@@ -1,6 +1,4 @@
 # ADR003-Database choice
-## Team
-Valentina si Elena
 
 ## Status
 Proposed
@@ -17,7 +15,7 @@ Pros: native support for points, lines, and polygons; fast spatial queries via G
 Cons: additional learning curve for the team (geometry types, ST_* functions); additional infrastructure dependency (PostgreSQL image with PostGIS, backup/restore for spatial types); requires attention to spatial indexes in future migrations
 
 ## Alternatives Considered
-Plain PostgreSQL, with lat/lng as float columns (does not natively support lines/polygons; spatial queries would require manual calculations without real indexing)
+Plain PostgreSQL
 
 Date:13.07.2026
 
