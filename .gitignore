@@ -1,2 +1,52 @@
-.idea
+# IDE and Editor Files
+.idea/
+.vs/
+.vscode/
+*.user
+*.suo
+*.sln.docstates
+*.code-workspace
+.idea/shelf/
+*.sln.iml
+
+# Build Results - .NET
+bin/
+obj/
+dist/
+*.dll
+*.exe
+
+# Local Environment & Configuration
+.env
+.env.local
+.env.*.local
+appsettings.Development.json
+appsettings.*.local.json
+
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/
+
+# Test Results
+TestResults/
+*.trx
+
+# OS & Temporary Files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.directory
+
+# Rider IDE
+.idea/
+
+# VS Code User Settings
+.vscode/settings.json
+.vscode/tasks.json
+.vscode/launch.json
+
+# Git
 .git
