@@ -1,7 +1,11 @@
 <Solution>
+  <Project Path="Seeagle.Application.Tests/Seeagle.Application.Tests.csproj" />
+  <Project Path="Seeagle.Application/Seeagle.Application.csproj" />
   <Project Path="seeagle.client/seeagle.client.esproj">
     <Build />
     <Deploy />
   </Project>
+  <Project Path="Seeagle.Domain/Seeagle.Domain.csproj" />
+  <Project Path="Seeagle.Infrastructure/Seeagle.Infrastructure.csproj" />
   <Project Path="Seeagle.Server/Seeagle.Server.csproj" />
 </Solution>
