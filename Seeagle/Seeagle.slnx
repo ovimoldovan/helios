@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="seeagle.client/seeagle.client.esproj">
+    <Build />
+    <Deploy />
+  </Project>
+  <Project Path="Seeagle.Server/Seeagle.Server.csproj" />
+</Solution>

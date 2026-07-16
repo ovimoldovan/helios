@@ -1,0 +1,6 @@
+@Seeagle.Server_HostAddress = http://localhost:5251
+
+GET {{Seeagle.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
