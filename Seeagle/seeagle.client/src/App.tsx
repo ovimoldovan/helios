@@ -1,14 +1,12 @@
 import './App.css';
-import { Button } from "@/components/ui/button"
+import {SampleNamesModule} from "@/features/sample-names/components/SampleNamesModule.tsx";
 
 function App() {
-  return (
-    <main>
-        <div className="flex min-h-svh flex-col items-center justify-center">
-            <Button>Click me</Button>
-        </div>
-    </main>
-  );
+    return (
+        <main>
+            <SampleNamesModule/>
+        </main>
+    );
 }
 
 export default App;
