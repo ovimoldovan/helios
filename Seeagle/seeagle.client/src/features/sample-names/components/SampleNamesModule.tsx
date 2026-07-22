@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import type React from 'react';
 import { createSampleName, getSampleNames } from '../api/sampleNamesApi';
 import type { SampleName } from '../../../shared/types/sampleName';
+import { Button } from "@/components/ui/button";
 
 const maxLength = 10;
 
@@ -68,9 +69,10 @@ export function SampleNamesModule() {
           onChange={(event) => setName(event.target.value)}
           placeholder="Up to 10 chars"
         />
-        <button type="submit" disabled={isLoading}>
+        
+        <Button type="submit" disabled={isLoading}>
           {isLoading ? 'Saving...' : 'Add'}
-        </button>
+        </Button>
       </form>
 
       <p className="hint">Validation: required, maximum {maxLength} characters.</p>
