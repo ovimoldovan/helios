@@ -1,10 +1,12 @@
 import './App.css';
-import { SampleNamesModule } from './features/sample-names/components/SampleNamesModule';
+import { Button } from "@/components/ui/button"
 
 function App() {
   return (
     <main>
-      <SampleNamesModule />
+        <div className="flex min-h-svh flex-col items-center justify-center">
+            <Button>Click me</Button>
+        </div>
     </main>
   );
 }
