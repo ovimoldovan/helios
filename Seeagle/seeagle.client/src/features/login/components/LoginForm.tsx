@@ -1,7 +1,18 @@
 ﻿import { useState } from 'react';
 import type React from 'react';
 import { loginUser } from '../api/loginApi';
+
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+    Card,
+    CardContent,
+    CardAction,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 
 export function LoginForm() {
     const [email, setEmail] = useState('');
@@ -41,41 +52,57 @@ export function LoginForm() {
     }
 
     return (
-        <section className={"login-module max-w-sm mx-auto p-6 border rounded-lg shadow-sm"}>
-            <h1 className={"text-2x; font-bold mb-2"}>Welcome back</h1>
-            <p className={"text-sm text-gray-500 mb-6"}>Please enter your details to sign in.</p>
-
-            <form onSubmit={handleSubmit} className={"flex flex-col gap-4"}>
-                <div className={"flex flex-col gap-1"}>
-                    <label htmlFor={"email-input"} className={"text-sm font-medium"}>Email</label>
-                    <input
-                        id={"email-input"}
-                        type={"text"}
-                        className={"border p-2 rounded-md"}
-                        value={email}
-                        onChange={(event) => setEmail(event.target.value)}
-                        placeholder={"Enter your email"}
-                    />
-                </div>
-
-                <div className={"flex flex-col gap-1"}>
-                    <label htmlFor={"password-input"} className={"text-sm font-medium"}>Password</label>
-                    <input
-                        id={"password-input"}
-                        type={"password"}
-                        className={"border p-2 rounded-md"}
-                        value={password}
-                        onChange={(event) => setPassword(event.target.value)}
-                        placeholder={"••••••••"}
-                    />
-                </div>
-
-                {error && <p className="text-sm text-red-500">{error}</p>}
-
-                <Button type={'submit'} disabled={isLoading} className={'mt-2'}>
-                    {isLoading ? 'Signing in...' : 'Sign In'}
-                </Button>
+        <Card className="w-full max-w-sm">
+            <CardHeader>
+                <CardTitle>Login to your account</CardTitle>
+                <CardDescription>
+                    Enter your email below to login to your account
+                </CardDescription>
+                <CardAction>
+                    <Button variant="link">Register</Button>
+                </CardAction>
+            </CardHeader>
+            
+            <form onSubmit={handleSubmit}>
+                <CardContent className="space-y-4">
+                    <div className="flex flex-col gap-6">
+                        <div className="grid gap-2">
+                            <Label htmlFor="email">Email</Label>
+                            <Input
+                                id="email-input"
+                                type="text"
+                                placeholder="Type in email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                disabled={isLoading}
+                            />
+                        </div>
+                        <div className="grid gap-2">
+                            <div className="flex items-center">
+                                <Label htmlFor="password">Password</Label>
+                            </div>
+                            <Input
+                                id="password-input"
+                                type="password"
+                                placeholder="••••••••"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                disabled={isLoading} />
+                        </div>
+                    </div>
+                    
+                    <CardAction className="flex-col gap-2">
+                        <Button type="submit" variant="link">
+                            Login
+                        </Button>
+                    </CardAction>
+                    
+                    {error && (
+                        <p className="text-sm font-medium text-destructive">{error}</p>
+                    )}  
+                </CardContent>
+                
             </form>
-        </section>
+        </Card>
     );
 }
