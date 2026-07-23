@@ -19,8 +19,8 @@ jobs:
       with:
         dotnet-version: 8.0.x
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore ./Seeagle/Seeagle.slnx
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build ./Seeagle/Seeagle.slnx --no-restore 
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test ./Seeagle/Seeagle.slnx --no-build --verbosity normal
