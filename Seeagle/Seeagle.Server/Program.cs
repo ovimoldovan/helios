@@ -2,13 +2,14 @@ using Microsoft.EntityFrameworkCore;
 using Seeagle.Application.Common;
 using Seeagle.Application.SampleNames;
 using Seeagle.Infrastructure.Persistence;
+using Seeagle.Application.Users;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddScoped<IUserService, UserService>();
 SetupDatabase(builder);
 
 builder.Services.AddScoped<ISampleNameService, SampleNameService>();
