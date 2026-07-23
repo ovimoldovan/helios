@@ -1,10 +1,10 @@
 import './App.css';
-import {SampleNamesModule} from "@/features/sample-names/components/SampleNamesModule.tsx";
+import { LoginForm } from "@/features/login/components/LoginForm";
 
 function App() {
     return (
-        <main>
-            <SampleNamesModule/>
+        <main className={'p-8'}>
+            <LoginForm />
         </main>
     );
 }
