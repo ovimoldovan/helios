@@ -44,7 +44,6 @@ function PinManager() {
             };
             setPins([...pins, newPin]);
             setNextId(nextId + 1);
-            console.log('Pin plasat la:', e.latlng.lat, e.latlng.lng);
         },
     });
 
@@ -52,7 +51,6 @@ function PinManager() {
         setPins(pins.map(pin =>
             pin.id === id ? { ...pin, position: newPosition } : pin
         ));
-        console.log('Pin mutat la:', newPosition);
     };
 
     return (

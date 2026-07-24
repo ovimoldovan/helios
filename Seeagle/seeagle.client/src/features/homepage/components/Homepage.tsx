@@ -7,7 +7,7 @@ interface HomepageProps {
 
 export function Homepage({ isAuthenticated = false }: HomepageProps) {
     return (
-        <div className="relative h-[100dvh] w-screen overflow-hidden">
+        <div className="relative h-screen w-screen overflow-hidden">
             <LeftPanel isAuthenticated={isAuthenticated} />
             <Map />
         </div>
