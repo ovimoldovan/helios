@@ -59,6 +59,12 @@ export function RegisterForm() {
         } else if (!/[a-z]/.test(password)) {
             validationErrors.password =
                 'Password must contain a lowercase letter.';
+        } else if (!/\d/.test(password)) {
+            validationErrors.password =
+                'Password must contain a number.';
+        } else if (!/[@$!%*?&]/.test(password)) {
+            validationErrors.password =
+                'Password must contain a special character: @$!%*?&.';
         }
 
         if (trimmedFirstName.length === 0) {
@@ -102,8 +108,13 @@ export function RegisterForm() {
                 lastName: lastName.trim(),
             });
 
-            setIsSuccess(true);
             setErrors({});
+            setIsSuccess(true);
+
+            setEmail('');
+            setPassword('');
+            setFirstName('');
+            setLastName('');
         } catch {
             setErrors({
                 form: 'Registration failed. Please try again.',

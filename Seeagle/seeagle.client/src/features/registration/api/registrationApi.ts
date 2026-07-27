@@ -1,10 +1,13 @@
 import { postJson } from '../../../shared/api/httpClient';
-import type { RegisterRequest } from '../../../shared/types/register';
+import type {
+    RegisterRequest,
+    RegisterResponse,
+} from '../../../shared/types/register';
 
-const registrationEndpoint = '/api/register';
+const registrationEndpoint = '/api/auth/register';
 
 export async function registerUser(
     request: RegisterRequest,
-): Promise<void> {
-    await postJson<unknown>(registrationEndpoint, request);
+): Promise<RegisterResponse> {
+    return postJson<RegisterResponse>(registrationEndpoint, request);
 }
