@@ -12,7 +12,6 @@ export function LeftPanel({ isAuthenticated = false }: LeftPanelProps) {
 
     return (
         <>
-            {/*  Buton vizibil doar când panoul e ÎNCHIS, doar pe mobil */}
             {!isOpen && (
                 <button
                     className="sm:hidden fixed top-4 left-4 z-9999 w-10 h-10 rounded-full bg-white flex items-center justify-center  border-gray-200"
@@ -22,7 +21,6 @@ export function LeftPanel({ isAuthenticated = false }: LeftPanelProps) {
                 </button>
             )}
 
-            {/*  Panoul lateral */}
             <div className={`
                 fixed z-9998 h-dvh
                 bg-white p-4
@@ -33,7 +31,6 @@ export function LeftPanel({ isAuthenticated = false }: LeftPanelProps) {
                 sm:left-0
                 overflow-y-auto
             `}>
-                {/* Header */}
                 <div className="flex items-center justify-between mb-6 gap-2">
                     <Logo />
                     <div className="flex items-center gap-2 shrink-0">
@@ -50,7 +47,6 @@ export function LeftPanel({ isAuthenticated = false }: LeftPanelProps) {
                     </div>
                 </div>
 
-                {/* Seeagle - Placing pin */}
                 <div className="mb-4 shrink-0">
                     <p className="text-[10px] font-semibold text-gray-400 uppercase mb-1">
                         Seeagle
@@ -64,10 +60,8 @@ export function LeftPanel({ isAuthenticated = false }: LeftPanelProps) {
                     </div>
                 </div>
 
-                {/* Linie separatoare */}
                 <hr className="border-gray-200 mb-4 shrink-0" />
 
-                {/* Downtown district */}
                 <div className="shrink-0">
                     <div className="flex items-center justify-between mb-2">
                         <p className="font-medium text-gray-800 text-sm">Downtown district</p>
@@ -79,7 +73,6 @@ export function LeftPanel({ isAuthenticated = false }: LeftPanelProps) {
                     <p className="text-[10px] text-gray-400 mt-2">Line report</p>
                 </div>
 
-                {/* User info */}
                 {isAuthenticated && (
                     <div className="mt-auto pt-3 border-t border-gray-200 shrink-0">
                         <div className="flex items-center justify-between gap-2">
@@ -93,10 +86,9 @@ export function LeftPanel({ isAuthenticated = false }: LeftPanelProps) {
                                 </div>
                             </div>
 
-                            {/*  Buton Settings */}
                             <button
                                 className="w-16 h-16 sm:w-13 sm:h-13 rounded-full hover:bg-gray-100 transition flex items-center justify-center shrink-0"
-                                onClick={() => console.log('Settings clicked')}
+                                
                             >
                                 <img
                                     src="/setting-lines.png"
@@ -109,7 +101,6 @@ export function LeftPanel({ isAuthenticated = false }: LeftPanelProps) {
                 )}
             </div>
 
-            {/*  Overlay pentru mobil */}
             {isOpen && (
                 <div
                     className="sm:hidden fixed inset-0 z-9997 bg-black/30"
