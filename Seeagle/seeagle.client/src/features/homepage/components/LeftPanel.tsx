@@ -84,10 +84,8 @@ export function LeftPanel({ isAuthenticated = false }: LeftPanelProps) {
                                     <p className="text-[10px] text-gray-400">luciana@example.com</p>
                                 </div>
                             </div>
-
                             <button
                                 className="w-16 h-16 sm:w-13 sm:h-13 rounded-full hover:bg-gray-100 transition flex items-center justify-center shrink-0"
-                                
                             >
                                 <img
                                     src="/setting-lines.png"

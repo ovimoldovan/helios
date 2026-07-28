@@ -6,7 +6,6 @@ import fs from 'fs';
 import path from 'path';
 import child_process from 'child_process';
 import { env } from 'process';
-// @ts-ignore
 import tailwindcss from "@tailwindcss/vite";
 
 const baseFolder =
