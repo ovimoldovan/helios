@@ -69,9 +69,10 @@ export function LoginForm() {
                         <div className="grid gap-2">
                             <Label htmlFor="email">Email</Label>
                             <Input
-                                id="email-input"
-                                type="text"
-                                placeholder="Type in email"
+                                id="email"
+                                type="email"
+                                placeholder="name@example.com"
+                                autoComplete="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 disabled={isLoading}
@@ -82,16 +83,17 @@ export function LoginForm() {
                                 <Label htmlFor="password">Password</Label>
                             </div>
                             <Input
-                                id="password-input"
+                                id="password"
                                 type="password"
                                 placeholder="••••••••"
+                                autoComplete="current-password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 disabled={isLoading} />
                         </div>
                     </div>
                     
-                    <CardAction className="flex-col gap-2">
+                    <CardAction>
                         <Button type="submit" variant="link">
                             Login
                         </Button>
