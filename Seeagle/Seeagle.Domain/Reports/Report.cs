@@ -28,7 +28,7 @@ public class Report
     public string? Description { get; private set; }
     public DateTime CreatedUtc { get; private set; }
 
-    // Placeholder fields — no FK constraints for now.
+    
     public Guid? UserId { get; private set; }
     public Guid? ReportTypeId { get; private set; }
     public string Status { get; private set; } =string.Empty;
