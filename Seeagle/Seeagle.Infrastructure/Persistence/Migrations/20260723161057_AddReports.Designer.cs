@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Seeagle.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using Seeagle.Infrastructure.Persistence;
 namespace Seeagle.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(SeeagleDbContext))]
-    partial class SeeagleDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260723161057_AddReports")]
+    partial class AddReports
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -73,39 +76,6 @@ namespace Seeagle.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("sample_names", (string)null);
-                });
-
-            modelBuilder.Entity("Seeagle.Domain.User.User", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("character varying(30)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("character varying(30)");
-
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.ToTable("Users", (string)null);
                 });
 #pragma warning restore 612, 618
         }

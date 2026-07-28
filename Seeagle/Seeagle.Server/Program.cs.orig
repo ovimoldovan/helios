@@ -2,8 +2,11 @@ using Microsoft.EntityFrameworkCore;
 using Seeagle.Application.Common;
 using Seeagle.Application.SampleNames;
 using Seeagle.Infrastructure.Persistence;
+<<<<<<< HEAD
 using Seeagle.Application.Users;
+=======
 using Seeagle.Application.Reports;
+>>>>>>> origin/main
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,8 +16,11 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ISampleNameService, SampleNameService>();
-builder.Services.AddScoped<IReportService, ReportService>();
+<<<<<<< HEAD
 SetupDatabase(builder);
+=======
+builder.Services.AddScoped<IReportService, ReportService>();
+>>>>>>> origin/main
 
 var app = builder.Build();
 
