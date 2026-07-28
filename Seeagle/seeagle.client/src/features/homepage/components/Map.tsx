@@ -10,12 +10,17 @@ L.Icon.Default.mergeOptions({
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
 });
 
-function DraggableMarker({ position, id }: any) {
+function DraggableMarker({ position, id, onDragEnd }: any) {
     return (
         <Marker
             position={position}
             draggable={true}
             eventHandlers={{
+                dragend(e) {
+                    const marker = e.target;
+                    const pos = marker.getLatLng();
+                    onDragEnd(id, [pos.lat, pos.lng]);
+                },
             }}
         >
             <Popup>
