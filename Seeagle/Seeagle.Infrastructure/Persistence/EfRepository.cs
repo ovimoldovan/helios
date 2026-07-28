@@ -27,4 +27,9 @@ public sealed class EfRepository<T>(SeeagleDbContext dbContext) : IRepository<T>
         dbContext.Set<T>().Remove(entity);
         await dbContext.SaveChangesAsync(cancellationToken);
     }
+
+    public IQueryable<T> GetAllQueryable()
+    {
+        return dbContext.Set<T>();
+    }
 }

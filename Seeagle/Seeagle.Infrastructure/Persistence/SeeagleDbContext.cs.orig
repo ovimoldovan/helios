@@ -1,17 +1,24 @@
 using Microsoft.EntityFrameworkCore;
 using Seeagle.Domain.SampleNames;
+<<<<<<< HEAD
 using Seeagle.Domain.User;
+=======
 using Seeagle.Domain.Reports;
+>>>>>>> origin/main
 
 namespace Seeagle.Infrastructure.Persistence;
 
 public sealed class SeeagleDbContext(DbContextOptions<SeeagleDbContext> options) : DbContext(options)
 {
     public DbSet<SampleName> SampleNames => Set<SampleName>();
-    public DbSet<Report> Reports => Set<Report>();
+<<<<<<< HEAD
     
     public DbSet<User> Users => Set<User>();
     
+=======
+    public DbSet<Report> Reports => Set<Report>();
+
+>>>>>>> origin/main
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(SeeagleDbContext).Assembly);
