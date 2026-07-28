@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Seeagle.Domain.SampleNames;
-
 using Seeagle.Domain.User;
+
 namespace Seeagle.Infrastructure.Persistence;
 
 public sealed class SeeagleDbContext(DbContextOptions<SeeagleDbContext> options) : DbContext(options)
