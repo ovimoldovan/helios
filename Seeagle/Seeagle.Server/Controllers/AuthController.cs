@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Seeagle.Application.Users;
+using Seeagle.Server.Utils.JWT;
 
 namespace Seeagle.Server.Controllers;
 [ApiController]
 [Route("api/auth")]
-public sealed class AuthController(IUserService userService) : ControllerBase
+public sealed class AuthController(IUserService userService, IJwtUtil jwtUtil) : ControllerBase
 {
     [HttpPost("register")]
     public async Task<ActionResult<UserDto>> RegisterUser(RegisterUserRequest request, CancellationToken cancellationToken)
@@ -28,7 +29,7 @@ public sealed class AuthController(IUserService userService) : ControllerBase
         if (user is null)
             return Unauthorized(new { message = "Invalid email or password" });
 
-        return Ok();
-
+        var token = jwtUtil.GenerateToken(user);
+        return Ok(new { token });
     }
 }
