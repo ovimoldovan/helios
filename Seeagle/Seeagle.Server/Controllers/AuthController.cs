@@ -19,4 +19,16 @@ public sealed class AuthController(IUserService userService) : ControllerBase
             return Conflict(new { message = ex.Message });
         }
     }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> LoginAsync(LoginUserRequest request, CancellationToken cancellationToken)
+    {
+        var user = await userService.ValidateCredentialsAsync(request, cancellationToken);
+        
+        if (user is null)
+            return Unauthorized(new { message = "Invalid email or password" });
+
+        return Ok();
+
+    }
 }
