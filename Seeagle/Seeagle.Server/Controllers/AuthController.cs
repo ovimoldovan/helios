@@ -6,7 +6,6 @@ namespace Seeagle.Server.Controllers;
 [Route("api/auth")]
 public sealed class AuthController(IUserService userService) : ControllerBase
 {
-    
     [HttpPost("register")]
     public async Task<ActionResult<UserDto>> RegisterUser(RegisterUserRequest request, CancellationToken cancellationToken)
     {

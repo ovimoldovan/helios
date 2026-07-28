@@ -9,10 +9,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<IUserService, UserService>();
-SetupDatabase(builder);
 
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ISampleNameService, SampleNameService>();
+SetupDatabase(builder);
 
 var app = builder.Build();
 

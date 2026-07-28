@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Seeagle.Application.Users;
 using Seeagle.Domain.User;
 using Seeagle.Application.Common;
@@ -17,20 +18,20 @@ public class UserService : IUserService
     public async Task<UserDto> RegisterUserAsync(RegisterUserRequest request, CancellationToken cancellationToken)
     {
         var normalizedEmail = request.Email.ToLowerInvariant().Trim();
-        var existingUser = await _userRepository.GetAllAsync( cancellationToken);
+        var emailExists = await _userRepository.GetAllQueryable()
+            .AnyAsync(u => u.Email.Equals(normalizedEmail, StringComparison.OrdinalIgnoreCase), cancellationToken);
         
-        if (existingUser.Any(u => u.Email.Equals(normalizedEmail, StringComparison.OrdinalIgnoreCase)))
+        if (emailExists)
         {
             throw new InvalidOperationException("A user with the provided email already exists.");
         }
         
         var placeholderUser = new User(normalizedEmail, string.Empty, request.FirstName, request.LastName); 
-        var hasedPassword = _passwordHasher.HashPassword(placeholderUser, request.Password);
+        var hashedPassword = _passwordHasher.HashPassword(placeholderUser, request.Password);
 
-        var user = new User(normalizedEmail, hasedPassword, request.FirstName, request.LastName);
+        var user = new User(normalizedEmail, hashedPassword, request.FirstName.Trim(), request.LastName.Trim());
         await _userRepository.AddAsync(user, cancellationToken);
         return ConvertToDto(user);
-
     }
 
     private UserDto ConvertToDto(User user)

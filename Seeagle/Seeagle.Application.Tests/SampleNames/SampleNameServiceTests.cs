@@ -84,5 +84,10 @@ public sealed class SampleNameServiceTests
             Items.Remove(entity);
             return Task.CompletedTask;
         }
+
+        public IQueryable<SampleName> GetAllQueryable()
+        {
+            return Items.AsQueryable();
+        }
     }
 }
