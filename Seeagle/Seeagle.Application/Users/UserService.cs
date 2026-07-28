@@ -19,7 +19,7 @@ public class UserService : IUserService
     {
         var normalizedEmail = request.Email.ToLowerInvariant().Trim();
         var emailExists = await _userRepository.GetAllQueryable()
-            .AnyAsync(u => u.Email.Equals(normalizedEmail, StringComparison.OrdinalIgnoreCase), cancellationToken);
+            .AnyAsync(u => u.Email == normalizedEmail, cancellationToken);
         
         if (emailExists)
         {
