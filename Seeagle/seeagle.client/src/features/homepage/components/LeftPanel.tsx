@@ -37,7 +37,6 @@ export function LeftPanel({ isAuthenticated = false }: LeftPanelProps) {
                         <Button variant="outline" size="sm" className="rounded-full text-xs px-3">
                             {isAuthenticated ? 'Logout' : 'Login'}
                         </Button>
-                        {/* Buton X */}
                         <button
                             className="sm:hidden w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-sm text-gray-600 shrink-0"
                             onClick={() => setIsOpen(false)}
