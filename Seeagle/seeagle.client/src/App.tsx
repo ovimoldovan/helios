@@ -1,12 +1,10 @@
 import './App.css';
-import {SampleNamesModule} from "@/features/sample-names/components/SampleNamesModule.tsx";
+import { Homepage } from './features/homepage/components/Homepage';
 
 function App() {
-    return (
-        <main>
-            <SampleNamesModule/>
-        </main>
-    );
+    const isAuthenticated = true; //  true/false
+
+    return <Homepage isAuthenticated={isAuthenticated} />;
 }
 
 export default App;
