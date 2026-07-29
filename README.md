@@ -34,6 +34,33 @@ Example connection string:
 
 `Host=localhost;Port=5432;Database=seeagle;Username=postgres;Password=postgres`
 
+## _appsettings.Development.json_ example 
+
+<details>
+   <summary>Example</summary>
+
+   ```json
+   {
+     "ConnectionStrings": {
+       "SeeagleDatabase": "Host=localhost;Port=5432;Database=seeagle;Username=postgres;Password=postgres"
+     },
+     "Logging": {
+       "LogLevel": {
+         "Default": "Information",
+         "Microsoft.AspNetCore": "Warning"
+       }
+     },
+     "AllowedHosts": "*",
+     "JWT": {
+       "Secret": "very-secure-key-here",
+       "ExpiryInMinutes": 60
+     }
+   }
+   ```
+</details>
+
+Replace the secret key with one generated from [here](https://jwtsecretkeygenerator.com).
+
 ## Run the app
 
 From `Seeagle/`:
