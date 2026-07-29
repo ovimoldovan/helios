@@ -37,8 +37,13 @@ export function LoginForm() {
         setError(null);
 
         try {
-            await loginUser({email, password});
-            alert('Login successful!');
+            const response = await loginUser({email, password});
+            
+            if (response.token) {
+                alert('Login successful!');
+            } else {
+                setError('Invalid email or password.');
+            }
         } catch (apiError) {
             const details = apiError as { errors?: Record<string, string[]> };
             const firstError =
