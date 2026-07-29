@@ -34,6 +34,20 @@ public class UserService : IUserService
         return ConvertToDto(user);
     }
 
+    public async Task<User?> ValidateCredentialsAsync(LoginUserRequest request, CancellationToken cancellationToken)
+    {
+        var normalizedEmail = request.Email.ToLowerInvariant().Trim();
+        var user = await _userRepository.GetAllQueryable()
+            .FirstOrDefaultAsync(u => u.Email == normalizedEmail, cancellationToken);
+
+        if (user is null)
+            return null;
+        
+        var isValid = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, request.Password) == PasswordVerificationResult.Success;
+
+        return isValid ? user : null;
+    }
+
     private UserDto ConvertToDto(User user)
     {
         return new UserDto(

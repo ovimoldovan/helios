@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using MockQueryable;
 using NSubstitute;
 using Seeagle.Application.Users;
@@ -8,6 +9,8 @@ namespace Seeagle.Application.Tests.Users;
 
 public sealed class UserServiceTests
 {
+    private readonly PasswordHasher<User> _passwordHasher = new();
+
     [Fact]
     public async Task RegisterUserAsync_ShouldReturnDtoWithUserData_WhenDataIsValid()
     {
@@ -49,9 +52,10 @@ public sealed class UserServiceTests
 
         // Act
         await service.RegisterUserAsync(request, CancellationToken.None);
-    
+
         // Assert
-        await repository.Received(1).AddAsync(Arg.Is<User>(user => user.Email == "test@test.com"), CancellationToken.None);
+        await repository.Received(1)
+            .AddAsync(Arg.Is<User>(user => user.Email == "test@test.com"), CancellationToken.None);
     }
 
     [Fact]
@@ -93,8 +97,8 @@ public sealed class UserServiceTests
         };
 
         // Act & Assert
-        await Assert.ThrowsAsync<InvalidOperationException>(
-            () => service.RegisterUserAsync(request, CancellationToken.None));
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            service.RegisterUserAsync(request, CancellationToken.None));
     }
 
     [Fact]
@@ -125,5 +129,109 @@ public sealed class UserServiceTests
 
         // Assert
         await repository.DidNotReceive().AddAsync(Arg.Any<User>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task ValidateCredentialsAsync_ShouldReturnUser_WhenCredentialsAreValid()
+    {
+        // Arrange
+        var placeholderUser = new User("test@test.com", "placeholder", "Ana", "Popescu");
+        var existingUser = new User(placeholderUser.Email, _passwordHasher.HashPassword(placeholderUser, "Parola123!"),
+            placeholderUser.FirstName, placeholderUser.LastName);
+
+        var repository = Substitute.For<IRepository<User>>();
+        repository.GetAllQueryable().Returns(new List<User> { existingUser }.BuildMock());
+        var service = new UserService(repository);
+
+        var request = new LoginUserRequest
+        {
+            Email = "test@test.com",
+            Password = "Parola123!"
+        };
+
+        // Act
+        var result = await service.ValidateCredentialsAsync(request, CancellationToken.None);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal("test@test.com", result!.Email);
+    }
+
+    [Fact]
+    public async Task ValidateCredentialsAsync_ShouldReturnNull_WhenEmailDoesNotExist()
+    {
+        // Arrange
+        var repository = Substitute.For<IRepository<User>>();
+        repository.GetAllQueryable().Returns(new List<User>().BuildMock());
+        var service = new UserService(repository);
+
+        var request = new LoginUserRequest
+        {
+            Email = "nonexistent@test.com",
+            Password = "Parola123!"
+        };
+
+        // Act
+        var result = await service.ValidateCredentialsAsync(request, CancellationToken.None);
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task ValidateCredentialsAsync_ShouldReturnNull_WhenPasswordIsIncorrect()
+    {
+        // Arrange
+        var placeholderUser = new User("test@test.com", "placeholder", "Ana", "Popescu");
+        var existingUser = new User(
+            placeholderUser.Email,
+            _passwordHasher.HashPassword(placeholderUser, "Parola123!"),
+            placeholderUser.FirstName,
+            placeholderUser.LastName);
+
+        var repository = Substitute.For<IRepository<User>>();
+        repository.GetAllQueryable().Returns(new List<User> { existingUser }.BuildMock());
+        var service = new UserService(repository);
+
+        var request = new LoginUserRequest
+        {
+            Email = "test@test.com",
+            Password = "WrongPassword!"
+        };
+
+        // Act
+        var result = await service.ValidateCredentialsAsync(request, CancellationToken.None);
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task ValidateCredentialsAsync_ShouldReturnUser_WhenEmailHasSurroundingWhitespaceAndUppercase()
+    {
+        // Arrange
+        var placeholderUser = new User("test@test.com", "placeholder", "Ana", "Popescu");
+        var existingUser = new User(
+            placeholderUser.Email,
+            _passwordHasher.HashPassword(placeholderUser, "Parola123!"),
+            placeholderUser.FirstName,
+            placeholderUser.LastName);
+
+        var repository = Substitute.For<IRepository<User>>();
+        repository.GetAllQueryable().Returns(new List<User> { existingUser }.BuildMock());
+        var service = new UserService(repository);
+
+        var request = new LoginUserRequest
+        {
+            Email = "  Test@TEST.com  ",
+            Password = "Parola123!"
+        };
+
+        // Act
+        var result = await service.ValidateCredentialsAsync(request, CancellationToken.None);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal("test@test.com", result!.Email);
     }
 }
