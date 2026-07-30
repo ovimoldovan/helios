@@ -9,4 +9,6 @@ public interface IRepository<T> where T : class
     Task UpdateAsync(T entity, CancellationToken cancellationToken);
 
     Task DeleteAsync(T entity, CancellationToken cancellationToken);
+
+    IQueryable<T> GetAllQueryable();
 }
