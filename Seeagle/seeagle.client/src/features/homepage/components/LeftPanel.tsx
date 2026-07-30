@@ -1,6 +1,7 @@
 import { Logo } from '@/components/Logo';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface LeftPanelProps {
     isAuthenticated?: boolean;
@@ -8,7 +9,9 @@ interface LeftPanelProps {
 
 
 export function LeftPanel({ isAuthenticated = false }: LeftPanelProps) {
-    const [isOpen, setIsOpen] = useState(true); 
+    const [isOpen, setIsOpen] = useState(true);
+
+    const navigate = useNavigate();
 
     return (
         <>
@@ -34,7 +37,16 @@ export function LeftPanel({ isAuthenticated = false }: LeftPanelProps) {
                 <div className="flex items-center justify-between mb-6 gap-2">
                     <Logo />
                     <div className="flex items-center gap-2 shrink-0">
-                        <Button variant="outline" size="sm" className="rounded-full text-xs px-3">
+                        <Button 
+                            variant="outline"
+                            size="sm"
+                            className="rounded-full text-xs px-3"
+                            onClick={() => {
+                                if (!isAuthenticated) {
+                                    navigate('/login');
+                                }
+                            }}
+                        >
                             {isAuthenticated ? 'Logout' : 'Login'}
                         </Button>
                         <button

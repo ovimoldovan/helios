@@ -2,9 +2,9 @@ import './App.css';
 
 import { Route, Routes } from 'react-router-dom';
 
-import { LoginForm } from '@/features/login/components/LoginForm';
 import { Homepage } from './features/homepage/components/Homepage';
-import { RegisterForm } from './features/registration/components/RegisterForm';
+import { LoginForm } from '@/features/login/components/LoginForm';
+import { RegisterForm } from '@/features/registration/components/RegisterForm';
 
 function App() {
     const isAuthenticated = false;
