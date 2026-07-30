@@ -62,9 +62,9 @@ export function RegisterForm() {
         } else if (!/\d/.test(password)) {
             validationErrors.password =
                 'Password must contain a number.';
-        } else if (!/[@$!%*?&]/.test(password)) {
+        } else if (!/[@#$!%*?&]/.test(password)) {
             validationErrors.password =
-                'Password must contain a special character: @$!%*?&.';
+                'Password must contain a special character: @#$!%*?&.';
         }
 
         if (trimmedFirstName.length === 0) {
