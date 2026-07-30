@@ -48,23 +48,14 @@ export function RegisterForm() {
             validationErrors.email = 'Enter a valid email address.';
         }
 
+        const passwordPattern =
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$!%*?&])[A-Za-z\d@#$!%*?&]{8,}$/;
+
         if (password.length === 0) {
             validationErrors.password = 'Password is required.';
-        } else if (password.length < 8) {
+        } else if (!passwordPattern.test(password)) {
             validationErrors.password =
-                'Password must contain at least 8 characters.';
-        } else if (!/[A-Z]/.test(password)) {
-            validationErrors.password =
-                'Password must contain an uppercase letter.';
-        } else if (!/[a-z]/.test(password)) {
-            validationErrors.password =
-                'Password must contain a lowercase letter.';
-        } else if (!/\d/.test(password)) {
-            validationErrors.password =
-                'Password must contain a number.';
-        } else if (!/[@#$!%*?&]/.test(password)) {
-            validationErrors.password =
-                'Password must contain a special character: @#$!%*?&.';
+                'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.';
         }
 
         if (trimmedFirstName.length === 0) {
