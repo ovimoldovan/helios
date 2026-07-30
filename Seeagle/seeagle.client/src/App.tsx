@@ -1,16 +1,28 @@
 import './App.css';
+
 import { Route, Routes } from 'react-router-dom';
+
+import { LoginForm } from '@/features/login/components/LoginForm';
 import { Homepage } from './features/homepage/components/Homepage';
 import { RegisterForm } from './features/registration/components/RegisterForm';
 
 function App() {
-    const isAuthenticated = true; //  true/false
+    const isAuthenticated = false;
 
     return (
         <Routes>
             <Route
                 path="/"
                 element={<Homepage isAuthenticated={isAuthenticated} />}
+            />
+
+            <Route
+                path="/login"
+                element={
+                    <main className="p-8">
+                        <LoginForm />
+                    </main>
+                }
             />
 
             <Route
