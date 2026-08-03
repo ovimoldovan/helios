@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/shared/context/AuthContext';
-import { getUserFromToken } from '@/shared/utils/GetUserFromToken.ts'
+import { getUserFromToken } from '@/shared/utils/GetUserFromToken.ts';
 
 interface LeftPanelProps {
     onNewReport?: () => void;
@@ -91,7 +91,7 @@ export function LeftPanel({ onNewReport, isPlacingPin = false }: LeftPanelProps)
                     </div>
 
                     <hr className="border-border" />
-                    
+
                     <div className="space-y-3">
                         <div className="flex items-center justify-between">
                             <p className="font-medium text-sm">Downtown district</p>
@@ -111,7 +111,7 @@ export function LeftPanel({ onNewReport, isPlacingPin = false }: LeftPanelProps)
                             </Button>
                         ) : (
                             <div className="w-full border-2 border-border rounded-full py-2 text-center text-sm text-muted-foreground">
-                                 Login to add report
+                                Login to add report
                             </div>
                         )}
 
@@ -136,13 +136,6 @@ export function LeftPanel({ onNewReport, isPlacingPin = false }: LeftPanelProps)
                                         </p>
                                     </div>
                                 </div>
-                                <Button variant="ghost" size="icon" className="w-8 h-8 rounded-full">
-                                    <img
-                                        src="/setting-lines.png"
-                                        alt="Settings"
-                                        className="w-4 h-4 object-contain"
-                                    />
-                                </Button>
                             </div>
                         </div>
                     )}
