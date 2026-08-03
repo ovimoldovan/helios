@@ -1,6 +1,7 @@
 ﻿import { useState } from 'react';
 import type React from 'react';
 import { loginUser } from '../api/loginApi';
+import { useAuth } from '@/shared/context/AuthContext';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,6 +19,7 @@ export function LoginForm() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const { login } = useAuth();
 
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -39,6 +41,7 @@ export function LoginForm() {
             const response = await loginUser({email, password});
 
             if (response.token) {
+                login();
                 alert('Login successful!');
             } else {
                 setError('Invalid email or password.');
