@@ -8,7 +8,6 @@ import { Label } from '@/components/ui/label';
 import {
     Card,
     CardContent,
-    CardAction,
     CardDescription,
     CardHeader,
     CardTitle,
@@ -22,7 +21,7 @@ export function LoginForm() {
 
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        
+
         if (!email) {
             setError('Email is required.');
             return;
@@ -38,7 +37,7 @@ export function LoginForm() {
 
         try {
             const response = await loginUser({email, password});
-            
+
             if (response.token) {
                 alert('Login successful!');
             } else {
@@ -63,12 +62,9 @@ export function LoginForm() {
                 <CardDescription>
                     Enter your email below to login to your account
                 </CardDescription>
-                <CardAction>
-                    <Button variant="link">Register</Button>
-                </CardAction>
             </CardHeader>
-            
-            <form onSubmit={handleSubmit}>
+
+            <form id="login-form" onSubmit={handleSubmit}>
                 <CardContent className="space-y-4">
                     <div className="flex flex-col gap-6">
                         <div className="grid gap-2">
@@ -94,22 +90,29 @@ export function LoginForm() {
                                 autoComplete="current-password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                disabled={isLoading} />
+                                disabled={isLoading}
+                            />
                         </div>
                     </div>
-                    
-                    <CardAction>
-                        <Button type="submit" variant="link">
-                            Login
-                        </Button>
-                    </CardAction>
-                    
-                    {error && (
-                        <p className="text-sm font-medium text-destructive">{error}</p>
-                    )}  
                 </CardContent>
-                
             </form>
+
+            <CardContent className="space-y-4 pt-0">
+                <div className="flex items-center justify-center gap-4">
+                    <Button type="submit" form="login-form" variant="link">
+                        Login
+                    </Button>
+                    <Button variant="link">
+                        Register
+                    </Button>
+                </div>
+
+                {error && (
+                    <p className="text-sm font-medium text-destructive text-center">
+                        {error}
+                    </p>
+                )}
+            </CardContent>
         </Card>
     );
 }
