@@ -4,17 +4,18 @@ import { useState } from 'react';
 
 interface LeftPanelProps {
     isAuthenticated?: boolean;
+    onNewReport?: () => void;
+    isPlacingPin?: boolean;
 }
 
-
-export function LeftPanel({ isAuthenticated = false }: LeftPanelProps) {
-    const [isOpen, setIsOpen] = useState(true); 
+export function LeftPanel({ isAuthenticated = false, onNewReport, isPlacingPin = false }: LeftPanelProps) {
+    const [isOpen, setIsOpen] = useState(true);
 
     return (
         <>
             {!isOpen && (
                 <button
-                    className="sm:hidden fixed top-4 left-4 z-9999 w-10 h-10 rounded-full bg-white flex items-center justify-center  border-gray-200"
+                    className="sm:hidden fixed top-4 left-4 z-40 w-10 h-10 rounded-full bg-white flex items-center justify-center  border-gray-200"
                     onClick={() => setIsOpen(true)}
                 >
                     ☰
@@ -22,7 +23,7 @@ export function LeftPanel({ isAuthenticated = false }: LeftPanelProps) {
             )}
 
             <div className={`
-                fixed z-9998 h-dvh
+                fixed z-30 h-dvh
                 bg-white p-4
                 flex flex-col 
                 transition-all duration-300 ease-in-out
@@ -53,8 +54,12 @@ export function LeftPanel({ isAuthenticated = false }: LeftPanelProps) {
                     <div className="flex items-start gap-2">
                         <span className="text-xl">📍</span>
                         <div>
-                            <p className="font-medium text-gray-800 text-sm">Placing pin</p>
-                            <p className="text-[10px] text-gray-400">tap map to drop</p>
+                            <p className="font-medium text-gray-800 text-sm">
+                                {isPlacingPin ? 'Placing pin...' : 'Placing pin'}
+                            </p>
+                            <p className="text-[10px] text-gray-400">
+                                {isPlacingPin ? 'tap map to drop' : 'tap "New report" to start'}
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -65,10 +70,21 @@ export function LeftPanel({ isAuthenticated = false }: LeftPanelProps) {
                     <div className="flex items-center justify-between mb-2">
                         <p className="font-medium text-gray-800 text-sm">Downtown district</p>
                     </div>
-                    <button className="w-full border-2 border-gray-300 rounded-full py-2 text-gray-700 text-sm hover:bg-green-900/50 transition">
-                        <span className="text-base mr-1">+</span>
-                        New raport
-                    </button>
+
+                    {isAuthenticated ? (
+                        <button
+                            className="w-full border-2 border-gray-300 rounded-full py-2 text-gray-700 text-sm hover:bg-green-900/50 transition"
+                            onClick={onNewReport}
+                        >
+                            <span className="text-base mr-1">+</span>
+                            New report
+                        </button>
+                    ) : (
+                        <div className="w-full border-2 border-gray-200 rounded-full py-2 text-gray-400 text-sm text-center">
+                            Login to add report
+                        </div>
+                    )}
+
                     <p className="text-[10px] text-gray-400 mt-2">Line report</p>
                 </div>
 
@@ -100,7 +116,7 @@ export function LeftPanel({ isAuthenticated = false }: LeftPanelProps) {
 
             {isOpen && (
                 <div
-                    className="sm:hidden fixed inset-0 z-9997 bg-black/30"
+                    className="sm:hidden fixed inset-0 z-20 bg-black/30"
                     onClick={() => setIsOpen(false)}
                 />
             )}
