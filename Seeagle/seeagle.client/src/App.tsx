@@ -5,9 +5,16 @@ import { Route, Routes } from 'react-router-dom';
 import { Homepage } from './features/homepage/components/Homepage';
 import { LoginForm } from '@/features/login/components/LoginForm';
 import { RegisterForm } from '@/features/registration/components/RegisterForm';
+import { AdminDashboard } from '@/features/admin/components/AdminDashboard';
+import { AdminRoute } from '@/features/admin/components/AdminRoute';
+import { getAuthToken } from '@/shared/auth/getAuthToken';
+import { getUserRole } from '@/shared/auth/getUserRole';
 
 function App() {
     const isAuthenticated = false;
+    const token = getAuthToken();
+    const role = token ? getUserRole(token) : null;
+    const isAdmin = role === 'Admin';
 
     return (
         <Routes>
@@ -33,6 +40,15 @@ function App() {
                             <RegisterForm />
                         </div>
                     </main>
+                }
+            />
+
+            <Route
+                path="/admin"
+                element={
+                    <AdminRoute isAdmin={isAdmin}>
+                        <AdminDashboard />
+                    </AdminRoute>
                 }
             />
         </Routes>
