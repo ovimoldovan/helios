@@ -2,14 +2,12 @@ import { Logo } from '@/components/Logo';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/shared/context/AuthContext';
 
-interface LeftPanelProps {
-    isAuthenticated?: boolean;
-}
-
-
-export function LeftPanel({ isAuthenticated = false }: LeftPanelProps) {
+export function LeftPanel() {
     const [isOpen, setIsOpen] = useState(true);
+    
+    const { isAuthenticated, logout } = useAuth();
 
     const navigate = useNavigate();
 
@@ -42,7 +40,10 @@ export function LeftPanel({ isAuthenticated = false }: LeftPanelProps) {
                             size="sm"
                             className="rounded-full text-xs px-3"
                             onClick={() => {
-                                if (!isAuthenticated) {
+                                if (isAuthenticated) {
+                                    logout();
+                                    navigate('/');
+                                } else {
                                     navigate('/login');
                                 }
                             }}
@@ -79,7 +80,7 @@ export function LeftPanel({ isAuthenticated = false }: LeftPanelProps) {
                     </div>
                     <button className="w-full border-2 border-gray-300 rounded-full py-2 text-gray-700 text-sm hover:bg-green-900/50 transition">
                         <span className="text-base mr-1">+</span>
-                        New raport
+                        New report
                     </button>
                     <p className="text-[10px] text-gray-400 mt-2">Line report</p>
                 </div>
@@ -92,8 +93,8 @@ export function LeftPanel({ isAuthenticated = false }: LeftPanelProps) {
                                     JD
                                 </div>
                                 <div className="hidden sm:block">
-                                    <p className="font-medium text-gray-800 text-xs">Luciana Morar</p>
-                                    <p className="text-[10px] text-gray-400">luciana@example.com</p>
+                                    <p className="font-medium text-gray-800 text-xs"></p>
+                                    <p className="text-[10px] text-gray-400"></p>
                                 </div>
                             </div>
                             <button
