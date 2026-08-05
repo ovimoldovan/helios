@@ -1,6 +1,5 @@
 import {
     Card,
-    CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
@@ -35,7 +34,7 @@ export function AdminDashboard() {
             <div
                 className="absolute inset-0 bg-cover bg-center opacity-20"
                 style={{
-                    backgroundImage: "url('/admin-map-background.png')",
+                    backgroundImage: "url('/map-dark-mode.avif')",
                 }}
             />
 
@@ -58,12 +57,7 @@ export function AdminDashboard() {
                                     {section.description}
                                 </CardDescription>
                             </CardHeader>
-
-                            <CardContent>
-                                <p className="text-sm font-medium text-muted-foreground">
-                                    Coming soon
-                                </p>
-                            </CardContent>
+                            
                         </Card>
                     ))}
                 </div>
