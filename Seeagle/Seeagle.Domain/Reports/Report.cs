@@ -1,3 +1,5 @@
+using NetTopologySuite.Geometries;
+
 namespace Seeagle.Domain.Reports;
 
 public class Report
@@ -6,30 +8,29 @@ public class Report
     {
     }
 
-    public Report(double latitude, double longitude, string? description)
+    public Report(Point location, string? description, User.User user)
     {
-        if (latitude < -90 || latitude > 90)
-            throw new ArgumentOutOfRangeException(nameof(latitude), "Latitude must be between -90 and 90.");
+        if (location.Y < -90 || location.Y > 90)
+            throw new ArgumentOutOfRangeException(nameof(location.Y), "Latitude must be between -90 and 90.");
 
-        if (longitude < -180 || longitude > 180)
-            throw new ArgumentOutOfRangeException(nameof(longitude), "Longitude must be between -180 and 180.");
+        if (location.X < -180 || location.X > 180)
+            throw new ArgumentOutOfRangeException(nameof(location.X), "Longitude must be between -180 and 180.");
 
         Id = Guid.NewGuid();
-        Latitude = latitude;
-        Longitude = longitude;
+        Location = location;
         Description = description;
         CreatedUtc = DateTime.UtcNow;
+        User = user;
         Status = "Pending";
     }
 
     public Guid Id { get; private set; }
-    public double Latitude { get; private set; }
-    public double Longitude { get; private set; }
+    public Point Location { get; set; }
     public string? Description { get; private set; }
     public DateTime CreatedUtc { get; private set; }
 
     
-    public Guid? UserId { get; private set; }
+    public User.User User { get; private set; }
     public Guid? ReportTypeId { get; private set; }
     public string Status { get; private set; } =string.Empty;
 }

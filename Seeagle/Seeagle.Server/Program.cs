@@ -78,7 +78,7 @@ static void SetupDatabase(WebApplicationBuilder builder)
     var connectionString = builder.Configuration.GetConnectionString("SeeagleDatabase")
         ?? throw new InvalidOperationException("Connection string 'SeeagleDatabase' was not found.");
 
-    builder.Services.AddDbContext<SeeagleDbContext>(options => options.UseNpgsql(connectionString));
+    builder.Services.AddDbContext<SeeagleDbContext>(options => options.UseNpgsql(connectionString, npgsqlOptions => npgsqlOptions.UseNetTopologySuite()));
 
     builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
 }
