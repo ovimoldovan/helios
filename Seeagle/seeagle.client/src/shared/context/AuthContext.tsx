@@ -5,7 +5,7 @@ import { getCookie, deleteCookie } from '@/shared/utils/cookies';
 interface AuthContextType {
     isAuthenticated: boolean;
     login: () => void;
-    logout: () => void;
+    logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -21,10 +21,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     function login() {
         setIsAuthenticated(true);
     }
-
-    function logout() {
-        deleteCookie('authToken');
-        setIsAuthenticated(false);
+    
+    async function logout() {
+        try {
+            await fetch('/api/auth/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+            });
+        } catch (error) {
+            console.error('Failed to notify server logout:', error);
+        } finally {
+            deleteCookie('authToken');
+            setIsAuthenticated(false);
+        }
     }
 
     return (
