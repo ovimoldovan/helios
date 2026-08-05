@@ -1,5 +1,6 @@
 ﻿import { useState } from 'react';
 import type React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../api/loginApi';
 
 import { Button } from '@/components/ui/button';
@@ -15,6 +16,7 @@ import {
 } from '@/components/ui/card';
 
 export function LoginForm() {
+    const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
@@ -64,7 +66,13 @@ export function LoginForm() {
                     Enter your email below to login to your account
                 </CardDescription>
                 <CardAction>
-                    <Button variant="link">Register</Button>
+                    <Button
+                        type="button"
+                        variant="link"
+                        onClick={() => navigate('/register')}
+                    >
+                        Register
+                    </Button>
                 </CardAction>
             </CardHeader>
             
