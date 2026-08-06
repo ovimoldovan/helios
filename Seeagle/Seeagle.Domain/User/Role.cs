@@ -1,6 +1,5 @@
 namespace Seeagle.Domain.User;
 
-
 public enum Role
 {
     User = 0,

@@ -15,7 +15,7 @@ namespace Seeagle.Infrastructure.Persistence.Migrations
                 table: "Users",
                 type: "text",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: "User");
         }
 
         /// <inheritdoc />
