@@ -5,6 +5,8 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/shared/context/AuthContext';
+
 
 interface LeftPanelProps {
     isAuthenticated?: boolean;
@@ -17,8 +19,12 @@ export function LeftPanel({
                               onNewReport,
                               isPlacingPin = false
                           }: LeftPanelProps) {
-    const navigate = useNavigate();
+
     const [isOpen, setIsOpen] = useState(true);
+    
+    const { isAuthenticated, logout } = useAuth();
+
+    const navigate = useNavigate();
 
     return (
         <>
@@ -77,8 +83,7 @@ export function LeftPanel({
                     </div>
 
                     <hr className="border-border" />
-
-                    {/* Downtown district */}
+                  
                     <div className="space-y-3">
                         <div className="flex items-center justify-between">
                             <p className="font-medium text-sm">Downtown district</p>
@@ -104,20 +109,23 @@ export function LeftPanel({
 
                         <p className="text-[10px] text-muted-foreground">Line report </p>
                     </div>
+                    <button className="w-full border-2 border-gray-300 rounded-full py-2 text-gray-700 text-sm hover:bg-green-900/50 transition">
+                        <span className="text-base mr-1">+</span>
+                        New report
+                    </button>
+                    <p className="text-[10px] text-gray-400 mt-2">Line report</p>
+                </div>
 
-                    {isAuthenticated && (
-                        <div className="mt-auto pt-3 border-t border-border">
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                    <Avatar className="w-8 h-8">
-                                        <AvatarFallback className="text-xs font-medium">
-                                            LM
-                                        </AvatarFallback>
-                                    </Avatar>
-                                    <div className="hidden sm:block">
-                                        <p className="font-medium text-xs">Luciana Morar</p>
-                                        <p className="text-[10px] text-muted-foreground">lm@example.com</p>
-                                    </div>
+                {isAuthenticated && (
+                    <div className="mt-auto pt-3 border-t border-gray-200 shrink-0">
+                        <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-2">
+                                <div className="w-8 h-8 rounded-full bg-green-900 text-white flex items-center justify-center font-bold text-xs">
+                                    JD
+                                </div>
+                                <div className="hidden sm:block">
+                                    <p className="font-medium text-gray-800 text-xs"></p>
+                                    <p className="text-[10px] text-gray-400"></p>
                                 </div>
                                 <Button variant="ghost" size="icon" className="w-8 h-8 rounded-full">
                                     <img
