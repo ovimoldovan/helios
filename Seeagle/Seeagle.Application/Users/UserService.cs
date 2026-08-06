@@ -54,7 +54,8 @@ public class UserService : IUserService
             user.Id,
             user.Email,
             user.FirstName,
-            user.LastName
+            user.LastName,
+            user.Role.ToString()
         );
     }
 }
