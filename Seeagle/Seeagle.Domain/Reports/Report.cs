@@ -6,6 +6,8 @@ public class Report
 {
     private Report()
     {
+        Location = null!;
+        User = null!;
     }
 
     public Report(Point location, string? description, User.User user)
