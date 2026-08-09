@@ -5,28 +5,35 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/shared/context/AuthContext';
 import { getUserFromToken } from '@/lib/utils/getUserFromToken.ts';
 
 interface LeftPanelProps {
-    isAuthenticated?: boolean;
     onNewReport?: () => void;
     isPlacingPin?: boolean;
 }
 
-export function LeftPanel({
-                              isAuthenticated = false,
-                              onNewReport,
-                              isPlacingPin = false
-                          }: LeftPanelProps) {
+export function LeftPanel({ onNewReport, isPlacingPin = false }: LeftPanelProps) {
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(true);
 
+    const { isAuthenticated, logout } = useAuth();
     const user = getUserFromToken();
+
     const getInitials = () => {
         if (!user) return '?';
-        return user.given_name[0] + user.family_name[0]
+        return `${user.given_name[0]}${user.family_name[0]}`.toUpperCase();
     };
-    
+
+    const handleAuthAction = () => {
+        if (isAuthenticated) {
+            logout();
+            navigate('/');
+        } else {
+            navigate('/login');
+        }
+    };
+
     return (
         <>
             {!isOpen && (
@@ -52,7 +59,7 @@ export function LeftPanel({
                             variant="outline"
                             size="sm"
                             className="rounded-full text-xs px-3 h-7"
-                            onClick={() => navigate('/login')}
+                            onClick={handleAuthAction}
                         >
                             {isAuthenticated ? 'Logout' : 'Login'}
                         </Button>
@@ -84,7 +91,7 @@ export function LeftPanel({
                     </div>
 
                     <hr className="border-border" />
-
+                    
                     <div className="space-y-3">
                         <div className="flex items-center justify-between">
                             <p className="font-medium text-sm">Downtown district</p>
@@ -104,25 +111,29 @@ export function LeftPanel({
                             </Button>
                         ) : (
                             <div className="w-full border-2 border-border rounded-full py-2 text-center text-sm text-muted-foreground">
-                                 Login to add report
+                                Login to add report
                             </div>
                         )}
 
-                        <p className="text-[10px] text-muted-foreground">Line report </p>
+                        <p className="text-[10px] text-muted-foreground">Line report</p>
                     </div>
 
-                    {isAuthenticated && (
+                    {isAuthenticated && user && (
                         <div className="mt-auto pt-3 border-t border-border">
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                     <Avatar className="w-8 h-8">
-                                        <AvatarFallback >
+                                        <AvatarFallback className="text-xs font-medium">
                                             {getInitials()}
                                         </AvatarFallback>
                                     </Avatar>
                                     <div className="hidden sm:block">
-                                        <p>{user?.given_name} {user?.family_name}</p>
-                                        <p>{user?.email}</p>
+                                        <p className="font-medium text-xs">
+                                            {user.given_name} {user.family_name}
+                                        </p>
+                                        <p className="text-[10px] text-muted-foreground">
+                                            {user.email}
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -130,7 +141,7 @@ export function LeftPanel({
                     )}
                 </CardContent>
             </Card>
-            
+
             {isOpen && (
                 <div
                     className="sm:hidden fixed inset-0 z-30 bg-black/30"

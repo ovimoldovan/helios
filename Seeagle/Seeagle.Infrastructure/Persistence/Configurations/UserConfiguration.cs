@@ -25,5 +25,9 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.LastName)
             .IsRequired()
             .HasMaxLength(30);
+
+        builder.Property(u => u.Role)
+            .HasConversion<string>()
+            .IsRequired();    
     }
 }
