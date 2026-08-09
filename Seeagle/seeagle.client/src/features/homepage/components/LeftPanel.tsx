@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getUserFromToken } from '@/lib/utils/getUserFromToken.ts';
 
 interface LeftPanelProps {
     isAuthenticated?: boolean;
@@ -20,6 +21,12 @@ export function LeftPanel({
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(true);
 
+    const user = getUserFromToken();
+    const getInitials = () => {
+        if (!user) return '?';
+        return user.given_name[0] + user.family_name[0]
+    };
+    
     return (
         <>
             {!isOpen && (
@@ -78,7 +85,6 @@ export function LeftPanel({
 
                     <hr className="border-border" />
 
-                    {/* Downtown district */}
                     <div className="space-y-3">
                         <div className="flex items-center justify-between">
                             <p className="font-medium text-sm">Downtown district</p>
@@ -110,22 +116,15 @@ export function LeftPanel({
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                     <Avatar className="w-8 h-8">
-                                        <AvatarFallback className="text-xs font-medium">
-                                            LM
+                                        <AvatarFallback >
+                                            {getInitials()}
                                         </AvatarFallback>
                                     </Avatar>
                                     <div className="hidden sm:block">
-                                        <p className="font-medium text-xs">Luciana Morar</p>
-                                        <p className="text-[10px] text-muted-foreground">lm@example.com</p>
+                                        <p>{user?.given_name} {user?.family_name}</p>
+                                        <p>{user?.email}</p>
                                     </div>
                                 </div>
-                                <Button variant="ghost" size="icon" className="w-8 h-8 rounded-full">
-                                    <img
-                                        src="/setting-lines.png"
-                                        alt="Settings"
-                                        className="w-4 h-4 object-contain"
-                                    />
-                                </Button>
                             </div>
                         </div>
                     )}
