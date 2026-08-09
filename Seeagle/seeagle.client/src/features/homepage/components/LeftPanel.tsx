@@ -6,7 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/shared/context/AuthContext';
-import { getUserFromToken } from '@/shared/utils/GetUserFromToken.ts';
+import { getUserFromToken } from '@/shared/utils/getUserFromToken.ts';
+
 
 interface LeftPanelProps {
     onNewReport?: () => void;
@@ -115,7 +116,7 @@ export function LeftPanel({ onNewReport, isPlacingPin = false }: LeftPanelProps)
                             </div>
                         )}
 
-                        <p className="text-[10px] text-muted-foreground">Line report — coming soon</p>
+                        <p className="text-[10px] text-muted-foreground">Line report</p>
                     </div>
 
                     {isAuthenticated && user && (
