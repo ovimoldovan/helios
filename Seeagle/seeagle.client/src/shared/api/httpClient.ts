@@ -1,15 +1,13 @@
 export async function getJson<T>(url: string, token?: string): Promise<T> {
-  let response;
+  const headers: Record<string, string> = {};
   
   if (token) {
-    response = await fetch(url, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
-  } else {
-    response = await fetch(url);
+    headers['Authorization'] = `Bearer ${token}`;
   }
+  
+  const response = await fetch(url, {
+    headers: headers
+  });
   
   if (!response.ok) {
     throw new Error(`Request failed with status ${response.status}.`);
@@ -19,26 +17,19 @@ export async function getJson<T>(url: string, token?: string): Promise<T> {
 }
 
 export async function postJson<TResponse>(url: string, body: unknown, token?: string): Promise<TResponse> {
-  let response;
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json'
+  };
   
   if (token) {
-    response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(body),
-    });
-  } else {
-    response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
+    headers['Authorization'] = `Bearer ${token}`;
   }
+  
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: headers,
+    body: JSON.stringify(body),
+  });
 
   if (!response.ok) {
     if (response.status === 400) {
@@ -50,3 +41,4 @@ export async function postJson<TResponse>(url: string, body: unknown, token?: st
 
   return (await response.json()) as TResponse;
 }
+
