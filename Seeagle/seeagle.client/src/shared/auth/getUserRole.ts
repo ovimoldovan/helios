@@ -1,7 +1,13 @@
 export function getUserRole(token: string): string | null {
     try {
         const payload = token.split('.')[1];
-        const decodedPayload = JSON.parse(atob(payload));
+
+        const base64 = payload
+            .replace(/-/g, '+')
+            .replace(/_/g, '/')
+            .padEnd(Math.ceil(payload.length / 4) * 4, '=');
+
+        const decodedPayload = JSON.parse(atob(base64));
 
         return (
             decodedPayload.role ??
