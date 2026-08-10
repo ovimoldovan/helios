@@ -2,7 +2,7 @@ import './App.css';
 
 import { Route, Routes } from 'react-router-dom';
 import { AuthProvider } from '@/shared/context/AuthContext';
-
+import { UsersListPage } from '@/features/admin/components/UsersListPage';
 import { Homepage } from './features/homepage/components/Homepage';
 import { LoginForm } from '@/features/login/components/LoginForm';
 import { RegisterForm } from '@/features/registration/components/RegisterForm';
@@ -31,6 +31,8 @@ function App() {
                         </main>
                     }
                 />
+
+                <Route path="/admin/users" element={<UsersListPage />} />
             </Routes>
         </AuthProvider>
     );
