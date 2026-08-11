@@ -1,6 +1,7 @@
 import './App.css';
 
 import { Route, Routes } from 'react-router-dom';
+import { AuthProvider } from '@/shared/context/AuthContext';
 
 import { Homepage } from './features/homepage/components/Homepage';
 import { LoginForm } from '@/features/login/components/LoginForm';
@@ -13,57 +14,56 @@ import { getAuthToken } from '@/shared/auth/getAuthToken';
 import { getUserRole } from '@/shared/auth/getUserRole';
 
 function App() {
-    const isAuthenticated = false;
     const token = getAuthToken();
     const role = token ? getUserRole(token) : null;
+
     const isAdmin = role === 'Admin';
     const isModerator = role === 'Moderator';
 
     return (
-        <Routes>
-            <Route
-                path="/"
-                element={<Homepage isAuthenticated={isAuthenticated} />}
-            />
+        <AuthProvider>
+            <Routes>
+                <Route path="/" element={<Homepage />} />
 
-            <Route
-                path="/login"
-                element={
-                    <main className="p-8">
-                        <LoginForm />
-                    </main>
-                }
-            />
+                <Route
+                    path="/login"
+                    element={
+                        <main className="p-8">
+                            <LoginForm />
+                        </main>
+                    }
+                />
 
-            <Route
-                path="/register"
-                element={
-                    <main className="min-h-screen p-6">
-                        <div className="mx-auto flex min-h-[calc(100vh-3rem)] max-w-7xl items-center justify-center">
-                            <RegisterForm />
-                        </div>
-                    </main>
-                }
-            />
+                <Route
+                    path="/register"
+                    element={
+                        <main className="min-h-screen p-6">
+                            <div className="mx-auto flex min-h-[calc(100vh-3rem)] max-w-7xl items-center justify-center">
+                                <RegisterForm />
+                            </div>
+                        </main>
+                    }
+                />
 
-            <Route
-                path="/admin"
-                element={
-                    <AdminRoute isAdmin={isAdmin}>
-                        <AdminDashboard />
-                    </AdminRoute>
-                }
-            />
+                <Route
+                    path="/admin"
+                    element={
+                        <AdminRoute isAdmin={isAdmin}>
+                            <AdminDashboard />
+                        </AdminRoute>
+                    }
+                />
 
-            <Route
-                path="/moderator"
-                element={
-                    <ModeratorRoute isModerator={isModerator}>
-                        <ModeratorDashboard />
-                    </ModeratorRoute>
-                }
-            />
-        </Routes>
+                <Route
+                    path="/moderator"
+                    element={
+                        <ModeratorRoute isModerator={isModerator}>
+                            <ModeratorDashboard />
+                        </ModeratorRoute>
+                    }
+                />
+            </Routes>
+        </AuthProvider>
     );
 }
 

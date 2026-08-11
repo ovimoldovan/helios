@@ -12,6 +12,7 @@ public class User
         PasswordHash = passwordHash;
         FirstName = firstName;
         LastName = lastName;
+        Role = Role.User;
     }
 
     public Guid Id { get; private set; }
@@ -23,4 +24,6 @@ public class User
     public string FirstName { get; private set; } = string.Empty;
 
     public string LastName { get; private set; } = string.Empty;
+
+    public Role Role { get; private set; } = Role.User;
 }
