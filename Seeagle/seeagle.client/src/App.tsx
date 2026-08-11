@@ -8,6 +8,8 @@ import { LoginForm } from '@/features/login/components/LoginForm';
 import { RegisterForm } from '@/features/registration/components/RegisterForm';
 import { AdminDashboard } from '@/features/admin/components/AdminDashboard';
 import { AdminRoute } from '@/features/admin/components/AdminRoute';
+import { ModeratorDashboard } from '@/features/moderator/components/ModeratorDashboard';
+import { ModeratorRoute } from '@/features/moderator/components/ModeratorRoute';
 import { getAuthToken } from '@/shared/auth/getAuthToken';
 import { getUserRole } from '@/shared/auth/getUserRole';
 import { UserRole } from '@/shared/types/UserRole';
@@ -15,7 +17,9 @@ import { UserRole } from '@/shared/types/UserRole';
 function App() {
     const token = getAuthToken();
     const role = token ? getUserRole(token) : null;
+
     const isAdmin = role === UserRole.Admin;
+    const isModerator = role === UserRole.Moderator;
 
     return (
         <AuthProvider>
@@ -48,6 +52,15 @@ function App() {
                         <AdminRoute isAdmin={isAdmin}>
                             <AdminDashboard />
                         </AdminRoute>
+                    }
+                />
+
+                <Route
+                    path="/moderator"
+                    element={
+                        <ModeratorRoute isModerator={isModerator}>
+                            <ModeratorDashboard />
+                        </ModeratorRoute>
                     }
                 />
             </Routes>
