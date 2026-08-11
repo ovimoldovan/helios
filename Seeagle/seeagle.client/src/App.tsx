@@ -14,7 +14,7 @@ import { getUserRole } from '@/shared/auth/getUserRole';
 function App() {
     const token = getAuthToken();
     const role = token ? getUserRole(token) : null;
-    const isAdmin = role === 'Admin';
+    const isAdmin =role === 'Admin';
 
     return (
         <AuthProvider>
