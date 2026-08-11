@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-
+import { getCookie } from '@/shared/utils/cookies';
 import { getUsers } from '@/features/admin/api/adminApi';
 import type { UserListItem } from '@/shared/types/admin';
 
@@ -15,8 +15,8 @@ export function UsersListPage() {
   useEffect(() => {
     setLoading(true);
     setError(null);
-
-    getUsers(page, PAGE_SIZE)
+    
+    getUsers(page, PAGE_SIZE, getCookie('authToken')!)
       .then((result) => {
         setUsers(result.items);
         setTotalCount(result.totalCount);
