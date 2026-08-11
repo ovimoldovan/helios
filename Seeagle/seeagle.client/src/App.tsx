@@ -8,13 +8,13 @@ import { LoginForm } from '@/features/login/components/LoginForm';
 import { RegisterForm } from '@/features/registration/components/RegisterForm';
 import { AdminDashboard } from '@/features/admin/components/AdminDashboard';
 import { AdminRoute } from '@/features/admin/components/AdminRoute';
-//import { getAuthToken } from '@/shared/auth/getAuthToken';
-//import { getUserRole } from '@/shared/auth/getUserRole';
+import { getAuthToken } from '@/shared/auth/getAuthToken';
+import { getUserRole } from '@/shared/auth/getUserRole';
 
 function App() {
-    //const token = getAuthToken();
-    //const role = token ? getUserRole(token) : null;
-    const isAdmin =true; //role === 'Admin';
+    const token = getAuthToken();
+    const role = token ? getUserRole(token) : null;
+    const isAdmin =role === 'Admin';
 
     return (
         <AuthProvider>
