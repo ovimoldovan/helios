@@ -10,10 +10,8 @@ public sealed class ReportConfiguration : IEntityTypeConfiguration<Report>
     {
         builder.HasKey(r => r.Id);
 
-        builder.Property(r => r.Latitude)
-            .IsRequired();
-
-        builder.Property(r => r.Longitude)
+        builder.Property(r => r.Location)
+            .HasColumnType("geometry")
             .IsRequired();
 
         builder.Property(r => r.Description)
@@ -21,5 +19,10 @@ public sealed class ReportConfiguration : IEntityTypeConfiguration<Report>
 
         builder.Property(r => r.Status)
             .IsRequired();
+
+        builder.HasOne(r => r.User)
+            .WithMany()
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

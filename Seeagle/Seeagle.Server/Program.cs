@@ -3,18 +3,33 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 using Seeagle.Application.Common;
 using Seeagle.Application.SampleNames;
 using Seeagle.Infrastructure.Persistence;
 using Seeagle.Application.Users;
 using Seeagle.Application.Reports;
 using Seeagle.Server.Utils.JWT;
+using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter your JWT token."
+    });
+    
+    options.OperationFilter<SecurityRequirementsOperationFilter>(true, "Bearer");
+});
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ISampleNameService, SampleNameService>();
@@ -31,7 +46,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         {
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Secret))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Secret)),
+            ValidateIssuer = false,   
+            ValidateAudience = false
         };
     });
 builder.Services.AddAuthorization();
@@ -78,7 +95,7 @@ static void SetupDatabase(WebApplicationBuilder builder)
     var connectionString = builder.Configuration.GetConnectionString("SeeagleDatabase")
         ?? throw new InvalidOperationException("Connection string 'SeeagleDatabase' was not found.");
 
-    builder.Services.AddDbContext<SeeagleDbContext>(options => options.UseNpgsql(connectionString));
+    builder.Services.AddDbContext<SeeagleDbContext>(options => options.UseNpgsql(connectionString, npgsqlOptions => npgsqlOptions.UseNetTopologySuite()));
 
     builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
 }

@@ -1,5 +1,14 @@
-export async function getJson<T>(url: string): Promise<T> {
-  const response = await fetch(url);
+export async function getJson<T>(url: string, token?: string): Promise<T> {
+  const headers: Record<string, string> = {};
+  
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  
+  const response = await fetch(url, {
+    headers: headers
+  });
+  
   if (!response.ok) {
     throw new Error(`Request failed with status ${response.status}.`);
   }
@@ -7,12 +16,18 @@ export async function getJson<T>(url: string): Promise<T> {
   return (await response.json()) as T;
 }
 
-export async function postJson<TResponse>(url: string, body: unknown): Promise<TResponse> {
+export async function postJson<TResponse>(url: string, body: unknown, token?: string): Promise<TResponse> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json'
+  };
+  
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  
   const response = await fetch(url, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: headers,
     body: JSON.stringify(body),
   });
 
@@ -26,3 +41,4 @@ export async function postJson<TResponse>(url: string, body: unknown): Promise<T
 
   return (await response.json()) as TResponse;
 }
+
