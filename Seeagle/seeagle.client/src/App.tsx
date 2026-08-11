@@ -12,13 +12,14 @@ import { ModeratorDashboard } from '@/features/moderator/components/ModeratorDas
 import { ModeratorRoute } from '@/features/moderator/components/ModeratorRoute';
 import { getAuthToken } from '@/shared/auth/getAuthToken';
 import { getUserRole } from '@/shared/auth/getUserRole';
+import { UserRole } from '@/shared/types/UserRole';
 
 function App() {
     const token = getAuthToken();
     const role = token ? getUserRole(token) : null;
 
-    const isAdmin = role === 'Admin';
-    const isModerator = role === 'Moderator';
+    const isAdmin = role === UserRole.Admin;
+    const isModerator = role === UserRole.Moderator;
 
     return (
         <AuthProvider>
