@@ -234,4 +234,25 @@ public sealed class UserServiceTests
         Assert.NotNull(result);
         Assert.Equal("test@test.com", result!.Email);
     }
+    [Fact]
+    public async Task RegisterUserAsync_ShouldReturnStandardUserRole_WhenUserRegisters()
+    {
+        // Arrange
+        var repository = Substitute.For<IRepository<User>>();
+        repository.GetAllQueryable().Returns(new List<User>().BuildMock());
+        var service = new UserService(repository);
+        var request = new RegisterUserRequest
+        {
+            Email = "test@test.com",
+            Password = "Parola123!",
+            FirstName = "Ana",
+            LastName = "Popescu"
+        };
+
+        // Act
+        var result = await service.RegisterUserAsync(request, CancellationToken.None);
+
+        // Assert
+        Assert.Equal("User", result.Role); 
+    }
 }

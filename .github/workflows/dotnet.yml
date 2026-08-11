@@ -17,10 +17,31 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: 10.0.x
     - name: Restore dependencies
       run: dotnet restore ./Seeagle/Seeagle.slnx
     - name: Build
       run: dotnet build ./Seeagle/Seeagle.slnx --no-restore 
     - name: Test
       run: dotnet test ./Seeagle/Seeagle.slnx --no-build --verbosity normal
+
+  frontend-build:
+
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./Seeagle/seeagle.client
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22.x
+        cache: npm
+        cache-dependency-path: ./Seeagle/seeagle.client/package-lock.json
+    - name: Install dependencies
+      run: npm ci
+    - name: Build
+      run: npm run build
