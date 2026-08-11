@@ -10,11 +10,12 @@ import { AdminDashboard } from '@/features/admin/components/AdminDashboard';
 import { AdminRoute } from '@/features/admin/components/AdminRoute';
 import { getAuthToken } from '@/shared/auth/getAuthToken';
 import { getUserRole } from '@/shared/auth/getUserRole';
+import { UserRole } from '@/shared/types/UserRole';
 
 function App() {
     const token = getAuthToken();
     const role = token ? getUserRole(token) : null;
-    const isAdmin =role === 'Admin';
+    const isAdmin = role === UserRole.Admin;
 
     return (
         <AuthProvider>
