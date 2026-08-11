@@ -10,8 +10,8 @@ public sealed class ReportService : IReportService
 {
     private readonly IRepository<Report> _reportRepository;
     private readonly IRepository<User> _userRepository;
-    //srid: 4326 specifies the coordinates format: (Longitude, Latitude) - standard GPS format
-    private static readonly GeometryFactory GeometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
+    private static readonly int StandardGpsFormat = 4326;
+    private static readonly GeometryFactory GeometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: StandardGpsFormat);
 
     public ReportService(IRepository<Report> reportRepository, IRepository<User> userRepository)
     {
