@@ -4,11 +4,7 @@ import { LeftPanel } from './LeftPanel';
 import { AddReportModal } from './ReportModal';
 import type { Report } from '@/shared/types/report';
 
-interface HomepageProps {
-    isAuthenticated?: boolean;
-}
-
-export function Homepage({ isAuthenticated = false }: HomepageProps) {
+export function Homepage() {
     const [isPlacingPin, setIsPlacingPin] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [pinPosition, setPinPosition] = useState<[number, number] | null>(null);
@@ -25,7 +21,6 @@ export function Homepage({ isAuthenticated = false }: HomepageProps) {
     return (
         <div className="relative h-screen w-screen overflow-hidden">
             <LeftPanel
-                isAuthenticated={isAuthenticated}
                 onNewReport={() => setIsPlacingPin(true)}
                 isPlacingPin={isPlacingPin}
             />

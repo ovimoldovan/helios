@@ -23,7 +23,9 @@ export function LeftPanel({ onNewReport, isPlacingPin = false }: LeftPanelProps)
 
     const getInitials = () => {
         if (!user) return '?';
-        return `${user.given_name[0]}${user.family_name[0]}`.toUpperCase();
+        const firstName = user.given_name || '';
+        const lastName = user.family_name || '';
+        return `${firstName[0] || ''}${lastName[0] || ''}`.toUpperCase() || '?';
     };
 
     const handleAuthAction = () => {
