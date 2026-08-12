@@ -62,8 +62,6 @@ function App() {
                         <ErrorPage errorCode={"401"} 
                                    errorTitle={"Access Denied"} 
                                    errorText={"Oops, not allowed here!"}
-                                   buttonText={"Login"}
-                                   buttonRedirect={"/login"}
                         />
                     }
                 />
