@@ -14,7 +14,7 @@ export function LoginForm() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
-    const { login } = useAuth();
+    const {login} = useAuth();
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -83,7 +83,6 @@ export function LoginForm() {
 
             <form id="login-form" onSubmit={handleSubmit}>
                 <CardContent className="space-y-4">
-                    <div className="flex flex-col gap-6">
                         <FieldGroup>
                             <Field>
                                 <FieldLabel id="email-label" htmlFor="email">Email</FieldLabel>
@@ -113,27 +112,26 @@ export function LoginForm() {
                                     disabled={isLoading}
                                 />
                             </Field>
+
+                            <Field className="flex flex-row gap-4">
+                                <Button type="submit" form="login-form" className="min-w-max">
+                                    Login
+                                </Button>
+
+                                <Button type="button" className="min-w-max">
+                                    Register
+                                </Button>
+                            </Field>
+                            
                         </FieldGroup>
-                    </div>
                 </CardContent>
             </form>
 
-            <CardContent className="space-y-4 pt-0">
-                <div className="flex items-center justify-center gap-4">
-                    <Button type="submit" form="login-form">
-                        Login
-                    </Button>
-                    <Button>
-                        Register
-                    </Button>
-                </div>
-
-                {error && (
-                    <p className="text-sm font-medium text-destructive text-center">
-                        {error}
-                    </p>
-                )}
-            </CardContent>
+            {error && (
+                <p className="text-sm font-medium text-destructive text-center">
+                    {error}
+                </p>
+            )}
         </Card>
     );
 }
