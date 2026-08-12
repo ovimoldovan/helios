@@ -1,18 +1,13 @@
-﻿import { useState } from 'react';
-import type React from 'react';
-import { loginUser } from '../api/loginApi';
-import { useAuth } from '@/shared/context/AuthContext';
-
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
+﻿import type React from 'react';
+import {useEffect, useState} from 'react';
+import {useLocation, useNavigate} from "react-router-dom";
+import {loginUser} from '../api/loginApi';
+import {useAuth} from '@/shared/context/AuthContext';
+import {Button} from '@/components/ui/button';
+import {Input} from '@/components/ui/input';
+import {Card, CardContent, CardDescription, CardHeader, CardTitle,} from '@/components/ui/card';
+import {Field, FieldGroup, FieldLabel} from "@/components/ui/field";
+import {toast} from "@/components/ui/toast.tsx";
 
 export function LoginForm() {
     const [email, setEmail] = useState('');
@@ -20,8 +15,27 @@ export function LoginForm() {
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const { login } = useAuth();
+    const location = useLocation();
+    const navigate = useNavigate();
 
-    async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    const state = location.state as {
+        from?: string;
+        title?: string;
+        description?: string;
+    } | null;
+
+    useEffect(() => {
+        if (state?.title && state?.description) {
+            toast.add({
+                id: 'auth-required',
+                title: state.title,
+                description: state.description,
+                type: "error"
+            });
+        }
+    }, [state]);
+
+    async function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
         event.preventDefault();
 
         if (!email) {
@@ -42,7 +56,7 @@ export function LoginForm() {
 
             if (response.token) {
                 login();
-                alert('Login successful!');
+                navigate(state?.from ? state.from : '/');
             } else {
                 setError('Invalid email or password.');
             }
@@ -70,42 +84,46 @@ export function LoginForm() {
             <form id="login-form" onSubmit={handleSubmit}>
                 <CardContent className="space-y-4">
                     <div className="flex flex-col gap-6">
-                        <div className="grid gap-2">
-                            <Label htmlFor="email">Email</Label>
-                            <Input
-                                id="email"
-                                type="email"
-                                placeholder="name@example.com"
-                                autoComplete="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                disabled={isLoading}
-                            />
-                        </div>
-                        <div className="grid gap-2">
-                            <div className="flex items-center">
-                                <Label htmlFor="password">Password</Label>
-                            </div>
-                            <Input
-                                id="password"
-                                type="password"
-                                placeholder="••••••••"
-                                autoComplete="current-password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                disabled={isLoading}
-                            />
-                        </div>
+                        <FieldGroup>
+                            <Field>
+                                <FieldLabel id="email-label" htmlFor="email">Email</FieldLabel>
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    aria-labelledby="email-label"
+                                    placeholder="name@example.com"
+                                    autoComplete="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    disabled={isLoading}
+                                />
+                            </Field>
+                            <Field>
+                                <div className="flex items-center">
+                                    <FieldLabel id="password-label" htmlFor="password">Password</FieldLabel>
+                                </div>
+                                <Input
+                                    id="password"
+                                    type="password"
+                                    aria-labelledby="password-label"
+                                    placeholder="••••••••"
+                                    autoComplete="current-password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    disabled={isLoading}
+                                />
+                            </Field>
+                        </FieldGroup>
                     </div>
                 </CardContent>
             </form>
 
             <CardContent className="space-y-4 pt-0">
                 <div className="flex items-center justify-center gap-4">
-                    <Button type="submit" form="login-form" variant="link">
+                    <Button type="submit" form="login-form">
                         Login
                     </Button>
-                    <Button variant="link">
+                    <Button>
                         Register
                     </Button>
                 </div>
