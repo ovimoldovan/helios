@@ -20,11 +20,11 @@ interface AddReportModalProps {
 }
 
 export function AddReportModal({
-                                   isOpen,
-                                   onClose,
-                                   onReportCreated,
-                                   pinPosition,
-                               }: AddReportModalProps) {
+    isOpen,
+    onClose,
+    onReportCreated,
+    pinPosition 
+}: AddReportModalProps) {
     const [description, setDescription] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
