@@ -9,10 +9,16 @@ import {Card, CardContent, CardDescription, CardHeader, CardTitle,} from '@/comp
 import {Field, FieldGroup, FieldLabel} from "@/components/ui/field";
 import {toast} from "@/components/ui/toast.tsx";
 
+interface LoginFormErrors {
+    email?: string;
+    password?: string;
+}
+
 export function LoginForm() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState<string | null>(null);
+    const [errors, setErrors] = useState<LoginFormErrors>({});
+    const [loginSuccessful, setLoginSuccessful] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
     const {login} = useAuth();
     const location = useLocation();
@@ -35,21 +41,30 @@ export function LoginForm() {
         }
     }, [state]);
 
+    function validateForm(): LoginFormErrors {
+        const validationErrors: LoginFormErrors = {};
+
+        const trimmedEmail = email.trim();
+        if (trimmedEmail.length === 0)
+            validationErrors.email = 'Email is required.';
+
+        if (password.length === 0)
+            validationErrors.password = 'Password is required.';
+            
+        return validationErrors;
+    }
+    
     async function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
         event.preventDefault();
 
-        if (!email) {
-            setError('Email is required.');
-            return;
-        }
+        const validationErrors = validateForm();
+        setErrors(validationErrors);
 
-        if (!password) {
-            setError('Password is required.');
+        if (Object.keys(validationErrors).length > 0) {
             return;
         }
 
         setIsLoading(true);
-        setError(null);
 
         try {
             const response = await loginUser({email, password});
@@ -58,15 +73,10 @@ export function LoginForm() {
                 login();
                 navigate(state?.from ? state.from : '/');
             } else {
-                setError('Invalid email or password.');
+                setLoginSuccessful(false);
             }
         } catch (apiError) {
-            const details = apiError as { errors?: Record<string, string[]> };
-            const firstError =
-                details.errors?.Email?.[0] ??
-                details.errors?.Password?.[0] ??
-                'Invalid email or password.';
-            setError(firstError);
+            setLoginSuccessful(false);
         } finally {
             setIsLoading(false);
         }
@@ -97,6 +107,12 @@ export function LoginForm() {
                                     onChange={(e) => setEmail(e.target.value)}
                                     disabled={isLoading}
                                 />
+
+                                {errors.email && (
+                                    <p className="text-sm text-destructive whitespace-nowrap">
+                                        {errors.email}
+                                    </p>
+                                )}
                             </Field>
                             <Field>
                                 <div className="flex items-center">
@@ -112,6 +128,12 @@ export function LoginForm() {
                                     onChange={(e) => setPassword(e.target.value)}
                                     disabled={isLoading}
                                 />
+                                
+                                {errors.password && (
+                                    <p className="text-sm text-destructive whitespace-nowrap">
+                                        {errors.password}
+                                    </p>
+                                )}
                             </Field>
 
                             <Field className="flex flex-row gap-4">
@@ -128,9 +150,9 @@ export function LoginForm() {
                     </CardContent>
                 </form>
 
-                {error && (
+                {!loginSuccessful &&(
                     <p className="text-sm font-medium text-destructive text-center">
-                        {error}
+                        Incorrect e-mail or password
                     </p>
                 )}
             </Card>
