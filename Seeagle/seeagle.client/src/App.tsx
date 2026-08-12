@@ -47,7 +47,7 @@ function App() {
                     />
                 </Route>
 
-                <Route element={<PrivateRoutes allowedRoles={['Moderator']}/>}>
+                <Route element={<PrivateRoutes allowedRoles={['Moderator', 'Admin']}/>}>
                     <Route
                         path="/moderator"
                         element={
