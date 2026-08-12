@@ -4,10 +4,11 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 export function AdminDashboard() {
     return (
-        <main className="relative min-h-screen overflow-y-auto p-8 bg-muted dark">
+        <main className="relative min-h-screen overflow-y-auto p-8 bg-muted">
             <Card className="relative z-10 mx-auto max-w-6xl overflow-visible w-full">
                 <CardHeader>
                     <CardTitle className="text-3xl font-bold ">Admin Dashboard</CardTitle>
@@ -15,50 +16,40 @@ export function AdminDashboard() {
                 </CardHeader>
 
                 <div className="m-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    <Card className="h-full">
-                        <CardHeader className="flex-1">
-                            <CardTitle>Areas</CardTitle>
-                            <CardDescription>
-                                Define and review application areas.
-                            </CardDescription>
-                        </CardHeader>
-                    </Card>
+                    <Button
+                        className="h-full w-full flex-col items-start justify-start gap-2 whitespace-normal p-6 text-left"
+                    >
+                        <span className="text-base font-semibold">Areas</span>
+                        <span className="font-normal">Define and review application areas.</span>
+                    </Button>
 
-                    <Card className="h-full">
-                        <CardHeader className="flex-1">
-                            <CardTitle>Users</CardTitle>
-                            <CardDescription>
-                                View the list of registered users.
-                            </CardDescription>
-                        </CardHeader>
-                    </Card>
+                    <Button
+                        className="h-full w-full flex-col items-start justify-start gap-2 whitespace-normal p-6 text-left"
+                    >
+                        <span className="text-base font-semibold">Users</span>
+                        <span className="font-normal">View the list of registered users.</span>
+                    </Button>
 
-                    <Card className="h-full">
-                        <CardHeader className="flex-1">
-                            <CardTitle>Permissions</CardTitle>
-                            <CardDescription>
-                                Assign administrative permissions to users.
-                            </CardDescription>
-                        </CardHeader>
-                    </Card>
+                    <Button
+                        className="h-full w-full flex-col items-start justify-start gap-2 whitespace-normal p-6 text-left"
+                    >
+                        <span className="text-base font-semibold">Permissions</span>
+                        <span className="font-normal">Assign administrative permissions to users.</span>
+                    </Button>
 
-                    <Card className="h-full">
-                        <CardHeader className="flex-1">
-                            <CardTitle>Report Types</CardTitle>
-                            <CardDescription>
-                                Define, view and edit report types.
-                            </CardDescription>
-                        </CardHeader>
-                    </Card>
+                    <Button
+                        className="h-full w-full flex-col items-start justify-start gap-2 whitespace-normal p-6 text-left"
+                    >
+                        <span className="text-base font-semibold">Report Types</span>
+                        <span className="font-normal">Define, view and edit report types.</span>
+                    </Button>
 
-                    <Card className="h-full">
-                        <CardHeader className="flex-1">
-                            <CardTitle>Reports</CardTitle>
-                            <CardDescription>
-                                Review reports submitted by users.
-                            </CardDescription>
-                        </CardHeader>
-                    </Card>
+                    <Button
+                        className="h-full w-full flex-col items-start justify-start gap-2 whitespace-normal p-6 text-left"
+                    >
+                        <span className="text-base font-semibold">Reports</span>
+                        <span className="font-normal">Review reports submitted by users.</span>
+                    </Button>
                 </div>
             </Card>
         </main>
