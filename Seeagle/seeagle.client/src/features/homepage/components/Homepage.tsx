@@ -30,6 +30,7 @@ export function Homepage() {
                     onPinPlaced={handlePinPlaced}
                     reports={reports}
                     isPlacingPin={isPlacingPin}
+                    pinPosition={pinPosition}
                 />
             </div>
 
@@ -37,9 +38,12 @@ export function Homepage() {
                 isOpen={isModalOpen}
                 onClose={() => {
                     setIsModalOpen(false);
-                    setPinPosition(null);
+                    setPinPosition(null); 
                 }}
-                onReportCreated={(report) => setReports([report, ...reports])}
+                onReportCreated={(report) => {
+                    setReports([report, ...reports]);
+                    setPinPosition(null); 
+                }}
                 pinPosition={pinPosition}
             />
         </div>
