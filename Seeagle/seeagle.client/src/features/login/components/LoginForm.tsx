@@ -73,16 +73,17 @@ export function LoginForm() {
     }
 
     return (
-        <Card className="w-full max-w-sm">
-            <CardHeader>
-                <CardTitle>Login to your account</CardTitle>
-                <CardDescription>
-                    Enter your email below to login to your account
-                </CardDescription>
-            </CardHeader>
+        <main className="bg-muted">
+            <Card className="w-full max-w-sm">
+                <CardHeader>
+                    <CardTitle>Login to your account</CardTitle>
+                    <CardDescription>
+                        Enter your email below to login to your account
+                    </CardDescription>
+                </CardHeader>
 
-            <form id="login-form" onSubmit={handleSubmit}>
-                <CardContent className="space-y-4">
+                <form id="login-form" onSubmit={handleSubmit}>
+                    <CardContent className="space-y-4">
                         <FieldGroup>
                             <Field>
                                 <FieldLabel id="email-label" htmlFor="email">Email</FieldLabel>
@@ -122,16 +123,17 @@ export function LoginForm() {
                                     Register
                                 </Button>
                             </Field>
-                            
-                        </FieldGroup>
-                </CardContent>
-            </form>
 
-            {error && (
-                <p className="text-sm font-medium text-destructive text-center">
-                    {error}
-                </p>
-            )}
-        </Card>
+                        </FieldGroup>
+                    </CardContent>
+                </form>
+
+                {error && (
+                    <p className="text-sm font-medium text-destructive text-center">
+                        {error}
+                    </p>
+                )}
+            </Card>
+        </main>
     );
 }

@@ -21,20 +21,14 @@ function App() {
                 <Route
                     path="/login"
                     element={
-                        <main className="p-8">
-                            <LoginForm />
-                        </main>
+                        <LoginForm/>
                     }
                 />
 
                 <Route
                     path="/register"
                     element={
-                        <main className="min-h-screen p-6">
-                            <div className="mx-auto flex min-h-[calc(100vh-3rem)] max-w-7xl items-center justify-center">
-                                <RegisterForm />
-                            </div>
-                        </main>
+                        <RegisterForm/>
                     }
                 />
 
