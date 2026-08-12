@@ -4,7 +4,8 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import {Button} from '@/components/ui/button';
+import './AdminDashboard.css';
 
 export function AdminDashboard() {
     return (
@@ -16,37 +17,27 @@ export function AdminDashboard() {
                 </CardHeader>
 
                 <div className="m-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    <Button
-                        className="h-full w-full flex-col items-start justify-start gap-2 whitespace-normal p-6 text-left"
-                    >
+                    <Button className="admin-dashboard-button">
                         <span className="text-base font-semibold">Areas</span>
                         <span className="font-normal">Define and review application areas.</span>
                     </Button>
 
-                    <Button
-                        className="h-full w-full flex-col items-start justify-start gap-2 whitespace-normal p-6 text-left"
-                    >
+                    <Button className="admin-dashboard-button">
                         <span className="text-base font-semibold">Users</span>
                         <span className="font-normal">View the list of registered users.</span>
                     </Button>
 
-                    <Button
-                        className="h-full w-full flex-col items-start justify-start gap-2 whitespace-normal p-6 text-left"
-                    >
+                    <Button className="admin-dashboard-button">
                         <span className="text-base font-semibold">Permissions</span>
                         <span className="font-normal">Assign administrative permissions to users.</span>
                     </Button>
 
-                    <Button
-                        className="h-full w-full flex-col items-start justify-start gap-2 whitespace-normal p-6 text-left"
-                    >
+                    <Button className="admin-dashboard-button">
                         <span className="text-base font-semibold">Report Types</span>
                         <span className="font-normal">Define, view and edit report types.</span>
                     </Button>
 
-                    <Button
-                        className="h-full w-full flex-col items-start justify-start gap-2 whitespace-normal p-6 text-left"
-                    >
+                    <Button className="admin-dashboard-button">
                         <span className="text-base font-semibold">Reports</span>
                         <span className="font-normal">Review reports submitted by users.</span>
                     </Button>
