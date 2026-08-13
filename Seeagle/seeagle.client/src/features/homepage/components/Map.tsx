@@ -18,7 +18,7 @@ interface MapProps {
     pinPosition?: [number, number] | null;
 }
 
-function PinManager({ onPinPlaced, isPlacingPin, pinPosition }: {
+function PinManager({ onPinPlaced, isPlacingPin, pinPosition}: {
     onPinPlaced?: (position: [number, number] | null) => void;
     isPlacingPin?: boolean;
     pinPosition?: [number, number] | null;
