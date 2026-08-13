@@ -18,7 +18,7 @@ interface MapProps {
     pinPosition?: [number, number] | null;
 }
 
-function PinManager({onPinPlaced, isPlacingPin, pinPosition}: {
+function PinManager({ onPinPlaced, isPlacingPin, pinPosition }: {
     onPinPlaced?: (position: [number, number] | null) => void;
     isPlacingPin?: boolean;
     pinPosition?: [number, number] | null;
@@ -39,9 +39,7 @@ function PinManager({onPinPlaced, isPlacingPin, pinPosition}: {
         },
     });
 
-    return position ? (
-        <Marker position={position} />
-    ) : null;
+    return position ? <Marker position={position} /> : null;
 }
 
 function ReportMarkers({ reports }: { reports?: Report[] }) {
@@ -50,11 +48,13 @@ function ReportMarkers({ reports }: { reports?: Report[] }) {
     return reports.map((report) => (
         <Marker key={report.id} position={[report.latitude, report.longitude]}>
             <Popup>
-                <strong>{report.status}</strong>
-                {report.description && <p className="text-sm">{report.description}</p>}
-                <small className="text-xs text-gray-500">
-                    {new Date(report.createdUtc).toLocaleString()}
-                </small>
+                <div className="space-y-1">
+                    <strong> {report.status}</strong>
+                    {report.description && <p className="text-sm">{report.description}</p>}
+                    <small className="block text-xs text-gray-500">
+                        {new Date(report.createdUtc).toLocaleString()}
+                    </small>
+                </div>
             </Popup>
         </Marker>
     ));

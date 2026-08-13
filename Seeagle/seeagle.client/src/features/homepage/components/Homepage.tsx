@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Map } from './Map';
 import { LeftPanel } from './LeftPanel';
-import { AddReportModal } from './ReportModal';
+import { AddReportModal } from '@/features/reports/components/ReportModal.tsx';
 import type { Report } from '@/shared/types/report';
 
 export function Homepage() {
