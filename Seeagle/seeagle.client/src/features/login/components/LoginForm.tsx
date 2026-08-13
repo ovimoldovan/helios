@@ -141,7 +141,7 @@ export function LoginForm() {
                                     Login
                                 </Button>
 
-                                <Button type="button" className="min-w-max">
+                                <Button type="button" className="min-w-max" onClick={() => navigate('/register')}>
                                     Register
                                 </Button>
                             </Field>
