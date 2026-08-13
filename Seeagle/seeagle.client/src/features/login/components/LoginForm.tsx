@@ -135,7 +135,7 @@ export function LoginForm() {
                         <Button type="submit" variant="link" disabled={isLoading}>
                             {isLoading ? 'Logging in...' : 'Login'}
                         </Button>
-                        <Button type="button" variant="link" asChild>
+                        <Button type="button" variant="link" onClick={() => navigate('/register')}>
                             <Link to="/register">Register</Link>
                         </Button>
                     </div>
