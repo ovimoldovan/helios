@@ -7,5 +7,6 @@ export async function createReport(data: CreateReportRequest): Promise<Report> {
     if (!token) {
         throw new Error("No authentication token found. Please login first.");
     }
+    
     return postJson<Report>('/api/reports', data, token);
 }
