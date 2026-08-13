@@ -4,58 +4,39 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-
-const moderatorSections = [
-    {
-        title: 'Moderation Queue',
-        description: 'Review reports waiting for moderation.',
-    },
-    {
-        title: 'Priority Reports',
-        description: 'View reports ordered by priority.',
-    },
-    {
-        title: 'Approved Reports',
-        description: 'View reports that have already been approved.',
-    },
-    {
-        title: 'Report Management',
-        description: 'Review and edit submitted reports.',
-    },
-];
+import {Button} from "@/components/ui/button.tsx";
 
 export function ModeratorDashboard() {
     return (
-        <main className="relative min-h-screen overflow-hidden p-8">
-            <div
-                className="absolute inset-0 bg-cover bg-center opacity-20"
-                style={{
-                    backgroundImage: "url('/map-dark-mode.avif')",
-                }}
-            />
-            <div className="relative z-10 mx-auto max-w-6xl">
-                <h1 className="text-3xl font-bold">
-                    Moderator Dashboard
-                </h1>
+        <main className="relative min-h-screen overflow-y-auto p-8 bg-muted">
+            <Card className="relative z-10 mx-auto max-w-6xl overflow-visible w-full">
+                <CardHeader>
+                    <CardTitle className="text-3xl font-bold ">Moderator Dashboard</CardTitle>
+                    <CardDescription>Manage reports that require moderation.</CardDescription>
+                </CardHeader>
 
-                <p className="mt-2 text-muted-foreground">
-                    Manage reports that require moderation.
-                </p>
+                <div className="m-8 grid gap-6 md:grid-cols-2">
+                    <Button className="admin-dashboard-button">
+                        <span className="text-base font-semibold">Moderation Queue</span>
+                        <span className="font-normal">Review reports waiting for moderation.</span>
+                    </Button>
 
-                <div className="mt-8 grid gap-6 md:grid-cols-2">
-                    {moderatorSections.map((section) => (
-                        <Card key={section.title}>
-                            <CardHeader>
-                                <CardTitle>{section.title}</CardTitle>
+                    <Button className="admin-dashboard-button">
+                        <span className="text-base font-semibold">Priority Reports</span>
+                        <span className="font-normal">View reports ordered by priority.</span>
+                    </Button>
 
-                                <CardDescription>
-                                    {section.description}
-                                </CardDescription>
-                            </CardHeader>
-                        </Card>
-                    ))}
+                    <Button className="admin-dashboard-button">
+                        <span className="text-base font-semibold">Approved Reports</span>
+                        <span className="font-normal">View reports that have already been approved.</span>
+                    </Button>
+
+                    <Button className="admin-dashboard-button">
+                        <span className="text-base font-semibold">Report Management</span>
+                        <span className="font-normal">Review and edit submitted reports.</span>
+                    </Button>
                 </div>
-            </div>
+            </Card>
         </main>
     );
 }
