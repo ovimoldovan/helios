@@ -2,6 +2,21 @@ import { useEffect, useState } from 'react';
 import { getCookie } from '@/shared/utils/cookies';
 import { getUsers } from '@/features/admin/api/adminApi';
 import type { UserListItem } from '@/shared/types/admin';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+} from '@/components/ui/pagination';
+import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 
 const PAGE_SIZE = 10;
 
@@ -36,43 +51,57 @@ export function UsersListPage() {
 
       {!loading && !error && (
         <>
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="text-left border-b">
-                <th className="py-2">Email</th>
-                <th className="py-2">First name</th>
-                <th className="py-2">Last name</th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Email</TableHead>
+                <TableHead>First Name</TableHead>
+                <TableHead>Last Name</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {users.map((user) => (
-                <tr key={user.id} className="border-b">
-                  <td className="py-2">{user.email}</td>
-                  <td className="py-2">{user.firstName}</td>
-                  <td className="py-2">{user.lastName}</td>
-                </tr>
+                <TableRow key={user.id}>
+                  <TableCell className="py-2">{user.email}</TableCell>
+                  <TableCell className="py-2">{user.firstName}</TableCell>
+                  <TableCell className="py-2">{user.lastName}</TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
 
-          <div className="flex items-center gap-4 mt-4">
-            <button
-              disabled={page === 1}
-              onClick={() => setPage((p) => p - 1)}
-              className="px-3 py-1 border rounded disabled:opacity-50"
+          <div className="flex items-center justify-between gap-4 mt-4">
+            <PaginationLink
+              href="#"
+              size="icon"
+              aria-label="Previous"
+              aria-disabled={page === 1}
+              className={page === 1 ? 'cursor-not-allowed opacity-50' : undefined}
+              onClick={(e) => {
+                e.preventDefault();
+                if (page > 1) setPage(page - 1);
+              }}
             >
-              Previous
-            </button>
-            <span>
+              <ChevronLeftIcon />
+            </PaginationLink>
+
+            <span className="text-sm">
               Page {page} of {totalPages}
             </span>
-            <button
-              disabled={page >= totalPages}
-              onClick={() => setPage((p) => p + 1)}
-              className="px-3 py-1 border rounded disabled:opacity-50"
+
+            <PaginationLink
+              href="#"
+              size="icon"
+              aria-label="Next"
+              aria-disabled={page === totalPages}
+              className={page === totalPages ? 'cursor-not-allowed opacity-50' : undefined}
+              onClick={(e) => {
+                e.preventDefault();
+                if (page < totalPages) setPage(page + 1);
+              }}
             >
-              Next
-            </button>
+              <ChevronRightIcon />
+            </PaginationLink>
           </div>
         </>
       )}
