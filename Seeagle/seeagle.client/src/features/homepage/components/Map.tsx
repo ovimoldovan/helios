@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -15,13 +15,19 @@ interface MapProps {
     onPinPlaced?: (position: [number, number] | null) => void;
     reports?: Report[];
     isPlacingPin?: boolean;
+    pinPosition?: [number, number] | null;
 }
 
-function PinManager({ onPinPlaced, isPlacingPin }: {
+function PinManager({onPinPlaced, isPlacingPin, pinPosition}: {
     onPinPlaced?: (position: [number, number] | null) => void;
     isPlacingPin?: boolean;
+    pinPosition?: [number, number] | null;
 }) {
     const [position, setPosition] = useState<[number, number] | null>(null);
+
+    useEffect(() => {
+        setPosition(pinPosition || null);
+    }, [pinPosition]);
 
     useMapEvents({
         click(e) {
@@ -33,24 +39,8 @@ function PinManager({ onPinPlaced, isPlacingPin }: {
         },
     });
 
-    const handleDragEnd = (e: L.DragEndEvent) => {
-        const marker = e.target;
-        const latlng = marker.getLatLng();
-        const pos: [number, number] = [latlng.lat, latlng.lng];
-        setPosition(pos);
-        onPinPlaced?.(pos);
-    };
-
     return position ? (
-        <Marker
-            position={position}
-            draggable={true}
-            eventHandlers={{ dragend: handleDragEnd }}
-        >
-            <Popup>
-                📍 {position[0].toFixed(4)}, {position[1].toFixed(4)}
-            </Popup>
-        </Marker>
+        <Marker position={position} />
     ) : null;
 }
 
@@ -70,7 +60,7 @@ function ReportMarkers({ reports }: { reports?: Report[] }) {
     ));
 }
 
-export function Map({ onPinPlaced, reports = [], isPlacingPin = false }: MapProps) {
+export function Map({ onPinPlaced, reports = [], isPlacingPin = false, pinPosition }: MapProps) {
     return (
         <MapContainer
             center={[45.9432, 24.9668]}
@@ -82,7 +72,7 @@ export function Map({ onPinPlaced, reports = [], isPlacingPin = false }: MapProp
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; OpenStreetMap contributors'
             />
-            <PinManager onPinPlaced={onPinPlaced} isPlacingPin={isPlacingPin} />
+            <PinManager onPinPlaced={onPinPlaced} isPlacingPin={isPlacingPin} pinPosition={pinPosition}/>
             <ReportMarkers reports={reports} />
         </MapContainer>
     );
