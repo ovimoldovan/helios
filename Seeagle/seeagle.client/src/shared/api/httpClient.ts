@@ -42,3 +42,22 @@ export async function postJson<TResponse>(url: string, body: unknown, token?: st
   return (await response.json()) as TResponse;
 }
 
+export async function putJson<TResponse>(url: string, token?: string): Promise<TResponse> {
+  const headers: Record<string, string> = {};
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const response = await fetch(url, {
+    method: 'PUT',
+    headers: headers,
+  });
+
+  if (!response.ok) {
+    throw new Error(`Request failed with status ${response.status}.`);
+  }
+
+  return (await response.json()) as TResponse;
+}
+

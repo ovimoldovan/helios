@@ -13,6 +13,7 @@ import { ModeratorRoute } from '@/features/moderator/components/ModeratorRoute';
 import { getAuthToken } from '@/shared/auth/getAuthToken';
 import { getUserRole } from '@/shared/auth/getUserRole';
 import { UserRole } from '@/shared/types/UserRole';
+import { ModerationQueue } from '@/features/moderator/components/ModerationQueue';
 
 function App() {
     const token = getAuthToken();
@@ -60,6 +61,15 @@ function App() {
                     element={
                         <ModeratorRoute isModerator={isModerator}>
                             <ModeratorDashboard />
+                        </ModeratorRoute>
+                    }
+                />
+
+                <Route
+                    path="/moderator/queue"
+                    element={
+                        <ModeratorRoute isModerator={isModerator}>
+                            <ModerationQueue />
                         </ModeratorRoute>
                     }
                 />
