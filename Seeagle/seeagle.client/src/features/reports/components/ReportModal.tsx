@@ -51,8 +51,8 @@ export function AddReportModal({
 
         try {
             const report = await createReport({
-                longitude: pinPosition[0], 
-                latitude: pinPosition[1],
+                longitude: pinPosition[1], 
+                latitude: pinPosition[0],
                 description: description.trim() || null,
             });
             onReportCreated(report);
