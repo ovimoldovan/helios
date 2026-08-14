@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/shared/context/AuthContext';
 import { getUserFromToken } from '@/shared/utils/getUserFromToken.ts';
-
+import { Menu, MapPin, Plus } from 'lucide-react';
 
 interface LeftPanelProps {
     onNewReport?: () => void;
@@ -41,10 +41,10 @@ export function LeftPanel({ onNewReport, isPlacingPin = false }: LeftPanelProps)
         <>
             {!isOpen && (
                 <button
-                    className="sm:hidden fixed top-4 left-4 z-50 w-10 h-10 rounded-full bg-background border border-border shadow-lg text-2xl"
+                    className="sm:hidden fixed top-4 left-4 z-50 w-12 h-12 rounded-full bg-background border border-border shadow-lg flex items-center justify-center"
                     onClick={() => setIsOpen(true)}
                 >
-                    ☰
+                    <Menu className="w-6 h-6" />
                 </button>
             )}
 
@@ -67,7 +67,7 @@ export function LeftPanel({ onNewReport, isPlacingPin = false }: LeftPanelProps)
                             {isAuthenticated ? 'Logout' : 'Login'}
                         </Button>
                         <button
-                            className="sm:hidden w-7 h-7 rounded-full bg-muted flex items-center justify-center text-sm"
+                            className="sm:hidden w-7 h-7 rounded-full bg-muted flex items-center justify-center"
                             onClick={() => setIsOpen(false)}
                         >
                             ✕
@@ -81,7 +81,7 @@ export function LeftPanel({ onNewReport, isPlacingPin = false }: LeftPanelProps)
                             Seeagle
                         </p>
                         <div className="flex items-start gap-2">
-                            <span className="text-xl">📍</span>
+                            <MapPin className="h-5 w-5 text-muted-foreground" />
                             <div>
                                 <p className="font-medium text-sm">
                                     {isPlacingPin ? 'Placing pin...' : 'Placing pin'}
@@ -109,7 +109,7 @@ export function LeftPanel({ onNewReport, isPlacingPin = false }: LeftPanelProps)
                                 className="w-full justify-start gap-2 border-2 rounded-full py-2 h-auto text-sm font-normal"
                                 onClick={onNewReport}
                             >
-                                <span className="text-base">+</span>
+                                <Plus className="h-4 w-4" />
                                 New report
                             </Button>
                         ) : (

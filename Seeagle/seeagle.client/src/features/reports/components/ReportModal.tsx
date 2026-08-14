@@ -9,7 +9,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { createReport } from '@/shared/api/reportApi';
+import { createReport } from '@/features/reports/api/reportApi.ts';
 import type { Report } from '@/shared/types/report';
 
 interface AddReportModalProps {
@@ -51,8 +51,8 @@ export function AddReportModal({
 
         try {
             const report = await createReport({
-                latitude: pinPosition[0],
-                longitude: pinPosition[1],
+                longitude: pinPosition[0], 
+                latitude: pinPosition[1],
                 description: description.trim() || null,
             });
             onReportCreated(report);
