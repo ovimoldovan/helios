@@ -6,12 +6,14 @@ import { AuthProvider } from '@/shared/context/AuthContext';
 import { Homepage } from './features/homepage/components/Homepage';
 import { LoginForm } from '@/features/login/components/LoginForm';
 import { RegisterForm } from '@/features/registration/components/RegisterForm';
+import { AdminAreasPage } from './features/admin/components/AdminAreasPage';
 
 function App() {
     return (
         <AuthProvider>
             <Routes>
                 <Route path="/" element={<Homepage />} />
+                <Route path="/admin/areas" element={<AdminAreasPage />} />
                 <Route
                     path="/login"
                     element={
