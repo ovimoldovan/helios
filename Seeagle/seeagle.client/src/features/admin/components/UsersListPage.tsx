@@ -11,9 +11,6 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
   PaginationLink,
 } from '@/components/ui/pagination';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
