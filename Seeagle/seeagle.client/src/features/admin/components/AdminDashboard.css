@@ -1,0 +1,5 @@
+@reference "../../../index.css";
+
+.admin-dashboard-button{
+    @apply h-full w-full flex-col items-start justify-start gap-2 whitespace-normal p-6 text-left;
+}

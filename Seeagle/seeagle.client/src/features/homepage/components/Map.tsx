@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import type { Report } from '@/shared/types/report';
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -10,65 +11,56 @@ L.Icon.Default.mergeOptions({
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
 });
 
-function DraggableMarker({ position, id, onDragEnd }: any) {
-    return (
-        <Marker
-            position={position}
-            draggable={true}
-            eventHandlers={{
-                dragend(e) {
-                    const marker = e.target;
-                    const pos = marker.getLatLng();
-                    onDragEnd(id, [pos.lat, pos.lng]);
-                },
-            }}
-        >
-            <Popup>
-                 Pin #{id}
-                <br />
-                {position[0].toFixed(4)}, {position[1].toFixed(4)}
-                <br />
-            </Popup>
-        </Marker>
-    );
+interface MapProps {
+    onPinPlaced?: (position: [number, number] | null) => void;
+    reports?: Report[];
+    isPlacingPin?: boolean;
+    pinPosition?: [number, number] | null;
 }
 
-function PinManager() {
-    const [pins, setPins] = useState<Array<{ id: number; position: [number, number] }>>([]);
-    const [nextId, setNextId] = useState(1);
+function PinManager({ onPinPlaced, isPlacingPin, pinPosition}: {
+    onPinPlaced?: (position: [number, number] | null) => void;
+    isPlacingPin?: boolean;
+    pinPosition?: [number, number] | null;
+}) {
+    const [position, setPosition] = useState<[number, number] | null>(null);
+
+    useEffect(() => {
+        setPosition(pinPosition || null);
+    }, [pinPosition]);
 
     useMapEvents({
         click(e) {
-            const newPin = {
-                id: nextId,
-                position: [e.latlng.lat, e.latlng.lng] as [number, number],
-            };
-            setPins([...pins, newPin]);
-            setNextId(nextId + 1);
+            if (isPlacingPin) {
+                const pos: [number, number] = [e.latlng.lat, e.latlng.lng];
+                setPosition(pos);
+                onPinPlaced?.(pos);
+            }
         },
     });
 
-    const handleDragEnd = (id: number, newPosition: [number, number]) => {
-        setPins(pins.map(pin =>
-            pin.id === id ? { ...pin, position: newPosition } : pin
-        ));
-    };
-
-    return (
-        <>
-            {pins.map((pin) => (
-                <DraggableMarker
-                    key={pin.id}
-                    id={pin.id}
-                    position={pin.position}
-                    onDragEnd={handleDragEnd}
-                />
-            ))}
-        </>
-    );
+    return position ? <Marker position={position} /> : null;
 }
 
-export function Map() {
+function ReportMarkers({ reports }: { reports?: Report[] }) {
+    if (!reports) return null;
+
+    return reports.map((report) => (
+        <Marker key={report.id} position={[report.latitude, report.longitude]}>
+            <Popup>
+                <div className="space-y-1">
+                    <strong> {report.status}</strong>
+                    {report.description && <p className="text-sm">{report.description}</p>}
+                    <small className="block text-xs text-gray-500">
+                        {new Date(report.createdUtc).toLocaleString()}
+                    </small>
+                </div>
+            </Popup>
+        </Marker>
+    ));
+}
+
+export function Map({ onPinPlaced, reports = [], isPlacingPin = false, pinPosition }: MapProps) {
     return (
         <MapContainer
             center={[45.9432, 24.9668]}
@@ -80,7 +72,8 @@ export function Map() {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; OpenStreetMap contributors'
             />
-            <PinManager />
+            <PinManager onPinPlaced={onPinPlaced} isPlacingPin={isPlacingPin} pinPosition={pinPosition}/>
+            <ReportMarkers reports={reports} />
         </MapContainer>
     );
 }

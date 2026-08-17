@@ -4,64 +4,45 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-
-const adminSections = [
-    {
-        title: 'Areas',
-        description: 'Define and review application areas.',
-    },
-    {
-        title: 'Users',
-        description: 'View the list of registered users.',
-    },
-    {
-        title: 'Permissions',
-        description: 'Assign administrative permissions to users.',
-    },
-    {
-        title: 'Report Types',
-        description: 'Define, view and edit report types.',
-    },
-    {
-        title: 'Reports',
-        description: 'Review reports submitted by users.',
-    },
-];
+import {Button} from '@/components/ui/button';
+import './AdminDashboard.css';
 
 export function AdminDashboard() {
     return (
-        <main className="relative min-h-screen overflow-hidden p-8">
-            <div
-                className="absolute inset-0 bg-cover bg-center opacity-20"
-                style={{
-                    backgroundImage: "url('/map-dark-mode.avif')",
-                }}
-            />
+        <main className="relative min-h-screen overflow-y-auto p-8 bg-muted">
+            <Card className="relative z-10 mx-auto max-w-6xl overflow-visible w-full">
+                <CardHeader>
+                    <CardTitle className="text-3xl font-bold ">Admin Dashboard</CardTitle>
+                    <CardDescription>Manage the main administrative areas of the application.</CardDescription>
+                </CardHeader>
 
-            <div className="relative z-10 mx-auto max-w-6xl">
-                <h1 className="text-3xl font-bold">
-                    Admin Dashboard
-                </h1>
+                <div className="m-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    <Button className="admin-dashboard-button">
+                        <span className="text-base font-semibold">Areas</span>
+                        <span className="font-normal">Define and review application areas.</span>
+                    </Button>
 
-                <p className="mt-2 text-muted-foreground">
-                    Manage the main administrative areas of the application.
-                </p>
+                    <Button className="admin-dashboard-button">
+                        <span className="text-base font-semibold">Users</span>
+                        <span className="font-normal">View the list of registered users.</span>
+                    </Button>
 
-                <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {adminSections.map((section) => (
-                        <Card key={section.title}>
-                            <CardHeader>
-                                <CardTitle>{section.title}</CardTitle>
+                    <Button className="admin-dashboard-button">
+                        <span className="text-base font-semibold">Permissions</span>
+                        <span className="font-normal">Assign administrative permissions to users.</span>
+                    </Button>
 
-                                <CardDescription>
-                                    {section.description}
-                                </CardDescription>
-                            </CardHeader>
-                            
-                        </Card>
-                    ))}
+                    <Button className="admin-dashboard-button">
+                        <span className="text-base font-semibold">Report Types</span>
+                        <span className="font-normal">Define, view and edit report types.</span>
+                    </Button>
+
+                    <Button className="admin-dashboard-button">
+                        <span className="text-base font-semibold">Reports</span>
+                        <span className="font-normal">Review reports submitted by users.</span>
+                    </Button>
                 </div>
-            </div>
+            </Card>
         </main>
     );
 }
