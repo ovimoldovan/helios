@@ -8,9 +8,10 @@ import { LoginForm } from '@/features/login/components/LoginForm';
 import { RegisterForm } from '@/features/registration/components/RegisterForm';
 import { AdminDashboard } from '@/features/admin/components/AdminDashboard';
 import { ModeratorDashboard } from '@/features/moderator/components/ModeratorDashboard';
-import {ErrorPage} from "@/shared/error_page/components/ErrorPage.tsx";
-import {PrivateRoutes} from "@/shared/utils/PrivateRoutes.tsx";
-import {Toaster} from "@/components/ui/toast.tsx";
+import { ErrorPage } from "@/shared/error_page/components/ErrorPage.tsx";
+import { PrivateRoutes } from "@/shared/utils/PrivateRoutes.tsx";
+import { Toaster } from "@/components/ui/toast.tsx";
+import { CookiesPolicy } from "@/pages/CookiesPolicy.tsx";
 
 function App() {
     return (
@@ -73,6 +74,13 @@ function App() {
                                    errorTitle={"Not Found"} 
                                    errorText={"Oops, looks like this URL doesn't exist!"}
                         />
+                    }
+                />
+                
+                <Route
+                    path="/cookies"
+                    element={
+                        <CookiesPolicy/>
                     }
                 />
             </Routes>

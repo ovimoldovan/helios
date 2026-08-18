@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/shared/context/AuthContext';
 import { getUserFromToken } from '@/shared/utils/getUserFromToken.ts';
 import { Menu, MapPin, Plus } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface LeftPanelProps {
     onNewReport?: () => void;
@@ -143,6 +144,14 @@ export function LeftPanel({ onNewReport, isPlacingPin = false }: LeftPanelProps)
                         </div>
                     )}
                 </CardContent>
+                <div className="p-4 pt-2 border-t border-border">
+                    <Link
+                        to="/cookies"
+                        className="text-[10px] text-muted-foreground hover:underline"
+                    >
+                        Cookies Policy
+                    </Link>
+                </div>
             </Card>
 
             {isOpen && (
