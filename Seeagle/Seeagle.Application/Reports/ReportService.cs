@@ -3,6 +3,7 @@ using NetTopologySuite.Geometries;
 using Seeagle.Application.Common;
 using Seeagle.Domain.Reports;
 using Seeagle.Domain.User;
+using Microsoft.EntityFrameworkCore;
 
 namespace Seeagle.Application.Reports;
 
@@ -39,20 +40,35 @@ public sealed class ReportService : IReportService
             report.Status);
     }
     
-    public async Task<IReadOnlyList<ReportDto>> GetPendingAsync(CancellationToken cancellationToken)
+    public async Task<PagedResult<ReportDto>> GetPendingAsync(
+        int pageNumber,
+        int pageSize,
+        CancellationToken cancellationToken)
     {
-        var reports = await _reportRepository.GetAllAsync(cancellationToken);
+        var query = _reportRepository
+            .GetAllQueryable()
+            .Where(report => report.Status == "Pending");
 
-        return reports
-            .Where(report => report.Status == "Pending")
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var reports = await query
+            .OrderBy(report => report.CreatedUtc)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
             .Select(report => new ReportDto(
                 report.Id,
-                report.Latitude,
-                report.Longitude,
+                report.Location.X,
+                report.Location.Y,
                 report.Description,
                 report.CreatedUtc,
                 report.Status))
-            .ToList();
+            .ToListAsync(cancellationToken);
+
+        return new PagedResult<ReportDto>(
+            reports,
+            totalCount,
+            pageNumber,
+            pageSize);
     }
     
     public async Task<ReportDto?> ApproveAsync(Guid id, CancellationToken cancellationToken)
@@ -72,8 +88,8 @@ public sealed class ReportService : IReportService
 
         return new ReportDto(
             report.Id,
-            report.Latitude,
-            report.Longitude,
+            report.Location.X,
+            report.Location.Y,
             report.Description,
             report.CreatedUtc,
             report.Status);
@@ -96,8 +112,8 @@ public sealed class ReportService : IReportService
 
         return new ReportDto(
             report.Id,
-            report.Latitude,
-            report.Longitude,
+            report.Location.X,
+            report.Location.Y,
             report.Description,
             report.CreatedUtc,
             report.Status);

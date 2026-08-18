@@ -1,3 +1,5 @@
+using Seeagle.Application.Common;
+
 namespace Seeagle.Application.Reports;
 
 public interface IReportService
@@ -7,7 +9,9 @@ public interface IReportService
         CreateReportRequest request,
         CancellationToken cancellationToken);
 
-    Task<IReadOnlyList<ReportDto>> GetPendingAsync(
+    Task<PagedResult<ReportDto>> GetPendingAsync(
+        int pageNumber,
+        int pageSize,
         CancellationToken cancellationToken);
 
     Task<ReportDto?> ApproveAsync(

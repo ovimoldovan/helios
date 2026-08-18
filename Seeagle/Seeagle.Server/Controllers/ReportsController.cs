@@ -2,7 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Seeagle.Application.Reports;
-using Microsoft.AspNetCore.Authorization;
+using Seeagle.Application.Common;
 
 namespace Seeagle.Server.Controllers;
 
@@ -34,10 +34,16 @@ public sealed class ReportsController(IReportService reportService) : Controller
     
     [Authorize(Roles = "Moderator")]
     [HttpGet("pending")]
-    public async Task<ActionResult<IReadOnlyList<ReportDto>>> GetPending(
-        CancellationToken cancellationToken)
+    public async Task<ActionResult<PagedResult<ReportDto>>> GetPending(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
+        CancellationToken cancellationToken = default)
     {
-        var reports = await reportService.GetPendingAsync(cancellationToken);
+        var reports = await reportService.GetPendingAsync(
+            pageNumber,
+            pageSize,
+            cancellationToken);
+
         return Ok(reports);
     }
     
