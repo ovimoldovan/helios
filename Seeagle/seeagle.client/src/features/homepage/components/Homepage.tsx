@@ -1,15 +1,26 @@
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import { Map } from './Map';
 import { LeftPanel } from './LeftPanel';
 import { AddReportModal } from '@/features/reports/components/ReportModal.tsx';
 import type { Report } from '@/shared/types/report';
+import {getApprovedReports} from "@/features/reports/api/reportApi.ts";
 
 export function Homepage() {
     const [isPlacingPin, setIsPlacingPin] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [pinPosition, setPinPosition] = useState<[number, number] | null>(null);
     const [reports, setReports] = useState<Report[]>([]);
+    const [, setLoading] = useState(true);
 
+    useEffect(() => {
+        const loadApprovedReports = async () => {
+            setLoading(true);
+            const data = await getApprovedReports(30);
+            setReports(data);
+        };
+        loadApprovedReports();
+        }, []);
+    
     const handlePinPlaced = (position: [number, number] | null) => {
         setPinPosition(position);
         if (position) {
@@ -41,8 +52,10 @@ export function Homepage() {
                     setPinPosition(null); 
                 }}
                 onReportCreated={(report) => {
-                    setReports([report, ...reports]);
-                    setPinPosition(null); 
+                    if(report.status === 'Approved') {
+                        setReports([report, ...reports]);
+                    }
+                    
                 }}
                 pinPosition={pinPosition}
             />

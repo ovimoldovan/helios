@@ -7,7 +7,7 @@ namespace Seeagle.Server.Controllers;
 
 [ApiController]
 [Route("api/reports")]
-public sealed class ReportsController(IReportService reportService) : ControllerBase
+public sealed class ReportsController(IReportService reportService, IReportQueryService reportQueryService) : ControllerBase
 {
     [Authorize]
     [HttpPost]
@@ -29,5 +29,12 @@ public sealed class ReportsController(IReportService reportService) : Controller
         {
             return BadRequest(new { message = ex.Message });
         }
+    }
+    
+    [HttpGet("approved")]
+    public async Task<ActionResult<IReadOnlyList<ReportDto>>> GetApprovedReports( CancellationToken cancellationToken )
+    {
+        var reports = await reportQueryService.GetApprovedReportsAsync(cancellationToken);
+        return Ok(reports);
     }
 }
