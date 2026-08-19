@@ -29,6 +29,6 @@ public class User
 
     public void AssignModeratorRole()
     {
-        Role = Role.Admin;
+        Role = Role.Moderator;
     }
 }

@@ -57,9 +57,9 @@ export function UsersListPage() {
   function roleLabel(role: number): string {
     switch (role) {
       case 1:
-        return 'Moderator';
-      case 2:
         return 'Admin';
+      case 2:
+        return 'Moderator';
       default:
         return 'User';
     }
