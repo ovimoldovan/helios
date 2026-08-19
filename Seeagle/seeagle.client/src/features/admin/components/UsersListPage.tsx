@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getCookie } from '@/shared/utils/cookies';
-import { getUsers } from '@/features/admin/api/adminApi';
+import { assignModerator, getUsers } from '@/features/admin/api/adminApi';
 import type { UserListItem } from '@/shared/types/admin';
 import {
   Table,
@@ -14,6 +14,7 @@ import {
   PaginationLink,
 } from '@/components/ui/pagination';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const PAGE_SIZE = 10;
 
@@ -23,6 +24,7 @@ export function UsersListPage() {
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [assigningModeratorId, setAssigningModeratorId] = useState<string | null>(null);
 
   useEffect(() => {
     setLoading(true);
@@ -39,6 +41,30 @@ export function UsersListPage() {
 
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
 
+  function handleAssignModerator(userId: string) {
+    setAssigningModeratorId(userId);
+
+    assignModerator(userId, getCookie('authToken')!)
+      .then((updatedUser) => {
+        setUsers((prevUsers) =>
+          prevUsers.map((user) => (user.id === updatedUser.id ? updatedUser : user))
+        );
+      })
+      .catch(() => setError('Unexpected error while assigning moderator.'))
+      .finally(() => setAssigningModeratorId(null));
+  }
+
+  function roleLabel(role: number): string {
+    switch (role) {
+      case 1:
+        return 'Moderator';
+      case 2:
+        return 'Admin';
+      default:
+        return 'User';
+    }
+  }
+
   return (
     <div className="p-6">
       <h1 className="text-xl font-semibold mb-4">Registered users</h1>
@@ -54,6 +80,8 @@ export function UsersListPage() {
                 <TableHead>Email</TableHead>
                 <TableHead>First Name</TableHead>
                 <TableHead>Last Name</TableHead>
+                <TableHead>Role</TableHead>
+                <TableHead>Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -62,6 +90,20 @@ export function UsersListPage() {
                   <TableCell className="py-2">{user.email}</TableCell>
                   <TableCell className="py-2">{user.firstName}</TableCell>
                   <TableCell className="py-2">{user.lastName}</TableCell>
+                  <TableCell className="py-2">{roleLabel(user.role)}</TableCell>
+                  <TableCell className="py-2">
+                    {user.role == 0 ? (
+                      <Button
+                        size="sm"
+                        disabled={assigningModeratorId === user.id}
+                        onClick={() => handleAssignModerator(user.id)}
+                        >
+                          {assigningModeratorId === user.id ? 'Assigning...' : 'Make moderator'}
+                        </Button>
+                    ) : (
+                      <span className='text-sm text-muted-foreground'>-</span>
+                    )}
+                    </TableCell>
                 </TableRow>
               ))}
             </TableBody>

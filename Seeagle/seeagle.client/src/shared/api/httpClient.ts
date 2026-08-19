@@ -42,3 +42,24 @@ export async function postJson<TResponse>(url: string, body: unknown, token?: st
   return (await response.json()) as TResponse;
 }
 
+export async function patchJson<TResponse>(url: string, token?: string): Promise<TResponse> {
+  const headers: Record<string, string> = {};
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const response = await fetch(url, {
+    method: 'PATCH',
+    headers: headers,
+  });
+
+  if (!response.ok) {
+    if (response.status === 400) {
+      throw await response.json();
+    }
+    throw new Error(`Request failed with status ${response.status}.`);
+  }
+
+  return (await response.json()) as TResponse;
+}

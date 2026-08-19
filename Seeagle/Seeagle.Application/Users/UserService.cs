@@ -48,6 +48,26 @@ public class UserService : IUserService
         return isValid ? user : null;
     }
 
+    public async Task<UserListItemDto> AssignModeratorRoleAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        var user = await _userRepository.GetAllQueryable()
+            .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
+
+        if (user is null)
+        {
+            throw new InvalidOperationException("User not found.");
+        }
+
+        user.AssignModeratorRole();
+        await _userRepository.UpdateAsync(user, cancellationToken);
+        return new UserListItemDto(
+            user.Id,
+            user.Email,
+            user.FirstName,
+            user.LastName,
+            user.Role
+        );
+    }
     private UserDto ConvertToDto(User user)
     {
         return new UserDto(
