@@ -1,11 +1,6 @@
 import { getJson, putJson } from '@/shared/api/httpClient';
-
-export interface PagedResult<T> {
-    items: T[];
-    totalCount: number;
-    pageNumber: number;
-    pageSize: number;
-}
+import type { PagedResult } from '@/shared/types/pagedResult';
+import { getAuthToken } from '@/shared/auth/getAuthToken';
 
 export interface ModerationReport {
     id: string;
@@ -18,12 +13,13 @@ export interface ModerationReport {
 
 export async function getPendingReports(
     pageNumber: number,
-    pageSize: number,
-    token?: string
+    pageSize: number
 ): Promise<PagedResult<ModerationReport>> {
+    const token = getAuthToken();
+
     return getJson<PagedResult<ModerationReport>>(
         `/api/reports/pending?pageNumber=${pageNumber}&pageSize=${pageSize}`,
-        token
+        token ?? undefined
     );
 }
 

@@ -10,6 +10,14 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 
+import {
+    Pagination,
+    PaginationContent,
+    PaginationItem,
+    PaginationNext,
+    PaginationPrevious,
+} from '@/components/ui/pagination';
+
 const PAGE_SIZE = 10;
 
 export function ModerationQueue() {
@@ -20,14 +28,7 @@ export function ModerationQueue() {
     useEffect(() => {
         async function loadReports() {
             setIsLoading(true);
-
-            const token = getAuthToken();
-            const result = await getPendingReports(
-                page,
-                PAGE_SIZE,
-                token ?? undefined
-            );
-
+            const result = await getPendingReports(page, PAGE_SIZE);
             setReports(result.items);
             setTotalCount(result.totalCount);
             setIsLoading(false);
@@ -110,27 +111,43 @@ export function ModerationQueue() {
                             ))}
                         </div>
 
-                        <div className="mt-4 flex items-center gap-4">
-                            <Button
-                                variant="outline"
-                                disabled={page === 1}
-                                onClick={() => setPage((p) => p - 1)}
-                            >
-                                Previous
-                            </Button>
+                        <Pagination className="mt-4">
+                            <PaginationContent>
+                                <PaginationItem>
+                                    <PaginationPrevious
+                                        href="#"
+                                        onClick={(event) => {
+                                            event.preventDefault();
 
-                            <span>
-                Page {page} of {totalPages}
-            </span>
+                                            if (page > 1) {
+                                                setPage((currentPage) => currentPage - 1);
+                                            }
+                                        }}
+                                        className={page === 1 ? 'pointer-events-none opacity-50' : ''}
+                                    />
+                                </PaginationItem>
 
-                            <Button
-                                variant="outline"
-                                disabled={page >= totalPages}
-                                onClick={() => setPage((p) => p + 1)}
-                            >
-                                Next
-                            </Button>
-                        </div>
+                                <PaginationItem>
+                                    <span className="px-4 text-sm">
+                                        Page {page} of {totalPages}
+                                    </span>
+                                </PaginationItem>
+
+                                <PaginationItem>
+                                    <PaginationNext
+                                        href="#"
+                                        onClick={(event) => {
+                                            event.preventDefault();
+
+                                            if (page < totalPages) {
+                                                setPage((currentPage) => currentPage + 1);
+                                            }
+                                        }}
+                                        className={page === totalPages ? 'pointer-events-none opacity-50' : ''}
+                                    />
+                                </PaginationItem>
+                            </PaginationContent>
+                        </Pagination>
                     </>
                 )}
             </div>
