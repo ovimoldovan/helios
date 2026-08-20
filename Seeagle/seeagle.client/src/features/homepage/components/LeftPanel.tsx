@@ -2,7 +2,6 @@ import { Logo } from '@/components/Logo';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/shared/context/AuthContext';
@@ -96,13 +95,6 @@ export function LeftPanel({ onNewReport, isPlacingPin = false }: LeftPanelProps)
                     <hr className="border-border" />
 
                     <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                            <p className="font-medium text-sm">Downtown district</p>
-                            <Badge variant="secondary" className="text-[10px]">
-                                MP
-                            </Badge>
-                        </div>
-
                         {isAuthenticated ? (
                             <Button
                                 variant="outline"
