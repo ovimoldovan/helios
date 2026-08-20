@@ -109,8 +109,6 @@ export function LeftPanel({ onNewReport, isPlacingPin = false }: LeftPanelProps)
                                 Login to add report
                             </div>
                         )}
-
-                        <p className="text-[10px] text-muted-foreground">Line report</p>
                     </div>
 
                     {isAuthenticated && user && (
