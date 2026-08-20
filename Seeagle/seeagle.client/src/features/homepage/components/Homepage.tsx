@@ -10,11 +10,9 @@ export function Homepage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [pinPosition, setPinPosition] = useState<[number, number] | null>(null);
     const [reports, setReports] = useState<Report[]>([]);
-    const [, setLoading] = useState(true);
 
     useEffect(() => {
         const loadApprovedReports = async () => {
-            setLoading(true);
             const data = await getApprovedReports(30);
             setReports(data);
         };
@@ -52,9 +50,7 @@ export function Homepage() {
                     setPinPosition(null); 
                 }}
                 onReportCreated={(report) => {
-                    if(report.status === 'Approved') {
-                        setReports([report, ...reports]);
-                    }
+                    setReports([report, ...reports]);
                     
                 }}
                 pinPosition={pinPosition}
