@@ -3,5 +3,6 @@ export interface UserListItem {
     email: string;
     firstName: string;
     lastName: string;
+    role: number;
 }
 
