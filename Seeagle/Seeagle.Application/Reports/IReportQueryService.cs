@@ -5,5 +5,5 @@ namespace Seeagle.Application.Reports;
 
 public interface IReportQueryService
 {
-    Task<IReadOnlyList<ReportDto>> GetApprovedReportsAsync(CancellationToken cancellationToken);
+    Task<IReadOnlyList<ReportDto>> GetApprovedReportsAsync(DateTime fromDate, CancellationToken cancellationToken);
 }
