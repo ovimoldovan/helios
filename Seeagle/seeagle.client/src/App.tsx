@@ -1,6 +1,6 @@
 import './App.css';
 
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { AuthProvider } from '@/shared/context/AuthContext';
 import { UsersListPage } from '@/features/admin/components/UsersListPage';
 import { Homepage } from './features/homepage/components/Homepage';
