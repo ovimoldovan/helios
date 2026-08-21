@@ -19,6 +19,7 @@ import {useAuth} from "@/shared/context/AuthContext.tsx";
 import {useLocation, useNavigate} from "react-router-dom";
 import {toast} from "@/components/ui/toast.tsx";
 import {loginUser} from "@/features/login/api/loginApi.ts";
+import { useTranslation } from 'react-i18next';
 
 interface LoginFormErrors {
     email?: string;
@@ -37,6 +38,7 @@ export function LoginForm({
     const {login} = useAuth();
     const location = useLocation();
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     const state = location.state as {
         from?: string;
@@ -60,10 +62,10 @@ export function LoginForm({
 
         const trimmedEmail = email.trim();
         if (trimmedEmail.length === 0)
-            validationErrors.email = 'Email is required.';
+            validationErrors.email = t('emailRequired');
 
         if (password.length === 0)
-            validationErrors.password = 'Password is required.';
+            validationErrors.password = t('passwordRequired');
 
         return validationErrors;
     }
@@ -100,16 +102,16 @@ export function LoginForm({
         <div className={cn("flex flex-col gap-6", className)} {...props}>
             <Card>
                 <CardHeader className="text-center">
-                    <CardTitle className="text-xl">Welcome back</CardTitle>
+                    <CardTitle className="text-xl">{t('loginTitle')}</CardTitle>
                     <CardDescription>
-                        Login with your credentials
+                        {t('loginDescription')}
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleSubmit}>
                         <FieldGroup>
                             <Field id="email-field">
-                                <FieldLabel id="email-label" htmlFor="email">Email</FieldLabel>
+                                <FieldLabel id="email-label" htmlFor="email">{t('email')}</FieldLabel>
                                 <Input id="email"
                                        name="email"
                                        aria-labelledby="email-label"
@@ -128,7 +130,7 @@ export function LoginForm({
                                 <FieldError>{errors.email}</FieldError>
                             </Field>
                             <Field>
-                                <FieldLabel id="password-label" htmlFor="password">Password</FieldLabel>
+                                <FieldLabel id="password-label" htmlFor="password">{t('password')}</FieldLabel>
                                 <Input id="password"
                                        name="password"
                                        aria-labelledby="password-label"
@@ -146,12 +148,12 @@ export function LoginForm({
                                 <FieldError>{errors.password}</FieldError>
                             </Field>
                             <Field>
-                                <Button type="submit">Login</Button>
+                                <Button type="submit">{t('login')}</Button>
                                 <FieldDescription className="text-center">
-                                    Don't have an account? <a href="/register">Sign up</a>
+                                    {t('missingAccount')} <a className="cursor-pointer" onClick={() => navigate('/register')}>{t('register')}</a>
                                 </FieldDescription>
                                 {!loginSuccessful &&
-                                    <FieldError>Invalid E-Mail or Password</FieldError>}
+                                    <FieldError>{t('incorrectCredentials')}</FieldError>}
                             </Field>
                         </FieldGroup>
                     </form>

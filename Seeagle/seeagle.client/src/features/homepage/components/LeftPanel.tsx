@@ -88,19 +88,19 @@ export function LeftPanel({ onNewReport, isPlacingPin = false, onCancelPlacePin 
                                 <div className="grid grid-cols-2">
                                     <Button
                                         variant="outline"
-                                        className="w-full justify-center gap-2 border-2 rounded-full py-2 h-auto text-sm font-normal animate-in fade-in slide-in-from-top-2 duration-300 ease-in-ou"
+                                        className="w-full justify-center gap-0.75 border-2 rounded-full py-2 h-auto text-sm font-normal animate-in fade-in slide-in-from-top-2 duration-300 ease-in-ou"
                                         disabled
                                     >
                                         <Plus className="h-4 w-4"/>
-                                        <span className="truncate">Placing...</span>
+                                        <span >{t('placing')}</span>
                                     </Button>
                                     <Button
                                         variant="outline"
-                                        className="w-full justify-center gap-2 border-2 rounded-full py-2 h-auto text-sm font-normal animate-in fade-in slide-in-from-top-2 duration-300 ease-in-ou"
+                                        className="w-full justify-center gap-0.75 border-2 rounded-full py-2 h-auto text-sm font-normal animate-in fade-in slide-in-from-top-2 duration-300 ease-in-ou"
                                         onClick={onCancelPlacePin}
                                     >
                                         <X className="h-4 w-4"/>
-                                        <span className="truncate">Cancel</span>
+                                        <span className="truncate">{t('cancel')}</span>
                                     </Button>
                                 </div>
                             ) : (
@@ -110,7 +110,7 @@ export function LeftPanel({ onNewReport, isPlacingPin = false, onCancelPlacePin 
                                     onClick={onNewReport}
                                 >
                                     <Plus className="h-4 w-4"/>
-                                    New report
+                                    {t('newReport')}
                                 </Button>
                             )
                         ) : (

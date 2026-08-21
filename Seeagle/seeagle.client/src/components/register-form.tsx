@@ -17,6 +17,7 @@ import {Input} from "@/components/ui/input"
 import React, {useState} from "react";
 import {registerUser} from "@/features/registration/api/registrationApi.ts";
 import {useNavigate} from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 
 interface RegisterFormErrors {
     email?: string;
@@ -41,6 +42,7 @@ export function RegisterForm({
     const [isLoading, setIsLoading] = useState(false);
 
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     function validateForm(): RegisterFormErrors {
         const validationErrors: RegisterFormErrors = {};
@@ -52,38 +54,35 @@ export function RegisterForm({
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         if (trimmedEmail.length === 0) {
-            validationErrors.email = 'Email is required.';
+            validationErrors.email = t('emailRequired');
         } else if (!emailPattern.test(trimmedEmail)) {
-            validationErrors.email = 'Enter a valid email address.';
+            validationErrors.email = t('invalidEmail');
         }
 
         const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 
         if (password.length === 0) {
-            validationErrors.password = 'Password is required.';
+            validationErrors.password = t('passwordRequired');
         } else if (!passwordPattern.test(password)) {
-            validationErrors.password =
-                'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter and one number.';
+            validationErrors.password = t('invalidPassword');
         }
 
         if (password !== passwordConfirmation)
-            validationErrors.passwordsMatch = 'Passwords must match.'
+            validationErrors.passwordsMatch = t('passwordsDontMatch')
 
 
         const maxNameLength = 30;
 
         if (trimmedFirstName.length === 0) {
-            validationErrors.firstName = 'First name is required.';
+            validationErrors.firstName = t('firstNameRequired');
         } else if (trimmedFirstName.length > maxNameLength) {
-            validationErrors.firstName =
-                `First name must have at most ${maxNameLength} characters.`;
+            validationErrors.firstName = t('firstNameTooLong');
         }
 
         if (trimmedLastName.length === 0) {
-            validationErrors.lastName = 'Last name is required.';
+            validationErrors.lastName = t('lastNameRequired');
         } else if (trimmedLastName.length > maxNameLength) {
-            validationErrors.lastName =
-                `Last name must have at most ${maxNameLength} characters.`;
+            validationErrors.lastName = t('lastNameTooLong');
         }
 
         return validationErrors;
@@ -115,7 +114,7 @@ export function RegisterForm({
             navigate('/login');
         } catch {
             setErrors({
-                form: 'Registration failed. Please try again.',
+                form: t('registrationFailed'),
             });
         } finally {
             setIsLoading(false);
@@ -126,21 +125,21 @@ export function RegisterForm({
         <div className={cn("flex flex-col gap-6", className)} {...props}>
             <Card>
                 <CardHeader className="text-center">
-                    <CardTitle className="text-xl">Create your account</CardTitle>
+                    <CardTitle className="text-xl">{t('registerTitle')}</CardTitle>
                     <CardDescription>
-                        Enter your details below to create your account
+                        {t('registerDescription')}
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <form onSubmit={handleSubmit} method="post" action="#">
+                    <form onSubmit={handleSubmit}>
                         <FieldGroup>
                             <Field id="first-name-field">
-                                <FieldLabel id="first-name-label" htmlFor="first-name">First Name</FieldLabel>
+                                <FieldLabel id="first-name-label" htmlFor="first-name">{t('firstName') + '*'}</FieldLabel>
                                 <Input id="first-name"
                                        name="first-name"
                                        aria-labelledby="first-name-label"
                                        type="text"
-                                       placeholder="First Name"
+                                       placeholder={t('firstName')}
                                        value={firstName}
                                        onChange={
                                            (e) => {
@@ -154,12 +153,12 @@ export function RegisterForm({
                                 <FieldError>{errors.firstName}</FieldError>
                             </Field>
                             <Field id="last-name-field">
-                                <FieldLabel id="last-name-label" htmlFor="last-name">Last Name</FieldLabel>
+                                <FieldLabel id="last-name-label" htmlFor="last-name">{t('lastName') + '*'}</FieldLabel>
                                 <Input id="last-name"
                                        name="last-name"
                                        aria-labelledby="last-name-label"
                                        type="text"
-                                       placeholder="Last Name"
+                                       placeholder={t('lastName')}
                                        value={lastName}
                                        onChange={
                                            (e) => {
@@ -173,7 +172,7 @@ export function RegisterForm({
                                 <FieldError>{errors.lastName}</FieldError>
                             </Field>
                             <Field id="email-field">
-                                <FieldLabel id="email-label" htmlFor="email">Email</FieldLabel>
+                                <FieldLabel id="email-label" htmlFor="email">{t('email') + '*'}</FieldLabel>
                                 <Input id="email"
                                        name="email"
                                        aria-labelledby="email-label"
@@ -194,7 +193,7 @@ export function RegisterForm({
                             <Field id="password-field">
                                 <Field className="grid grid-cols-2 gap-4">
                                     <Field>
-                                        <FieldLabel id="password-label" htmlFor="password">Password</FieldLabel>
+                                        <FieldLabel id="password-label" htmlFor="password">{t('password') + '*'}</FieldLabel>
                                         <Input id="password"
                                                name="password"
                                                aria-labelledby="password-label"
@@ -211,7 +210,7 @@ export function RegisterForm({
                                         />
                                     </Field>
                                     <Field>
-                                        <FieldLabel id="password-confirmation-label" htmlFor="confirm-password">Confirm Password</FieldLabel>
+                                        <FieldLabel id="password-confirmation-label" htmlFor="confirm-password">{t('confirmPassword') + '*'}</FieldLabel>
                                         <Input id="confirm-password"
                                                name="confirm-password"
                                                aria-labelledby="password-confirmation-label"
@@ -233,9 +232,9 @@ export function RegisterForm({
                                 <FieldError>{errors.form}</FieldError>
                             </Field>
                             <Field>
-                                <Button type="submit">Register</Button>
+                                <Button type="submit">{t('register')}</Button>
                                 <FieldDescription className="text-center">
-                                    Already have an account? <a href="/login">Sign in</a>
+                                    {t('alreadyHaveAnAccount')} <a className="cursor-pointer" onClick={() => navigate('/login')}>{t('login')}</a>
                                 </FieldDescription>
                             </Field>
                         </FieldGroup>
