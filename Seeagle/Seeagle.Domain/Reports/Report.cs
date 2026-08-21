@@ -35,4 +35,12 @@ public class Report
     public User.User User { get; private set; }
     public Guid? ReportTypeId { get; private set; }
     public string Status { get; private set; } =string.Empty;
+    
+    public void Approve() {
+        Status = "Approved";
+    }
+    public void Reject()
+    {
+        Status = "Rejected";
+    }
 }
