@@ -13,14 +13,20 @@ public sealed class ReportQueryService : IReportQueryService
         _reportRepository = reportRepository;
     }
 
-    public async Task<IReadOnlyList<ReportDto>> GetApprovedReportsAsync(CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<ReportDto>> GetApprovedReportsAsync(
+        DateTime fromDate,
+        CancellationToken cancellationToken)
     {
-        var oneMonthAgo = DateTime.UtcNow.AddMonths(-1);
-
         var reports = await _reportRepository.GetAllQueryable()
-            .Where(r => r.Status == "Approved" && r.CreatedUtc >= oneMonthAgo)
+            .Where(r => r.Status == "Approved" && r.CreatedUtc >= fromDate && r.Status != "Solved")
             .OrderByDescending(r => r.CreatedUtc)
-            .Select(r => new ReportDto(r.Id, r.Location.X, r.Location.Y, r.Description, r.CreatedUtc, r.Status))
+            .Select(r => new ReportDto(
+                r.Id,
+                r.Location.X,
+                r.Location.Y,
+                r.Description,
+                r.CreatedUtc,
+                r.Status))
             .ToListAsync(cancellationToken);
 
         return reports;
