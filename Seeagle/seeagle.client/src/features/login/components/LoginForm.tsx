@@ -8,6 +8,7 @@ import {Input} from '@/components/ui/input';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle,} from '@/components/ui/card';
 import {Field, FieldGroup, FieldLabel} from "@/components/ui/field";
 import {toast} from "@/components/ui/toast.tsx";
+import { useTranslation } from 'react-i18next';
 
 interface LoginFormErrors {
     email?: string;
@@ -23,6 +24,7 @@ export function LoginForm() {
     const {login} = useAuth();
     const location = useLocation();
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     const state = location.state as {
         from?: string;
@@ -46,11 +48,11 @@ export function LoginForm() {
 
         const trimmedEmail = email.trim();
         if (trimmedEmail.length === 0)
-            validationErrors.email = 'Email is required.';
+            validationErrors.email = t('emailRequired');
 
         if (password.length === 0)
-            validationErrors.password = 'Password is required.';
-            
+            validationErrors.password = t('passwordRequired');
+
         return validationErrors;
     }
     
@@ -86,9 +88,9 @@ export function LoginForm() {
         <main className="bg-muted">
             <Card className="w-full max-w-sm">
                 <CardHeader>
-                    <CardTitle>Login to your account</CardTitle>
+                    <CardTitle>{t('loginTitle')}</CardTitle>
                     <CardDescription>
-                        Enter your email below to login to your account
+                        {t('loginDescription')}
                     </CardDescription>
                 </CardHeader>
 
@@ -96,7 +98,7 @@ export function LoginForm() {
                     <CardContent className="space-y-4">
                         <FieldGroup>
                             <Field>
-                                <FieldLabel id="email-label" htmlFor="email">Email</FieldLabel>
+                                <FieldLabel id="email-label" htmlFor="email">{t('email')}</FieldLabel>
                                 <Input
                                     id="email"
                                     type="email"
@@ -116,7 +118,7 @@ export function LoginForm() {
                             </Field>
                             <Field>
                                 <div className="flex items-center">
-                                    <FieldLabel id="password-label" htmlFor="password">Password</FieldLabel>
+                                    <FieldLabel id="password-label" htmlFor="password">{t('password')}</FieldLabel>
                                 </div>
                                 <Input
                                     id="password"
@@ -138,11 +140,11 @@ export function LoginForm() {
 
                             <Field className="flex flex-row gap-4">
                                 <Button type="submit" form="login-form" className="min-w-max">
-                                    Login
+                                    {t('login')}
                                 </Button>
 
                                 <Button type="button" className="min-w-max" onClick={() => navigate('/register')}>
-                                    Register
+                                    {t('register')}
                                 </Button>
                             </Field>
 
@@ -152,7 +154,7 @@ export function LoginForm() {
 
                 {!loginSuccessful &&(
                     <p className="text-sm font-medium text-destructive text-center">
-                        Incorrect e-mail or password
+                        {t('incorrectCredentials')}
                     </p>
                 )}
             </Card>
