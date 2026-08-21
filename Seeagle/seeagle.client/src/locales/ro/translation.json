@@ -108,5 +108,8 @@
   "notFoundText": "Ups, se pare că acest URL nu există!",
   "goHome": "Mergi la pagina principală",
   "unexpectedErrorLoadingUsers": "Eroare neașteptată la încărcarea utilizatorilor.",
-  "unexpectedErrorAssigningModerator": "Eroare neașteptată la atribuirea rolului de moderator."
+  "unexpectedErrorAssigningModerator": "Eroare neașteptată la atribuirea rolului de moderator.",
+
+  "languageEn": "EN",
+  "languageRo": "RO"
 }

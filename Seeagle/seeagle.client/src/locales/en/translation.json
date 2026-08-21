@@ -108,5 +108,8 @@
   "notFoundText": "Oops, looks like this URL doesn't exist!",
   "goHome": "Go to homepage",
   "unexpectedErrorLoadingUsers": "Unexpected error while loading users.",
-  "unexpectedErrorAssigningModerator": "Unexpected error while assigning moderator."
+  "unexpectedErrorAssigningModerator": "Unexpected error while assigning moderator.",
+
+  "languageEn": "EN",
+  "languageRo": "RO"
 }

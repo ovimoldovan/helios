@@ -11,20 +11,10 @@ import { ModeratorDashboard } from '@/features/moderator/components/ModeratorDas
 import {ErrorPage} from "@/shared/error_page/components/ErrorPage.tsx";
 import {PrivateRoutes} from "@/shared/utils/PrivateRoutes.tsx";
 import {Toaster} from "@/components/ui/toast.tsx";
-import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 function App() {
-    const location = useLocation();
-    const isHomepage = location.pathname === '/';
-
     return (
         <AuthProvider>
-            {!isHomepage && (
-                <div className="fixed top-4 right-4 z-50">
-                    <LanguageSwitcher />
-                </div>
-            )}
-
             <Routes>
                 <Route path="/" element={<Homepage />} />
 
