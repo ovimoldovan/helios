@@ -3,6 +3,7 @@ using NetTopologySuite.Geometries;
 using Seeagle.Application.Common;
 using Seeagle.Domain.Reports;
 using Seeagle.Domain.User;
+using Microsoft.EntityFrameworkCore;
 
 namespace Seeagle.Application.Reports;
 
@@ -29,6 +30,85 @@ public sealed class ReportService : IReportService
         var report = new Report(point, request.Description, user);
 
         await _reportRepository.AddAsync(report, cancellationToken);
+
+        return new ReportDto(
+            report.Id,
+            report.Location.X,
+            report.Location.Y,
+            report.Description,
+            report.CreatedUtc,
+            report.Status);
+    }
+    
+    public async Task<PagedResult<ReportDto>> GetPendingAsync(
+        int pageNumber,
+        int pageSize,
+        CancellationToken cancellationToken)
+    {
+        var query = _reportRepository
+            .GetAllQueryable()
+            .Where(report => report.Status == "Pending");
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var reports = await query
+            .OrderBy(report => report.CreatedUtc)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .Select(report => new ReportDto(
+                report.Id,
+                report.Location.X,
+                report.Location.Y,
+                report.Description,
+                report.CreatedUtc,
+                report.Status))
+            .ToListAsync(cancellationToken);
+
+        return new PagedResult<ReportDto>(
+            reports,
+            totalCount,
+            pageNumber,
+            pageSize);
+    }
+    
+    public async Task<ReportDto?> ApproveAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var report = _reportRepository
+            .GetAllQueryable()
+            .FirstOrDefault(report => report.Id == id);
+
+        if (report is null)
+        {
+            return null;
+        }
+
+        report.Approve();
+
+        await _reportRepository.UpdateAsync(report, cancellationToken);
+
+        return new ReportDto(
+            report.Id,
+            report.Location.X,
+            report.Location.Y,
+            report.Description,
+            report.CreatedUtc,
+            report.Status);
+    }
+    
+    public async Task<ReportDto?> RejectAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var report = _reportRepository
+            .GetAllQueryable()
+            .FirstOrDefault(report => report.Id == id);
+
+        if (report is null)
+        {
+            return null;
+        }
+
+        report.Reject();
+
+        await _reportRepository.UpdateAsync(report, cancellationToken);
 
         return new ReportDto(
             report.Id,

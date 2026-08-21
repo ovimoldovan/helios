@@ -6,7 +6,9 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/shared/context/AuthContext';
 import { getUserFromToken } from '@/shared/utils/getUserFromToken.ts';
-import { Menu, Plus, X} from 'lucide-react';
+import { Menu, Plus, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 interface LeftPanelProps {
     onNewReport?: () => void;
@@ -15,6 +17,7 @@ interface LeftPanelProps {
 }
 
 export function LeftPanel({ onNewReport, isPlacingPin = false, onCancelPlacePin }: LeftPanelProps) {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(true);
 
@@ -58,13 +61,14 @@ export function LeftPanel({ onNewReport, isPlacingPin = false, onCancelPlacePin 
                 <CardHeader className="flex-row items-center justify-between space-y-0 p-4">
                     <Logo />
                     <div className="flex items-center gap-2">
+                        <LanguageSwitcher />
                         <Button
                             variant="outline"
                             size="sm"
                             className="rounded-full text-xs px-3 h-7"
                             onClick={handleAuthAction}
                         >
-                            {isAuthenticated ? 'Logout' : 'Login'}
+                            {isAuthenticated ? t('logout') : t('login')}
                         </Button>
                         <button
                             className="sm:hidden w-7 h-7 rounded-full bg-muted flex items-center justify-center"
@@ -111,7 +115,7 @@ export function LeftPanel({ onNewReport, isPlacingPin = false, onCancelPlacePin 
                             )
                         ) : (
                             <div className="w-full border-2 border-border rounded-full py-2 text-center text-sm text-muted-foreground">
-                                Login to add report
+                                {t('loginToAddReport')}
                             </div>
                         )}
                     </div>
