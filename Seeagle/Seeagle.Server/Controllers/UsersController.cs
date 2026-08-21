@@ -16,4 +16,18 @@ public sealed class UsersController(IUserQueryService userQueryService) : Contro
         var result = await userQueryService.GetUsersAsync(pageNumber, pageSize, cancellationToken);
         return Ok(result);
     }
+
+    [HttpGet("{id}/assign-moderator")]
+    public async Task<ActionResult<UserListItemDto>> AssignModeratorRoleAsync(Guid id, [FromServices] IUserService userService, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var userDto = await userService.AssignModeratorRoleAsync(id, cancellationToken);
+            return Ok(userDto);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+    }
 }

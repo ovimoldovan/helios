@@ -13,7 +13,7 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
     [Authorize]
     [HttpPost]
     public async Task<ActionResult<ReportDto>> Create(
-        [FromBody] CreateReportRequest request, 
+        [FromBody] CreateReportRequest request,
         CancellationToken cancellationToken)
     {
         try
@@ -31,7 +31,7 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
             return BadRequest(new { message = ex.Message });
         }
     }
-    
+
     [HttpGet("approved")]
     public async Task<ActionResult<IReadOnlyList<ReportDto>>> GetApprovedReports(
         [FromQuery] int days = 30,
@@ -41,7 +41,7 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
         var reports = await reportQueryService.GetApprovedReportsAsync(fromDate, cancellationToken);
         return Ok(reports);
     }
-    
+
     [Authorize(Roles = "Moderator")]
     [HttpGet("pending")]
     public async Task<ActionResult<PagedResult<ReportDto>>> GetPending(
@@ -56,7 +56,7 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
 
         return Ok(reports);
     }
-    
+
     [Authorize(Roles = "Moderator")]
     [HttpPut("{id:guid}/approve")]
     public async Task<ActionResult<ReportDto>> Approve(
@@ -72,7 +72,7 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
 
         return Ok(report);
     }
-    
+
     [Authorize(Roles = "Moderator")]
     [HttpPut("{id:guid}/reject")]
     public async Task<ActionResult<ReportDto>> Reject(
