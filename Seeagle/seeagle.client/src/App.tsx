@@ -11,6 +11,7 @@ import { ModeratorDashboard } from '@/features/moderator/components/ModeratorDas
 import {ErrorPage} from "@/shared/error_page/components/ErrorPage.tsx";
 import {PrivateRoutes} from "@/shared/utils/PrivateRoutes.tsx";
 import {Toaster} from "@/components/ui/toast.tsx";
+import { ModerationQueue } from '@/features/moderator/components/ModerationQueue';
 
 function App() {
     return (
@@ -54,8 +55,15 @@ function App() {
                             <ModeratorDashboard/>
                         }
                     />
-                </Route>
 
+                    <Route
+                        path="/moderator/queue"
+                        element={<ModerationQueue />}
+                    />
+                    
+                </Route>
+                
+                
                 <Route
                     path="/unauthorized"
                     element={
