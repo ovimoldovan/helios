@@ -4,7 +4,7 @@ import { Route, Routes } from 'react-router-dom';
 import { AuthProvider } from '@/shared/context/AuthContext';
 import { UsersListPage } from '@/features/admin/components/UsersListPage';
 import { Homepage } from './features/homepage/components/Homepage';
-import { LoginForm } from '@/features/login/components/LoginForm';
+import { LoginPage } from '@/features/login/components/LoginPage.tsx';
 import { RegisterPage } from '@/features/registration/components/RegisterPage.tsx';
 import { AdminDashboard } from '@/features/admin/components/AdminDashboard';
 import { ModeratorDashboard } from '@/features/moderator/components/ModeratorDashboard';
@@ -21,7 +21,7 @@ function App() {
                 <Route
                     path="/login"
                     element={
-                        <LoginForm/>
+                        <LoginPage/>
                     }
                 />
 
