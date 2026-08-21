@@ -6,14 +6,15 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/shared/context/AuthContext';
 import { getUserFromToken } from '@/shared/utils/getUserFromToken.ts';
-import { Menu, MapPin, Plus } from 'lucide-react';
+import { Menu, Plus, X} from 'lucide-react';
 
 interface LeftPanelProps {
     onNewReport?: () => void;
     isPlacingPin?: boolean;
+    onCancelPlacePin?: () => void;
 }
 
-export function LeftPanel({ onNewReport, isPlacingPin = false }: LeftPanelProps) {
+export function LeftPanel({ onNewReport, isPlacingPin = false, onCancelPlacePin }: LeftPanelProps) {
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(true);
 
@@ -75,35 +76,39 @@ export function LeftPanel({ onNewReport, isPlacingPin = false }: LeftPanelProps)
                 </CardHeader>
 
                 <CardContent className="flex-1 p-4 space-y-4 overflow-y-auto">
-                    <div className="space-y-2">
-                        <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
-                            Seeagle
-                        </p>
-                        <div className="flex items-start gap-2">
-                            <MapPin className="h-5 w-5 text-muted-foreground" />
-                            <div>
-                                <p className="font-medium text-sm">
-                                    {isPlacingPin ? 'Placing pin...' : 'Placing pin'}
-                                </p>
-                                <p className="text-[10px] text-muted-foreground">
-                                    {isPlacingPin ? 'click map to drop' : 'tap map to drop'}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
                     <hr className="border-border" />
 
                     <div className="space-y-3">
                         {isAuthenticated ? (
-                            <Button
-                                variant="outline"
-                                className="w-full justify-start gap-2 border-2 rounded-full py-2 h-auto text-sm font-normal"
-                                onClick={onNewReport}
-                            >
-                                <Plus className="h-4 w-4" />
-                                New report
-                            </Button>
+                            isPlacingPin ? (
+                                <div className="grid grid-cols-2">
+                                    <Button
+                                        variant="outline"
+                                        className="w-full justify-center gap-2 border-2 rounded-full py-2 h-auto text-sm font-normal animate-in fade-in slide-in-from-top-2 duration-300 ease-in-ou"
+                                        disabled
+                                    >
+                                        <Plus className="h-4 w-4"/>
+                                        <span className="truncate">Placing...</span>
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        className="w-full justify-center gap-2 border-2 rounded-full py-2 h-auto text-sm font-normal animate-in fade-in slide-in-from-top-2 duration-300 ease-in-ou"
+                                        onClick={onCancelPlacePin}
+                                    >
+                                        <X className="h-4 w-4"/>
+                                        <span className="truncate">Cancel</span>
+                                    </Button>
+                                </div>
+                            ) : (
+                                <Button
+                                    variant="outline"
+                                    className="w-full justify-start gap-2 border-2 rounded-full py-2 h-auto text-sm font-normal animate-in fade-in slide-in-from-top-2 duration-300 ease-in-out"
+                                    onClick={onNewReport}
+                                >
+                                    <Plus className="h-4 w-4"/>
+                                    New report
+                                </Button>
+                            )
                         ) : (
                             <div className="w-full border-2 border-border rounded-full py-2 text-center text-sm text-muted-foreground">
                                 Login to add report
