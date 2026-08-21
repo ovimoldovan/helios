@@ -8,12 +8,12 @@ namespace Seeagle.Server.Controllers;
 
 [ApiController]
 [Route("api/reports")]
-public sealed class ReportsController(IReportService reportService) : ControllerBase
+public sealed class ReportsController(IReportService reportService, IReportQueryService reportQueryService) : ControllerBase
 {
     [Authorize]
     [HttpPost]
     public async Task<ActionResult<ReportDto>> Create(
-        [FromBody] CreateReportRequest request, 
+        [FromBody] CreateReportRequest request,
         CancellationToken cancellationToken)
     {
         try
@@ -31,7 +31,17 @@ public sealed class ReportsController(IReportService reportService) : Controller
             return BadRequest(new { message = ex.Message });
         }
     }
-    
+
+    [HttpGet("approved")]
+    public async Task<ActionResult<IReadOnlyList<ReportDto>>> GetApprovedReports(
+        [FromQuery] int days = 30,
+        CancellationToken cancellationToken = default)
+    {
+        var fromDate = DateTime.UtcNow.AddDays(-days);
+        var reports = await reportQueryService.GetApprovedReportsAsync(fromDate, cancellationToken);
+        return Ok(reports);
+    }
+
     [Authorize(Roles = "Moderator")]
     [HttpGet("pending")]
     public async Task<ActionResult<PagedResult<ReportDto>>> GetPending(
@@ -46,7 +56,7 @@ public sealed class ReportsController(IReportService reportService) : Controller
 
         return Ok(reports);
     }
-    
+
     [Authorize(Roles = "Moderator")]
     [HttpPut("{id:guid}/approve")]
     public async Task<ActionResult<ReportDto>> Approve(
@@ -62,7 +72,7 @@ public sealed class ReportsController(IReportService reportService) : Controller
 
         return Ok(report);
     }
-    
+
     [Authorize(Roles = "Moderator")]
     [HttpPut("{id:guid}/reject")]
     public async Task<ActionResult<ReportDto>> Reject(
