@@ -17,5 +17,10 @@ public sealed class SeeagleDbContext(DbContextOptions<SeeagleDbContext> options)
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(SeeagleDbContext).Assembly);
+        modelBuilder.Entity<Report>()
+            .HasOne(r => r.Photo)
+            .WithOne(p => p.Report)
+            .HasForeignKey<Photo>(p => p.ReportId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
