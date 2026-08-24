@@ -9,6 +9,14 @@ namespace Seeagle.Server.Controllers;
 [Authorize(Roles = "Admin")]
 public sealed class ReportTypesController(IReportTypeService reportTypeService) : ControllerBase
 {
+    [HttpGet]
+    public async Task<ActionResult<IReadOnlyList<ReportTypeDto>>> GetAll(
+        CancellationToken cancellationToken)
+    {
+        var reportTypes = await reportTypeService.GetAllAsync(cancellationToken);
+        return Ok(reportTypes);
+    }
+
     [HttpPost]
     public async Task<ActionResult<ReportTypeDto>> Create(
         CreateReportTypeRequest request,
@@ -16,7 +24,9 @@ public sealed class ReportTypesController(IReportTypeService reportTypeService) 
     {
         try
         {
-            var created = await reportTypeService.CreateAsync(request, cancellationToken);
+            var created = await reportTypeService.CreateAsync(
+                request,
+                cancellationToken);
 
             return Created($"/api/report-types/{created.Id}", created);
         }
@@ -28,5 +38,48 @@ public sealed class ReportTypesController(IReportTypeService reportTypeService) 
         {
             return Conflict(new { message = ex.Message });
         }
+    }
+
+    [HttpPut("{id:guid}")]
+    public async Task<ActionResult<ReportTypeDto>> Update(
+        Guid id,
+        UpdateReportTypeRequest request,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var updated = await reportTypeService.UpdateAsync(
+                id,
+                request,
+                cancellationToken);
+
+            if (updated is null)
+                return NotFound();
+
+            return Ok(updated);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { message = ex.Message });
+        }
+    }
+
+    [HttpPut("{id:guid}/disable")]
+    public async Task<ActionResult<ReportTypeDto>> Disable(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        var disabled = await reportTypeService.DisableAsync(
+            id,
+            cancellationToken);
+
+        if (disabled is null)
+            return NotFound();
+
+        return Ok(disabled);
     }
 }
