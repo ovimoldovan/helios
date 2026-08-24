@@ -87,6 +87,12 @@ export function RegisterForm({
 
         return validationErrors;
     }
+    
+    function clearFieldErrors(field: keyof RegisterFormErrors): void {
+        setErrors(prevState => {
+            return {...prevState, [field]: undefined}
+        });
+    }
 
     async function handleSubmit(
         event: React.SubmitEvent<HTMLFormElement>,
@@ -144,7 +150,7 @@ export function RegisterForm({
                                        onChange={
                                            (e) => {
                                                setFirstName(e.target.value);
-                                               errors.firstName = undefined;
+                                               clearFieldErrors('firstName');
                                            }
                                        }
                                        disabled={isLoading}
@@ -163,7 +169,7 @@ export function RegisterForm({
                                        onChange={
                                            (e) => {
                                                setLastName(e.target.value)
-                                               errors.lastName = undefined;
+                                               clearFieldErrors('lastName')
                                            }
                                        }
                                        disabled={isLoading}
@@ -182,7 +188,7 @@ export function RegisterForm({
                                        onChange={
                                            (e) => {
                                                setEmail(e.target.value)
-                                               errors.email = undefined;
+                                               clearFieldErrors('email')
                                            }
                                        }
                                        disabled={isLoading}
@@ -202,7 +208,8 @@ export function RegisterForm({
                                                onChange={
                                                    (e) => {
                                                        setPassword(e.target.value)
-                                                       errors.password = undefined;
+                                                       clearFieldErrors('password')
+                                                       clearFieldErrors('passwordsMatch')
                                                    }
                                                }
                                                disabled={isLoading}
@@ -219,7 +226,7 @@ export function RegisterForm({
                                                onChange={
                                                    (e) => {
                                                        setPasswordConfirmation(e.target.value)
-                                                       errors.passwordsMatch = undefined;
+                                                       clearFieldErrors('passwordsMatch')
                                                    }
                                                }
                                                disabled={isLoading}
