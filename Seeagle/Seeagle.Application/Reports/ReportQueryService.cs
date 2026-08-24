@@ -26,7 +26,8 @@ public sealed class ReportQueryService : IReportQueryService
                 r.Location.Y,
                 r.Description,
                 r.CreatedUtc,
-                r.Status))
+                r.Status,
+                r.Priority.ToString()))
             .ToListAsync(cancellationToken);
 
         return reports;

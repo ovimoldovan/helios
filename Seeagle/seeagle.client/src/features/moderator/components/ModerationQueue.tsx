@@ -17,6 +17,7 @@ import {
 import { PaginationLink } from '@/components/ui/pagination';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { PriorityModal } from './PriorityModal';
 
 const PAGE_SIZE = 10;
 
@@ -26,6 +27,11 @@ export function ModerationQueue() {
     const [totalCount, setTotalCount] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+
+    const [modalOpen, setModalOpen] = useState(false);
+    const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [selectedReport, setSelectedReport] = useState<ModerationReport | null>(null);
 
     useEffect(() => {
         setIsLoading(true);
@@ -42,21 +48,38 @@ export function ModerationQueue() {
 
     const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
 
-    async function handleApprove(id: string) {
+    const handleApprove = (report: ModerationReport) => {
+        setSelectedReportId(report.id);
+        setSelectedReport(report);
+        setModalOpen(true);
+    };
+    const handleModalClose = () => {
+        setModalOpen(false);
+        setSelectedReportId(null);
+        setSelectedReport(null);
+    };
+    const handleConfirmApprove = async (priority: string) => {
+        if (!selectedReportId) return;
+
+        setIsProcessing(true);
+
         try {
             const token = getAuthToken();
-
-            await approveReport(id, token ?? undefined);
+            await approveReport(selectedReportId, priority, token ?? undefined);
 
             setReports((currentReports) =>
-                currentReports.filter((report) => report.id !== id)
+                currentReports.filter((report) => report.id !== selectedReportId)
             );
 
             setTotalCount((currentCount) => Math.max(0, currentCount - 1));
+            setModalOpen(false);
+            setSelectedReportId(null);
         } catch {
             setError('Unexpected error while approving report.');
+        } finally {
+            setIsProcessing(false);
         }
-    }
+    };
 
     async function handleReject(id: string) {
         try {
@@ -124,7 +147,7 @@ export function ModerationQueue() {
                                             <div className="flex gap-2">
                                                 <Button
                                                     size="sm"
-                                                    onClick={() => void handleApprove(report.id)}
+                                                    onClick={() => void handleApprove(report)}
                                                 >
                                                     Approve
                                                 </Button>
@@ -193,6 +216,13 @@ export function ModerationQueue() {
                     </div>
                 </>
             )}
+            <PriorityModal
+                isOpen={modalOpen}
+                onClose={handleModalClose}
+                onConfirm={handleConfirmApprove}
+                report={selectedReport}
+                isLoading={isProcessing}
+            />
         </div>
     );
 }
