@@ -8,6 +8,7 @@ import {Input} from '@/components/ui/input';
 import {registerUser} from '../api/registrationApi';
 import {Field, FieldGroup, FieldLabel} from "@/components/ui/field.tsx";
 import {useNavigate} from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 
 const maxNameLength = 30;
 
@@ -29,6 +30,7 @@ export function RegisterForm() {
     const [isLoading, setIsLoading] = useState(false);
     
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     function validateForm(): RegisterFormErrors {
         const validationErrors: RegisterFormErrors = {};
@@ -40,33 +42,32 @@ export function RegisterForm() {
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         if (trimmedEmail.length === 0) {
-            validationErrors.email = 'Email is required.';
+            validationErrors.email = t('emailRequired');
         } else if (!emailPattern.test(trimmedEmail)) {
-            validationErrors.email = 'Enter a valid email address.';
+            validationErrors.email = t('invalidEmail');
         }
 
         const passwordPattern =
             /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$!%*?&])[A-Za-z\d@#$!%*?&]{8,}$/;
 
         if (password.length === 0) {
-            validationErrors.password = 'Password is required.';
+            validationErrors.password = t('passwordRequired');
         } else if (!passwordPattern.test(password)) {
-            validationErrors.password =
-                'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.';
+            validationErrors.password = t('invalidPassword');
         }
 
         if (trimmedFirstName.length === 0) {
-            validationErrors.firstName = 'First name is required.';
+            validationErrors.firstName = t('firstNameRequired');
         } else if (trimmedFirstName.length > maxNameLength) {
             validationErrors.firstName =
-                `First name must have at most ${maxNameLength} characters.`;
+                t('firstNameTooLong', { max: maxNameLength });
         }
 
         if (trimmedLastName.length === 0) {
-            validationErrors.lastName = 'Last name is required.';
+            validationErrors.lastName = t('lastNameRequired');
         } else if (trimmedLastName.length > maxNameLength) {
             validationErrors.lastName =
-                `Last name must have at most ${maxNameLength} characters.`;
+                t('lastNameTooLong', { max: maxNameLength });
         }
 
         return validationErrors;
@@ -98,7 +99,7 @@ export function RegisterForm() {
             navigate('/login');
         } catch {
             setErrors({
-                form: 'Registration failed. Please try again.',
+                form: t('registrationFailed'),
             });
         } finally {
             setIsLoading(false);
@@ -109,14 +110,14 @@ export function RegisterForm() {
         <main className="bg-muted">
             <Card className="w-full max-w-sm">
                 <CardHeader>
-                    <CardTitle>Create account</CardTitle>
+                    <CardTitle>{t('createAccount')}</CardTitle>
                 </CardHeader>
 
                 <form id="login-form" onSubmit={handleSubmit}>
                     <CardContent className="space-y-4">
                         <FieldGroup>
                             <Field className="whitespace-nowrap">
-                                <FieldLabel id="email-label" htmlFor="email">Email*</FieldLabel>
+                                <FieldLabel id="email-label" htmlFor="email">{t('emailField')}</FieldLabel>
                                 <Input
                                     id="email"
                                     type="email"
@@ -136,7 +137,7 @@ export function RegisterForm() {
                             </Field>
                             
                             <Field className="whitespace-nowrap">
-                                <FieldLabel id="password-label" htmlFor="password">Password*</FieldLabel>
+                                <FieldLabel id="password-label" htmlFor="password">{t('passwordField')}</FieldLabel>
                                 <Input
                                     id="password"
                                     type="password"
@@ -156,7 +157,7 @@ export function RegisterForm() {
                             </Field>
                             
                             <Field className="whitespace-nowrap">
-                                <FieldLabel id="first-name-label" htmlFor="first-name">First Name*</FieldLabel>
+                                <FieldLabel id="first-name-label" htmlFor="first-name">{t('firstNameField')}</FieldLabel>
                                 <Input
                                     id="first-name"
                                     type="text"
@@ -174,7 +175,7 @@ export function RegisterForm() {
                             </Field>
                             
                             <Field className="whitespace-nowrap">
-                                <FieldLabel id="last-name-label" htmlFor="last-name">Last Name*</FieldLabel>
+                                <FieldLabel id="last-name-label" htmlFor="last-name">{t('lastNameField')}</FieldLabel>
                                 <Input
                                     id="last-name"
                                     type="text"
@@ -193,7 +194,7 @@ export function RegisterForm() {
 
                             <Field className="flex flex-row gap-4">
                                 <Button type="submit" form="login-form" className="min-w-max">
-                                    Register
+                                    {t('createAccount')}
                                 </Button>
                             </Field>
 
