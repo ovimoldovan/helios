@@ -197,7 +197,7 @@ export function RegisterForm({
                                 <FieldError>{errors.email}</FieldError>
                             </Field>
                             <Field id="password-field">
-                                <Field className="grid grid-cols-2 gap-4">
+                                <Field className="grid lg:grid-cols-2 sm:grid-cols-1 gap-4">
                                     <Field>
                                         <FieldLabel id="password-label" htmlFor="password">{t('password') + '*'}</FieldLabel>
                                         <Input id="password"
