@@ -32,6 +32,10 @@ export function Homepage() {
             <LeftPanel
                 onNewReport={() => setIsPlacingPin(true)}
                 isPlacingPin={isPlacingPin}
+                onCancelPlacePin={() => {
+                    setIsPlacingPin(false);
+                    setPinPosition(null);
+                }}
             />
 
             <div className="absolute inset-0 z-0 isolate">
