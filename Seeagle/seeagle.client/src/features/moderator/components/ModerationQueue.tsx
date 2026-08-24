@@ -18,10 +18,13 @@ import { PaginationLink } from '@/components/ui/pagination';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PriorityModal } from './PriorityModal';
+import { useTranslation } from 'react-i18next';
 
 const PAGE_SIZE = 10;
 
 export function ModerationQueue() {
+    const { t } = useTranslation();
+
     const [reports, setReports] = useState<ModerationReport[]>([]);
     const [page, setPage] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
@@ -42,9 +45,9 @@ export function ModerationQueue() {
                 setReports(result.items);
                 setTotalCount(result.totalCount);
             })
-            .catch(() => setError('Unexpected error while loading reports.'))
+            .catch(() => setError(t('unexpectedError')))
             .finally(() => setIsLoading(false));
-    }, [page]);
+    }, [page, t]);
 
     const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
 
@@ -53,11 +56,13 @@ export function ModerationQueue() {
         setSelectedReport(report);
         setModalOpen(true);
     };
+
     const handleModalClose = () => {
         setModalOpen(false);
         setSelectedReportId(null);
         setSelectedReport(null);
     };
+
     const handleConfirmApprove = async (priority: string) => {
         if (!selectedReportId) return;
 
@@ -72,10 +77,9 @@ export function ModerationQueue() {
             );
 
             setTotalCount((currentCount) => Math.max(0, currentCount - 1));
-            setModalOpen(false);
-            setSelectedReportId(null);
+            handleModalClose();
         } catch {
-            setError('Unexpected error while approving report.');
+            setError(t('unexpectedErrorApprove'));
         } finally {
             setIsProcessing(false);
         }
@@ -84,7 +88,6 @@ export function ModerationQueue() {
     async function handleReject(id: string) {
         try {
             const token = getAuthToken();
-
             await rejectReport(id, token ?? undefined);
 
             setReports((currentReports) =>
@@ -93,71 +96,58 @@ export function ModerationQueue() {
 
             setTotalCount((currentCount) => Math.max(0, currentCount - 1));
         } catch {
-            setError('Unexpected error while rejecting report.');
+            setError(t('unexpectedErrorReject'));
         }
     }
 
     return (
         <div className="p-6">
-            <h1 className="text-xl font-semibold mb-4">
-                Moderation Queue
-            </h1>
+            <h1 className="text-xl font-semibold mb-4">{t('moderationQueue')}</h1>
 
-            {isLoading && <p>Loading reports...</p>}
+            {isLoading && <p>{t('loadingReports')}</p>}
 
-            {error && (
-                <p className="text-red-600">
-                    {error}
-                </p>
-            )}
+            {error && <p className="text-red-600">{error}</p>}
 
             {!isLoading && !error && (
                 <>
                     {reports.length === 0 ? (
-                        <p className="text-muted-foreground">
-                            No pending reports.
-                        </p>
+                        <p className="text-muted-foreground">{t('noPendingReports')}</p>
                     ) : (
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>Description</TableHead>
-                                    <TableHead>Created</TableHead>
-                                    <TableHead>Status</TableHead>
-                                    <TableHead>Action</TableHead>
+                                    <TableHead>{t('description')}</TableHead>
+                                    <TableHead>{t('created')}</TableHead>
+                                    <TableHead>{t('status')}</TableHead>
+                                    <TableHead>{t('action')}</TableHead>
                                 </TableRow>
                             </TableHeader>
-
                             <TableBody>
                                 {reports.map((report) => (
                                     <TableRow key={report.id}>
                                         <TableCell className="py-2">
-                                            {report.description ?? 'No description'}
+                                            {report.description ?? t('noDescription')}
                                         </TableCell>
-
                                         <TableCell className="py-2">
                                             {new Date(report.createdUtc).toLocaleString()}
                                         </TableCell>
-
                                         <TableCell className="py-2">
                                             {report.status}
                                         </TableCell>
-
                                         <TableCell className="py-2">
                                             <div className="flex gap-2">
                                                 <Button
                                                     size="sm"
-                                                    onClick={() => void handleApprove(report)}
+                                                    onClick={() => handleApprove(report)}
                                                 >
-                                                    Approve
+                                                    {t('approve')}
                                                 </Button>
-
                                                 <Button
                                                     size="sm"
                                                     variant="outline"
                                                     onClick={() => void handleReject(report.id)}
                                                 >
-                                                    Reject
+                                                    {t('reject')}
                                                 </Button>
                                             </div>
                                         </TableCell>
@@ -173,42 +163,26 @@ export function ModerationQueue() {
                             size="icon"
                             aria-label="Previous"
                             aria-disabled={page === 1}
-                            className={
-                                page === 1
-                                    ? 'cursor-not-allowed opacity-50'
-                                    : undefined
-                            }
+                            className={page === 1 ? 'cursor-not-allowed opacity-50' : undefined}
                             onClick={(e) => {
                                 e.preventDefault();
-
-                                if (page > 1) {
-                                    setPage(page - 1);
-                                }
+                                if (page > 1) setPage(page - 1);
                             }}
                         >
                             <ChevronLeftIcon />
                         </PaginationLink>
-
                         <span className="text-sm">
-                            Page {page} of {totalPages}
+                            {t('page')} {page} {t('of')} {totalPages}
                         </span>
-
                         <PaginationLink
                             href="#"
                             size="icon"
                             aria-label="Next"
                             aria-disabled={page === totalPages}
-                            className={
-                                page === totalPages
-                                    ? 'cursor-not-allowed opacity-50'
-                                    : undefined
-                            }
+                            className={page === totalPages ? 'cursor-not-allowed opacity-50' : undefined}
                             onClick={(e) => {
                                 e.preventDefault();
-
-                                if (page < totalPages) {
-                                    setPage(page + 1);
-                                }
+                                if (page < totalPages) setPage(page + 1);
                             }}
                         >
                             <ChevronRightIcon />
@@ -216,6 +190,7 @@ export function ModerationQueue() {
                     </div>
                 </>
             )}
+
             <PriorityModal
                 isOpen={modalOpen}
                 onClose={handleModalClose}

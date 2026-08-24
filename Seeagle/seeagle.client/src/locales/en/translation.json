@@ -109,6 +109,37 @@
   "goHome": "Go to homepage",
   "unexpectedErrorLoadingUsers": "Unexpected error while loading users.",
   "unexpectedErrorAssigningModerator": "Unexpected error while assigning moderator.",
+  
+  "moderatorDashboard": "Moderator Dashboard",
+ 
+  "moderationQueue": "Moderation Queue",
+  "loadingReports": "Loading reports...",
+  "noPendingReports": "No pending reports.",
+  "unexpectedError": "Unexpected error while loading reports.",
+  "unexpectedErrorApprove": "Unexpected error while approving report.",
+  "unexpectedErrorReject": "Unexpected error while rejecting report.",
+
+  "created": "Created",
+  "status": "Status",
+  "action": "Action",
+  "approve": "Approve",
+  "reject": "Reject",
+  "page": "Page",
+  "of": "of",
+
+  "approveReport": "Approve Report",
+  "report": "Report",
+  "noDescription": "No description",
+  "setPriority": "Set priority",
+  "setPriorityDescription": "Choose how urgently this report should be handled.",
+  "priorityLow": "Low",
+  "priorityMedium": "Medium",
+  "priorityUrgent": "Urgent",
+  "priorityLowDescription": "Other",
+  "priorityMediumDescription": "Review soon",
+  "priorityUrgentDescription": "Immediate attention",
+  "processing": "Processing...",
+  "approveReportButton": "Approve Report",
 
   "languageEn": "EN",
   "languageRo": "RO"
