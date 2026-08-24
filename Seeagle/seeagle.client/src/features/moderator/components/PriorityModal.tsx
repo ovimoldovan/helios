@@ -19,13 +19,7 @@ interface PriorityModalProps {
     isLoading: boolean;
 }
 
-export function PriorityModal({
-                                  isOpen,
-                                  onClose,
-                                  onConfirm,
-                                  report,
-                                  isLoading,
-                              }: PriorityModalProps) {
+export function PriorityModal({isOpen, onClose, onConfirm, report, isLoading,}: PriorityModalProps) {
     const { t } = useTranslation();
     const [priority, setPriority] = useState('low');
 
