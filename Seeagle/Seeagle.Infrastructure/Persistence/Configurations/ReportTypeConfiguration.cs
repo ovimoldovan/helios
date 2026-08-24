@@ -10,6 +10,9 @@ public sealed class ReportTypeConfiguration : IEntityTypeConfiguration<ReportTyp
     {
         builder.HasKey(rt => rt.Id);
 
+        builder.HasIndex(rt => rt.Name)
+            .IsUnique();
+        
         builder.Property(rt => rt.Name)
             .HasMaxLength(20)
             .IsRequired();

@@ -5,9 +5,11 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import {Button} from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 import './AdminDashboard.css';
 
 export function AdminDashboard() {
+    const navigate = useNavigate();
     return (
         <main className="relative min-h-screen overflow-y-auto p-8 bg-muted">
             <Card className="relative z-10 mx-auto max-w-6xl overflow-visible w-full">
@@ -32,7 +34,10 @@ export function AdminDashboard() {
                         <span className="font-normal">Assign administrative permissions to users.</span>
                     </Button>
 
-                    <Button className="admin-dashboard-button">
+                    <Button
+                        className="admin-dashboard-button"
+                        onClick={() => navigate('/admin/report-types')}
+                    >
                         <span className="text-base font-semibold">Report Types</span>
                         <span className="font-normal">Define, view and edit report types.</span>
                     </Button>

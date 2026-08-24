@@ -11,6 +11,8 @@ import { ModeratorDashboard } from '@/features/moderator/components/ModeratorDas
 import {ErrorPage} from "@/shared/error_page/components/ErrorPage.tsx";
 import {PrivateRoutes} from "@/shared/utils/PrivateRoutes.tsx";
 import {Toaster} from "@/components/ui/toast.tsx";
+import { ReportTypesPage } from '@/features/admin/components/ReportTypesPage';
+
 
 function App() {
     return (
@@ -46,6 +48,11 @@ function App() {
                         } 
                     />
                 </Route>
+
+                <Route
+                    path="/admin/report-types"
+                    element={<ReportTypesPage />}
+                />
 
                 <Route element={<PrivateRoutes allowedRoles={['Moderator', 'Admin']}/>}>
                     <Route
