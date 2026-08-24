@@ -76,13 +76,13 @@ export function RegisterForm({
         if (trimmedFirstName.length === 0) {
             validationErrors.firstName = t('firstNameRequired');
         } else if (trimmedFirstName.length > maxNameLength) {
-            validationErrors.firstName = t('firstNameTooLong');
+            validationErrors.firstName = t('firstNameTooLong', { max: maxNameLength });
         }
 
         if (trimmedLastName.length === 0) {
             validationErrors.lastName = t('lastNameRequired');
         } else if (trimmedLastName.length > maxNameLength) {
-            validationErrors.lastName = t('lastNameTooLong');
+            validationErrors.lastName = t('lastNameTooLong', { max: maxNameLength });
         }
 
         return validationErrors;
