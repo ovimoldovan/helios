@@ -6,10 +6,10 @@ namespace Seeagle.Server.Controllers;
 
 [ApiController]
 [Route("api/report-types")]
-[Authorize(Roles = "Admin")]
 public sealed class ReportTypesController(IReportTypeService reportTypeService) : ControllerBase
 {
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ReportTypeDto>> Create(
         CreateReportTypeRequest request,
         CancellationToken cancellationToken)

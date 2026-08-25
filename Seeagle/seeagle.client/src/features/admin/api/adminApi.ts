@@ -1,6 +1,7 @@
 import { getJson } from '@/shared/api/httpClient';
 import type { UserListItem } from '@/shared/types/admin';
 import type { PagedResult } from '@/shared/types/pagedResult';
+import type { ReportType } from '@/shared/types/report';
 
 export async function getUsers(page: number, pageSize: number, token: string): Promise<PagedResult<UserListItem>> {
   return getJson<PagedResult<UserListItem>>(`/api/users?pageNumber=${page}&pageSize=${pageSize}`, token);
@@ -8,11 +9,6 @@ export async function getUsers(page: number, pageSize: number, token: string): P
 
 export async function assignModerator(userId: string, token: string): Promise<UserListItem> {
   return getJson<UserListItem>(`/api/users/${userId}/assign-moderator`, token);
-}
-
-export interface ReportType {
-  id: string;
-  name: string;
 }
 
 export async function createReportType(
@@ -29,11 +25,11 @@ export async function createReportType(
   });
 
   if (response.status === 409) {
-    throw new Error('DUPLICATE_REPORT_TYPE');
+    throw new Error('This report type already exists.');
   }
 
   if (!response.ok) {
-    throw new Error('CREATE_REPORT_TYPE_FAILED');
+    throw new Error('Failed to create report type.');
   }
 
   return await response.json() as ReportType;

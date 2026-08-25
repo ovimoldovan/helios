@@ -16,12 +16,21 @@ namespace Seeagle.Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false)
+                    Name = table.Column<string>(
+                        type: "character varying(20)",
+                        maxLength: 20,
+                        nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ReportTypes", x => x.Id);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ReportTypes_Name",
+                table: "ReportTypes",
+                column: "Name",
+                unique: true);
         }
 
         /// <inheritdoc />
