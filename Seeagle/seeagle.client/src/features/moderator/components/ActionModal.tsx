@@ -19,13 +19,7 @@ interface ActionModalProps {
     isLoading: boolean;
 }
 
-export function ActionModal({
-                                isOpen,
-                                onClose,
-                                onConfirm,
-                                report,
-                                isLoading,
-                            }: ActionModalProps) {
+export function ActionModal({isOpen, onClose, onConfirm, report, isLoading,}: ActionModalProps) {
     const [message, setMessage] = useState('');
     const [markAsSolved, setMarkAsSolved] = useState(false);
 

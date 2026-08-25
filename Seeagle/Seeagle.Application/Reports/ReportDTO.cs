@@ -8,5 +8,4 @@ public sealed record ReportDto(
     DateTime CreatedUtc,
     string Status,
     string Priority
-    
     );
