@@ -119,5 +119,21 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
         return Ok(report);
     }
     
+    [Authorize(Roles = "Moderator")]
+    [HttpPut("{id:guid}/message")]
+    public async Task<ActionResult<ReportDto>> SendMessage(
+        Guid id,
+        [FromQuery] string? message = null,
+        CancellationToken cancellationToken = default)
+    {
+        var report = await reportService.SendMessageToReporterAsync(id, message, cancellationToken);
+
+        if (report is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(report);
+    }
     
 }

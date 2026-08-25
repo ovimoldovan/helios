@@ -45,6 +45,10 @@ public class Report
         MessageToReporter = message;
         Status = "Solved";
     }
+    public void UpdateMessageToReporter(string? message)
+    {
+        MessageToReporter = message;
+    }
     public void Approve(Priority priority)
     {
         Status = "Approved";

@@ -8,23 +8,36 @@ import {
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { ModerationReport } from '@/features/moderator/api/moderationApi';
 
 interface ActionModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onConfirm: (message: string | null) => void;
+    onConfirm: (message: string | null, markAsSolved: boolean) => void;  // ← Schimbat
     report: ModerationReport | null;
     isLoading: boolean;
 }
 
-export function ActionModal({isOpen, onClose, onConfirm, report, isLoading,}: ActionModalProps) {
+export function ActionModal({
+                                isOpen,
+                                onClose,
+                                onConfirm,
+                                report,
+                                isLoading,
+                            }: ActionModalProps) {
     const [message, setMessage] = useState('');
     const [markAsSolved, setMarkAsSolved] = useState(false);
 
+    useEffect(() => {
+        if (isOpen) {
+            setMessage('');
+            setMarkAsSolved(false);
+        }
+    }, [isOpen]);
+
     const handleConfirm = () => {
-        onConfirm(markAsSolved ? message : null);
+        onConfirm(message.trim() || null, markAsSolved);
     };
 
     return (
@@ -40,7 +53,7 @@ export function ActionModal({isOpen, onClose, onConfirm, report, isLoading,}: Ac
                             {report.description ?? 'No description'}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                            Priority: <span className="font-medium"></span>
+                            Priority: <span className="font-medium">{report.priority}</span>
                         </p>
                     </div>
                 )}

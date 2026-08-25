@@ -9,6 +9,7 @@ export interface ModerationReport {
     description: string | null;
     createdUtc: string;
     status: string;
+    priority: string;
     isSolved?: boolean;
     messageToReporter?: string | null;
 }
@@ -51,5 +52,15 @@ export async function markAsSolved(id: string, message?: string | null,  token?:
     const url = message
         ? `/api/reports/${id}/solved?message=${encodeURIComponent(message)}`
         : `/api/reports/${id}/solved`;
+    return putJson<ModerationReport>(url, token);
+}
+export async function sendMessageToReporter(
+    id: string,
+    message?: string | null,
+    token?: string
+): Promise<ModerationReport> {
+    const url = message
+        ? `/api/reports/${id}/message?message=${encodeURIComponent(message)}`
+        : `/api/reports/${id}/message`;
     return putJson<ModerationReport>(url, token);
 }

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import {
     getApprovedReports,
     markAsSolved,
+    sendMessageToReporter,
     type ModerationReport,
 } from '@/features/moderator/api/moderationApi';
 import { getAuthToken } from '@/shared/auth/getAuthToken';
@@ -51,17 +52,24 @@ export function ApprovedReports() {
         setModalOpen(true);
     };
 
-    const handleConfirmAction = async (message: string | null) => {
+    const handleConfirmAction = async (message: string | null, shouldMarkAsSolved: boolean) => {
         if (!selectedReport) return;
 
         setIsProcessing(true);
 
         try {
             const token = getAuthToken();
-            await markAsSolved(selectedReport.id, message, token ?? undefined);
+            if (shouldMarkAsSolved) {
+                await markAsSolved(selectedReport.id, message, token ?? undefined);
+            } else {
+                await sendMessageToReporter(selectedReport.id, message, token ?? undefined);
+            }
 
-            setReports((current) => current.filter((r) => r.id !== selectedReport.id));
-            setTotalCount((current) => Math.max(0, current - 1));
+            if (shouldMarkAsSolved) {
+                setReports((current) => current.filter((r) => r.id !== selectedReport.id));
+                setTotalCount((current) => Math.max(0, current - 1));
+            }
+
             setModalOpen(false);
             setSelectedReport(null);
         } catch {
@@ -71,14 +79,14 @@ export function ApprovedReports() {
         }
     };
 
-    // const priorityBadge = (priority: string) => {
-    //     const config = {
-    //         Urgent: 'bg-red-100 text-red-700',
-    //         Medium: 'bg-yellow-100 text-yellow-700',
-    //         Low: 'bg-green-100 text-green-700',
-    //     };
-    //     return config[priority as keyof typeof config] || config.Low;
-    // };
+    const priorityBadge = (priority: string) => {
+        const config = {
+            Urgent: 'bg-red-100 text-red-700',
+            Medium: 'bg-yellow-100 text-yellow-700',
+            Low: 'bg-green-100 text-green-700',
+        };
+        return config[priority as keyof typeof config] || config.Low;
+    };
 
     return (
         <div className="p-6">
@@ -109,9 +117,9 @@ export function ApprovedReports() {
                                             {report.description ?? 'No description'}
                                         </TableCell>
                                         <TableCell className="py-2">
-                                            {/*<span className={`px-2 py-1 rounded-full text-xs font-medium ${priorityBadge(report.priority)}`}>*/}
-                                            {/*    {report.priority}*/}
-                                            {/*</span>*/}
+                                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${priorityBadge(report.priority)}`}>
+                                                {report.priority}
+                                            </span>
                                         </TableCell>
                                         <TableCell className="py-2">
                                             {new Date(report.createdUtc).toLocaleString()}
