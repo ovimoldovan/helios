@@ -8,7 +8,8 @@ namespace Seeagle.Server.Controllers;
 
 [ApiController]
 [Route("api/reports")]
-public sealed class ReportsController(IReportService reportService, IReportQueryService reportQueryService) : ControllerBase
+public sealed class ReportsController(IReportService reportService, IReportQueryService reportQueryService)
+    : ControllerBase
 {
     [Authorize]
     [HttpPost]
@@ -23,6 +24,7 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
             {
                 return Unauthorized(new { message = "User ID claim is missing or invalid." });
             }
+
             var result = await reportService.CreateAsync(userId, request, cancellationToken);
             return Ok(result);
         }
@@ -61,15 +63,14 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
     [HttpPut("{id:guid}/approve")]
     public async Task<ActionResult<ReportDto>> Approve(
         Guid id,
-        CancellationToken cancellationToken)
+        [FromQuery] string priority = "low",
+        CancellationToken cancellationToken = default)
     {
-        var report = await reportService.ApproveAsync(id, cancellationToken);
-
+        var report = await reportService.ApproveAsync(id, priority, cancellationToken);
         if (report is null)
         {
             return NotFound();
         }
-
         return Ok(report);
     }
 
@@ -80,12 +81,10 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
         CancellationToken cancellationToken)
     {
         var report = await reportService.RejectAsync(id, cancellationToken);
-
         if (report is null)
         {
             return NotFound();
         }
-
         return Ok(report);
     }
 }
