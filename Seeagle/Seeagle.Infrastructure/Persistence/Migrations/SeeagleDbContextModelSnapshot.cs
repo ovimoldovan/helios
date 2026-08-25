@@ -76,11 +76,9 @@ namespace Seeagle.Infrastructure.Persistence.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
-                    b.Property<double>("Latitude")
-                        .HasColumnType("double precision");
-
-                    b.Property<double>("Longitude")
-                        .HasColumnType("double precision");
+                    b.Property<Point>("Location")
+                        .IsRequired()
+                        .HasColumnType("geometry");
 
                     b.Property<Guid?>("ReportTypeId")
                         .HasColumnType("uuid");
@@ -89,10 +87,12 @@ namespace Seeagle.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid?>("UserId")
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Reports");
                 });
@@ -151,6 +151,17 @@ namespace Seeagle.Infrastructure.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("Users", (string)null);
+                });
+
+            modelBuilder.Entity("Seeagle.Domain.Reports.Report", b =>
+                {
+                    b.HasOne("Seeagle.Domain.User.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

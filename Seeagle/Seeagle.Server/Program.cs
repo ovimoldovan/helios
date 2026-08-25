@@ -38,6 +38,8 @@ builder.Services.AddScoped<IAreaService, AreaService>();
 builder.Services.AddScoped<IReportTypeService, ReportTypeService>();
 builder.Services.AddScoped<ISampleNameService, SampleNameService>();
 builder.Services.AddScoped<IReportService, ReportService>();
+builder.Services.AddScoped<IUserQueryService, UserQueryService>();
+builder.Services.AddScoped<IReportQueryService, ReportQueryService>();
 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
 builder.Services.AddScoped<IJwtUtil, JwtUtil>();
@@ -99,7 +101,7 @@ static void SetupDatabase(WebApplicationBuilder builder)
     var connectionString = builder.Configuration.GetConnectionString("SeeagleDatabase")
         ?? throw new InvalidOperationException("Connection string 'SeeagleDatabase' was not found.");
 
-    builder.Services.AddDbContext<SeeagleDbContext>(options => options.UseNpgsql(connectionString, o => o.UseNetTopologySuite()));
+    builder.Services.AddDbContext<SeeagleDbContext>(options => options.UseNpgsql(connectionString, npgsqlOptions => npgsqlOptions.UseNetTopologySuite()));
 
     builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
 }
