@@ -2,28 +2,46 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
-import { Pencil, Trash2, Check, X } from 'lucide-react';
+import { Pencil, Trash2, Check, X, Square, Pentagon } from 'lucide-react';
 import type { Area } from '../types';
 
 interface AreasSidePanelProps {
     areas: Area[];
     onDeleteArea: (id: string) => void;
     onRenameArea: (id: string, newName: string) => void;
+    onStartDraw: (mode: 'rectangle' | 'polygon') => void;
 }
 
-export function AreasSidePanel({ areas, onDeleteArea, onRenameArea }: AreasSidePanelProps) {
+export function AreasSidePanel({ areas, onDeleteArea, onRenameArea, onStartDraw }: AreasSidePanelProps) {
     return (
         <div className="fixed z-9998 h-dvh bg-white p-4 flex flex-col w-80 left-0 overflow-y-auto shadow-md">
             <h2 className="text-lg font-bold text-gray-800 mb-2">Area Management</h2>
             <p className="text-sm text-gray-500 mb-4">
-                Draw rectangles on the map to define areas.
+                Draw shapes on the map to define areas.
             </p>
+
+            <div className="flex gap-2 mb-4">
+                <Button
+                    size="sm"
+                    className="flex-1 bg-green-700 hover:bg-green-800 text-white flex items-center gap-1.5"
+                    onClick={() => onStartDraw('rectangle')}
+                >
+                    <Square className="h-3.5 w-3.5" /> Rectangle
+                </Button>
+                <Button
+                    size="sm"
+                    className="flex-1 bg-green-700 hover:bg-green-800 text-white flex items-center gap-1.5"
+                    onClick={() => onStartDraw('polygon')}
+                >
+                    <Pentagon className="h-3.5 w-3.5" /> Polygon
+                </Button>
+            </div>
 
             <div className="h-px bg-gray-200 w-full mb-4" />
 
             {areas.length === 0 && (
                 <p className="text-sm text-gray-400 italic text-center py-4">
-                    No areas yet. Use the draw tool on the map to create one.
+                    No areas yet. Use the buttons above to draw one.
                 </p>
             )}
 

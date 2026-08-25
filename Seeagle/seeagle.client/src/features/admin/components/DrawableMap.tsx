@@ -6,19 +6,29 @@ import 'leaflet-draw/dist/leaflet.draw.css';
 import 'leaflet-draw';
 import type { Area } from '../types';
 
-const RECTANGLE_BORDER_COLOR = '#15803d';
-const RECTANGLE_FILL_COLOR = '#15803d';
-const RECTANGLE_FILL_OPACITY = 0.15;
-const RECTANGLE_BORDER_WEIGHT = 2;
+const BORDER_COLOR = '#15803d';
+const FILL_COLOR = '#15803d';
+const FILL_OPACITY = 0.15;
+const BORDER_WEIGHT = 2;
+
+const shapeOptions = {
+    color: BORDER_COLOR,
+    fillColor: FILL_COLOR,
+    fillOpacity: FILL_OPACITY,
+    weight: BORDER_WEIGHT,
+};
 
 interface DrawableMapProps {
     areas: Area[];
-    onAreaCreated: (bounds: [[number, number], [number, number]]) => void;
+    onAreaCreated: (coordinates: number[][]) => void;
+    drawMode: 'rectangle' | 'polygon' | null;
+    onDrawComplete: () => void;
 }
 
-function DrawControls({ areas, onAreaCreated }: DrawableMapProps) {
+function DrawControls({ areas, onAreaCreated, drawMode, onDrawComplete }: DrawableMapProps) {
     const map = useMap();
     const featureGroupRef = useRef<L.FeatureGroup>(new L.FeatureGroup());
+    const drawControlRef = useRef<L.Control.Draw | null>(null);
 
     useEffect(() => {
         const featureGroup = featureGroupRef.current;
@@ -27,16 +37,8 @@ function DrawControls({ areas, onAreaCreated }: DrawableMapProps) {
         const drawControl = new L.Control.Draw({
             position: 'topright',
             draw: {
-                rectangle: {
-                    showArea: false,
-                    shapeOptions: {
-                        color: RECTANGLE_BORDER_COLOR,
-                        fillColor: RECTANGLE_FILL_COLOR,
-                        fillOpacity: RECTANGLE_FILL_OPACITY,
-                        weight: RECTANGLE_BORDER_WEIGHT,
-                    },
-                },
-                polygon: false,
+                rectangle: { showArea: false, shapeOptions },
+                polygon: { showArea: true, shapeOptions },
                 circle: false,
                 circlemarker: false,
                 marker: false,
@@ -50,6 +52,10 @@ function DrawControls({ areas, onAreaCreated }: DrawableMapProps) {
         });
 
         map.addControl(drawControl);
+        drawControlRef.current = drawControl;
+
+        const container = (drawControl as any).getContainer();
+        if (container) container.style.display = 'none';
 
         map.on('draw:drawstart', () => {
             map.dragging.disable();
@@ -64,11 +70,21 @@ function DrawControls({ areas, onAreaCreated }: DrawableMapProps) {
         });
 
         map.on(L.Draw.Event.CREATED, (e: any) => {
-            const bounds = e.layer.getBounds();
-            onAreaCreated([
-                [bounds.getNorthWest().lat, bounds.getNorthWest().lng],
-                [bounds.getSouthEast().lat, bounds.getSouthEast().lng],
-            ]);
+            const layer = e.layer;
+            let coords: number[][] = [];
+
+            if (e.layerType === 'rectangle') {
+                const bounds = layer.getBounds();
+                coords = [
+                    [bounds.getNorthWest().lat, bounds.getNorthWest().lng],
+                    [bounds.getSouthEast().lat, bounds.getSouthEast().lng],
+                ];
+            } else if (e.layerType === 'polygon') {
+                const latlngs = layer.getLatLngs()[0] as L.LatLng[];
+                coords = latlngs.map(ll => [ll.lat, ll.lng]);
+            }
+            onAreaCreated(coords);
+            onDrawComplete();
         });
 
         return () => {
@@ -77,28 +93,44 @@ function DrawControls({ areas, onAreaCreated }: DrawableMapProps) {
             map.off('draw:drawstop');
             map.off(L.Draw.Event.CREATED);
             map.removeLayer(featureGroup);
+            drawControlRef.current = null;
         };
-    }, [map, onAreaCreated]);
+    }, [map, onAreaCreated, onDrawComplete]);
+
+    useEffect(() => {
+        const control = drawControlRef.current;
+        if (!control || !drawMode) return;
+
+        const toolbars = (control as any)._toolbars;
+        if (!toolbars?.draw?._modes) return;
+
+        const modes = toolbars.draw._modes;
+        if (drawMode === 'rectangle' && modes.rectangle) {
+            modes.rectangle.handler.enable();
+        } else if (drawMode === 'polygon' && modes.polygon) {
+            modes.polygon.handler.enable();
+        }
+    }, [drawMode]);
 
     useEffect(() => {
         featureGroupRef.current.clearLayers();
 
         areas.forEach((area) => {
-            const rect = L.rectangle(area.bounds, {
-                color: RECTANGLE_BORDER_COLOR,
-                fillColor: RECTANGLE_FILL_COLOR,
-                weight: RECTANGLE_BORDER_WEIGHT,
-                fillOpacity: RECTANGLE_FILL_OPACITY,
-            });
-            rect.bindTooltip(area.name, { permanent: true, direction: 'center', className: 'area-label' });
-            featureGroupRef.current.addLayer(rect);
+            let shape;
+            if (area.coordinates.length === 2) {
+                shape = L.rectangle(area.coordinates as [[number, number], [number, number]], shapeOptions);
+            } else {
+                shape = L.polygon(area.coordinates as [number, number][], shapeOptions);
+            }
+            shape.bindTooltip(area.name, { permanent: true, direction: 'center', className: 'area-label' });
+            featureGroupRef.current.addLayer(shape);
         });
     }, [areas]);
 
     return null;
 }
 
-export function DrawableMap({ areas, onAreaCreated }: DrawableMapProps) {
+export function DrawableMap({ areas, onAreaCreated, drawMode, onDrawComplete }: DrawableMapProps) {
     return (
         <MapContainer
             center={[45.9432, 24.9668]}
@@ -110,7 +142,12 @@ export function DrawableMap({ areas, onAreaCreated }: DrawableMapProps) {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; OpenStreetMap contributors'
             />
-            <DrawControls areas={areas} onAreaCreated={onAreaCreated} />
+            <DrawControls
+                areas={areas}
+                onAreaCreated={onAreaCreated}
+                drawMode={drawMode}
+                onDrawComplete={onDrawComplete}
+            />
         </MapContainer>
     );
 }

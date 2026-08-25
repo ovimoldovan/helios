@@ -9,16 +9,14 @@ import type { Area, CreateAreaRequest, CreateAreaResponse } from '../types';
 export function AdminAreasPage() {
     const [areas, setAreas] = useState<Area[]>([]);
     const [nextId, setNextId] = useState(1);
+    const [drawMode, setDrawMode] = useState<'rectangle' | 'polygon' | null>(null);
 
     // TODO (Backend): fetch existing areas on page load using getJson
 
-    const handleAreaCreated = useCallback(async(bounds: [[number, number], [number, number]]) => {
+    const handleAreaCreated = useCallback(async(coordinates: number[][]) => {
         const request: CreateAreaRequest = {
             name: `Area ${nextId}`,
-            northWestLatitude: bounds[0][0],
-            northWestLongitude: bounds[0][1],
-            southEastLatitude: bounds[1][0],
-            southEastLongitude: bounds[1][1],
+            coordinates
         };
         try {
             const token = getCookie('authToken');
@@ -26,16 +24,15 @@ export function AdminAreasPage() {
             const newArea: Area = {
                 id: response.id,
                 name: request.name,
-                bounds,
+                coordinates,
             };
             setAreas((prev) => [...prev, newArea]);
             setNextId((prev) => prev + 1);
-        } catch (error) { 
-            // Remove after backend is merged
+        } catch (error) {   
             const newArea: Area = {
             id: String(nextId),
             name: `Area ${nextId}`,
-            bounds,
+            coordinates,
         };
         setAreas((prev) => [...prev, newArea]);
         setNextId((prev) => prev + 1);
@@ -67,11 +64,14 @@ export function AdminAreasPage() {
                 areas={areas}
                 onDeleteArea={handleDeleteArea}
                 onRenameArea={handleRenameArea}
+                onStartDraw={setDrawMode}
             />
 
             <DrawableMap
                 areas={areas}
                 onAreaCreated={handleAreaCreated}
+                drawMode={drawMode}
+                onDrawComplete={() => setDrawMode(null)}
             />
         </div>
     );

@@ -11,6 +11,8 @@ using Seeagle.Application.Users;
 using Seeagle.Application.Reports;
 using Seeagle.Server.Utils.JWT;
 using Swashbuckle.AspNetCore.Filters;
+using Seeagle.Application.Areas;
+using Seeagle.Application.ReportTypes;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +34,8 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAreaService, AreaService>();
+builder.Services.AddScoped<IReportTypeService, ReportTypeService>();
 builder.Services.AddScoped<ISampleNameService, SampleNameService>();
 builder.Services.AddScoped<IReportService, ReportService>();
 
@@ -95,7 +99,7 @@ static void SetupDatabase(WebApplicationBuilder builder)
     var connectionString = builder.Configuration.GetConnectionString("SeeagleDatabase")
         ?? throw new InvalidOperationException("Connection string 'SeeagleDatabase' was not found.");
 
-    builder.Services.AddDbContext<SeeagleDbContext>(options => options.UseNpgsql(connectionString));
+    builder.Services.AddDbContext<SeeagleDbContext>(options => options.UseNpgsql(connectionString, o => o.UseNetTopologySuite()));
 
     builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
 }
