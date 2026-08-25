@@ -12,6 +12,7 @@ import {ErrorPage} from "@/shared/error_page/components/ErrorPage.tsx";
 import {PrivateRoutes} from "@/shared/utils/PrivateRoutes.tsx";
 import {Toaster} from "@/components/ui/toast.tsx";
 import { ModerationQueue } from '@/features/moderator/components/ModerationQueue';
+import {ApprovedReports} from "@/features/moderator/components/ApprovedReports.tsx";
 
 function App() {
     return (
@@ -59,6 +60,10 @@ function App() {
                     <Route
                         path="/moderator/queue"
                         element={<ModerationQueue />}
+                    />
+                    <Route
+                        path="/moderator/approved"
+                        element={<ApprovedReports />}
                     />
                     
                 </Route>

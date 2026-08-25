@@ -88,4 +88,37 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
 
         return Ok(report);
     }
+    
+    [Authorize(Roles = "Moderator")]
+    [HttpGet("approved-list")]
+    public async Task<ActionResult<PagedResult<ReportDto>>> GetApprovedReports(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
+        CancellationToken cancellationToken = default)
+    {
+        var reports = await reportService.GetApprovedReportsAsync(
+            pageNumber,
+            pageSize,
+            cancellationToken);
+
+        return Ok(reports);
+    }
+    [Authorize(Roles = "Moderator")]
+    [HttpPut("{id:guid}/solved")]
+    public async Task<ActionResult<ReportDto>> MarkAsSolved(
+        Guid id,
+        [FromQuery] string? message = null,
+        CancellationToken cancellationToken = default)
+    {
+        var report = await reportService.MarkAsSolvedAsync(id, message, cancellationToken);
+
+        if (report is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(report);
+    }
+    
+    
 }
