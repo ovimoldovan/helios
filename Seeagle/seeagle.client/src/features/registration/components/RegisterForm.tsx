@@ -1,14 +1,15 @@
 import type React from 'react';
-import {useState} from 'react';
+import { useState } from 'react';
 
-import {Button} from '@/components/ui/button';
-import {Card, CardContent, CardHeader, CardTitle,} from '@/components/ui/card';
-import {Input} from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 
-import {registerUser} from '../api/registrationApi';
-import {Field, FieldGroup, FieldLabel} from "@/components/ui/field.tsx";
-import {useNavigate} from "react-router-dom";
+import { registerUser } from '../api/registrationApi';
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field.tsx";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
+
 
 const maxNameLength = 30;
 

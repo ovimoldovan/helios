@@ -111,5 +111,21 @@
   "unexpectedErrorAssigningModerator": "Unexpected error while assigning moderator.",
 
   "languageEn": "EN",
-  "languageRo": "RO"
+  "languageRo": "RO",
+
+  "home": "Home",
+  "admin": "Admin",
+  "moderator": "Moderator",
+
+  "loadingReports": "Loading reports...",
+  "errorLoadingReports": "Unexpected error while loading reports.",
+  "errorApprovingReport": "Unexpected error while approving report.",
+  "errorRejectingReport": "Unexpected error while rejecting report.",
+  "noPendingReports": "No pending reports.",
+  "descriptionColumn": "Description",
+  "createdColumn": "Created",
+  "statusColumn": "Status",
+  "noDescription": "No description",
+  "approve": "Approve",
+  "reject": "Reject"
 }

@@ -27,7 +27,7 @@ export function getUserFromToken(): UserPayload | null {
             given_name: decoded.given_name || decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname'] || '',
             family_name: decoded.family_name || decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname'] || '',
             exp: decoded.exp || 0,
-            role: decoded.role || decoded['http://schemas.microsoft.com/windows/2008/06/identity/claims/role'] || ''
+            role: decoded.role || decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || ''
         };
     } catch (error) {
         console.error('Failed to decode token:', error);

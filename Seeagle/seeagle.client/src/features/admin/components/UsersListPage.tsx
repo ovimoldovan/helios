@@ -16,6 +16,7 @@ import {
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
+import { LeftPanel } from '@/features/homepage/components/LeftPanel';
 
 const PAGE_SIZE = 10;
 
@@ -69,24 +70,26 @@ export function UsersListPage() {
   }
 
   return (
-    <div className="p-6">
-      <h1 className="text-xl font-semibold mb-4">{t('registeredUsers')}</h1>
+    <div className="flex">
+      <LeftPanel />
+      <div className="flex-1 p-6">
+        <h1 className="text-xl font-semibold mb-4">{t('registeredUsers')}</h1>
 
-      {loading && <p>{t('loadingUsers')}</p>}
-      {error && <p className="text-red-600">{error}</p>}
+        {loading && <p>{t('loadingUsers')}</p>}
+        {error && <p className="text-red-600">{error}</p>}
 
-      {!loading && !error && (
-        <>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t('emailColumn')}</TableHead>
-                <TableHead>{t('firstNameColumn')}</TableHead>
-                <TableHead>{t('lastNameColumn')}</TableHead>
-                <TableHead>{t('roleColumn')}</TableHead>
-                <TableHead>{t('actionColumn')}</TableHead>
-              </TableRow>
-            </TableHeader>
+        {!loading && !error && (
+          <>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t('emailColumn')}</TableHead>
+                  <TableHead>{t('firstNameColumn')}</TableHead>
+                  <TableHead>{t('lastNameColumn')}</TableHead>
+                  <TableHead>{t('roleColumn')}</TableHead>
+                  <TableHead>{t('actionColumn')}</TableHead>
+                </TableRow>
+              </TableHeader>
             <TableBody>
               {users.map((user) => (
                 <TableRow key={user.id}>
@@ -147,6 +150,7 @@ export function UsersListPage() {
           </div>
         </>
       )}
+      </div>
     </div>
   );
 }
