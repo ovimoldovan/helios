@@ -25,8 +25,11 @@ export async function getPendingReports(
     );
 }
 
-export async function approveReport(id: string, token?: string): Promise<ModerationReport> {
-    return putJson<ModerationReport>(`/api/reports/${id}/approve`, token);
+export async function approveReport( id: string, priority: string, token?: string): Promise<ModerationReport> {
+    return putJson<ModerationReport>(
+        `/api/reports/${id}/approve?priority=${priority}`,
+        token
+    );
 }
 
 export async function rejectReport(id: string, token?: string): Promise<ModerationReport> {

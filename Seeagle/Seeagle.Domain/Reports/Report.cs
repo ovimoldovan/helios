@@ -35,6 +35,7 @@ public class Report
     public User.User User { get; private set; }
     public Guid? ReportTypeId { get; private set; }
     public string Status { get; private set; } = string.Empty;
+    public Priority Priority { get; private set; } = Priority.Low;
     public string? MessageToReporter { get; private set; }
     public bool IsSolved { get; private set; }
     
@@ -44,10 +45,12 @@ public class Report
         MessageToReporter = message;
         Status = "Solved";
     }
-    
-    public void Approve() {
+    public void Approve(Priority priority)
+    {
         Status = "Approved";
+        Priority = priority;
     }
+    
     public void Reject()
     {
         Status = "Rejected";
