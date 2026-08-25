@@ -10,36 +10,37 @@ import { useState } from 'react';
 import type { ModerationReport } from '@/features/moderator/api/moderationApi';
 import { Check, AlertTriangle, CircleAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { Priority } from "./models/Priority";
 
 interface PriorityModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onConfirm: (priority: string) => void;
+    onConfirm: (priority: Priority) => void;
     report: ModerationReport | null;
     isLoading: boolean;
 }
 
 export function PriorityModal({isOpen, onClose, onConfirm, report, isLoading,}: PriorityModalProps) {
     const { t } = useTranslation();
-    const [priority, setPriority] = useState('low');
+    const [priority, setPriority] = useState<Priority>(Priority.Low);
 
     const priorities = [
         {
-            value: 'low',
+            value: Priority.Low,
             label: t('priorityLow'),
             description: t('priorityLowDescription'),
             icon: Check,
             active: 'border-green-500 bg-green-50 text-green-700',
         },
         {
-            value: 'medium',
+            value: Priority.Medium,
             label: t('priorityMedium'),
             description: t('priorityMediumDescription'),
             icon: AlertTriangle,
             active: 'border-yellow-500 bg-yellow-50 text-yellow-700',
         },
         {
-            value: 'urgent',
+            value: Priority.Urgent,
             label: t('priorityUrgent'),
             description: t('priorityUrgentDescription'),
             icon: CircleAlert,
