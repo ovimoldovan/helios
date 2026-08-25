@@ -1,4 +1,4 @@
-import { getJson } from '@/shared/api/httpClient';
+import { getJson, postJson } from '@/shared/api/httpClient';
 import type { UserListItem } from '@/shared/types/admin';
 import type { PagedResult } from '@/shared/types/pagedResult';
 import type { ReportType } from '@/shared/types/report';
@@ -15,22 +15,21 @@ export async function createReportType(
     name: string,
     token: string
 ): Promise<ReportType> {
-  const response = await fetch('/api/report-types', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    },
-    body: JSON.stringify({ name }),
-  });
+  try {
+    return await postJson<ReportType>(
+        '/api/report-types',
+        { name },
+        token
+    );
+  } catch (error) {
+    if (
+        error instanceof Error &&
+        error.message === 'Request failed with status 409.'
+    ) {
+      throw new Error('This report type already exists.');
+    }
 
-  if (response.status === 409) {
-    throw new Error('This report type already exists.');
+    throw error;
   }
-
-  if (!response.ok) {
-    throw new Error('Failed to create report type.');
-  }
-
-  return await response.json() as ReportType;
 }
+

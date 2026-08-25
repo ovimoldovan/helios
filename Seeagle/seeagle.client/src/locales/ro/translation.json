@@ -86,7 +86,8 @@
   "maximum20Characters": "Maximum 20 de caractere.",
   "adding": "Se adaugă...",
   "add": "Adaugă",
-
+  "reportTypeAlreadyExists": "Acest tip de raport există deja.",
+  
   "moderatorDashboardTitle": "Panou de moderare",
   "moderatorDashboardDescription": "Gestionează rapoartele care necesită moderare.",
   "moderationQueueTitle": "Coadă de moderare",

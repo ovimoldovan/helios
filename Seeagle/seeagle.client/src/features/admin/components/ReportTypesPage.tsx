@@ -45,12 +45,16 @@ export function ReportTypesPage() {
             );
             setName('');
         } catch (error) {
-            if (error instanceof Error) {
-                setError(error.message);
+            if (
+                error instanceof Error &&
+                error.message === 'This report type already exists.'
+            ) {
+                setError(t('reportTypeAlreadyExists'));
             } else {
                 setError(t('unexpectedErrorAddingReportType'));
             }
-        } finally {
+        }
+         finally {
             setIsSubmitting(false);
         }
     }

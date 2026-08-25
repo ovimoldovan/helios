@@ -86,6 +86,7 @@
   "maximum20Characters": "Maximum 20 characters.",
   "adding": "Adding...",
   "add": "Add",
+  "reportTypeAlreadyExists": "This report type already exists.",
 
   "moderatorDashboardTitle": "Moderator Dashboard",
   "moderatorDashboardDescription": "Manage reports that require moderation.",
