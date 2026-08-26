@@ -8,6 +8,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/shared/context/AuthContext';
 import { getUserFromToken } from '@/shared/utils/getUserFromToken.ts';
 import { Menu, MapPin, Plus } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 interface LeftPanelProps {
     onNewReport?: () => void;
@@ -15,6 +17,7 @@ interface LeftPanelProps {
 }
 
 export function LeftPanel({ onNewReport, isPlacingPin = false }: LeftPanelProps) {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(true);
 
@@ -58,13 +61,14 @@ export function LeftPanel({ onNewReport, isPlacingPin = false }: LeftPanelProps)
                 <CardHeader className="flex-row items-center justify-between space-y-0 p-4">
                     <Logo />
                     <div className="flex items-center gap-2">
+                        <LanguageSwitcher />
                         <Button
                             variant="outline"
                             size="sm"
                             className="rounded-full text-xs px-3 h-7"
                             onClick={handleAuthAction}
                         >
-                            {isAuthenticated ? 'Logout' : 'Login'}
+                            {isAuthenticated ? t('logout') : t('login')}
                         </Button>
                         <button
                             className="sm:hidden w-7 h-7 rounded-full bg-muted flex items-center justify-center"
@@ -84,10 +88,10 @@ export function LeftPanel({ onNewReport, isPlacingPin = false }: LeftPanelProps)
                             <MapPin className="h-5 w-5 text-muted-foreground" />
                             <div>
                                 <p className="font-medium text-sm">
-                                    {isPlacingPin ? 'Placing pin...' : 'Placing pin'}
+                                    {isPlacingPin ? t('placingPin') : t('addReport')}
                                 </p>
                                 <p className="text-[10px] text-muted-foreground">
-                                    {isPlacingPin ? 'click map to drop' : 'tap map to drop'}
+                                    {isPlacingPin ? t('clickMapToDrop') : t('tapMapToDrop')}
                                 </p>
                             </div>
                         </div>
@@ -97,7 +101,7 @@ export function LeftPanel({ onNewReport, isPlacingPin = false }: LeftPanelProps)
 
                     <div className="space-y-3">
                         <div className="flex items-center justify-between">
-                            <p className="font-medium text-sm">Downtown district</p>
+                            <p className="font-medium text-sm">{t('downtownDistrict')}</p>
                             <Badge variant="secondary" className="text-[10px]">
                                 MP
                             </Badge>
@@ -110,15 +114,15 @@ export function LeftPanel({ onNewReport, isPlacingPin = false }: LeftPanelProps)
                                 onClick={onNewReport}
                             >
                                 <Plus className="h-4 w-4" />
-                                New report
+                                {t('newReport')}
                             </Button>
                         ) : (
                             <div className="w-full border-2 border-border rounded-full py-2 text-center text-sm text-muted-foreground">
-                                Login to add report
+                                {t('loginToAddReport')}
                             </div>
                         )}
 
-                        <p className="text-[10px] text-muted-foreground">Line report</p>
+                        <p className="text-[10px] text-muted-foreground">{t('lineReport')}</p>
                     </div>
 
                     {isAuthenticated && user && (

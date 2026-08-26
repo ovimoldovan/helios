@@ -12,7 +12,7 @@ import {ErrorPage} from "@/shared/error_page/components/ErrorPage.tsx";
 import {PrivateRoutes} from "@/shared/utils/PrivateRoutes.tsx";
 import {Toaster} from "@/components/ui/toast.tsx";
 import { ReportTypesPage } from '@/features/admin/components/ReportTypesPage';
-
+import { ModerationQueue } from '@/features/moderator/components/ModerationQueue';
 
 function App() {
     return (
@@ -47,12 +47,13 @@ function App() {
                       <UsersListPage />
                         } 
                     />
-                </Route>
 
-                <Route
-                    path="/admin/report-types"
-                    element={<ReportTypesPage />}
-                />
+                    <Route
+                        path="/admin/report-types"
+                        element={<ReportTypesPage />}
+                    />
+                    
+                </Route>
 
                 <Route element={<PrivateRoutes allowedRoles={['Moderator', 'Admin']}/>}>
                     <Route
@@ -61,6 +62,12 @@ function App() {
                             <ModeratorDashboard/>
                         }
                     />
+
+                    <Route
+                        path="/moderator/queue"
+                        element={<ModerationQueue />}
+                    />
+                    
                 </Route>
 
                 <Route

@@ -36,6 +36,7 @@ builder.Services.AddScoped<ISampleNameService, SampleNameService>();
 builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddScoped<IUserQueryService, UserQueryService>();
 builder.Services.AddScoped<IReportTypeService, ReportTypeService>();
+builder.Services.AddScoped<IReportQueryService, ReportQueryService>();
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
 builder.Services.AddScoped<IJwtUtil, JwtUtil>();
 var jwtOptions = builder.Configuration.GetSection("Jwt").Get<JwtOptions>()

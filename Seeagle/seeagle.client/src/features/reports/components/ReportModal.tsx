@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { createReport } from '@/features/reports/api/reportApi.ts';
 import type { Report } from '@/shared/types/report';
+import { useTranslation } from 'react-i18next';
 
 interface AddReportModalProps {
     isOpen: boolean;
@@ -37,12 +38,12 @@ export function AddReportModal({
 
     const handleSubmit = async () => {
         if (!pinPosition) {
-            setError('Place a pin on the map first.');
+            setError(t('placePinFirst'));
             return;
         }
 
         if (description.length > 255) {
-            setError('Description must be 255 characters or less.');
+            setError(t('descriptionTooLong'));
             return;
         }
 
@@ -58,38 +59,40 @@ export function AddReportModal({
             onReportCreated(report);
             handleClose();
         } catch {
-            setError('Failed to submit report.');
+            setError(t('failedToSubmitReport'));
         } finally {
             setIsSubmitting(false);
         }
     };
 
+    const { t } = useTranslation();
+
     return (
         <Dialog open={isOpen} onOpenChange={handleClose}>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>New report</DialogTitle>
+                    <DialogTitle>{t('newReport')}</DialogTitle>
                 </DialogHeader>
 
                 <div className="grid gap-4 py-4">
                     <div className="space-y-2">
-                        <Label>Location</Label>
+                        <Label>{t('location')}</Label>
                         <div className="rounded-md bg-gray-50 p-3 text-sm text-gray-600 border border-gray-200">
                             {pinPosition ? (
                                 ` ${pinPosition[0].toFixed(4)}° N, ${pinPosition[1].toFixed(4)}° E`
                             ) : (
-                                'Tap map to place a pin'
+                                t('tapMapToPlacePin')
                             )}
                         </div>
                     </div>
 
                     <div className="space-y-2">
                         <Label htmlFor="description">
-                            Description <span className="text-gray-400 text-xs">(optional)</span>
+                            {t('description')} <span className="text-gray-400 text-xs">(optional)</span>
                         </Label>
                         <Textarea
                             id="description"
-                            placeholder="Describe what you saw..."
+                            placeholder={t('descriptionPlaceholder')}
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
                             maxLength={255}
@@ -109,10 +112,10 @@ export function AddReportModal({
 
                 <DialogFooter className="gap-2 sm:gap-0">
                     <Button variant="outline" onClick={handleClose} disabled={isSubmitting}>
-                        Cancel
+                        {t('cancel')}
                     </Button>
                     <Button onClick={handleSubmit} disabled={isSubmitting || !pinPosition}>
-                        {isSubmitting ? 'Submitting...' : 'Submit report'}
+                        {isSubmitting ? t('submitting') : t('submitReport')}
                     </Button>
                 </DialogFooter>
             </DialogContent>
