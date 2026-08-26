@@ -11,6 +11,7 @@ import { ModeratorDashboard } from '@/features/moderator/components/ModeratorDas
 import {ErrorPage} from "@/shared/error_page/components/ErrorPage.tsx";
 import {PrivateRoutes} from "@/shared/utils/PrivateRoutes.tsx";
 import {Toaster} from "@/components/ui/toast.tsx";
+import { ReportTypesPage } from '@/features/admin/components/ReportTypesPage';
 import { ModerationQueue } from '@/features/moderator/components/ModerationQueue';
 
 function App() {
@@ -40,11 +41,19 @@ function App() {
                             <AdminDashboard/>
                         }
                     />
-                  
-                    <Route path="/admin/users" 
-                      element={
-                      <UsersListPage />
-                        } 
+
+                    <Route
+                        path="/admin/users"
+                        element={
+                            <UsersListPage />
+                        }
+                    />
+
+                    <Route
+                        path="/admin/report-types"
+                        element={
+                            <ReportTypesPage />
+                        }
                     />
                 </Route>
 
@@ -63,7 +72,7 @@ function App() {
                     
                 </Route>
                 
-                
+
                 <Route
                     path="/unauthorized"
                     element={
