@@ -23,8 +23,6 @@ import { PriorityModal } from './PriorityModal';
 const PAGE_SIZE = 10;
 
 export function ModerationQueue() {
-    const { t } = useTranslation();
-
     const [reports, setReports] = useState<ModerationReport[]>([]);
     const [page, setPage] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
@@ -148,7 +146,7 @@ export function ModerationQueue() {
                                                 <div className="flex gap-2">
                                                     <Button
                                                         size="sm"
-                                                        onClick={() => void handleApprove(report.id)}
+                                                        onClick={() => void handleApprove(report)}
                                                     >
                                                         {t('approve')}
                                                     </Button>

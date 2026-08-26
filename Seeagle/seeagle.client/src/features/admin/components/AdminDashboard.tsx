@@ -41,7 +41,7 @@ export function AdminDashboard() {
                         </Button>
 
                         <Button className="admin-dashboard-button"
-                        onClick={() => navigate('/admin/report-types')>
+                        onClick={() => navigate('/admin/report-types')}>
                             <span className="text-base font-semibold">{t('reportTypesTitle')}</span>
                             <span className="font-normal">{t('reportTypesDescription')}</span>
                         </Button>

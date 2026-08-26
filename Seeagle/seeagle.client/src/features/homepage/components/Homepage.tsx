@@ -35,8 +35,8 @@ export function Homepage() {
                     <MapSidebarExtra
                     onNewReport={() => setIsPlacingPin(true)}
                     isPlacingPin={isPlacingPin}
-                    setPinPosition(null);
-                }}
+                    />
+                }
             />
 
             <div className="absolute inset-0 z-0 isolate">
