@@ -12,10 +12,10 @@ import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import type { ReactNode } from 'react';
 
 interface LeftPanelProps {
-    children?: ReactNode;
+    sidebarExtra?: ReactNode;
 }
 
-export function LeftPanel({ children }: LeftPanelProps) {
+export function LeftPanel({ sidebarExtra }: LeftPanelProps) {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
@@ -44,16 +44,6 @@ export function LeftPanel({ children }: LeftPanelProps) {
 
     return (
         <>
-            <div className="sm:hidden fixed top-0 left-0 z-40 h-14 rounded-full bg-background border-b border-border flex items-center justify-between px-4">
-                <Logo />
-                <button
-                    className="w-9 h-9 rounded-full bg-muted flex items-center justify-center"
-                    onClick={() => setIsOpen(true)}
-                >
-                    <Menu className="w-5 h-5" />
-                </button>
-            </div>
-
             <Card className={`
                 fixed sm:relative z-50 h-full w-72 rounded-none border-r shadow-none
                 ${isOpen ? 'left-0' : '-left-72'}
@@ -114,7 +104,7 @@ export function LeftPanel({ children }: LeftPanelProps) {
                         )}
                     </nav>
                     
-                    {children}
+                    {sidebarExtra}
 
                     {isAuthenticated && user && (
                         <div className="mt-auto pt-3 border-t border-border">

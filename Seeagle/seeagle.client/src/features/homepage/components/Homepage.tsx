@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Map } from './Map';
-import { LeftPanel } from './LeftPanel';
+import { LeftPanel } from '@/features/homepage/components/LeftPanel';
 import { AddReportModal } from '@/features/reports/components/ReportModal.tsx';
 import type { Report } from '@/shared/types/report';
 import { MapSidebarExtra } from '../MapSidebarExtra';
@@ -21,12 +21,14 @@ export function Homepage() {
 
     return (
         <div className="relative h-screen w-screen overflow-hidden">
-            <LeftPanel >
-                <MapSidebarExtra
+            <LeftPanel
+                sidebarExtra = {
+                    <MapSidebarExtra
                     onNewReport={() => setIsPlacingPin(true)}
                     isPlacingPin={isPlacingPin}
                 />
-            </LeftPanel>
+                }
+            />
 
             <div className="absolute inset-0 z-0 isolate">
                 <Map
