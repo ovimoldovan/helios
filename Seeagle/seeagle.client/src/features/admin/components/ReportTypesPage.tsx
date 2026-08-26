@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Card,
     CardContent,
@@ -8,10 +9,13 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { FieldError } from '@/components/ui/field';
 import { createReportType } from '@/features/admin/api/adminApi';
 import { getCookie } from '@/shared/utils/cookies';
 
 export function ReportTypesPage() {
+    const { t } = useTranslation();
+
     const [name, setName] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -21,7 +25,7 @@ export function ReportTypesPage() {
         const trimmedName = name.trim();
 
         if (!trimmedName) {
-            setError('Report type name is required.');
+            setError(t('reportTypeNameRequired'));
             setSuccess(null);
             return;
         }
@@ -36,18 +40,21 @@ export function ReportTypesPage() {
                 getCookie('authToken')!
             );
 
-            setSuccess(`Report type "${created.name}" added successfully.`);
+            setSuccess(
+                t('reportTypeAddedSuccess', { name: created.name })
+            );
             setName('');
         } catch (error) {
             if (
                 error instanceof Error &&
-                error.message === 'DUPLICATE_REPORT_TYPE'
+                error.message === 'This report type already exists.'
             ) {
-                setError('This report type already exists.');
+                setError(t('reportTypeAlreadyExists'));
             } else {
-                setError('Unexpected error while adding report type.');
+                setError(t('unexpectedErrorAddingReportType'));
             }
-        } finally {
+        }
+         finally {
             setIsSubmitting(false);
         }
     }
@@ -57,18 +64,18 @@ export function ReportTypesPage() {
             <Card className="relative z-10 mx-auto max-w-4xl w-full">
                 <CardHeader>
                     <CardTitle className="text-3xl font-bold">
-                        Report Types
+                        {t('reportTypesPageTitle')}
                     </CardTitle>
 
                     <CardDescription>
-                        Add report types that users can select when creating reports.
+                        {t('reportTypesPageDescription')}
                     </CardDescription>
                 </CardHeader>
 
                 <CardContent>
                     <div className="flex gap-2">
                         <Input
-                            placeholder="Report type name"
+                            placeholder={t('reportTypeNamePlaceholder')}
                             maxLength={20}
                             value={name}
                             disabled={isSubmitting}
@@ -79,33 +86,33 @@ export function ReportTypesPage() {
                             }}
                             onKeyDown={(event) => {
                                 if (event.key === 'Enter') {
-                                    void handleAddReportType();
+                                    handleAddReportType();
                                 }
                             }}
                         />
 
                         <Button
-                            onClick={() => void handleAddReportType()}
+                            onClick={handleAddReportType}
                             disabled={isSubmitting || !name.trim()}
                         >
-                            {isSubmitting ? 'Adding...' : 'Add'}
+                            {isSubmitting ? t('adding') : t('add')}
                         </Button>
                     </div>
 
                     {error && (
-                        <p className="mt-2 text-sm text-red-600">
+                        <FieldError className="mt-2">
                             {error}
-                        </p>
+                        </FieldError>
                     )}
 
                     {success && (
-                        <p className="mt-2 text-sm text-green-600">
+                        <p className="mt-2 text-sm text-primary">
                             {success}
                         </p>
                     )}
 
                     <p className="mt-2 text-xs text-muted-foreground">
-                        Maximum 20 characters.
+                        {t('maximum20Characters')}
                     </p>
                 </CardContent>
             </Card>

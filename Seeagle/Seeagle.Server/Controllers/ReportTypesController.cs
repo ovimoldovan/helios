@@ -6,7 +6,6 @@ namespace Seeagle.Server.Controllers;
 
 [ApiController]
 [Route("api/report-types")]
-[Authorize(Roles = "Admin")]
 public sealed class ReportTypesController(IReportTypeService reportTypeService) : ControllerBase
 {
     [HttpGet]
@@ -18,6 +17,7 @@ public sealed class ReportTypesController(IReportTypeService reportTypeService) 
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ReportTypeDto>> Create(
         CreateReportTypeRequest request,
         CancellationToken cancellationToken)
@@ -41,6 +41,7 @@ public sealed class ReportTypesController(IReportTypeService reportTypeService) 
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ReportTypeDto>> Update(
         Guid id,
         UpdateReportTypeRequest request,
@@ -69,6 +70,7 @@ public sealed class ReportTypesController(IReportTypeService reportTypeService) 
     }
 
     [HttpPut("{id:guid}/disable")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ReportTypeDto>> Disable(
         Guid id,
         CancellationToken cancellationToken)

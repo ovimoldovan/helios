@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Seeagle.Application.Common;
 using Seeagle.Domain.Reports;
 
@@ -18,10 +19,12 @@ public sealed class ReportTypeService : IReportTypeService
     {
         var normalizedName = request.Name.Trim();
 
-        var exists = _reportTypeRepository
+        var exists = await _reportTypeRepository
             .GetAllQueryable()
-            .Any(reportType =>
-                reportType.Name.ToLower() == normalizedName.ToLower());
+            .AnyAsync(
+                reportType =>
+                    reportType.Name.ToLower() == normalizedName.ToLower(),
+                cancellationToken);
 
         if (exists)
             throw new InvalidOperationException(
@@ -52,20 +55,24 @@ public sealed class ReportTypeService : IReportTypeService
         UpdateReportTypeRequest request,
         CancellationToken cancellationToken)
     {
-        var reportType = _reportTypeRepository
+        var reportType = await _reportTypeRepository
             .GetAllQueryable()
-            .FirstOrDefault(reportType => reportType.Id == id);
+            .FirstOrDefaultAsync(
+                reportType => reportType.Id == id,
+                cancellationToken);
 
         if (reportType is null)
             return null;
 
         var normalizedName = request.Name.Trim();
 
-        var duplicateExists = _reportTypeRepository
+        var duplicateExists = await _reportTypeRepository
             .GetAllQueryable()
-            .Any(existingReportType =>
-                existingReportType.Id != id &&
-                existingReportType.Name.ToLower() == normalizedName.ToLower());
+            .AnyAsync(
+                existingReportType =>
+                    existingReportType.Id != id &&
+                    existingReportType.Name.ToLower() == normalizedName.ToLower(),
+                cancellationToken);
 
         if (duplicateExists)
             throw new InvalidOperationException(
@@ -84,9 +91,11 @@ public sealed class ReportTypeService : IReportTypeService
         Guid id,
         CancellationToken cancellationToken)
     {
-        var reportType = _reportTypeRepository
+        var reportType = await _reportTypeRepository
             .GetAllQueryable()
-            .FirstOrDefault(reportType => reportType.Id == id);
+            .FirstOrDefaultAsync(
+                reportType => reportType.Id == id,
+                cancellationToken);
 
         if (reportType is null)
             return null;

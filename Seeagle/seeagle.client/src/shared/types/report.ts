@@ -11,3 +11,9 @@ export interface Report {
     createdUtc: string;
     status: string;
 }
+
+export interface ReportType {
+    id: string;
+    name: string;
+    isActive: boolean;
+}

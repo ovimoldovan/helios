@@ -38,8 +38,9 @@ export function AdminDashboard() {
                     <Button className="admin-dashboard-button">
                         <span className="text-base font-semibold">
                             {t('users')}
-                        </span>
-                        <span className="font-normal">
+                :
+
+:                        <span className="font-normal">
                             {t('viewRegisteredUsers')}
                         </span>
                     </Button>
