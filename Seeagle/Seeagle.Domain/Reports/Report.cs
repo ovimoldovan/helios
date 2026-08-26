@@ -24,21 +24,24 @@ public class Report
         CreatedUtc = DateTime.UtcNow;
         User = user;
         Status = "Pending";
+        Priority = Priority.Low;
     }
 
     public Guid Id { get; private set; }
     public Point Location { get; set; }
     public string? Description { get; private set; }
     public DateTime CreatedUtc { get; private set; }
-
-    
     public User.User User { get; private set; }
     public Guid? ReportTypeId { get; private set; }
-    public string Status { get; private set; } =string.Empty;
-    
-    public void Approve() {
+    public string Status { get; private set; } = string.Empty;
+    public Priority Priority { get; private set; } = Priority.Low;
+
+    public void Approve(Priority priority)
+    {
         Status = "Approved";
+        Priority = priority;
     }
+
     public void Reject()
     {
         Status = "Rejected";

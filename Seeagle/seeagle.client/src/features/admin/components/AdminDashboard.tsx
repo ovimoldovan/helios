@@ -4,12 +4,14 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import {Button} from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 import './AdminDashboard.css';
 import { useTranslation } from 'react-i18next';
 import { LeftPanel } from '@/features/homepage/components/LeftPanel';
 
 export function AdminDashboard() {
+    const navigate = useNavigate();
     const { t } = useTranslation();
 
     return (
@@ -38,7 +40,8 @@ export function AdminDashboard() {
                             <span className="font-normal">{t('permissionsDescription')}</span>
                         </Button>
 
-                        <Button className="admin-dashboard-button">
+                        <Button className="admin-dashboard-button"
+                        onClick={() => navigate('/admin/report-types')>
                             <span className="text-base font-semibold">{t('reportTypesTitle')}</span>
                             <span className="font-normal">{t('reportTypesDescription')}</span>
                         </Button>

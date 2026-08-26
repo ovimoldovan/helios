@@ -8,12 +8,13 @@ namespace Seeagle.Server.Controllers;
 
 [ApiController]
 [Route("api/reports")]
-public sealed class ReportsController(IReportService reportService) : ControllerBase
+public sealed class ReportsController(IReportService reportService, IReportQueryService reportQueryService)
+    : ControllerBase
 {
     [Authorize]
     [HttpPost]
     public async Task<ActionResult<ReportDto>> Create(
-        [FromBody] CreateReportRequest request, 
+        [FromBody] CreateReportRequest request,
         CancellationToken cancellationToken)
     {
         try
@@ -23,6 +24,7 @@ public sealed class ReportsController(IReportService reportService) : Controller
             {
                 return Unauthorized(new { message = "User ID claim is missing or invalid." });
             }
+
             var result = await reportService.CreateAsync(userId, request, cancellationToken);
             return Ok(result);
         }
@@ -31,8 +33,17 @@ public sealed class ReportsController(IReportService reportService) : Controller
             return BadRequest(new { message = ex.Message });
         }
     }
-    
-    [Authorize(Roles = "Moderator, Admin")]
+
+    [HttpGet("approved")]
+    public async Task<ActionResult<IReadOnlyList<ReportDto>>> GetApprovedReports(
+        [FromQuery] int days = 30,
+        CancellationToken cancellationToken = default)
+    {
+        var fromDate = DateTime.UtcNow.AddDays(-days);
+        var reports = await reportQueryService.GetApprovedReportsAsync(fromDate, cancellationToken);
+        return Ok(reports);
+    }
+
     [HttpGet("pending")]
     public async Task<ActionResult<PagedResult<ReportDto>>> GetPending(
         [FromQuery] int pageNumber = 1,
@@ -46,23 +57,22 @@ public sealed class ReportsController(IReportService reportService) : Controller
 
         return Ok(reports);
     }
-    
+
     [Authorize(Roles = "Moderator")]
     [HttpPut("{id:guid}/approve")]
     public async Task<ActionResult<ReportDto>> Approve(
         Guid id,
-        CancellationToken cancellationToken)
+        [FromQuery] string priority = "low",
+        CancellationToken cancellationToken = default)
     {
-        var report = await reportService.ApproveAsync(id, cancellationToken);
-
+        var report = await reportService.ApproveAsync(id, priority, cancellationToken);
         if (report is null)
         {
             return NotFound();
         }
-
         return Ok(report);
     }
-    
+
     [Authorize(Roles = "Moderator")]
     [HttpPut("{id:guid}/reject")]
     public async Task<ActionResult<ReportDto>> Reject(
@@ -70,12 +80,10 @@ public sealed class ReportsController(IReportService reportService) : Controller
         CancellationToken cancellationToken)
     {
         var report = await reportService.RejectAsync(id, cancellationToken);
-
         if (report is null)
         {
             return NotFound();
         }
-
         return Ok(report);
     }
 }

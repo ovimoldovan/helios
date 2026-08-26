@@ -6,4 +6,6 @@ public sealed record ReportDto(
     double Latitude,
     string? Description,
     DateTime CreatedUtc,
-    string Status);
+    string Status,
+    string Priority
+    );

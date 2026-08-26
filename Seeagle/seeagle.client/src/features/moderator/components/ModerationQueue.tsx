@@ -19,16 +19,22 @@ import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { LeftPanel } from '@/features/homepage/components/LeftPanel';
+import { PriorityModal } from './PriorityModal';
 const PAGE_SIZE = 10;
 
 export function ModerationQueue() {
+    const { t } = useTranslation();
+
     const [reports, setReports] = useState<ModerationReport[]>([]);
     const [page, setPage] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-
     const { t } = useTranslation();
+    const [modalOpen, setModalOpen] = useState(false);
+    const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [selectedReport, setSelectedReport] = useState<ModerationReport | null>(null);
 
     useEffect(() => {
         setIsLoading(true);
@@ -41,30 +47,47 @@ export function ModerationQueue() {
             })
             .catch(() => setError(t('errorLoadingReports')))
             .finally(() => setIsLoading(false));
-    }, [page]);
+    }, [page, t]);
 
     const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
 
-    async function handleApprove(id: string) {
+    const handleApprove = (report: ModerationReport) => {
+        setSelectedReportId(report.id);
+        setSelectedReport(report);
+        setModalOpen(true);
+    };
+
+    const handleModalClose = () => {
+        setModalOpen(false);
+        setSelectedReportId(null);
+        setSelectedReport(null);
+    };
+
+    const handleConfirmApprove = async (priority: string) => {
+        if (!selectedReportId) return;
+
+        setIsProcessing(true);
+
         try {
             const token = getAuthToken();
-
-            await approveReport(id, token ?? undefined);
+            await approveReport(selectedReportId, priority, token ?? undefined);
 
             setReports((currentReports) =>
-                currentReports.filter((report) => report.id !== id)
+                currentReports.filter((report) => report.id !== selectedReportId)
             );
 
             setTotalCount((currentCount) => Math.max(0, currentCount - 1));
+            handleModalClose();
         } catch {
             setError(t('errorWhileApprovingReport'));
+        } finally {
+            setIsProcessing(false);
         }
-    }
+    };
 
     async function handleReject(id: string) {
         try {
             const token = getAuthToken();
-
             await rejectReport(id, token ?? undefined);
 
             setReports((currentReports) =>
@@ -109,22 +132,18 @@ export function ModerationQueue() {
                                         <TableHead>{t('actionColumn')}</TableHead>
                                     </TableRow>
                                 </TableHeader>
-
                                 <TableBody>
                                     {reports.map((report) => (
                                         <TableRow key={report.id}>
                                             <TableCell className="py-2">
                                                 {report.description ?? t('noDescription')}
                                             </TableCell>
-
                                             <TableCell className="py-2">
                                                 {new Date(report.createdUtc).toLocaleString()}
                                             </TableCell>
-
                                             <TableCell className="py-2">
                                                 {report.status}
                                             </TableCell>
-
                                             <TableCell className="py-2">
                                                 <div className="flex gap-2">
                                                     <Button
@@ -133,7 +152,6 @@ export function ModerationQueue() {
                                                     >
                                                         {t('approve')}
                                                     </Button>
-
                                                     <Button
                                                         size="sm"
                                                         variant="outline"
@@ -163,7 +181,7 @@ export function ModerationQueue() {
                                 }
                                 onClick={(e) => {
                                     e.preventDefault();
-
+                                if (page > 1) setPage(page - 1);
                                     if (page > 1) {
                                         setPage(page - 1);
                                     }
@@ -171,11 +189,9 @@ export function ModerationQueue() {
                             >
                                 <ChevronLeftIcon />
                             </PaginationLink>
-
                             <span className="text-sm">
                                 {t('pageOf', { page, totalPages })}
                             </span>
-
                             <PaginationLink
                                 href="#"
                                 size="icon"
@@ -188,10 +204,7 @@ export function ModerationQueue() {
                                 }
                                 onClick={(e) => {
                                     e.preventDefault();
-
-                                    if (page < totalPages) {
-                                        setPage(page + 1);
-                                    }
+                                if (page < totalPages) setPage(page + 1);
                                 }}
                             >
                                 <ChevronRightIcon />
@@ -200,6 +213,13 @@ export function ModerationQueue() {
                     </>
                 )}
             </div>
+            <PriorityModal
+                isOpen={modalOpen}
+                onClose={handleModalClose}
+                onConfirm={handleConfirmApprove}
+                report={selectedReport}
+                isLoading={isProcessing}
+            />
         </div>
     );
 }

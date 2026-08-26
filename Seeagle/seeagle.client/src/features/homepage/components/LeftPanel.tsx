@@ -6,13 +6,14 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/shared/context/AuthContext';
 import { getUserFromToken } from '@/shared/utils/getUserFromToken.ts';
-import { Menu } from 'lucide-react';
+import { Menu, Plus, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import type { ReactNode } from 'react';
 
 interface LeftPanelProps {
     sidebarExtra?: ReactNode;
+    onCancelPlacePin?: () => void;
 }
 
 export function LeftPanel({ sidebarExtra }: LeftPanelProps) {
@@ -65,14 +66,38 @@ export function LeftPanel({ sidebarExtra }: LeftPanelProps) {
                 <CardContent className="flex-1 p-4 space-y-4 overflow-y-auto">
                     <div className="flex items-center justify-between">
                         <LanguageSwitcher />
+                            isPlacingPin ? (
+                                <div className="grid grid-cols-2">
                         <Button
                             variant="outline"
                             size="sm"
                             className="rounded-full text-xs px-3 h-7"
                             onClick={handleAuthAction}
-                        >
-                            {isAuthenticated ? t('logout') : t('login')}
-                        </Button>
+                            className="w-full justify-center gap-0.75 border-2 rounded-full py-2 h-auto text-sm font-normal animate-in fade-in slide-in-from-top-2 duration-300 ease-in-out"
+                            disabled
+                                    >
+                                        <Plus className="h-4 w-4"/>
+                                        <span >{t('placing')}</span>
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        className="w-full justify-center gap-0.75 border-2 rounded-full py-2 h-auto text-sm font-normal animate-in fade-in slide-in-from-top-2 duration-300 ease-in-out"
+                                        onClick={onCancelPlacePin}
+                                    >
+                                        <X className="h-4 w-4"/>
+                                        <span className="truncate">{t('cancel')}</span>
+                                    </Button>
+                                </div>
+                            ) : (
+                                <Button
+                                    variant="outline"
+                                    className="w-full justify-start gap-2 border-2 rounded-full py-2 h-auto text-sm font-normal animate-in fade-in slide-in-from-top-2 duration-300 ease-in-out"
+                                    onClick={onNewReport}
+                                >
+                                    <Plus className="h-4 w-4"/>
+                                    {t('newReport')}
+                                </Button>
+                            )
                     </div>
                     <nav className="space-y-1">
                         <Link
@@ -92,7 +117,6 @@ export function LeftPanel({ sidebarExtra }: LeftPanelProps) {
                                 {t('admin')}
                             </Link>
                         )}
-
                         {isModerator && (
                             <Link
                                 to="/moderator"
