@@ -6,9 +6,6 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/shared/context/AuthContext';
 import { getUserFromToken } from '@/shared/utils/getUserFromToken.ts';
-import { Menu, MapPin, Plus } from 'lucide-react';
-import { Link } from 'react-router-dom';
-
 import { Menu, Plus, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
