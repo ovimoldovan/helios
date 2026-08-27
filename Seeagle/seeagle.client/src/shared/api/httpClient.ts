@@ -83,3 +83,27 @@ export async function patchJson<TResponse>(url: string, token?: string): Promise
 
   return (await response.json()) as TResponse;
 }
+
+export async function postFormData<TRespoonse>(url:string, formData: FormData, token?: string): Promise<TRespoonse> {
+  const headers: Record<string, string> = {};
+  
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: headers,
+    body: formData,
+  });
+  
+  if (!response.ok) {
+    if (response.status === 400) {
+      throw await response.json();
+    }
+    
+    throw new Error(`Request failed with status ${response.status}.`);
+  }
+  
+  return (await response.json()) as TRespoonse;
+}

@@ -178,5 +178,10 @@
   "statusColumn": "Stare",
   "noDescription": "Fără descriere",
   "approve": "Aprobă",
-  "reject": "Respinge"
+  "reject": "Respinge",
+
+  "Photo": "Imagine",
+  "photoPreview": "Previzualizare imagine",
+  "remove": "Șterge",
+  "optional": "Opțional"
 }

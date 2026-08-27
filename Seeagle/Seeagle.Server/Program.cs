@@ -9,6 +9,7 @@ using Seeagle.Application.SampleNames;
 using Seeagle.Infrastructure.Persistence;
 using Seeagle.Application.Users;
 using Seeagle.Application.Reports;
+using Seeagle.Domain.Reports;
 using Seeagle.Server.Utils.JWT;
 using Swashbuckle.AspNetCore.Filters;
 
@@ -37,6 +38,7 @@ builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddScoped<IUserQueryService, UserQueryService>();
 builder.Services.AddScoped<IReportTypeService, ReportTypeService>();
 builder.Services.AddScoped<IReportQueryService, ReportQueryService>();
+builder.Services.AddScoped<IPhotoProcessor, PhotoProcessor>();
 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
 builder.Services.AddScoped<IJwtUtil, JwtUtil>();

@@ -177,5 +177,11 @@
   "statusColumn": "Status",
   "noDescription": "No description",
   "approve": "Approve",
-  "reject": "Reject"
+  "reject": "Reject",
+  
+  "Photo": "Photo",
+  "photoPreview": "Photo Preview",
+  "remove": "Remove",
+  "optional": "Optional"
+  
 }

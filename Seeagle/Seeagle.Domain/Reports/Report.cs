@@ -30,6 +30,7 @@ public class Report
     public Point Location { get; set; }
     public string? Description { get; private set; }
     public DateTime CreatedUtc { get; private set; }
+    public Photo? Photo { get; private set; }
     public User.User User { get; private set; }
     public Guid? ReportTypeId { get; private set; }
     public string Status { get; private set; } = string.Empty;
@@ -58,5 +59,12 @@ public class Report
     public void Reject()
     {
         Status = "Rejected";
+    }
+    
+    public void AttachPhoto(Photo photo)
+    {
+        if (Photo is not null)
+            throw new InvalidOperationException("Photo already attached to report.");
+        Photo = photo;
     }
 }
