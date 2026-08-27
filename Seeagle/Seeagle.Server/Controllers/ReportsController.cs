@@ -44,7 +44,6 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
         return Ok(reports);
     }
 
-    [Authorize(Roles = "Moderator")]
     [HttpGet("pending")]
     public async Task<ActionResult<PagedResult<ReportDto>>> GetPending(
         [FromQuery] int pageNumber = 1,
