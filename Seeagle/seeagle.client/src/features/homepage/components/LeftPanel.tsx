@@ -162,6 +162,14 @@ export function LeftPanel({ sidebarExtra, onCancelPlacePin, isPlacingPin}: LeftP
                         </div>
                     )}
                 </CardContent>
+                <div className="p-4 pt-2 border-t border-border">
+                    <Link
+                        to="/cookies"
+                        className="text-[10px] text-muted-foreground hover:underline"
+                    >
+                        Cookies Policy
+                    </Link>
+                </div>
             </Card>
 
             {isOpen && (
