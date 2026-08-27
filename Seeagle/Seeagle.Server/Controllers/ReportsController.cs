@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Seeagle.Application.Reports;
 using Seeagle.Application.Common;
+using Seeagle.Domain.Reports;
 
 namespace Seeagle.Server.Controllers;
 
@@ -89,6 +90,8 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
         return Ok(report);
     }
 
+    [Authorize]
+    [RequestSizeLimit(10_000_000)]
     [HttpPost("{reportId:guid}/photo")]
     public async Task<IActionResult> UploadPhoto(Guid reportId, IFormFile file, CancellationToken cancellationToken)
     {
@@ -124,11 +127,12 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
             return BadRequest(new { message = ex.Message });
         }
     }
-
+    
     [HttpGet("{reportId}/photo")]
-    public async Task<IActionResult> GetPhoto(Guid reportId, CancellationToken)
+    public async Task<IActionResult> GetPhoto(Guid reportId, CancellationToken cancellationToken)
     {
-        var photo = await reportService.GetPhotoAsync(reportId, cancellationToken);
+        var isModerator = User.IsInRole("Moderator");
+        var photo = await reportService.GetPhotoAsync(reportId, isModerator, cancellationToken);
 
         if (photo is null)
             return NotFound();

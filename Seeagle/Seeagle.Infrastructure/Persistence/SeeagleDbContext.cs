@@ -23,4 +23,6 @@ public sealed class SeeagleDbContext(DbContextOptions<SeeagleDbContext> options)
             .HasForeignKey<Photo>(p => p.ReportId)
             .OnDelete(DeleteBehavior.Cascade);
     }
+    
+    public DbSet<Photo> Photos => Set<Photo>();
 }

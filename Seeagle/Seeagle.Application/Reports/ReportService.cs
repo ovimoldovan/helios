@@ -13,11 +13,13 @@ public sealed class ReportService : IReportService
     private readonly IRepository<User> _userRepository;
     private static readonly int StandardGpsFormat = 4326;
     private static readonly GeometryFactory GeometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: StandardGpsFormat);
+    private readonly IPhotoProcessor _photoProcessor;
 
-    public ReportService(IRepository<Report> reportRepository, IRepository<User> userRepository)
+    public ReportService(IRepository<Report> reportRepository, IRepository<User> userRepository, IPhotoProcessor photoProcessor)
     {
         _reportRepository = reportRepository;
         _userRepository = userRepository;
+        _photoProcessor = photoProcessor;
     }
 
     public async Task<ReportDto> CreateAsync(Guid userId, CreateReportRequest request, CancellationToken cancellationToken)
@@ -25,7 +27,7 @@ public sealed class ReportService : IReportService
         var user = _userRepository.GetAllQueryable().FirstOrDefault(u => u.Id == userId);
         if (user == null)
             throw new InvalidOperationException("User not found");
-
+        
         var point = GeometryFactory.CreatePoint(new Coordinate(request.Longitude, request.Latitude));
         var report = new Report(point, request.Description, user);
 
@@ -37,10 +39,9 @@ public sealed class ReportService : IReportService
             report.Location.Y,
             report.Description,
             report.CreatedUtc,
-            report.Status,
-            report.Priority.ToString());
+            report.Status);
     }
-
+    
     public async Task<PagedResult<ReportDto>> GetPendingAsync(
         int pageNumber,
         int pageSize,
@@ -62,8 +63,7 @@ public sealed class ReportService : IReportService
                 report.Location.Y,
                 report.Description,
                 report.CreatedUtc,
-                report.Status,
-                report.Priority.ToString()))
+                report.Status))
             .ToListAsync(cancellationToken);
 
         return new PagedResult<ReportDto>(
@@ -72,8 +72,8 @@ public sealed class ReportService : IReportService
             pageNumber,
             pageSize);
     }
-
-    public async Task<ReportDto?> ApproveAsync(Guid id, string priority, CancellationToken cancellationToken)
+    
+    public async Task<ReportDto?> ApproveAsync(Guid id, CancellationToken cancellationToken)
     {
         var report = _reportRepository
             .GetAllQueryable()
@@ -84,14 +84,7 @@ public sealed class ReportService : IReportService
             return null;
         }
 
-        var priorityEnum = priority.ToLower() switch
-        {
-            "urgent" => Priority.Urgent,
-            "medium" => Priority.Medium,
-            _ => Priority.Low
-        };
-
-        report.Approve(priorityEnum);
+        report.Approve();
 
         await _reportRepository.UpdateAsync(report, cancellationToken);
 
@@ -101,10 +94,9 @@ public sealed class ReportService : IReportService
             report.Location.Y,
             report.Description,
             report.CreatedUtc,
-            report.Status,
-            report.Priority.ToString());
+            report.Status);
     }
-
+    
     public async Task<ReportDto?> RejectAsync(Guid id, CancellationToken cancellationToken)
     {
         var report = _reportRepository
@@ -126,20 +118,23 @@ public sealed class ReportService : IReportService
             report.Location.Y,
             report.Description,
             report.CreatedUtc,
-            report.Status,
-            report.Priority.ToString());
+            report.Status);
     }
 
-    public async Task<ReportDto?> MarkAsSolvedAsync(Guid id, string? message, CancellationToken cancellationToken)
+    public async Task<ReportDto?> AttachPhotoAsync(Guid reportId, Guid userId, byte[] data, string contentType, CancellationToken cancellationToken)
     {
         var report = _reportRepository
             .GetAllQueryable()
-            .FirstOrDefault(report => report.Id == id);
+            .FirstOrDefault(report => report.Id == reportId);
         if (report is null)
-        {
             return null;
-        }
-        report.MarkAsSolved(message);
+        if (report.User.Id != userId)
+            throw new UnauthorizedAccessException("You can only attach a photo to your own report.");
+        
+        var processed = await _photoProcessor.ProcessAsync(new MemoryStream(data), cancellationToken);
+        var photo = new Photo(processed.Data, processed.ContentType, report);
+        report.AttachPhoto(photo);
+        
         await _reportRepository.UpdateAsync(report, cancellationToken);
         
         return new ReportDto(
@@ -148,58 +143,21 @@ public sealed class ReportService : IReportService
             report.Location.Y,
             report.Description,
             report.CreatedUtc,
-            report.Status,
-            report.Priority.ToString());
+            report.Status);
     }
 
-    public async Task<PagedResult<ReportDto>> GetApprovedReportsAsync(int pageNumber, int pageSize, CancellationToken cancellationToken)
+    public async Task<ProcessedPhoto?> GetPhotoAsync(Guid reportId, bool isModerator, CancellationToken cancellationToken)
     {
-        var query = _reportRepository
+        var report = _reportRepository
             .GetAllQueryable()
-            .Where(report => report.Status == "Approved" && !report.IsSolved);
-
-        var totalCount = await query.CountAsync(cancellationToken);
-
-        var reports = await query
-            .OrderByDescending(report => report.CreatedUtc)
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
-            .Select(report => new ReportDto(
-                report.Id,
-                report.Location.X,
-                report.Location.Y,
-                report.Description,
-                report.CreatedUtc,
-                report.Status,
-                report.Priority.ToString()))
-            .ToListAsync(cancellationToken);
-
-        return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
-    }
-    public async Task<ReportDto?> SendMessageToReporterAsync(Guid id, string? message, CancellationToken cancellationToken)
-    {
-        var report = await _reportRepository
-            .GetAllQueryable()
-            .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
-
-        if (report is null)
-        {
+            .FirstOrDefault(report => report.Id == reportId);
+        
+        if (report?.Photo is null)
             return null;
-        }
 
-        report.UpdateMessageToReporter(message);
-
-        await _reportRepository.UpdateAsync(report, cancellationToken);
-
-        return new ReportDto(
-            report.Id,
-            report.Location.X,
-            report.Location.Y,
-            report.Description,
-            report.CreatedUtc,
-            report.Status,
-            report.Priority.ToString()
-        );
+        if (report.Status != "Approved" && !isModerator)
+            return null;
+        
+        return new ProcessedPhoto(report.Photo.ImageData, report.Photo.ContentType);
     }
-    
 }

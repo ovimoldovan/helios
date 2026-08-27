@@ -18,7 +18,7 @@ public class Photo
         if (imageData == null || imageData.Length == 0)
             throw new ArgumentException("Image data cannot be empty", nameof(imageData));
         if (imageData.Length > MaxSizeBytes)
-            throw new ArgumentOutOfRangeException(nameof(imageData), "Photo cannot exceed 128kb.");
+            throw new PhotoTooLargeException("Photo cannot exceed 128kb.");
         if (string.IsNullOrEmpty(contentType))
             throw new ArgumentException("Content type cannot be empty", nameof(contentType));
         
