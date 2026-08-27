@@ -141,6 +141,15 @@
   "processing": "Processing...",
   "approveReportButton": "Approve",
 
+  "actionOnReport": "Action on Report",
+  "messageToReporter": "Message to reporter (optional)",
+  "writeMessagePlaceholder": "Write a message to the reporter...",
+  "markAsSolved": "Mark as solved",
+  "applyAction": "Apply Action",
+  "noApprovedReports": "No approved reports.",
+  "unexpectedErrorLoadingApproved": "Unexpected error while loading approved reports.",
+  "unexpectedErrorProcessingAction": "Unexpected error while processing action.",
+  
   "languageEn": "EN",
   "languageRo": "RO"
 }

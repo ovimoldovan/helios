@@ -140,6 +140,17 @@
   "processing": "Se procesează...",
   "approveReportButton": "Aprobă",
 
+  "actionOnReport": "Acțiune asupra raportului",
+  "messageToReporter": "Mesaj către reporter (opțional)",
+  "writeMessagePlaceholder": "Scrie un mesaj către reporter...",
+  "markAsSolved": "Marchează ca rezolvat",
+  "applyAction": "Aplică acțiunea",
+  "approvedReports": "Rapoarte Aprobate",
+  "noApprovedReports": "Niciun raport aprobat.",
+  "unexpectedErrorLoadingApproved": "Eroare neașteptată la încărcarea rapoartelor aprobate.",
+  "unexpectedErrorProcessingAction": "Eroare neașteptată la procesarea acțiunii.",
+ 
+
   "languageEn": "EN",
   "languageRo": "RO"
 }

@@ -18,10 +18,12 @@ import { PaginationLink } from '@/components/ui/pagination';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ActionModal } from './ActionModal';
+import { useTranslation } from 'react-i18next';
 
 const PAGE_SIZE = 10;
 
 export function ApprovedReports() {
+    const { t } = useTranslation();
     const [reports, setReports] = useState<ModerationReport[]>([]);
     const [page, setPage] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
@@ -41,9 +43,9 @@ export function ApprovedReports() {
                 setReports(result.items);
                 setTotalCount(result.totalCount);
             })
-            .catch(() => setError('Unexpected error while loading approved reports.'))
+            .catch(() => setError(t('unexpectedErrorLoadingApproved')))
             .finally(() => setIsLoading(false));
-    }, [page]);
+    }, [page, t]);
 
     const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
 
@@ -73,7 +75,7 @@ export function ApprovedReports() {
             setModalOpen(false);
             setSelectedReport(null);
         } catch {
-            setError('Unexpected error while processing action.');
+            setError(t('unexpectedErrorProcessingAction'));
         } finally {
             setIsProcessing(false);
         }
@@ -90,31 +92,31 @@ export function ApprovedReports() {
 
     return (
         <div className="p-6">
-            <h1 className="text-xl font-semibold mb-4">Approved Reports</h1>
+            <h1 className="text-xl font-semibold mb-4">{t('approvedReports')}</h1>
 
-            {isLoading && <p>Loading reports...</p>}
+            {isLoading && <p>{t('loadingReports')}</p>}
 
             {error && <p className="text-red-600">{error}</p>}
 
             {!isLoading && !error && (
                 <>
                     {reports.length === 0 ? (
-                        <p className="text-muted-foreground">No approved reports.</p>
+                        <p className="text-muted-foreground">{t('noApprovedReports')}</p>
                     ) : (
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>Description</TableHead>
-                                    <TableHead>Priority</TableHead>
-                                    <TableHead>Created</TableHead>
-                                    <TableHead>Action</TableHead>
+                                    <TableHead>{t('description')}</TableHead>
+                                    <TableHead>{t('priority')}</TableHead>
+                                    <TableHead>{t('created')}</TableHead>
+                                    <TableHead>{t('action')}</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {reports.map((report) => (
                                     <TableRow key={report.id}>
                                         <TableCell className="py-2">
-                                            {report.description ?? 'No description'}
+                                            {report.description ?? t('noDescription')}
                                         </TableCell>
                                         <TableCell className="py-2">
                                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${priorityBadge(report.priority)}`}>
@@ -130,7 +132,7 @@ export function ApprovedReports() {
                                                 variant="outline"
                                                 onClick={() => handleActionClick(report)}
                                             >
-                                                Action
+                                                {t('action')}
                                             </Button>
                                         </TableCell>
                                     </TableRow>
@@ -153,7 +155,9 @@ export function ApprovedReports() {
                         >
                             <ChevronLeftIcon />
                         </PaginationLink>
-                        <span className="text-sm">Page {page} of {totalPages}</span>
+                        <span className="text-sm">
+                            {t('page')} {page} {t('of')} {totalPages}
+                        </span>
                         <PaginationLink
                             href="#"
                             size="icon"
