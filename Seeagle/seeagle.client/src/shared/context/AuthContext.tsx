@@ -16,7 +16,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         const token = getCookie('authToken');
         setIsAuthenticated(!!token);
-        setIsAuthenticated(true);
     }, []);
 
     function login() {

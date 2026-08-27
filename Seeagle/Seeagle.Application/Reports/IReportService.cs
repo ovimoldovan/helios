@@ -11,10 +11,10 @@ public interface IReportService
     Task<ReportDto?> ApproveAsync(Guid id,string priority, CancellationToken cancellationToken);
 
     Task<ReportDto?> RejectAsync(Guid id, CancellationToken cancellationToken);
-
-    Task<ReportDto?> AttachPhotoAsync(Guid reportId, Guid userId, byte[] data, string contentType,
-        CancellationToken ct);
-
+    Task<ReportDto?> MarkAsSolvedAsync(Guid id, string? message, CancellationToken cancellationToken);
+    Task<PagedResult<ReportDto>> GetApprovedReportsAsync(int pageNumber, int pageSize, CancellationToken cancellationToken);
+    Task<ReportDto?> SendMessageToReporterAsync(Guid id, string? message, CancellationToken cancellationToken);
+    Task<ReportDto?> AttachPhotoAsync(Guid reportId, Guid userId, byte[] data, string contentType, CancellationToken ct);
     Task<ProcessedPhoto?> GetPhotoAsync(Guid reportId, bool isModerator, CancellationToken ct);
     
 }

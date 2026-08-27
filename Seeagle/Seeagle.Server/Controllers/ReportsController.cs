@@ -90,6 +90,53 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
 
         return Ok(report);
     }
+    
+    [Authorize(Roles = "Moderator")]
+    [HttpGet("approved-list")]
+    public async Task<ActionResult<PagedResult<ReportDto>>> GetApprovedReports(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
+        CancellationToken cancellationToken = default)
+    {
+        var reports = await reportService.GetApprovedReportsAsync(
+            pageNumber,
+            pageSize,
+            cancellationToken);
+
+        return Ok(reports);
+    }
+    
+    public async Task<ActionResult<ReportDto>> MarkAsSolved(
+        Guid id,
+        [FromQuery] string? message = null,
+        CancellationToken cancellationToken = default)
+    {
+        var report = await reportService.MarkAsSolvedAsync(id, message, cancellationToken);
+
+        if (report is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(report);
+    }
+    
+    [Authorize(Roles = "Moderator")]
+    [HttpPut("{id:guid}/message")]
+    public async Task<ActionResult<ReportDto>> SendMessage(
+        Guid id,
+        [FromQuery] string? message = null,
+        CancellationToken cancellationToken = default)
+    {
+        var report = await reportService.SendMessageToReporterAsync(id, message, cancellationToken);
+
+        if (report is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(report);
+    }
 
     [Authorize]
     [RequestSizeLimit(10_000_000)]
