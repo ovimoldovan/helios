@@ -26,4 +26,9 @@ public class User
     public string LastName { get; private set; } = string.Empty;
 
     public Role Role { get; private set; } = Role.User;
+
+    public void AssignModeratorRole()
+    {
+        Role = Role.Moderator;
+    }
 }

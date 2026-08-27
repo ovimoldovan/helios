@@ -50,3 +50,7 @@ Thumbs.db
 
 # Git
 .git
+
+# Node.js
+node_modules/
+**/node_modules/
