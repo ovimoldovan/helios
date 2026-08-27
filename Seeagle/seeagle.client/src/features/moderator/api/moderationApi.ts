@@ -9,6 +9,9 @@ export interface ModerationReport {
     description: string | null;
     createdUtc: string;
     status: string;
+    priority: string;
+    isSolved?: boolean;
+    messageToReporter?: string | null;
 }
 
 export async function getPendingReports(
@@ -32,4 +35,32 @@ export async function approveReport( id: string, priority: string, token?: strin
 
 export async function rejectReport(id: string, token?: string): Promise<ModerationReport> {
     return putJson<ModerationReport>(`/api/reports/${id}/reject`, token);
+}
+
+export async function getApprovedReports(
+    pageNumber: number,
+    pageSize: number
+): Promise<PagedResult<ModerationReport>> {
+    const token = getAuthToken();
+
+    return getJson<PagedResult<ModerationReport>>(
+        `/api/reports/approved-list?pageNumber=${pageNumber}&pageSize=${pageSize}`,
+        token ?? undefined
+    );
+}
+export async function markAsSolved(id: string, message?: string | null,  token?: string): Promise<ModerationReport> {
+    const url = message
+        ? `/api/reports/${id}/solved?message=${encodeURIComponent(message)}`
+        : `/api/reports/${id}/solved`;
+    return putJson<ModerationReport>(url, token);
+}
+export async function sendMessageToReporter(
+    id: string,
+    message?: string | null,
+    token?: string
+): Promise<ModerationReport> {
+    const url = message
+        ? `/api/reports/${id}/message?message=${encodeURIComponent(message)}`
+        : `/api/reports/${id}/message`;
+    return putJson<ModerationReport>(url, token);
 }
