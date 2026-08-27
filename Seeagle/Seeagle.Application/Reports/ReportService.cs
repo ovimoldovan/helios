@@ -39,7 +39,8 @@ public sealed class ReportService : IReportService
             report.Location.Y,
             report.Description,
             report.CreatedUtc,
-            report.Status);
+            report.Status,
+            report.Priority.ToString());
     }
     
     public async Task<PagedResult<ReportDto>> GetPendingAsync(
@@ -63,7 +64,8 @@ public sealed class ReportService : IReportService
                 report.Location.Y,
                 report.Description,
                 report.CreatedUtc,
-                report.Status))
+                report.Status,
+                report.Priority.ToString()))
             .ToListAsync(cancellationToken);
 
         return new PagedResult<ReportDto>(
@@ -73,28 +75,34 @@ public sealed class ReportService : IReportService
             pageSize);
     }
     
-    public async Task<ReportDto?> ApproveAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<ReportDto?> ApproveAsync(Guid id, string priority, CancellationToken cancellationToken)
     {
         var report = _reportRepository
             .GetAllQueryable()
             .FirstOrDefault(report => report.Id == id);
-
+ 
         if (report is null)
         {
             return null;
         }
-
-        report.Approve();
-
+ 
+        if (!Enum.TryParse<Priority>(priority, ignoreCase: true, out var parsedPriority))
+        {
+            throw new ArgumentException($"Invalid priority value: '{priority}'. Expected Low, Medium, or Urgent.", nameof(priority));
+        }
+ 
+        report.Approve(parsedPriority);
+ 
         await _reportRepository.UpdateAsync(report, cancellationToken);
-
+ 
         return new ReportDto(
             report.Id,
             report.Location.X,
             report.Location.Y,
             report.Description,
             report.CreatedUtc,
-            report.Status);
+            report.Status,
+            report.Priority.ToString());
     }
     
     public async Task<ReportDto?> RejectAsync(Guid id, CancellationToken cancellationToken)
@@ -118,7 +126,8 @@ public sealed class ReportService : IReportService
             report.Location.Y,
             report.Description,
             report.CreatedUtc,
-            report.Status);
+            report.Status,
+            report.Priority.ToString());
     }
 
     public async Task<ReportDto?> AttachPhotoAsync(Guid reportId, Guid userId, byte[] data, string contentType, CancellationToken cancellationToken)
@@ -143,7 +152,8 @@ public sealed class ReportService : IReportService
             report.Location.Y,
             report.Description,
             report.CreatedUtc,
-            report.Status);
+            report.Status,
+            report.Priority.ToString());
     }
 
     public async Task<ProcessedPhoto?> GetPhotoAsync(Guid reportId, bool isModerator, CancellationToken cancellationToken)

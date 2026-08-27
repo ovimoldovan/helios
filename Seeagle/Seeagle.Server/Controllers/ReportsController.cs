@@ -62,9 +62,10 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
     [HttpPut("{id:guid}/approve")]
     public async Task<ActionResult<ReportDto>> Approve(
         Guid id,
+        [FromBody] string priority,
         CancellationToken cancellationToken)
     {
-        var report = await reportService.ApproveAsync(id, cancellationToken);
+        var report = await reportService.ApproveAsync(id, priority, cancellationToken);
 
         if (report is null)
         {
