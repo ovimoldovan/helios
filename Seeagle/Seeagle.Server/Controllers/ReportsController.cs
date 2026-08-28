@@ -8,7 +8,8 @@ namespace Seeagle.Server.Controllers;
 
 [ApiController]
 [Route("api/reports")]
-public sealed class ReportsController(IReportService reportService, IReportQueryService reportQueryService) : ControllerBase
+public sealed class ReportsController(IReportService reportService, IReportQueryService reportQueryService)
+    : ControllerBase
 {
     [Authorize]
     [HttpPost]
@@ -23,6 +24,7 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
             {
                 return Unauthorized(new { message = "User ID claim is missing or invalid." });
             }
+
             var result = await reportService.CreateAsync(userId, request, cancellationToken);
             return Ok(result);
         }
@@ -42,7 +44,6 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
         return Ok(reports);
     }
 
-    [Authorize(Roles = "Moderator")]
     [HttpGet("pending")]
     public async Task<ActionResult<PagedResult<ReportDto>>> GetPending(
         [FromQuery] int pageNumber = 1,
@@ -61,15 +62,14 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
     [HttpPut("{id:guid}/approve")]
     public async Task<ActionResult<ReportDto>> Approve(
         Guid id,
-        CancellationToken cancellationToken)
+        [FromQuery] string priority = "low",
+        CancellationToken cancellationToken = default)
     {
-        var report = await reportService.ApproveAsync(id, cancellationToken);
-
+        var report = await reportService.ApproveAsync(id, priority, cancellationToken);
         if (report is null)
         {
             return NotFound();
         }
-
         return Ok(report);
     }
 
@@ -80,6 +80,35 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
         CancellationToken cancellationToken)
     {
         var report = await reportService.RejectAsync(id, cancellationToken);
+        if (report is null)
+        {
+            return NotFound();
+        }
+        return Ok(report);
+    }
+    
+    [Authorize(Roles = "Moderator")]
+    [HttpGet("approved-list")]
+    public async Task<ActionResult<PagedResult<ReportDto>>> GetApprovedReports(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
+        CancellationToken cancellationToken = default)
+    {
+        var reports = await reportService.GetApprovedReportsAsync(
+            pageNumber,
+            pageSize,
+            cancellationToken);
+
+        return Ok(reports);
+    }
+    [Authorize(Roles = "Moderator")]
+    [HttpPut("{id:guid}/solved")]
+    public async Task<ActionResult<ReportDto>> MarkAsSolved(
+        Guid id,
+        [FromQuery] string? message = null,
+        CancellationToken cancellationToken = default)
+    {
+        var report = await reportService.MarkAsSolvedAsync(id, message, cancellationToken);
 
         if (report is null)
         {
@@ -88,4 +117,22 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
 
         return Ok(report);
     }
+    
+    [Authorize(Roles = "Moderator")]
+    [HttpPut("{id:guid}/message")]
+    public async Task<ActionResult<ReportDto>> SendMessage(
+        Guid id,
+        [FromQuery] string? message = null,
+        CancellationToken cancellationToken = default)
+    {
+        var report = await reportService.SendMessageToReporterAsync(id, message, cancellationToken);
+
+        if (report is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(report);
+    }
+    
 }

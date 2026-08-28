@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using Seeagle.Application.Common;
 using Seeagle.Domain.Reports;
 
@@ -19,101 +18,69 @@ public sealed class ReportTypeService : IReportTypeService
     {
         var normalizedName = request.Name.Trim();
 
-        var exists = await _reportTypeRepository
+        var exists = _reportTypeRepository
             .GetAllQueryable()
-            .AnyAsync(
-                reportType =>
-                    reportType.Name.ToLower() == normalizedName.ToLower(),
-                cancellationToken);
+            .Any(reportType => reportType.Name.ToLower() == normalizedName.ToLower());
 
         if (exists)
-            throw new InvalidOperationException(
-                "A report type with this name already exists.");
-
+            throw new InvalidOperationException("A report type with this name already exists.");
+        
         var reportType = new ReportType(normalizedName);
 
-        await _reportTypeRepository.AddAsync(
-            reportType,
-            cancellationToken);
-
-        return MapToDto(reportType);
+        await _reportTypeRepository.AddAsync(reportType, cancellationToken);
+        
+        return new ReportTypeDto(reportType.Id, reportType.Name, reportType.IsActive);
     }
 
-    public async Task<IReadOnlyList<ReportTypeDto>> GetAllAsync(
-        CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<ReportTypeDto>> GetAllAsync(CancellationToken cancellationToken)
     {
-        var reportTypes = await _reportTypeRepository
-            .GetAllAsync(cancellationToken);
+        var reportTypes = await _reportTypeRepository.GetAllAsync(cancellationToken);
 
         return reportTypes
-            .Select(MapToDto)
+            .Select(reportType => new ReportTypeDto(reportType.Id, reportType.Name, reportType.IsActive))
             .ToList();
     }
 
-    public async Task<ReportTypeDto?> UpdateAsync(
-        Guid id,
-        UpdateReportTypeRequest request,
-        CancellationToken cancellationToken)
+    public async Task<ReportTypeDto?> UpdateAsync(Guid id, UpdateReportTypeRequest request, CancellationToken cancellationToken)
     {
-        var reportType = await _reportTypeRepository
+        var reportType = _reportTypeRepository
             .GetAllQueryable()
-            .FirstOrDefaultAsync(
-                reportType => reportType.Id == id,
-                cancellationToken);
+            .FirstOrDefault(reportType => reportType.Id == id);
 
         if (reportType is null)
             return null;
 
         var normalizedName = request.Name.Trim();
 
-        var duplicateExists = await _reportTypeRepository
+        var duplicateExists = _reportTypeRepository
             .GetAllQueryable()
-            .AnyAsync(
-                existingReportType =>
-                    existingReportType.Id != id &&
-                    existingReportType.Name.ToLower() == normalizedName.ToLower(),
-                cancellationToken);
+            .Any(existingReportType =>
+                existingReportType.Id != id &&
+                existingReportType.Name.ToLower() == normalizedName.ToLower());
 
         if (duplicateExists)
-            throw new InvalidOperationException(
-                "A report type with this name already exists.");
+            throw new InvalidOperationException("A report type with this name already exists.");
 
         reportType.Rename(normalizedName);
 
-        await _reportTypeRepository.UpdateAsync(
-            reportType,
-            cancellationToken);
+        await _reportTypeRepository.UpdateAsync(reportType, cancellationToken);
 
-        return MapToDto(reportType);
+        return new ReportTypeDto(reportType.Id, reportType.Name, reportType.IsActive);
     }
 
-    public async Task<ReportTypeDto?> DisableAsync(
-        Guid id,
-        CancellationToken cancellationToken)
+    public async Task<ReportTypeDto?> DisableAsync(Guid id, CancellationToken cancellationToken)
     {
-        var reportType = await _reportTypeRepository
+        var reportType = _reportTypeRepository
             .GetAllQueryable()
-            .FirstOrDefaultAsync(
-                reportType => reportType.Id == id,
-                cancellationToken);
+            .FirstOrDefault(reportType => reportType.Id == id);
 
         if (reportType is null)
             return null;
 
         reportType.Disable();
 
-        await _reportTypeRepository.UpdateAsync(
-            reportType,
-            cancellationToken);
+        await _reportTypeRepository.UpdateAsync(reportType, cancellationToken);
 
-        return MapToDto(reportType);
-    }
-
-    private static ReportTypeDto MapToDto(ReportType reportType)
-    {
-        return new ReportTypeDto(
-            reportType.Id,
-            reportType.Name,
-            reportType.IsActive);
+        return new ReportTypeDto(reportType.Id, reportType.Name, reportType.IsActive);
     }
 }

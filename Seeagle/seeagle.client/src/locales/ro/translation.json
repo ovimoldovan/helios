@@ -150,6 +150,33 @@
   "processing": "Se procesează...",
   "approveReportButton": "Aprobă",
 
+  "actionOnReport": "Acțiune asupra raportului",
+  "messageToReporter": "Mesaj către reporter (opțional)",
+  "writeMessagePlaceholder": "Scrie un mesaj către reporter...",
+  "markAsSolved": "Marchează ca rezolvat",
+  "applyAction": "Aplică acțiunea",
+  "approvedReports": "Rapoarte Aprobate",
+  "noApprovedReports": "Niciun raport aprobat.",
+  "unexpectedErrorLoadingApproved": "Eroare neașteptată la încărcarea rapoartelor aprobate.",
+  "unexpectedErrorProcessingAction": "Eroare neașteptată la procesarea acțiunii.",
+ 
+
   "languageEn": "EN",
-  "languageRo": "RO"
+  "languageRo": "RO",
+
+  "home": "Acasa",
+  "admin": "Admin",
+  "moderator": "Moderator",
+
+  "loadingReports": "Se încarcă rapoartele...",
+  "errorLoadingReports": "Eroare neașteptată la încărcarea rapoartelor.",
+  "errorApprovingReport": "Eroare neașteptată la aprobarea raportului.",
+  "errorRejectingReport": "Eroare neașteptată la respingerea raportului.",
+  "noPendingReports": "Niciun raport în așteptare.",
+  "descriptionColumn": "Descriere",
+  "createdColumn": "Data creării",
+  "statusColumn": "Stare",
+  "noDescription": "Fără descriere",
+  "approve": "Aprobă",
+  "reject": "Respinge"
 }

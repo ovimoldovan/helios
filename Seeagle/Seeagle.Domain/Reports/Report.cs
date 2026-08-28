@@ -30,15 +30,31 @@ public class Report
     public Point Location { get; set; }
     public string? Description { get; private set; }
     public DateTime CreatedUtc { get; private set; }
-
-    
     public User.User User { get; private set; }
     public Guid? ReportTypeId { get; private set; }
-    public string Status { get; private set; } =string.Empty;
+    public string Status { get; private set; } = string.Empty;
+    public Priority Priority { get; private set; } = Priority.Low;
+    public string? MessageToReporter { get; private set; }
+    public bool IsSolved { get; private set; }
     
-    public void Approve() {
-        Status = "Approved";
+    public void MarkAsSolved(string? message)
+    {
+        IsSolved =  true;
+        MessageToReporter = message;
+        Status = "Solved";
     }
+    
+    public void UpdateMessageToReporter(string? message)
+    {
+        MessageToReporter = message;
+    }
+    
+    public void Approve(Priority priority)
+    {
+        Status = "Approved";
+        Priority = priority;
+    }
+    
     public void Reject()
     {
         Status = "Rejected";

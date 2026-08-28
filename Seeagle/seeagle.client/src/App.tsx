@@ -4,15 +4,17 @@ import { Route, Routes } from 'react-router-dom';
 import { AuthProvider } from '@/shared/context/AuthContext';
 import { UsersListPage } from '@/features/admin/components/UsersListPage';
 import { Homepage } from './features/homepage/components/Homepage';
-import { LoginForm } from '@/features/login/components/LoginForm';
-import { RegisterForm } from '@/features/registration/components/RegisterForm';
+import { LoginPage } from '@/features/login/components/LoginPage.tsx';
+import { RegisterPage } from '@/features/registration/components/RegisterPage.tsx';
 import { AdminDashboard } from '@/features/admin/components/AdminDashboard';
 import { ModeratorDashboard } from '@/features/moderator/components/ModeratorDashboard';
-import {ErrorPage} from "@/shared/error_page/components/ErrorPage.tsx";
-import {PrivateRoutes} from "@/shared/utils/PrivateRoutes.tsx";
-import {Toaster} from "@/components/ui/toast.tsx";
+import { ErrorPage } from "@/shared/error_page/components/ErrorPage.tsx";
+import { PrivateRoutes } from "@/shared/utils/PrivateRoutes.tsx";
+import { Toaster } from "@/components/ui/toast.tsx";
+import { CookiesPolicy } from "@/pages/CookiesPolicy.tsx";
 import { ReportTypesPage } from '@/features/admin/components/ReportTypesPage';
 import { ModerationQueue } from '@/features/moderator/components/ModerationQueue';
+import {ApprovedReports} from "@/features/moderator/components/ApprovedReports.tsx";
 
 function App() {
     return (
@@ -23,14 +25,14 @@ function App() {
                 <Route
                     path="/login"
                     element={
-                        <LoginForm/>
+                        <LoginPage/>
                     }
                 />
 
                 <Route
                     path="/register"
                     element={
-                        <RegisterForm/>
+                        <RegisterPage/>
                     }
                 />
 
@@ -41,18 +43,20 @@ function App() {
                             <AdminDashboard/>
                         }
                     />
-                  
-                    <Route path="/admin/users" 
-                      element={
-                      <UsersListPage />
-                        } 
+
+                    <Route
+                        path="/admin/users"
+                        element={
+                            <UsersListPage />
+                        }
                     />
 
                     <Route
                         path="/admin/report-types"
-                        element={<ReportTypesPage />}
+                        element={
+                            <ReportTypesPage />
+                        }
                     />
-                    
                 </Route>
 
                 <Route element={<PrivateRoutes allowedRoles={['Moderator', 'Admin']}/>}>
@@ -67,8 +71,13 @@ function App() {
                         path="/moderator/queue"
                         element={<ModerationQueue />}
                     />
+                    <Route
+                        path="/moderator/approved"
+                        element={<ApprovedReports />}
+                    />
                     
                 </Route>
+                
 
                 <Route
                     path="/unauthorized"
@@ -87,6 +96,13 @@ function App() {
                                    errorTitle={"Not Found"} 
                                    errorText={"Oops, looks like this URL doesn't exist!"}
                         />
+                    }
+                />
+                
+                <Route
+                    path="/cookies"
+                    element={
+                        <CookiesPolicy/>
                     }
                 />
             </Routes>

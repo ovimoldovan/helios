@@ -1,8 +1,9 @@
 import {useEffect, useState} from 'react';
 import { Map } from './Map';
-import { LeftPanel } from './LeftPanel';
+import { LeftPanel } from '@/features/homepage/components/LeftPanel';
 import { AddReportModal } from '@/features/reports/components/ReportModal.tsx';
 import type { Report } from '@/shared/types/report';
+import { MapSidebarExtra } from '../MapSidebarExtra';
 import {getApprovedReports} from "@/features/reports/api/reportApi.ts";
 
 export function Homepage() {
@@ -30,8 +31,12 @@ export function Homepage() {
     return (
         <div className="relative h-screen w-screen overflow-hidden">
             <LeftPanel
-                onNewReport={() => setIsPlacingPin(true)}
-                isPlacingPin={isPlacingPin}
+                sidebarExtra = {
+                    <MapSidebarExtra
+                    onNewReport={() => setIsPlacingPin(true)}
+                    isPlacingPin={isPlacingPin}
+                    />
+                }
             />
 
             <div className="absolute inset-0 z-0 isolate">

@@ -9,8 +9,7 @@ namespace Seeagle.Server.Controllers;
 public sealed class ReportTypesController(IReportTypeService reportTypeService) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<ReportTypeDto>>> GetAll(
-        CancellationToken cancellationToken)
+    public async Task<ActionResult<IReadOnlyList<ReportTypeDto>>> GetAll(CancellationToken cancellationToken)
     {
         var reportTypes = await reportTypeService.GetAllAsync(cancellationToken);
         return Ok(reportTypes);
@@ -24,9 +23,7 @@ public sealed class ReportTypesController(IReportTypeService reportTypeService) 
     {
         try
         {
-            var created = await reportTypeService.CreateAsync(
-                request,
-                cancellationToken);
+            var created = await reportTypeService.CreateAsync(request, cancellationToken);
 
             return Created($"/api/report-types/{created.Id}", created);
         }
@@ -42,17 +39,11 @@ public sealed class ReportTypesController(IReportTypeService reportTypeService) 
 
     [HttpPut("{id:guid}")]
     [Authorize(Roles = "Admin")]
-    public async Task<ActionResult<ReportTypeDto>> Update(
-        Guid id,
-        UpdateReportTypeRequest request,
-        CancellationToken cancellationToken)
+    public async Task<ActionResult<ReportTypeDto>> Update(Guid id, UpdateReportTypeRequest request, CancellationToken cancellationToken)
     {
         try
         {
-            var updated = await reportTypeService.UpdateAsync(
-                id,
-                request,
-                cancellationToken);
+            var updated = await reportTypeService.UpdateAsync(id, request, cancellationToken);
 
             if (updated is null)
                 return NotFound();
@@ -71,13 +62,9 @@ public sealed class ReportTypesController(IReportTypeService reportTypeService) 
 
     [HttpPut("{id:guid}/disable")]
     [Authorize(Roles = "Admin")]
-    public async Task<ActionResult<ReportTypeDto>> Disable(
-        Guid id,
-        CancellationToken cancellationToken)
+    public async Task<ActionResult<ReportTypeDto>> Disable(Guid id, CancellationToken cancellationToken)
     {
-        var disabled = await reportTypeService.DisableAsync(
-            id,
-            cancellationToken);
+        var disabled = await reportTypeService.DisableAsync(id, cancellationToken);
 
         if (disabled is null)
             return NotFound();

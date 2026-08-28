@@ -148,7 +148,7 @@ public sealed class ReportServiceTests
             "Approved report",
             user);
 
-        approvedReport.Approve();
+        approvedReport.Approve(Priority.Medium);
 
         var reports = new List<Report>
         {
@@ -237,9 +237,7 @@ public sealed class ReportServiceTests
             .Returns(new List<Report> { report }.AsQueryable());
 
         // Act
-        var result = await service.ApproveAsync(
-            report.Id,
-            CancellationToken.None);
+        var result = await service.ApproveAsync(report.Id, "medium", CancellationToken.None);
 
         // Assert
         Assert.NotNull(result);
@@ -310,7 +308,7 @@ public sealed class ReportServiceTests
             "Approved report",
             user);
 
-        approvedReport.Approve();
+        approvedReport.Approve(Priority.Medium);
 
         var rejectedReport = new Report(
             new Point(26.1025, 44.4268),
@@ -355,9 +353,7 @@ public sealed class ReportServiceTests
             .Returns(new List<Report>().AsQueryable());
 
         // Act
-        var result = await service.ApproveAsync(
-            Guid.NewGuid(),
-            CancellationToken.None);
+        var result = await service.ApproveAsync(Guid.NewGuid(), "medium", CancellationToken.None);
 
         // Assert
         Assert.Null(result);

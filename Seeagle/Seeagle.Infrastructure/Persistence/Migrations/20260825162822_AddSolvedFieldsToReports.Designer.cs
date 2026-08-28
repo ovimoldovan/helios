@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -12,9 +13,11 @@ using Seeagle.Infrastructure.Persistence;
 namespace Seeagle.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(SeeagleDbContext))]
-    partial class SeeagleDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260825162822_AddSolvedFieldsToReports")]
+    partial class AddSolvedFieldsToReports
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,9 +40,15 @@ namespace Seeagle.Infrastructure.Persistence.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
+                    b.Property<bool>("IsSolved")
+                        .HasColumnType("boolean");
+
                     b.Property<Point>("Location")
                         .IsRequired()
                         .HasColumnType("geometry");
+
+                    b.Property<string>("MessageToReporter")
+                        .HasColumnType("text");
 
                     b.Property<Guid?>("ReportTypeId")
                         .HasColumnType("uuid");
@@ -57,28 +66,6 @@ namespace Seeagle.Infrastructure.Persistence.Migrations
 
                     b.ToTable("Reports");
                 });
-            
-            modelBuilder.Entity("Seeagle.Domain.Reports.ReportType", b =>
-            {
-                b.Property<Guid>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("uuid");
-
-                b.Property<bool>("IsActive")
-                    .HasColumnType("boolean");
-
-                b.Property<string>("Name")
-                    .IsRequired()
-                    .HasMaxLength(20)
-                    .HasColumnType("character varying(20)");
-
-                b.HasKey("Id");
-
-                b.HasIndex("Name")
-                    .IsUnique();
-
-                b.ToTable("ReportTypes");
-            });
 
             modelBuilder.Entity("Seeagle.Domain.SampleNames.SampleName", b =>
                 {
