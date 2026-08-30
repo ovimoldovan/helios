@@ -201,5 +201,33 @@ public sealed class ReportService : IReportService
             report.Priority.ToString()
         );
     }
+    public async Task<PagedResult<ReportDto>> GetUserReportsAsync(
+        Guid userId,
+        int pageNumber,
+        int pageSize,
+        CancellationToken cancellationToken)
+    {
+        var query = _reportRepository
+            .GetAllQueryable()
+            .Where(report => report.User.Id == userId);
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var reports = await query
+            .OrderByDescending(report => report.CreatedUtc)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .Select(report => new ReportDto(
+                report.Id,
+                report.Location.X,
+                report.Location.Y,
+                report.Description,
+                report.CreatedUtc,
+                report.Status,
+                report.Priority.ToString()))
+            .ToListAsync(cancellationToken);
+
+        return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
+    }
     
 }

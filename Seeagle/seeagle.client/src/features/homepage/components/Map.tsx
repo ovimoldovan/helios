@@ -44,20 +44,42 @@ function PinManager({ onPinPlaced, isPlacingPin, pinPosition}: {
 
 function ReportMarkers({ reports }: { reports?: Report[] }) {
     if (!reports) return null;
+    const getPriorityColor = (priority: string) => {
+        switch (priority) {
+            case 'Urgent': return '#dc2626'; 
+            case 'Medium': return '#eab308'; 
+            default: return '#22c55e'; 
+        }
+    };
+    return reports.map((report) => {
+        const isPending = report.status === 'Pending';
+        const markerColor = isPending ? '#3b82f6' : getPriorityColor(report.priority);
 
-    return reports.map((report) => (
-        <Marker key={report.id} position={[report.latitude, report.longitude]}>
-            <Popup>
-                <div className="space-y-1">
-                    <strong> {report.status}</strong>
-                    {report.description && <p className="text-sm">{report.description}</p>}
-                    <small className="block text-xs text-gray-500">
-                        {new Date(report.createdUtc).toLocaleString()}
-                    </small>
-                </div>
-            </Popup>
-        </Marker>
-    ));
+        return (
+            <Marker key={report.id} position={[report.latitude, report.longitude]}
+            ><Popup>
+                    <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                            <span
+                                className="w-3 h-3 rounded-full inline-block"
+                                style={{ backgroundColor: markerColor }}
+                            />
+                            <strong>{report.status}</strong>
+                        </div>
+                        {report.description && (<p className="text-sm">{report.description}</p>)}
+                        {report.status === 'Approved' && report.priority && (
+                            <p className="text-xs font-medium mt-1">
+                                Priority: {report.priority}
+                            </p>
+                        )}
+                        <small className="block text-xs text-gray-500">
+                            {new Date(report.createdUtc).toLocaleString()}
+                        </small>
+                    </div>
+                </Popup>
+            </Marker>
+    );
+    });
 }
 
 export function Map({ onPinPlaced, reports = [], isPlacingPin = false, pinPosition }: MapProps) {
