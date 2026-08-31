@@ -20,10 +20,10 @@ export function MapSidebarExtra({ onNewReport, isPlacingPin = false }: MapSideba
                     <MapPin className="w-5 h-5 text-muted-foreground" />
                     <div>
                         <p className="font-medium text-sm">
-                            {isPlacingPin ? t("placingPin") : t("addReport")}
+                            {isPlacingPin ? t("placing") : t("addReport")}
                         </p>
                         <p className="text-[10px] text-muted-foreground">
-                            {isPlacingPin ? t("clickMapToDrop") : t("tapMapToDrop")}
+                            {isPlacingPin ? t("clickMapToDrop") : t("tapMapToPlacePin")}
                         </p>
                     </div>
                 </div>
@@ -46,10 +46,6 @@ export function MapSidebarExtra({ onNewReport, isPlacingPin = false }: MapSideba
                     {t("loginToAddReport")}
                 </div>
             )}
-
-            <p className="text-[10px] text-muted-foreground">
-                {t("lineReport")}
-            </p>
         </div>
         </div>
     );
