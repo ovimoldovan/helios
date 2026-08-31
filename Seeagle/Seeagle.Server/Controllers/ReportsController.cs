@@ -135,4 +135,26 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
         return Ok(report);
     }
     
+    [Authorize]
+    [HttpGet("my")]
+    public async Task<ActionResult<PagedResult<ReportDto>>> GetMyReports(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
+        CancellationToken cancellationToken = default)
+    {
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null || !Guid.TryParse(userIdClaim, out var userId))
+        {
+            return Unauthorized(new { message = "User ID claim is missing or invalid." });
+        }
+
+        var reports = await reportService.GetUserReportsAsync(
+            userId,
+            pageNumber,
+            pageSize,
+            cancellationToken);
+
+        return Ok(reports);
+    }
+    
 }

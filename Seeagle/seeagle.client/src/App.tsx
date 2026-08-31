@@ -15,6 +15,7 @@ import { CookiesPolicy } from "@/pages/CookiesPolicy.tsx";
 import { ReportTypesPage } from '@/features/admin/components/ReportTypesPage';
 import { ModerationQueue } from '@/features/moderator/components/ModerationQueue';
 import {ApprovedReports} from "@/features/moderator/components/ApprovedReports.tsx";
+import { MyReports } from '@/features/reports/components/MyReports';
 
 function App() {
     return (
@@ -33,6 +34,12 @@ function App() {
                     path="/register"
                     element={
                         <RegisterPage/>
+                    }
+                />
+                <Route
+                    path="/my-reports"
+                    element={
+                            <MyReports />
                     }
                 />
 

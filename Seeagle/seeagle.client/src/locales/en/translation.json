@@ -167,15 +167,16 @@
   "admin": "Admin",
   "moderator": "Moderator",
 
-  "loadingReports": "Loading reports...",
   "errorLoadingReports": "Unexpected error while loading reports.",
   "errorApprovingReport": "Unexpected error while approving report.",
   "errorRejectingReport": "Unexpected error while rejecting report.",
-  "noPendingReports": "No pending reports.",
   "descriptionColumn": "Description",
   "createdColumn": "Created",
   "statusColumn": "Status",
-  "noDescription": "No description",
-  "approve": "Approve",
-  "reject": "Reject"
+  "myReports": "My Reports",
+  "viewYourReports": "View your submitted reports",
+  "loginToViewReports": "Please login to view your reports.",
+  "noReports": "You haven't submitted any reports yet.",
+  "priority": "Priority"
+  
 }
