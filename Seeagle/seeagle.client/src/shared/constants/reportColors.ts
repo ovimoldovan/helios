@@ -1,5 +1,3 @@
-// src/shared/constants/reportColors.ts
-
 export const PRIORITY_COLORS: Record<string, string> = {
     low: '#22c55e',
     medium: '#eab308',
