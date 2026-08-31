@@ -19,7 +19,7 @@ export function CookiesPolicy() {
                         {t('cookiesPolicyTitle')}
                     </h1>
                     <p>
-                        
+                        {t('cookiesIntro')}
                     </p>
                 </div>
 
