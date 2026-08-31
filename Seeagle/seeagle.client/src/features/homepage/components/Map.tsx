@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaf
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import type { Report } from '@/shared/types/report';
+import {getPriorityColor, getStatusColor} from "@/shared/constants/reportColors.ts";
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -44,16 +45,12 @@ function PinManager({ onPinPlaced, isPlacingPin, pinPosition}: {
 
 function ReportMarkers({ reports }: { reports?: Report[] }) {
     if (!reports) return null;
-    const getPriorityColor = (priority: string) => {
-        switch (priority) {
-            case 'Urgent': return '#dc2626'; 
-            case 'Medium': return '#eab308'; 
-            default: return '#22c55e'; 
-        }
-    };
+    
     return reports.map((report) => {
         const isPending = report.status === 'Pending';
-        const markerColor = isPending ? '#3b82f6' : getPriorityColor(report.priority);
+        const markerColor = isPending
+            ? getStatusColor('Pending')
+            : getPriorityColor(report.priority);
 
         return (
             <Marker key={report.id} position={[report.latitude, report.longitude]}
