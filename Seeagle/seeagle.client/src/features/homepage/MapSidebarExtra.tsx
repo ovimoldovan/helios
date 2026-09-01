@@ -25,7 +25,7 @@ export function MapSidebarExtra({ onNewReport, isPlacingPin = false }: MapSideba
                             {isPlacingPin ? t("placingPin") : t("addReport")}
                         </p>
                         <p className="text-[10px] text-muted-foreground">
-                            {isPlacingPin ? t("clickMapToDrop") : t("tapMapToDrop")}
+                            {isPlacingPin ? t("clickMapToDrop") : t("tapMapToPlacePin")}
                         </p>
                     </div>
                 </div>
