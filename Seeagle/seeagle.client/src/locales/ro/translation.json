@@ -87,6 +87,8 @@
   "adding": "Se adaugă...",
   "add": "Adaugă",
   "reportTypeAlreadyExists": "Acest tip de raport există deja.",
+  "loadingReportTypes": "Se încarcă tipurile de rapoarte...",
+  "unexpectedErrorLoadingReportTypes": "A apărut o eroare neașteptată la încărcarea tipurilor de rapoarte.",
   
   "moderatorDashboardTitle": "Panou de moderare",
   "moderatorDashboardDescription": "Gestionează rapoartele care necesită moderare.",
@@ -178,5 +180,7 @@
   "statusColumn": "Stare",
   "noDescription": "Fără descriere",
   "approve": "Aprobă",
-  "reject": "Respinge"
+  "reject": "Respinge",
+  "edit": "Editează",
+  "disable": "Dezactivează"
 }

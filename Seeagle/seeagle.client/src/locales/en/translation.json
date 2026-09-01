@@ -87,6 +87,8 @@
   "adding": "Adding...",
   "add": "Add",
   "reportTypeAlreadyExists": "This report type already exists.",
+  "loadingReportTypes": "Loading report types...",
+  "unexpectedErrorLoadingReportTypes": "Unexpected error while loading report types.",
 
   "moderatorDashboardTitle": "Moderator Dashboard",
   "moderatorDashboardDescription": "Manage reports that require moderation.",
@@ -177,5 +179,7 @@
   "statusColumn": "Status",
   "noDescription": "No description",
   "approve": "Approve",
-  "reject": "Reject"
+  "reject": "Reject",
+  "edit": "Edit",
+  "disable": "Disable"
 }

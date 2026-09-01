@@ -90,4 +90,76 @@ public sealed class ReportTypeServiceTests
                 Arg.Any<ReportType>(),
                 Arg.Any<CancellationToken>());
     }
+    
+    [Fact]
+    public async Task UpdateAsync_ShouldRenameReportType_WhenNameIsValid()
+    {
+        // Arrange
+        var repository = Substitute.For<IRepository<ReportType>>();
+
+        var existingReportType = new ReportType("Police");
+
+        repository
+            .GetAllQueryable()
+            .Returns(new List<ReportType>
+            {
+                existingReportType
+            }.AsQueryable());
+
+        var service = new ReportTypeService(repository);
+        var request = new UpdateReportTypeRequest
+        {
+            Name = "Traffic"
+        };
+
+        // Act
+        var result = await service.UpdateAsync(
+            existingReportType.Id,
+            request,
+            CancellationToken.None);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal("Traffic", result.Name);
+
+        await repository
+            .Received(1)
+            .UpdateAsync(
+                Arg.Is<ReportType>(reportType => reportType.Name == "Traffic"),
+                CancellationToken.None);
+    }
+
+    [Fact]
+    public async Task DisableAsync_ShouldDisableReportType()
+    {
+        // Arrange
+        var repository = Substitute.For<IRepository<ReportType>>();
+
+        var existingReportType = new ReportType("Police");
+
+        repository
+            .GetAllQueryable()
+            .Returns(new List<ReportType>
+            {
+                existingReportType
+            }.AsQueryable());
+
+        var service = new ReportTypeService(repository);
+
+        // Act
+        var result = await service.DisableAsync(
+            existingReportType.Id,
+            CancellationToken.None);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.False(result.IsActive);
+
+        await repository
+            .Received(1)
+            .UpdateAsync(
+                Arg.Is<ReportType>(reportType => !reportType.IsActive),
+                CancellationToken.None);
+    }
 }
+
