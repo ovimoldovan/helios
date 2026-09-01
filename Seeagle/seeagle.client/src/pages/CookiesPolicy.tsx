@@ -1,23 +1,25 @@
 ﻿import { Logo } from '@/components/Logo';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export function CookiesPolicy() {
+    const { t } = useTranslation();
     return (
         <main className="container max-w-3xl py-12 px-4 mx-auto">
             
             <div className="space-y-6">
                 <div className="bg-background">
                     <Link to="/" className="text-sm text-muted-foreground hover:underline">
-                        Back to map
+                        {t('backToMap')}
                     </Link>
                 </div>
                 <Logo></Logo>
                 <div className="space-y-2">
                     <h1 className="text-3xl font-bold tracking-tight">
-                        Cookies Policy
+                        {t('cookiesPolicyTitle')}
                     </h1>
                     <p>
-                        To make Seeagle work properly, we install small files called cookies on your device.
+                        {t('cookiesIntro')}
                     </p>
                 </div>
 
@@ -25,22 +27,22 @@ export function CookiesPolicy() {
 
                 <div className="space-y-2">
                     <h1 className="text-3xl font-bold tracking-tight">
-                        What are cookies?
+                        {t('whatAreCookies')}
                     </h1>
                     <p>
-                        A cookie is a small text file that a website stores on your device when you visit said site.
+                        {t('cookieDefinition')}
                     </p>
                     <p>
-                        - First party cookies are cookies set by the website and only it can read them. Moreover, a website might use external services, which use third-party cookies
+                        - {t('firstPartyCookies')}
                     </p>
                     <p>
-                        - Persistent cookies, which are saved on your computer and are not deleted automatically when you quit your browser.
+                        - {t('persistentCookies')}
                     </p>
                     <p>
-                        Every time you enter our website, essential cookies for the functionality of the website will be activated automatically.
+                        {t('essentialCookiesNote')}
                     </p>
                     <p>
-                        Their purpose is to remember settings and preferences such as language, account login etc. for a period of time.
+                        {t('cookiesPurpose')}
                     </p>
                 </div>
 
@@ -48,22 +50,22 @@ export function CookiesPolicy() {
 
                 <div className="space-y-2">
                     <h1 className="text-3xl font-bold tracking-tight">
-                        How do we use cookies?
+                        {t('howWeUseCookies')}
                     </h1>
                     <p>
-                       We only use essential cookies, necessary for keeping you logged in for a longer period of time and other settings. We do not use any marketing or analytics cookies.
+                       {t('cookiesUsageIntro')}
                     </p>
                     <p className="font-extrabold">
-                        This is what we use cookies for:
+                        {t('cookiesUsageListTitle')}
                     </p>
                     <p>
-                        -Keeping the site functional
+                        - {t('cookiesUsageItem1')}
                     </p>
                     <p>
-                        -Saving your preferences and settings
+                        - {t('cookiesUsageItem2')}
                     </p>
                     <p>
-                        -Keeping you logged in for a limited, longer period of time
+                        - {t('cookiesUsageItem3')}
                     </p>
                 </div>
             </div>
