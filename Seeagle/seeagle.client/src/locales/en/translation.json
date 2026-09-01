@@ -174,5 +174,8 @@
   "cookiesUsageListTitle": "This is what we use cookies for:",
   "cookiesUsageItem1": "Keeping the site functional",
   "cookiesUsageItem2": "Saving your preferences and settings",
-  "cookiesUsageItem3": "Keeping you logged in for a limited, longer period of time"
+  "cookiesUsageItem3": "Keeping you logged in for a limited, longer period of time",
+
+  "authRequiredTitle": "Authentication Required",
+  "authRequiredDescription": "Please log in or create an account to submit a report."
 }

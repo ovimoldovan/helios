@@ -176,5 +176,8 @@
   "cookiesUsageListTitle": "Iată pentru ce folosim cookie-urile:",
   "cookiesUsageItem1": "Menținerea funcționalității site-ului",
   "cookiesUsageItem2": "Salvarea preferințelor și setărilor tale",
-  "cookiesUsageItem3": "Menținerea autentificării pentru o perioadă limitată, mai lungă"
+  "cookiesUsageItem3": "Menținerea autentificării pentru o perioadă limitată, mai lungă",
+
+  "authRequiredTitle": "Autentificare necesară",
+  "authRequiredDescription": "Te rugăm să te autentifici sau să creezi un cont pentru a trimite un raport."
 }
