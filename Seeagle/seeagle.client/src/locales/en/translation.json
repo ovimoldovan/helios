@@ -5,7 +5,6 @@
   "addReport": "Placing pin",
   "newReport": "New report",
   "loginToAddReport": "Login to add report",
-
   "cookiesPolicy": "Cookies Policy",
 
   "loginTitle": "Login to your account",
@@ -32,7 +31,8 @@
   "firstNameTooLong": "First name must be at most {{max}} characters.",
   "lastNameRequired": "Last name is required.",
   "lastNameTooLong": "Last name must be at most {{max}} characters.",
-
+  
+  "cookiesPolicyTitle": "Cookies Policy",
   "registeredUsers": "Registered users",
   "loadingUsers": "Loading...",
   "errorLoadingUsers": "Unexpected error while loading users.",
@@ -71,6 +71,8 @@
   "adding": "Adding...",
   "add": "Add",
   "reportTypeAlreadyExists": "This report type already exists.",
+  "loadingReportTypes": "Loading report types...",
+  "unexpectedErrorLoadingReportTypes": "Unexpected error while loading report types.",
 
   "moderatorDashboardTitle": "Moderator Dashboard",
   "moderatorDashboardDescription": "Manage reports that require moderation.",
@@ -119,6 +121,7 @@
 
   "approveReport": "Approve Report",
   "report": "Report",
+  "noDescription": "No description",
   "setPriority": "Set priority",
   "setPriorityDescription": "Choose how urgently this report should be handled.",
   "priority": "Priority",
@@ -147,22 +150,21 @@
   "admin": "Admin",
   "moderator": "Moderator",
 
+  "loadingReports": "Loading reports...",
   "errorLoadingReports": "Unexpected error while loading reports.",
   "errorApprovingReport": "Unexpected error while approving report.",
   "errorRejectingReport": "Unexpected error while rejecting report.",
+  "noPendingReports": "No pending reports.",
   "descriptionColumn": "Description",
   "createdColumn": "Created",
   "statusColumn": "Status",
   "myReports": "My Reports",
   "viewYourReports": "View your submitted reports",
-  "reject": "Reject",
   "backToMap": "Back to map",
-  "cookiesPolicyTitle": "Cookies Policy", 
   "cookiesIntro": "To make Seeagle work properly, we install small files called cookies on your device.",
   "loginToViewReports": "Please login to view your reports.",
   "noReports": "You haven't submitted any reports yet.",
-  "priority": "Priority",
-  
+
   "whatAreCookies": "What are cookies?",
   "cookieDefinition": "A cookie is a small text file that a website stores on your device when you visit said site.",
   "firstPartyCookies": "First party cookies are cookies set by the website and only it can read them. Moreover, a website might use external services, which use third-party cookies",
@@ -177,5 +179,14 @@
   "cookiesUsageItem3": "Keeping you logged in for a limited, longer period of time",
 
   "authRequiredTitle": "Authentication Required",
-  "authRequiredDescription": "Please log in or create an account to submit a report."
+  "authRequiredDescription": "Please log in or create an account to submit a report.",
+  "approve": "Approve",
+  "reject": "Reject",
+  "edit": "Edit",
+  "disable": "Disable",
+  "save": "Save",
+  "saving": "Saving...",
+  "unexpectedErrorUpdatingReportType": "Unexpected error while updating report type.",
+  "unexpectedErrorDisablingReportType": "Unexpected error while disabling report type."
+  
 }

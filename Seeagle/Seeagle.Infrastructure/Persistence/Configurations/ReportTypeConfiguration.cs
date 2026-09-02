@@ -16,5 +16,8 @@ public sealed class ReportTypeConfiguration : IEntityTypeConfiguration<ReportTyp
         builder.Property(rt => rt.Name)
             .HasMaxLength(20)
             .IsRequired();
+        
+        builder.Property(rt => rt.IsActive)
+            .IsRequired();
     }
 }

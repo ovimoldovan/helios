@@ -4,7 +4,8 @@
   "placing": "Plasează...",
   "addReport": "Plasează un pin",
   "newReport": "Raport nou",
-  "loginToAddReport": "Autentifică-te",
+  "loginToAddReport": "Autentifică-te pentru a adăuga un raport",
+
   "cookiesPolicy": "Politica de cookie-uri",
 
   "loginTitle": "Autentifică-te în cont",
@@ -32,6 +33,8 @@
   "lastNameRequired": "Numele este obligatoriu.",
   "lastNameTooLong": "Numele trebuie să aibă maxim {{max}} caractere.",
 
+
+  "cookiesPolicyTitle": "Politica de cookie-uri",
   "registeredUsers": "Utilizatori înregistrați",
   "loadingUsers": "Se încarcă...",
   "errorLoadingUsers": "Eroare neașteptată la încărcarea utilizatorilor.",
@@ -70,6 +73,8 @@
   "adding": "Se adaugă...",
   "add": "Adaugă",
   "reportTypeAlreadyExists": "Acest tip de raport există deja.",
+  "loadingReportTypes": "Se încarcă tipurile de rapoarte...",
+  "unexpectedErrorLoadingReportTypes": "A apărut o eroare neașteptată la încărcarea tipurilor de rapoarte.",
   
   "moderatorDashboardTitle": "Panou de moderare",
   "moderatorDashboardDescription": "Gestionează rapoartele care necesită moderare.",
@@ -148,22 +153,20 @@
   "admin": "Admin",
   "moderator": "Moderator",
 
+  "loadingReports": "Se încarcă rapoartele...",
   "errorLoadingReports": "Eroare neașteptată la încărcarea rapoartelor.",
   "errorApprovingReport": "Eroare neașteptată la aprobarea raportului.",
   "errorRejectingReport": "Eroare neașteptată la respingerea raportului.",
+  "noPendingReports": "Niciun raport în așteptare.",
   "descriptionColumn": "Descriere",
   "createdColumn": "Data creării",
   "statusColumn": "Stare",
   "myReports": "Rapoartele Mele",
-  "noDescription": "Fără descriere",
   "viewYourReports": "Vezi rapoartele tale trimise",
   "loginToViewReports": "Conectați-vă pentru a vedea rapoartele.",
   "noReports": "Nu ați trimis încă niciun raport.",
-  "priority": "Prioritate",
-  "reject": "Respinge",
 
   "backToMap": "Înapoi la hartă",
-  "cookiesPolicyTitle": "Politica de cookie-uri",
   "cookiesIntro": "Pentru ca Seeagle să funcționeze corect, instalăm pe dispozitivul tău fișiere mici numite cookie-uri.",
   "whatAreCookies": "Ce sunt cookie-urile?",
   "cookieDefinition": "Un cookie este un fișier text mic pe care un site web îl stochează pe dispozitivul tău când îl vizitezi.",
@@ -179,5 +182,14 @@
   "cookiesUsageItem3": "Menținerea autentificării pentru o perioadă limitată, mai lungă",
 
   "authRequiredTitle": "Autentificare necesară",
-  "authRequiredDescription": "Te rugăm să te autentifici sau să creezi un cont pentru a trimite un raport."
+  "authRequiredDescription": "Te rugăm să te autentifici sau să creezi un cont pentru a trimite un raport.",
+  "approve": "Aprobă",
+  "reject": "Respinge",
+  "edit": "Editează",
+  "disable": "Dezactivează",
+  "save": "Salvează",
+  "saving": "Se salvează...",
+  "unexpectedErrorUpdatingReportType": "A apărut o eroare neașteptată la actualizarea tipului de raport.",
+  "unexpectedErrorDisablingReportType": "A apărut o eroare neașteptată la dezactivarea tipului de raport."
+  
 }
