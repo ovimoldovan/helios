@@ -5,7 +5,7 @@
   "addReport": "Plasează un pin",
   "newReport": "Raport nou",
   "loginToAddReport": "Autentifică-te pentru a adăuga un raport",
-  "lineReport": "Raport linie",
+
   "cookiesPolicy": "Politica de cookie-uri",
 
   "loginTitle": "Autentifică-te în cont",
@@ -210,5 +210,10 @@
   "approve": "Aprobă",
   "reject": "Respinge",
   "edit": "Editează",
-  "disable": "Dezactivează"
+  "disable": "Dezactivează",
+  "save": "Salvează",
+  "saving": "Se salvează...",
+  "unexpectedErrorUpdatingReportType": "A apărut o eroare neașteptată la actualizarea tipului de raport.",
+  "unexpectedErrorDisablingReportType": "A apărut o eroare neașteptată la dezactivarea tipului de raport."
+  
 }

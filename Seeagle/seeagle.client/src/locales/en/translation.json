@@ -5,7 +5,6 @@
   "addReport": "Placing pin",
   "newReport": "New report",
   "loginToAddReport": "Login to add report",
-  "lineReport": "Line report",
   "cookiesPolicy": "Cookies Policy",
 
   "loginTitle": "Login to your account",
@@ -208,5 +207,10 @@
   "authRequiredDescription": "Please log in or create an account to submit a report.",
   
   "edit": "Edit",
-  "disable": "Disable"
+  "disable": "Disable",
+  "save": "Save",
+  "saving": "Saving...",
+  "unexpectedErrorUpdatingReportType": "Unexpected error while updating report type.",
+  "unexpectedErrorDisablingReportType": "Unexpected error while disabling report type."
+  
 }
