@@ -30,15 +30,12 @@ export function AdminDashboard() {
                             <span className="font-normal">{t('areasDescription')}</span>
                         </Button>
 
-                        <Button className="admin-dashboard-button">
+                        <Button className="admin-dashboard-button" 
+                                onClick={() => navigate('/admin/users')}>
                             <span className="text-base font-semibold">{t('usersTitle')}</span>
                           <span className="font-normal">{t('usersDescription')}</span>
                         </Button>
-
-                        <Button className="admin-dashboard-button">
-                            <span className="text-base font-semibold">{t('permissionsTitle')}</span>
-                            <span className="font-normal">{t('permissionsDescription')}</span>
-                        </Button>
+                        
 
                         <Button className="admin-dashboard-button"
                         onClick={() => navigate('/admin/report-types')}>
