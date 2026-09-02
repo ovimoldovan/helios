@@ -1,23 +1,31 @@
 import {useEffect, useState} from 'react';
 import { Map } from './Map';
-import { LeftPanel } from './LeftPanel';
+import { LeftPanel } from '@/features/homepage/components/LeftPanel';
 import { AddReportModal } from '@/features/reports/components/ReportModal.tsx';
 import type { Report } from '@/shared/types/report';
-import {getApprovedReports} from "@/features/reports/api/reportApi.ts";
+import { MapSidebarExtra } from '../MapSidebarExtra';
+import {getApprovedReports, getMyReports} from "@/features/reports/api/reportApi.ts";
 
 export function Homepage() {
     const [isPlacingPin, setIsPlacingPin] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [pinPosition, setPinPosition] = useState<[number, number] | null>(null);
     const [reports, setReports] = useState<Report[]>([]);
-
+    const [myPendingReports, setMyPendingReports] = useState<Report[]>([]);
     useEffect(() => {
         const loadApprovedReports = async () => {
             const data = await getApprovedReports(30);
             setReports(data);
         };
         loadApprovedReports();
+        const loadMyPendingReports = async () => {
+            const result = await getMyReports(1, 1000);
+            setMyPendingReports(result.items.filter(report => report.status === 'Pending'));
+        };
+        loadMyPendingReports();
         }, []);
+    
+    const allReports = [...reports, ...myPendingReports];
     
     const handlePinPlaced = (position: [number, number] | null) => {
         setPinPosition(position);
@@ -30,18 +38,18 @@ export function Homepage() {
     return (
         <div className="relative h-screen w-screen overflow-hidden">
             <LeftPanel
-                onNewReport={() => setIsPlacingPin(true)}
-                isPlacingPin={isPlacingPin}
-                onCancelPlacePin={() => {
-                    setIsPlacingPin(false);
-                    setPinPosition(null);
-                }}
+                sidebarExtra = {
+                    <MapSidebarExtra
+                    onNewReport={() => setIsPlacingPin(true)}
+                    isPlacingPin={isPlacingPin}
+                    />
+                }
             />
 
             <div className="absolute inset-0 z-0 isolate">
                 <Map
                     onPinPlaced={handlePinPlaced}
-                    reports={reports}
+                    reports={allReports}
                     isPlacingPin={isPlacingPin}
                     pinPosition={pinPosition}
                 />

@@ -24,7 +24,6 @@ public class Report
         CreatedUtc = DateTime.UtcNow;
         User = user;
         Status = "Pending";
-        Priority = Priority.Low;
     }
 
     public Guid Id { get; private set; }
@@ -35,13 +34,27 @@ public class Report
     public Guid? ReportTypeId { get; private set; }
     public string Status { get; private set; } = string.Empty;
     public Priority Priority { get; private set; } = Priority.Low;
-
+    public string? MessageToReporter { get; private set; }
+    public bool IsSolved { get; private set; }
+    
+    public void MarkAsSolved(string? message)
+    {
+        IsSolved =  true;
+        MessageToReporter = message;
+        Status = "Solved";
+    }
+    
+    public void UpdateMessageToReporter(string? message)
+    {
+        MessageToReporter = message;
+    }
+    
     public void Approve(Priority priority)
     {
         Status = "Approved";
         Priority = priority;
     }
-
+    
     public void Reject()
     {
         Status = "Rejected";

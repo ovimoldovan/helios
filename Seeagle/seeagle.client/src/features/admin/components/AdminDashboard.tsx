@@ -4,48 +4,55 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import {Button} from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 import './AdminDashboard.css';
 import { useTranslation } from 'react-i18next';
+import { LeftPanel } from '@/features/homepage/components/LeftPanel';
 
 export function AdminDashboard() {
+    const navigate = useNavigate();
     const { t } = useTranslation();
 
     return (
-        <main className="relative min-h-screen overflow-y-auto p-8 bg-muted">
-            <Card className="relative z-10 mx-auto max-w-6xl overflow-visible w-full">
-                <CardHeader>
-                    <CardTitle className="text-3xl font-bold ">{t('adminDashboard')}</CardTitle>
-                    <CardDescription>{t('adminDashboardDescription')}</CardDescription>
-                </CardHeader>
+        <div className="flex">
+            <LeftPanel />
+                <main className="relative min-h-screen overflow-y-auto p-8 bg-muted">
+                    <Card className="relative z-10 mx-auto max-w-6xl overflow-visible w-full">
+                    <CardHeader>
+                        <CardTitle className="text-3xl font-bold ">{t('adminDashboardTitle')}</CardTitle>
+                        <CardDescription>{t('adminDashboardDescription')}</CardDescription>
+                    </CardHeader>
 
-                <div className="m-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    <Button className="admin-dashboard-button">
-                        <span className="text-base font-semibold">{t('areas')}</span>
-                        <span className="font-normal">{t('defineReviewAreas')}</span>
-                    </Button>
+                    <div className="m-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                        <Button className="admin-dashboard-button">
+                            <span className="text-base font-semibold">{t('areasTitle')}</span>
+                            <span className="font-normal">{t('areasDescription')}</span>
+                        </Button>
 
-                    <Button className="admin-dashboard-button">
-                        <span className="text-base font-semibold">{t('users')}</span>
-                        <span className="font-normal">{t('viewRegisteredUsers')}</span>
-                    </Button>
+                        <Button className="admin-dashboard-button">
+                            <span className="text-base font-semibold">{t('usersTitle')}</span>
+                          <span className="font-normal">{t('usersDescription')}</span>
+                        </Button>
 
-                    <Button className="admin-dashboard-button">
-                        <span className="text-base font-semibold">{t('permissions')}</span>
-                        <span className="font-normal">{t('assignAdministrativePermissions')}</span>
-                    </Button>
+                        <Button className="admin-dashboard-button">
+                            <span className="text-base font-semibold">{t('permissionsTitle')}</span>
+                            <span className="font-normal">{t('permissionsDescription')}</span>
+                        </Button>
 
-                    <Button className="admin-dashboard-button">
-                        <span className="text-base font-semibold">{t('reportTypes')}</span>
-                        <span className="font-normal">{t('defineViewEditReportTypes')}</span>
-                    </Button>
+                        <Button className="admin-dashboard-button"
+                        onClick={() => navigate('/admin/report-types')}>
+                            <span className="text-base font-semibold">{t('reportTypesTitle')}</span>
+                            <span className="font-normal">{t('reportTypesDescription')}</span>
+                        </Button>
 
-                    <Button className="admin-dashboard-button">
-                        <span className="text-base font-semibold">{t('reports')}</span>
-                        <span className="font-normal">{t('reviewSubmittedReports')}</span>
-                    </Button>
-                </div>
-            </Card>
-        </main>
+                        <Button className="admin-dashboard-button">
+                            <span className="text-base font-semibold">{t('reportsTitle')}</span>
+                            <span className="font-normal">{t('reportsDescription')}</span>
+                        </Button>
+                    </div>
+                </Card>
+            </main>
+        </div>
     );
 }

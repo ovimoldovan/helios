@@ -9,10 +9,14 @@ import { RegisterPage } from '@/features/registration/components/RegisterPage.ts
 import { AdminDashboard } from '@/features/admin/components/AdminDashboard';
 import { AdminAreasPage } from './features/admin/components/AdminAreasPage';
 import { ModeratorDashboard } from '@/features/moderator/components/ModeratorDashboard';
-import {ErrorPage} from "@/shared/error_page/components/ErrorPage.tsx";
-import {PrivateRoutes} from "@/shared/utils/PrivateRoutes.tsx";
-import {Toaster} from "@/components/ui/toast.tsx";
+import { ErrorPage } from "@/shared/error_page/components/ErrorPage.tsx";
+import { PrivateRoutes } from "@/shared/utils/PrivateRoutes.tsx";
+import { Toaster } from "@/components/ui/toast.tsx";
+import { CookiesPolicy } from "@/pages/CookiesPolicy.tsx";
+import { ReportTypesPage } from '@/features/admin/components/ReportTypesPage';
 import { ModerationQueue } from '@/features/moderator/components/ModerationQueue';
+import {ApprovedReports} from "@/features/moderator/components/ApprovedReports.tsx";
+import { MyReports } from '@/features/reports/components/MyReports';
 
 function App() {
     return (
@@ -33,6 +37,12 @@ function App() {
                         <RegisterPage/>
                     }
                 />
+                <Route
+                    path="/my-reports"
+                    element={
+                            <MyReports />
+                    }
+                />
 
                 <Route element={<PrivateRoutes allowedRoles={['Admin']}/>}>
                     <Route
@@ -41,11 +51,19 @@ function App() {
                             <AdminDashboard/>
                         }
                     />
-                  
-                    <Route path="/admin/users" 
-                      element={
-                      <UsersListPage />
-                        } 
+
+                    <Route
+                        path="/admin/users"
+                        element={
+                            <UsersListPage />
+                        }
+                    />
+
+                    <Route
+                        path="/admin/report-types"
+                        element={
+                            <ReportTypesPage />
+                        }
                     />
 
                     <Route path="/admin/areas" element={<AdminAreasPage />} />
@@ -63,10 +81,14 @@ function App() {
                         path="/moderator/queue"
                         element={<ModerationQueue />}
                     />
+                    <Route
+                        path="/moderator/approved"
+                        element={<ApprovedReports />}
+                    />
                     
                 </Route>
                 
-                
+
                 <Route
                     path="/unauthorized"
                     element={
@@ -84,6 +106,13 @@ function App() {
                                    errorTitle={"Not Found"} 
                                    errorText={"Oops, looks like this URL doesn't exist!"}
                         />
+                    }
+                />
+                
+                <Route
+                    path="/cookies"
+                    element={
+                        <CookiesPolicy/>
                     }
                 />
             </Routes>

@@ -44,7 +44,6 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
         return Ok(reports);
     }
 
-    [Authorize(Roles = "Moderator")]
     [HttpGet("pending")]
     public async Task<ActionResult<PagedResult<ReportDto>>> GetPending(
         [FromQuery] int pageNumber = 1,
@@ -87,4 +86,75 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
         }
         return Ok(report);
     }
+    
+    [Authorize(Roles = "Moderator")]
+    [HttpGet("approved-list")]
+    public async Task<ActionResult<PagedResult<ReportDto>>> GetApprovedReports(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
+        CancellationToken cancellationToken = default)
+    {
+        var reports = await reportService.GetApprovedReportsAsync(
+            pageNumber,
+            pageSize,
+            cancellationToken);
+
+        return Ok(reports);
+    }
+    [Authorize(Roles = "Moderator")]
+    [HttpPut("{id:guid}/solved")]
+    public async Task<ActionResult<ReportDto>> MarkAsSolved(
+        Guid id,
+        [FromQuery] string? message = null,
+        CancellationToken cancellationToken = default)
+    {
+        var report = await reportService.MarkAsSolvedAsync(id, message, cancellationToken);
+
+        if (report is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(report);
+    }
+    
+    [Authorize(Roles = "Moderator")]
+    [HttpPut("{id:guid}/message")]
+    public async Task<ActionResult<ReportDto>> SendMessage(
+        Guid id,
+        [FromQuery] string? message = null,
+        CancellationToken cancellationToken = default)
+    {
+        var report = await reportService.SendMessageToReporterAsync(id, message, cancellationToken);
+
+        if (report is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(report);
+    }
+    
+    [Authorize]
+    [HttpGet("my")]
+    public async Task<ActionResult<PagedResult<ReportDto>>> GetMyReports(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
+        CancellationToken cancellationToken = default)
+    {
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null || !Guid.TryParse(userIdClaim, out var userId))
+        {
+            return Unauthorized(new { message = "User ID claim is missing or invalid." });
+        }
+
+        var reports = await reportService.GetUserReportsAsync(
+            userId,
+            pageNumber,
+            pageSize,
+            cancellationToken);
+
+        return Ok(reports);
+    }
+    
 }

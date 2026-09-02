@@ -1,4 +1,4 @@
-namespace Seeagle.Application.ReportTypes;
+namespace Seeagle.Application.Reports;
 
 public interface IReportTypeService
 {

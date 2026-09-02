@@ -12,7 +12,6 @@ using Seeagle.Application.Reports;
 using Seeagle.Server.Utils.JWT;
 using Swashbuckle.AspNetCore.Filters;
 using Seeagle.Application.Areas;
-using Seeagle.Application.ReportTypes;
 
 var builder = WebApplication.CreateBuilder(args);
 

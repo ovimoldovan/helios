@@ -1,5 +1,6 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Seeagle.Application.ReportTypes;
+using Seeagle.Application.Reports;
 
 namespace Seeagle.Server.Controllers;
 
@@ -8,11 +9,24 @@ namespace Seeagle.Server.Controllers;
 public sealed class ReportTypesController(IReportTypeService reportTypeService) : ControllerBase
 {
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ReportTypeDto>> Create(
-        [FromBody] CreateReportTypeRequest request,
+        CreateReportTypeRequest request,
         CancellationToken cancellationToken)
     {
-        var result = await reportTypeService.CreateAsync(request, cancellationToken);
-        return Ok(result);
+        try
+        {
+            var created = await reportTypeService.CreateAsync(request, cancellationToken);
+
+            return Created($"/api/report-types/{created.Id}", created);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { message = ex.Message });
+        }
     }
 }
