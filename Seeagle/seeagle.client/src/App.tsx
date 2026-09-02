@@ -16,6 +16,7 @@ import { ReportTypesPage } from '@/features/admin/components/ReportTypesPage';
 import { ModerationQueue } from '@/features/moderator/components/ModerationQueue';
 import {ApprovedReports} from "@/features/moderator/components/ApprovedReports.tsx";
 import { MyReports } from '@/features/reports/components/MyReports';
+import { AppLayout } from '@/shared/layout/AppLayout';
 
 function App() {
     return (
@@ -36,53 +37,59 @@ function App() {
                         <RegisterPage/>
                     }
                 />
-                <Route
-                    path="/my-reports"
-                    element={
+                <Route element={<AppLayout />}>
+                    <Route
+                        path="/my-reports"
+                        element={
                             <MyReports />
-                    }
-                />
-
-                <Route element={<PrivateRoutes allowedRoles={['Admin']}/>}>
-                    <Route
-                        path="/admin"
-                        element={
-                            <AdminDashboard/>
-                        }
-                    />
-
-                    <Route
-                        path="/admin/users"
-                        element={
-                            <UsersListPage />
-                        }
-                    />
-
-                    <Route
-                        path="/admin/report-types"
-                        element={
-                            <ReportTypesPage />
                         }
                     />
                 </Route>
 
-                <Route element={<PrivateRoutes allowedRoles={['Moderator', 'Admin']}/>}>
-                    <Route
-                        path="/moderator"
-                        element={
-                            <ModeratorDashboard/>
-                        }
-                    />
+                <Route element={<PrivateRoutes allowedRoles={['Admin']}/>}>
+                    <Route element={<AppLayout />}>
+                        <Route
+                            path="/admin"
+                            element={
+                                <AdminDashboard/>
+                            }
+                        />
 
-                    <Route
-                        path="/moderator/queue"
-                        element={<ModerationQueue />}
-                    />
-                    <Route
-                        path="/moderator/approved"
-                        element={<ApprovedReports />}
-                    />
-                    
+                        <Route
+                            path="/admin/users"
+                            element={
+                                <UsersListPage />
+                            }
+                        />
+
+                        <Route
+                            path="/admin/report-types"
+                            element={
+                                <ReportTypesPage />
+                            }
+                        />
+                    </Route>
+                </Route>
+
+                <Route element={<PrivateRoutes allowedRoles={['Moderator', 'Admin']}/>}>
+                    <Route element={<AppLayout />}>
+                        <Route
+                            path="/moderator"
+                            element={
+                                <ModeratorDashboard/>
+                            }
+                        />
+
+                        <Route
+                            path="/moderator/queue"
+                            element={<ModerationQueue />}
+                        />
+
+                        <Route
+                            path="/moderator/approved"
+                            element={<ApprovedReports />}
+                        />
+                    </Route>
                 </Route>
                 
 

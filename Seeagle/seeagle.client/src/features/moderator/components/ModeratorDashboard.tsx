@@ -7,15 +7,13 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
-import { LeftPanel } from '@/features/homepage/components/LeftPanel';
 
 export function ModeratorDashboard() {
     const { t } = useTranslation();
     const navigate = useNavigate();
 
     return (
-        <div className="flex">
-            <LeftPanel />
+        
             <main className="flex-1 relative min-h-screen overflow-y-auto bg-muted p-8">
                 <Card className="relative z-10 mx-auto w-full max-w-6xl overflow-visible">
                     <CardHeader>
@@ -51,6 +49,5 @@ export function ModeratorDashboard() {
                 </div>
             </Card>
         </main>
-    </div>
     );
 }

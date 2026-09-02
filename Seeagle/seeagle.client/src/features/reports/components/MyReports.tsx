@@ -14,7 +14,6 @@ import { PaginationLink } from '@/components/ui/pagination';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/shared/context/AuthContext';
-import { LeftPanel } from "@/features/homepage/components/LeftPanel.tsx";
 
 const PAGE_SIZE = 10;
 
@@ -56,18 +55,13 @@ export function MyReports() {
 
     if (!isAuthenticated) {
         return (
-            <div className="flex">
-                <LeftPanel />
                 <main className="flex-1 p-6">
                     <p className="text-muted-foreground text-center">{t('loginToViewReports')}</p>
                 </main>
-            </div>
         );
     }
 
     return (
-        <div className="flex">
-            <LeftPanel />
             <main className="flex-1 relative min-h-screen overflow-y-auto bg-muted p-8">
                 <div className="mx-auto w-full max-w-6xl">
                     <h1 className="text-xl font-semibold mb-4">{t('myReports')}</h1>
@@ -148,6 +142,5 @@ export function MyReports() {
                     )}
                 </div>
             </main>
-        </div>
     );
 }
