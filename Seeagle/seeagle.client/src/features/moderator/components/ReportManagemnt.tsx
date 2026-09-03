@@ -66,7 +66,7 @@ export function ReportManagement() {
         } catch {
             setError(t('unexpectedErrorLoadingReports'));
         } finally {
-            setIsLoading(false); // ← Trebuie să fie aici!
+            setIsLoading(false);
         }
     };
 
