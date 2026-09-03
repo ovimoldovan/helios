@@ -24,6 +24,8 @@ function App() {
             <Routes>
                 <Route path="/" element={<Homepage />} />
 
+                <Route element={<AppLayout />}>
+                    
                 <Route
                     path="/login"
                     element={
@@ -37,17 +39,14 @@ function App() {
                         <RegisterPage/>
                     }
                 />
-                <Route element={<AppLayout />}>
                     <Route
                         path="/my-reports"
                         element={
                             <MyReports />
                         }
                     />
-                </Route>
 
                 <Route element={<PrivateRoutes allowedRoles={['Admin']}/>}>
-                    <Route element={<AppLayout />}>
                         <Route
                             path="/admin"
                             element={
@@ -68,11 +67,9 @@ function App() {
                                 <ReportTypesPage />
                             }
                         />
-                    </Route>
                 </Route>
 
                 <Route element={<PrivateRoutes allowedRoles={['Moderator', 'Admin']}/>}>
-                    <Route element={<AppLayout />}>
                         <Route
                             path="/moderator"
                             element={
@@ -89,7 +86,6 @@ function App() {
                             path="/moderator/approved"
                             element={<ApprovedReports />}
                         />
-                    </Route>
                 </Route>
                 
 
@@ -118,7 +114,7 @@ function App() {
                     element={
                         <CookiesPolicy/>
                     }
-                />
+                /></Route>
             </Routes>
             <Toaster />
         </AuthProvider>

@@ -53,10 +53,6 @@ export function MapSidebarExtra({ onNewReport, isPlacingPin = false }: MapSideba
                         {t("loginToAddReport")}
                     </Button>
                 )}
-
-                <p className="text-[10px] text-muted-foreground">
-                    {t("lineReport")}
-                </p>
             </div>
         </div>
     );

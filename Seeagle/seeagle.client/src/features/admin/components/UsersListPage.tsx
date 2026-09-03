@@ -16,7 +16,6 @@ import {
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
-import { LeftPanel } from '@/features/homepage/components/LeftPanel';
 
 const PAGE_SIZE = 10;
 
@@ -68,11 +67,9 @@ export function UsersListPage() {
         return t('user');
     }
   }
-
+  
   return (
-    <div className="flex">
-      <LeftPanel />
-      <div className="flex-1 p-6">
+      <div className="p-6">
         <h1 className="text-xl font-semibold mb-4">{t('registeredUsers')}</h1>
 
         {loading && <p>{t('loadingUsers')}</p>}
@@ -151,6 +148,5 @@ export function UsersListPage() {
         </>
       )}
       </div>
-    </div>
   );
 }
