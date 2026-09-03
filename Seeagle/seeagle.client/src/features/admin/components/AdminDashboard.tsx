@@ -24,29 +24,26 @@ export function AdminDashboard() {
                         <CardDescription>{t('adminDashboardDescription')}</CardDescription>
                     </CardHeader>
 
-                    <div className="m-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                        <Button className="admin-dashboard-button">
+                    <div className="m-8 grid gap-6 md:grid-cols-2 auto-rows-fr">
+                        <Button className="admin-dashboard-button h-full" disabled>
                             <span className="text-base font-semibold">{t('areasTitle')}</span>
                             <span className="font-normal">{t('areasDescription')}</span>
                         </Button>
 
-                        <Button className="admin-dashboard-button">
+                        <Button className="admin-dashboard-button h-full" 
+                                onClick={() => navigate('/admin/users')}>
                             <span className="text-base font-semibold">{t('usersTitle')}</span>
                           <span className="font-normal">{t('usersDescription')}</span>
                         </Button>
+                        
 
-                        <Button className="admin-dashboard-button">
-                            <span className="text-base font-semibold">{t('permissionsTitle')}</span>
-                            <span className="font-normal">{t('permissionsDescription')}</span>
-                        </Button>
-
-                        <Button className="admin-dashboard-button"
+                        <Button className="admin-dashboard-button h-full"
                         onClick={() => navigate('/admin/report-types')}>
                             <span className="text-base font-semibold">{t('reportTypesTitle')}</span>
                             <span className="font-normal">{t('reportTypesDescription')}</span>
                         </Button>
 
-                        <Button className="admin-dashboard-button">
+                        <Button className="admin-dashboard-button h-full" disabled>
                             <span className="text-base font-semibold">{t('reportsTitle')}</span>
                             <span className="font-normal">{t('reportsDescription')}</span>
                         </Button>
