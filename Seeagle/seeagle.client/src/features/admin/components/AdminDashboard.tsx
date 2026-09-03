@@ -9,13 +9,11 @@ import { useNavigate } from 'react-router-dom';
 import './AdminDashboard.css';
 import { useTranslation } from 'react-i18next';
 
-
 export function AdminDashboard() {
     const navigate = useNavigate();
     const { t } = useTranslation();
 
     return (
-        
                 <main className="relative min-h-screen overflow-y-auto p-8 bg-muted">
                     <Card className="relative z-10 mx-auto max-w-6xl overflow-visible w-full">
                     <CardHeader>

@@ -114,7 +114,9 @@ function App() {
                     element={
                         <CookiesPolicy/>
                     }
-                /></Route>
+                />
+                    
+                </Route>
             </Routes>
             <Toaster />
         </AuthProvider>
