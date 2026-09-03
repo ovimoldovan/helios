@@ -16,6 +16,7 @@ import { ReportTypesPage } from '@/features/admin/components/ReportTypesPage';
 import { ModerationQueue } from '@/features/moderator/components/ModerationQueue';
 import {ApprovedReports} from "@/features/moderator/components/ApprovedReports.tsx";
 import { MyReports } from '@/features/reports/components/MyReports';
+import { AdminAreasPage } from './features/admin/components/AdminAreasPage';
 import { AppLayout } from '@/shared/layout/AppLayout';
 
 function App() {
@@ -25,7 +26,7 @@ function App() {
                 <Route path="/" element={<Homepage />} />
 
                 <Route element={<AppLayout />}>
-                    
+
                 <Route
                     path="/login"
                     element={
@@ -39,53 +40,61 @@ function App() {
                         <RegisterPage/>
                     }
                 />
-                    <Route
-                        path="/my-reports"
-                        element={
+                <Route
+                    path="/my-reports"
+                    element={
                             <MyReports />
+                    }
+                />
+
+                <Route element={<PrivateRoutes allowedRoles={['Admin']}/>}>
+                    <Route
+                        path="/admin"
+                        element={
+                            <AdminDashboard/>
                         }
                     />
 
-                <Route element={<PrivateRoutes allowedRoles={['Admin']}/>}>
-                        <Route
-                            path="/admin"
-                            element={
-                                <AdminDashboard/>
-                            }
-                        />
+                    <Route
+                        path="/admin/users"
+                        element={
+                            <UsersListPage />
+                        }
+                    />
 
-                        <Route
-                            path="/admin/users"
-                            element={
-                                <UsersListPage />
-                            }
-                        />
+                    <Route
+                        path="/admin/report-types"
+                        element={
+                            <ReportTypesPage />
+                        }
+                    />
 
-                        <Route
-                            path="/admin/report-types"
-                            element={
-                                <ReportTypesPage />
-                            }
-                        />
+                    <Route 
+                        path="/admin/areas" 
+                        element={
+                        <AdminAreasPage />
+                        }
+                    />
+                    
                 </Route>
 
                 <Route element={<PrivateRoutes allowedRoles={['Moderator', 'Admin']}/>}>
-                        <Route
-                            path="/moderator"
-                            element={
-                                <ModeratorDashboard/>
-                            }
-                        />
+                    <Route
+                        path="/moderator"
+                        element={
+                            <ModeratorDashboard/>
+                        }
+                    />
 
-                        <Route
-                            path="/moderator/queue"
-                            element={<ModerationQueue />}
-                        />
-
-                        <Route
-                            path="/moderator/approved"
-                            element={<ApprovedReports />}
-                        />
+                    <Route
+                        path="/moderator/queue"
+                        element={<ModerationQueue />}
+                    />
+                    <Route
+                        path="/moderator/approved"
+                        element={<ApprovedReports />}
+                    />
+                    
                 </Route>
                 
 
@@ -115,7 +124,6 @@ function App() {
                         <CookiesPolicy/>
                     }
                 />
-                    
                 </Route>
             </Routes>
             <Toaster />
