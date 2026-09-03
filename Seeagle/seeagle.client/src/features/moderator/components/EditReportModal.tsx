@@ -28,51 +28,47 @@ interface EditReportModalProps {
     isSaving?: boolean;
 }
 
+const PRIORITY_OPTIONS = [
+    { value: 'low', label: 'priorityLow' },
+    { value: 'medium', label: 'priorityMedium' },
+    { value: 'urgent', label: 'priorityUrgent' },
+];
+
 export function EditReportModal({isOpen, onClose, report, onSave, isSaving = false,}: EditReportModalProps) {
     const { t } = useTranslation();
+
     const [description, setDescription] = useState('');
-    const [priority, setPriority] = useState<string>('low');
+    const [priority, setPriority] = useState('low');
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        if (report) {
-            setDescription(report.description || '');
-            setPriority(report.priority || 'low');
-            setError(null);
-        }
+        if (!report) return;
+        setDescription(report.description || '');
+        setPriority(report.priority || 'low');
+        setError(null);
     }, [report]);
 
     const handleSubmit = async () => {
         if (!report) return;
-
-        setError(null);
 
         if (description.length > 255) {
             setError(t('descriptionTooLong'));
             return;
         }
 
-        const updateData: UpdateReportRequest = {
-            description: description.trim() || null,
-            priority: priority,
-        };
-
         try {
-            await onSave(report.id, updateData);
+            await onSave(report.id, {
+                description: description.trim() || null,
+                priority,
+            });
             onClose();
         } catch {
             setError(t('unexpectedErrorUpdatingReport'));
         }
     };
 
-    const getPriorityColor = (value: string) => {
-        return PRIORITY_COLORS[value?.toLowerCase()] || PRIORITY_COLORS.low;
-    };
-
-    const handlePriorityChange = (value: string | null) => {
-        if (value) {
-            setPriority(value);
-        }
+    const getColor = (value: string) => {
+        return PRIORITY_COLORS[value] || PRIORITY_COLORS.low;
     };
 
     return (
@@ -84,54 +80,39 @@ export function EditReportModal({isOpen, onClose, report, onSave, isSaving = fal
 
                 <div className="grid gap-4 py-4">
                     <div className="space-y-2">
-                        <Label htmlFor="edit-priority">{t('priority')}</Label>
+                        <Label>{t('priority')}</Label>
                         <Select
                             value={priority}
-                            onValueChange={handlePriorityChange}
+                            onValueChange={(value) => value && setPriority(value)}
                             disabled={isSaving}
                         >
-                            <SelectTrigger id="edit-priority">
+                            <SelectTrigger>
                                 <SelectValue placeholder={t('selectPriority')} />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="low">
-                                    <div className="flex items-center gap-2">
-                                        <span
-                                            className="w-3 h-3 rounded-full inline-block"
-                                            style={{ backgroundColor: getPriorityColor('low') }}
-                                        />
-                                        {t('priorityLow')}
-                                    </div>
-                                </SelectItem>
-                                <SelectItem value="medium">
-                                    <div className="flex items-center gap-2">
-                                        <span
-                                            className="w-3 h-3 rounded-full inline-block"
-                                            style={{ backgroundColor: getPriorityColor('medium') }}
-                                        />
-                                        {t('priorityMedium')}
-                                    </div>
-                                </SelectItem>
-                                <SelectItem value="urgent">
-                                    <div className="flex items-center gap-2">
-                                        <span
-                                            className="w-3 h-3 rounded-full inline-block"
-                                            style={{ backgroundColor: getPriorityColor('urgent') }}
-                                        />
-                                        {t('priorityUrgent')}
-                                    </div>
-                                </SelectItem>
+                                {PRIORITY_OPTIONS.map((opt) => (
+                                    <SelectItem key={opt.value} value={opt.value}>
+                                        <div className="flex items-center gap-2">
+                                            <span
+                                                className="w-3 h-3 rounded-full"
+                                                style={{ backgroundColor: getColor(opt.value) }}
+                                            />
+                                            {t(opt.label)}
+                                        </div>
+                                    </SelectItem>
+                                ))}
                             </SelectContent>
                         </Select>
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="edit-description">
-                            {t('description')} <span className="text-muted-foreground text-xs">({t('optional')})</span>
+                        <Label>
+                            {t('description')}
+                            <span className="text-xs text-muted-foreground ml-1">
+                                ({t('optional')})
+                            </span>
                         </Label>
                         <Textarea
-                            id="edit-description"
-                            placeholder={t('descriptionPlaceholder')}
                             value={description}
                             onChange={(e) => {
                                 setDescription(e.target.value);
@@ -141,19 +122,18 @@ export function EditReportModal({isOpen, onClose, report, onSave, isSaving = fal
                             className="min-h-[100px]"
                             disabled={isSaving}
                         />
-                        <div className="text-right text-xs text-muted-foreground">
+                        <p className="text-right text-xs text-muted-foreground">
                             {description.length}/255
-                        </div>
+                        </p>
                     </div>
-
                     {error && (
-                        <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive border border-destructive/20">
+                        <div className="rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">
                             {error}
                         </div>
                     )}
                 </div>
 
-                <DialogFooter className="gap-2 sm:gap-0">
+                <DialogFooter>
                     <Button variant="outline" onClick={onClose} disabled={isSaving}>
                         {t('cancel')}
                     </Button>

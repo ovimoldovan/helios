@@ -58,10 +58,16 @@ export function ReportManagement() {
     const loadReports = async () => {
         setIsLoading(true);
         setError(null);
-        const token = getAuthToken();
-        const result = await getAllReports(page, PAGE_SIZE, sortBy, sortOrder, token ?? undefined);setReports(result.items);
-        setTotalCount(result.totalCount);
-        
+        try {
+            const token = getAuthToken();
+            const result = await getAllReports(page, PAGE_SIZE, sortBy, sortOrder, token ?? undefined);
+            setReports(result.items);
+            setTotalCount(result.totalCount);
+        } catch {
+            setError(t('unexpectedErrorLoadingReports'));
+        } finally {
+            setIsLoading(false); // ← Trebuie să fie aici!
+        }
     };
 
     const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
@@ -78,9 +84,15 @@ export function ReportManagement() {
 
     const handleSave = async (id: string, data: UpdateReportRequest) => {
         setIsSaving(true);
-        const token = getAuthToken();
-        const updated = await updateReport(id, data, token ?? undefined);
-        setReports((prev) => prev.map((r) => (r.id === id ? updated : r)));
+        try {
+            const token = getAuthToken();
+            const updated = await updateReport(id, data, token ?? undefined);
+            setReports((prev) => prev.map((r) => (r.id === id ? updated : r)));
+        } catch {
+            throw new Error(t('unexpectedErrorUpdatingReport'));
+        } finally {
+            setIsSaving(false);
+        }
     };
 
     const getPriorityLabel = (priority: string) => {

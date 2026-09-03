@@ -236,7 +236,10 @@ public sealed class ReportService : IReportService
             .GetAllQueryable()
             .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
       
-        
+        if (report is null)
+   		{
+        	return null;
+    	}
         if (request.Description is not null)
         {
             report.UpdateDescription(request.Description);

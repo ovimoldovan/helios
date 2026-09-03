@@ -90,7 +90,7 @@
   "failedToSubmitReport": "Failed to submit report.",
   "tapMapToPlacePin": "Tap map to place a pin",
   "description": "Description",
-  "optional": "(optional)",
+  "optional": "optional",
   "descriptionPlaceholder": "Describe what you saw...",
   "cancel": "Cancel",
   "submitting": "Submitting...",
@@ -199,6 +199,6 @@
   "noPendingReports": "No pending reports.",
  "errorWhileApprovingReport": "Error while approving report.",
   "errorWhileRejectingReport": "Error while rejecting report."
-
+  
 
 }
