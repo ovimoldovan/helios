@@ -11,6 +11,7 @@ using Seeagle.Application.Users;
 using Seeagle.Application.Reports;
 using Seeagle.Server.Utils.JWT;
 using Swashbuckle.AspNetCore.Filters;
+using Seeagle.Application.Areas;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,10 +33,11 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAreaService, AreaService>();
+builder.Services.AddScoped<IReportTypeService, ReportTypeService>();
 builder.Services.AddScoped<ISampleNameService, SampleNameService>();
 builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddScoped<IUserQueryService, UserQueryService>();
-builder.Services.AddScoped<IReportTypeService, ReportTypeService>();
 builder.Services.AddScoped<IReportQueryService, ReportQueryService>();
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
 builder.Services.AddScoped<IJwtUtil, JwtUtil>();
