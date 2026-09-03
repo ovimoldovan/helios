@@ -16,4 +16,5 @@ public interface IReportService
     Task<PagedResult<ReportDto>> GetApprovedReportsAsync(int pageNumber, int pageSize, CancellationToken cancellationToken);
     Task<ReportDto?> SendMessageToReporterAsync(Guid id, string? message, CancellationToken cancellationToken);
     Task<PagedResult<ReportDto>> GetUserReportsAsync(Guid userId, int pageNumber, int pageSize, CancellationToken cancellationToken);
+	Task<ReportDto?> UpdateAsync(Guid id, UpdateReportRequest request, CancellationToken cancellationToken);
 }

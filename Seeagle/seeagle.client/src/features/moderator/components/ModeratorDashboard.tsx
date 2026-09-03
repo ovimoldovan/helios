@@ -32,11 +32,6 @@ export function ModeratorDashboard() {
                             <span className="font-normal">{t('moderationQueueDescription')}</span>
                         </Button>
 
-                    <Button className="admin-dashboard-button">
-                        <span className="text-base font-semibold">{t('priorityReportsTitle')}</span>
-                        <span className="font-normal">{t('priorityReportsDescription')}</span>
-                    </Button>
-
                     <Button className="admin-dashboard-button"
                             onClick={() => navigate('/moderator/approved')}
                     >
@@ -44,7 +39,9 @@ export function ModeratorDashboard() {
                         <span className="font-normal">{t('approvedReportsDescription')}</span>
                     </Button>
 
-                    <Button className="admin-dashboard-button">
+                    <Button className="admin-dashboard-button"
+                            onClick={() => navigate('/moderator/reports')}
+                    >
                         <span className="text-base font-semibold">{t('reportManagementTitle')}</span>
                         <span className="font-normal">{t('reportManagementDescription')}</span>
                     </Button>

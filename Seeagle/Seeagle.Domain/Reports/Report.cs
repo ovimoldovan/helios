@@ -59,4 +59,13 @@ public class Report
     {
         Status = "Rejected";
     }
+    public void UpdateDescription(string description)
+    {
+        Description = description;
+    }
+    
+    public void UpdatePriority(Priority priority)
+    {
+        Priority = priority;
+    }
 }

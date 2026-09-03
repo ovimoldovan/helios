@@ -177,5 +177,28 @@
   "cookiesUsageItem3": "Keeping you logged in for a limited, longer period of time",
 
   "authRequiredTitle": "Authentication Required",
-  "authRequiredDescription": "Please log in or create an account to submit a report."
+  "authRequiredDescription": "Please log in or create an account to submit a report.",
+
+  "placingPin": "Placing pin...",
+  "clickMapToDrop": "Click on the map to drop a pin",
+  "lineReport": "Line report",
+
+  "edit": "Edit",
+  "editReport": "Edit Report",
+  "selectPriority": "Select priority",
+  "saveChanges": "Save Changes",
+  "saving": "Saving...",
+  "unexpectedErrorUpdatingReport": "Unexpected error while updating report.",
+
+  "backToDashboard": "Back to Dashboard",
+  "all": "All",
+  "pending": "Pending",
+  "approved": "Approved",
+
+  "loadingReports": "Loading reports...",
+  "noPendingReports": "No pending reports.",
+ "errorWhileApprovingReport": "Error while approving report.",
+  "errorWhileRejectingReport": "Error while rejecting report."
+
+
 }

@@ -179,5 +179,26 @@
   "cookiesUsageItem3": "Menținerea autentificării pentru o perioadă limitată, mai lungă",
 
   "authRequiredTitle": "Autentificare necesară",
-  "authRequiredDescription": "Te rugăm să te autentifici sau să creezi un cont pentru a trimite un raport."
+  "authRequiredDescription": "Te rugăm să te autentifici sau să creezi un cont pentru a trimite un raport.",
+  
+  "placingPin": "Plasează pin...",
+  "clickMapToDrop": "Click pe hartă pentru a plasa un pin",
+  "lineReport": "Raport linie",
+
+  "edit": "Editează",
+  "editReport": "Editează Raport",
+  "selectPriority": "Selectează prioritatea",
+  "saveChanges": "Salvează Modificările",
+  "saving": "Se salvează...",
+  "unexpectedErrorUpdatingReport": "Eroare neașteptată la actualizarea raportului.",
+  "backToDashboard": "Înapoi la panoul de moderare",
+  "all": "Toate",
+  "pending": "În așteptare",
+  "approved": "Aprobate",
+
+  "loadingReports": "Se încarcă rapoartele...",
+  "noPendingReports": "Niciun raport în așteptare.",
+  "errorWhileApprovingReport": "Eroare la aprobarea raportului.",
+  "errorWhileRejectingReport": "Eroare la respingerea raportului."
+
 }
