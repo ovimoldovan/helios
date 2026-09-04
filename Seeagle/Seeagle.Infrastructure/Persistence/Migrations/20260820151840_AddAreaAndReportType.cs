@@ -28,18 +28,6 @@ namespace Seeagle.Infrastructure.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_Areas", x => x.Id);
                 });
-
-            migrationBuilder.CreateTable(
-                name: "ReportTypes",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ReportTypes", x => x.Id);
-                });
         }
 
         /// <inheritdoc />
@@ -47,9 +35,6 @@ namespace Seeagle.Infrastructure.Persistence.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Areas");
-
-            migrationBuilder.DropTable(
-                name: "ReportTypes");
 
             migrationBuilder.AlterDatabase()
                 .OldAnnotation("Npgsql:PostgresExtension:postgis", ",,");
