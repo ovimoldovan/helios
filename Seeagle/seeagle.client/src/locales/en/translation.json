@@ -31,7 +31,7 @@
   "firstNameTooLong": "First name must be at most {{max}} characters.",
   "lastNameRequired": "Last name is required.",
   "lastNameTooLong": "Last name must be at most {{max}} characters.",
-  
+
   "cookiesPolicyTitle": "Cookies Policy",
   "registeredUsers": "Registered users",
   "loadingUsers": "Loading...",
@@ -92,7 +92,7 @@
   "failedToSubmitReport": "Failed to submit report.",
   "tapMapToPlacePin": "Tap map to place a pin",
   "description": "Description",
-  "optional": "(optional)",
+  "optional": "optional",
   "descriptionPlaceholder": "Describe what you saw...",
   "cancel": "Cancel",
   "submitting": "Submitting...",
@@ -105,9 +105,8 @@
   "goHome": "Go to homepage",
   "unexpectedErrorLoadingUsers": "Unexpected error while loading users.",
   "unexpectedErrorAssigningModerator": "Unexpected error while assigning moderator.",
-  
+
   "moderatorDashboard": "Moderator Dashboard",
- 
   "moderationQueue": "Moderation Queue",
   "unexpectedError": "Unexpected error while loading reports.",
   "unexpectedErrorApprove": "Unexpected error while approving report.",
@@ -142,7 +141,7 @@
   "noApprovedReports": "No approved reports.",
   "unexpectedErrorLoadingApproved": "Unexpected error while loading approved reports.",
   "unexpectedErrorProcessingAction": "Unexpected error while processing action.",
-  
+
   "languageEn": "EN",
   "languageRo": "RO",
 
@@ -180,13 +179,29 @@
 
   "authRequiredTitle": "Authentication Required",
   "authRequiredDescription": "Please log in or create an account to submit a report.",
+
+  "placingPin": "Placing pin...",
+  "clickMapToDrop": "Click on the map to drop a pin",
+  "lineReport": "Line report",
+
+  "edit": "Edit",
+  "editReport": "Edit Report",
+  "selectPriority": "Select priority",
+  "saveChanges": "Save Changes",
+  "saving": "Saving...",
+  "unexpectedErrorUpdatingReport": "Unexpected error while updating report.",
+
+  "backToDashboard": "Back to Dashboard",
+  "all": "All",
+  "pending": "Pending",
+  "approved": "Approved",
+
+  "errorWhileApprovingReport": "Error while approving report.",
+  "errorWhileRejectingReport": "Error while rejecting report.",
   "approve": "Approve",
   "reject": "Reject",
-  "edit": "Edit",
   "disable": "Disable",
   "save": "Save",
-  "saving": "Saving...",
   "unexpectedErrorUpdatingReportType": "Unexpected error while updating report type.",
   "unexpectedErrorDisablingReportType": "Unexpected error while disabling report type."
-  
 }

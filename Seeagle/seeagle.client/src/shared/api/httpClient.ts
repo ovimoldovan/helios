@@ -42,8 +42,10 @@ export async function postJson<TResponse>(url: string, body: unknown, token?: st
   return (await response.json()) as TResponse;
 }
 
-export async function putJson<TResponse>(url: string, token?: string): Promise<TResponse> {
-  const headers: Record<string, string> = {};
+export async function putJson<TResponse>(url: string, token?: string, body?: unknown): Promise<TResponse> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json' 
+  };
 
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
@@ -52,6 +54,7 @@ export async function putJson<TResponse>(url: string, token?: string): Promise<T
   const response = await fetch(url, {
     method: 'PUT',
     headers: headers,
+    body: body ? JSON.stringify(body) : undefined,
   });
 
   if (!response.ok) {

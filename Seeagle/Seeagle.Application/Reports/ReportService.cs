@@ -229,5 +229,44 @@ public sealed class ReportService : IReportService
 
         return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
     }
-    
+
+	public async Task<ReportDto?> UpdateAsync(Guid id, UpdateReportRequest request, CancellationToken cancellationToken)
+    {
+        var report = await _reportRepository
+            .GetAllQueryable()
+            .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
+      
+        if (report is null)
+   		{
+        	return null;
+    	}
+        if (request.Description is not null)
+        {
+            report.UpdateDescription(request.Description);
+        }
+        
+        if (request.Priority is not null)
+        {
+            var priorityEnum = request.Priority.ToLower() switch
+            {
+                "urgent" => Priority.Urgent,
+                "medium" => Priority.Medium,
+                _ => Priority.Low
+            };
+            report.UpdatePriority(priorityEnum);
+        }
+        
+        await _reportRepository.UpdateAsync(report, cancellationToken);
+        
+        return new ReportDto(
+            report.Id,
+            report.Location.X,
+            report.Location.Y,
+            report.Description,
+            report.CreatedUtc,
+            report.Status,
+            report.Priority.ToString()
+        );
+    }
+  
 }

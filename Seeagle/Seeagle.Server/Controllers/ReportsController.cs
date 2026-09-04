@@ -156,5 +156,40 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
 
         return Ok(reports);
     }
+
+    [Authorize(Roles = "Moderator, Admin")]
+    [HttpGet("all")]
+    public async Task<ActionResult<PagedResult<ReportDto>>> GetAllReports(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
+        [FromQuery] string? sortBy = null,
+        [FromQuery] string? sortOrder = "desc",
+        CancellationToken cancellationToken = default)
+    {
+        var reports = await reportQueryService.GetAllReportsAsync(
+            pageNumber,
+            pageSize,
+            sortBy,
+            sortOrder,
+            cancellationToken);
+        
+        return Ok(reports);
+    }
+	
+	[Authorize(Roles = "Moderator, Admin")]
+	[HttpPut("{id:guid}")]
+	public async Task<ActionResult<ReportDto>> UpdateReport(
+    	Guid id,
+    	[FromBody] UpdateReportRequest request,
+    	CancellationToken cancellationToken)
+	{
+    	var report = await reportService.UpdateAsync(id, request, cancellationToken);
+        if (report is null)
+    		{
+        		return NotFound();
+    		}
     
+    	return Ok(report);
+	}
+   
 }
