@@ -102,4 +102,8 @@ static void SetupDatabase(WebApplicationBuilder builder)
     builder.Services.AddDbContext<SeeagleDbContext>(options => options.UseNpgsql(connectionString, npgsqlOptions => npgsqlOptions.UseNetTopologySuite()));
 
     builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
+    builder.Services.AddHttpClient("SeeagleAssistant", client =>
+    {
+        client.BaseAddress = new Uri(builder.Configuration["SeeagleAssistant:BaseUrl"] ?? "http://localhost:8000");
+    });
 }

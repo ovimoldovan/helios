@@ -69,3 +69,7 @@ export async function disableReportType(
       token
   );
 }
+
+export async function getAssistantHealth(token: string): Promise<{ status: string }> {
+  return getJson<{ status: string }>('/api/admin/health/assistant', token);
+}

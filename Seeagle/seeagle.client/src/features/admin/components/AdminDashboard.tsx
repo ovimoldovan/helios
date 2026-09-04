@@ -1,3 +1,6 @@
+import { useEffect, useState } from 'react';
+import { getAssistantHealth } from '../api/adminApi';
+import { getCookie } from '@/shared/utils/cookies';
 import {
     Card,
     CardDescription,
@@ -13,6 +16,14 @@ import { LeftPanel } from '@/features/homepage/components/LeftPanel';
 export function AdminDashboard() {
     const navigate = useNavigate();
     const { t } = useTranslation();
+
+    const [assistantStatus, setAssistantStatus] = useState<string>('checking');
+    useEffect(() => {
+    const token = getCookie('authToken')!;
+    getAssistantHealth(token)
+        .then((data) => setAssistantStatus(data.status))
+        .catch(() => setAssistantStatus('offline'));
+}, []);
 
     return (
         <div className="flex">
@@ -47,6 +58,21 @@ export function AdminDashboard() {
                             <span className="text-base font-semibold">{t('reportsTitle')}</span>
                             <span className="font-normal">{t('reportsDescription')}</span>
                         </Button>
+                    </div>
+                    <div className="mx-8 mb-8 flex items-center gap-3 rounded-lg border p-4">
+                        <span
+                            className={`inline-block h-3 w-3 rounded-full ${
+                            assistantStatus === 'online' ? 'bg-green-500' : assistantStatus === 'offline' ? 'bg-red-500' : 'bg-gray-400'
+                            }`}
+                        />
+                        <span className="font-medium">SeeagleAssistant</span>
+                        <span className="text-muted-foreground text-sm">
+                            {assistantStatus === 'online'
+                            ? t('assistantOnline')
+                            : assistantStatus === 'offline'
+                                ? t('assistantOffline')
+                                : t('assistantChecking')}
+                        </span>
                     </div>
                 </Card>
             </main>
