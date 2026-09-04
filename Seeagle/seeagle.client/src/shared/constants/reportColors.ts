@@ -5,7 +5,7 @@ export const PRIORITY_COLORS: Record<string, string> = {
 };
 
 export const STATUS_COLORS: Record<string, string> = {
-    pending: '#3b82f6',
+    pending: '#767b83',
     approved: '#22c55e',
     rejected: '#ef4444',
     solved: '#8b5cf6',
