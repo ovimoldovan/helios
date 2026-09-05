@@ -7,7 +7,6 @@ import { Homepage } from './features/homepage/components/Homepage';
 import { LoginPage } from '@/features/login/components/LoginPage.tsx';
 import { RegisterPage } from '@/features/registration/components/RegisterPage.tsx';
 import { AdminDashboard } from '@/features/admin/components/AdminDashboard';
-import { AdminAreasPage } from './features/admin/components/AdminAreasPage';
 import { ModeratorDashboard } from '@/features/moderator/components/ModeratorDashboard';
 import { ErrorPage } from "@/shared/error_page/components/ErrorPage.tsx";
 import { PrivateRoutes } from "@/shared/utils/PrivateRoutes.tsx";
@@ -17,12 +16,16 @@ import { ReportTypesPage } from '@/features/admin/components/ReportTypesPage';
 import { ModerationQueue } from '@/features/moderator/components/ModerationQueue';
 import {ApprovedReports} from "@/features/moderator/components/ApprovedReports.tsx";
 import { MyReports } from '@/features/reports/components/MyReports';
+import { AdminAreasPage } from './features/admin/components/AdminAreasPage';
+import { AppLayout } from '@/shared/layout/AppLayout';
 
 function App() {
     return (
         <AuthProvider>
             <Routes>
                 <Route path="/" element={<Homepage />} />
+
+                <Route element={<AppLayout />}>
 
                 <Route
                     path="/login"
@@ -66,7 +69,13 @@ function App() {
                         }
                     />
 
-                    <Route path="/admin/areas" element={<AdminAreasPage />} />
+                    <Route 
+                        path="/admin/areas" 
+                        element={
+                        <AdminAreasPage />
+                        }
+                    />
+                    
                 </Route>
 
                 <Route element={<PrivateRoutes allowedRoles={['Moderator', 'Admin']}/>}>
@@ -115,6 +124,7 @@ function App() {
                         <CookiesPolicy/>
                     }
                 />
+                </Route>
             </Routes>
             <Toaster />
         </AuthProvider>

@@ -8,15 +8,12 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import './AdminDashboard.css';
 import { useTranslation } from 'react-i18next';
-import { LeftPanel } from '@/features/homepage/components/LeftPanel';
 
 export function AdminDashboard() {
     const navigate = useNavigate();
     const { t } = useTranslation();
 
     return (
-        <div className="flex">
-            <LeftPanel />
                 <main className="relative min-h-screen overflow-y-auto p-8 bg-muted">
                     <Card className="relative z-10 mx-auto max-w-6xl overflow-visible w-full">
                     <CardHeader>
@@ -50,6 +47,5 @@ export function AdminDashboard() {
                     </div>
                 </Card>
             </main>
-        </div>
     );
 }
