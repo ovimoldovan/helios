@@ -62,6 +62,10 @@ export function Homepage() {
                     <MapSidebarExtra
                         onNewReport={handleNewReportClick}
                         isPlacingPin={isPlacingPin}
+                        onCancelPlacePin={() => {
+                            setIsPlacingPin(false);
+                            setPinPosition(null);
+                        }}
                     />
                 }
             />
