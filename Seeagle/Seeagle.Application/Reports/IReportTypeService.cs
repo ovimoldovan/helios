@@ -8,5 +8,5 @@ public interface IReportTypeService
 
     Task<ReportTypeDto?> UpdateAsync(Guid id, UpdateReportTypeRequest request, CancellationToken cancellationToken);
 
-    Task<ReportTypeDto?> DisableAsync(Guid id, CancellationToken cancellationToken);
+    Task<ReportTypeDto?> ChangeStatusAsync(Guid id, CancellationToken cancellationToken);
 }

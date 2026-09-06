@@ -27,9 +27,9 @@ public class ReportType
         Name = name;
     }
 
-    public void Disable()
+    public void ChangeStatus()
     {
-        IsActive = false;
+        IsActive = !IsActive;
     }
 
     private static void ValidateName(string name)

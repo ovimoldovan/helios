@@ -65,15 +65,15 @@ public sealed class ReportTypesController(IReportTypeService reportTypeService) 
         }
     }
 
-    [HttpPut("{id:guid}/disable")]
+    [HttpPut("{id:guid}/change_status")]
     [Authorize(Roles = "Admin")]
-    public async Task<ActionResult<ReportTypeDto>> Disable(Guid id, CancellationToken cancellationToken)
+    public async Task<ActionResult<ReportTypeDto>> ChangeStatus(Guid id, CancellationToken cancellationToken)
     {
-        var disabled = await reportTypeService.DisableAsync(id, cancellationToken);
+        var changedStatusReportType = await reportTypeService.ChangeStatusAsync(id, cancellationToken);
 
-        if (disabled is null)
+        if (changedStatusReportType is null)
             return NotFound();
 
-        return Ok(disabled);
+        return Ok(changedStatusReportType);
     }
 }
