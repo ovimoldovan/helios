@@ -17,4 +17,5 @@ public interface IReportService
     Task<ReportDto?> AttachPhotoAsync(Guid reportId, Guid userId, byte[] data, string contentType, CancellationToken ct);
     Task<ProcessedPhoto?> GetPhotoAsync(Guid reportId, bool isModerator, CancellationToken ct);
     
+    Task<PagedResult<ReportDto>> GetUserReportsAsync(Guid userId, int pageNumber, int pageSize, CancellationToken cancellationToken);
 }

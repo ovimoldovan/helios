@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/shared/context/AuthContext';
 import { getUserFromToken } from '@/shared/utils/getUserFromToken.ts';
-import { Menu, Plus, X } from 'lucide-react';
+import {Menu, Plus, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import type { ReactNode } from 'react';
@@ -128,6 +128,15 @@ export function LeftPanel({ sidebarExtra, onCancelPlacePin, isPlacingPin}: LeftP
                                 {t('admin')}
                             </Link>
                         )}
+                        {isAuthenticated && (
+                            <Link
+                                to="/my-reports"
+                                className="block px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                                onClick={() => setIsOpen(false)}
+                            >
+                                {t('myReports')}
+                            </Link>
+                        )}
 
                         {isModerator && (
                             <Link
@@ -162,6 +171,14 @@ export function LeftPanel({ sidebarExtra, onCancelPlacePin, isPlacingPin}: LeftP
                         </div>
                     )}
                 </CardContent>
+                <div className="p-4 pt-2 border-t border-border">
+                    <Link
+                        to="/cookies"
+                        className="text-[10px] text-muted-foreground hover:underline"
+                    >
+                        Cookies Policy
+                    </Link>
+                </div>
             </Card>
 
             {isOpen && (

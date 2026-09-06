@@ -92,7 +92,7 @@ export function ApprovedReports() {
 
     return (
         <div className="p-6">
-            <h1 className="text-xl font-semibold mb-4">{t('approvedReports')}</h1>
+            <h1 className="text-xl font-semibold mb-4">{t('approvedReportsTitle')}</h1>
 
             {isLoading && <p>{t('loadingReports')}</p>}
 

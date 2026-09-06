@@ -7,13 +7,16 @@ import { Homepage } from './features/homepage/components/Homepage';
 import { LoginPage } from '@/features/login/components/LoginPage.tsx';
 import { RegisterPage } from '@/features/registration/components/RegisterPage.tsx';
 import { AdminDashboard } from '@/features/admin/components/AdminDashboard';
+import { AdminAreasPage } from './features/admin/components/AdminAreasPage';
 import { ModeratorDashboard } from '@/features/moderator/components/ModeratorDashboard';
-import {ErrorPage} from "@/shared/error_page/components/ErrorPage.tsx";
-import {PrivateRoutes} from "@/shared/utils/PrivateRoutes.tsx";
-import {Toaster} from "@/components/ui/toast.tsx";
+import { ErrorPage } from "@/shared/error_page/components/ErrorPage.tsx";
+import { PrivateRoutes } from "@/shared/utils/PrivateRoutes.tsx";
+import { Toaster } from "@/components/ui/toast.tsx";
+import { CookiesPolicy } from "@/pages/CookiesPolicy.tsx";
 import { ReportTypesPage } from '@/features/admin/components/ReportTypesPage';
 import { ModerationQueue } from '@/features/moderator/components/ModerationQueue';
 import {ApprovedReports} from "@/features/moderator/components/ApprovedReports.tsx";
+import { MyReports } from '@/features/reports/components/MyReports';
 
 function App() {
     return (
@@ -32,6 +35,12 @@ function App() {
                     path="/register"
                     element={
                         <RegisterPage/>
+                    }
+                />
+                <Route
+                    path="/my-reports"
+                    element={
+                            <MyReports />
                     }
                 />
 
@@ -56,6 +65,8 @@ function App() {
                             <ReportTypesPage />
                         }
                     />
+
+                    <Route path="/admin/areas" element={<AdminAreasPage />} />
                 </Route>
 
                 <Route element={<PrivateRoutes allowedRoles={['Moderator', 'Admin']}/>}>
@@ -95,6 +106,13 @@ function App() {
                                    errorTitle={"Not Found"} 
                                    errorText={"Oops, looks like this URL doesn't exist!"}
                         />
+                    }
+                />
+                
+                <Route
+                    path="/cookies"
+                    element={
+                        <CookiesPolicy/>
                     }
                 />
             </Routes>

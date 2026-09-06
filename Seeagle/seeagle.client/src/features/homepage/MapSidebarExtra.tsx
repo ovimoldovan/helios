@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { MapPin, Plus } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useAuth } from '@/shared/context/AuthContext';
 
 interface MapSidebarExtraProps {
     onNewReport?: () => void;
@@ -9,6 +10,7 @@ interface MapSidebarExtraProps {
 
 export function MapSidebarExtra({ onNewReport, isPlacingPin = false }: MapSidebarExtraProps) {
     const { t } = useTranslation();
+    const { isAuthenticated } = useAuth();
 
     return (
         <div className="p-4 space-y-4 border-t border-border">
@@ -23,34 +25,39 @@ export function MapSidebarExtra({ onNewReport, isPlacingPin = false }: MapSideba
                             {isPlacingPin ? t("placingPin") : t("addReport")}
                         </p>
                         <p className="text-[10px] text-muted-foreground">
-                            {isPlacingPin ? t("clickMapToDrop") : t("tapMapToDrop")}
+                            {isPlacingPin ? t("clickMapToDrop") : t("tapMapToPlacePin")}
                         </p>
                     </div>
                 </div>
             </div>
 
-        <hr className="border-border" />
+            <hr className="border-border" />
 
-        <div className="space-y-3">
-            {onNewReport ? (
-                <Button
-                    variant="outline"
-                    className="w-full justify-start gap-2 border-2 rounded-full"
-                    onClick={onNewReport}
-                >
-                    <Plus className="w-4 h-4" />
-                    {t("newReport")}
-                </Button>
-            ) : (
-                <div className="w-full h-10 flex items-center justify-center rounded-full border-2 border-dashed border-border text-muted-foreground text-[10px]">
-                    {t("loginToAddReport")}
-                </div>
-            )}
+            <div className="space-y-3">
+                {isAuthenticated ? (
+                    <Button
+                        variant="outline"
+                        className="w-full justify-start gap-2 border-2 rounded-full"
+                        onClick={onNewReport}
+                    >
+                        <Plus className="w-4 h-4" />
+                        {t("newReport")}
+                    </Button>
+                ) : (
+                    <Button
+                        variant="outline"
+                        className="w-full justify-start gap-2 border-2 rounded-full"
+                        onClick={onNewReport}
+                    >
+                        <Plus className="w-4 h-4" />
+                        {t("loginToAddReport")}
+                    </Button>
+                )}
 
-            <p className="text-[10px] text-muted-foreground">
-                {t("lineReport")}
-            </p>
-        </div>
+                <p className="text-[10px] text-muted-foreground">
+                    {t("lineReport")}
+                </p>
+            </div>
         </div>
     );
 }

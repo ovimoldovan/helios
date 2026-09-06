@@ -10,9 +10,11 @@ export interface Report {
     description?: string | null;
     createdUtc: string;
     status: string;
+    priority: string;
 }
 
 export interface ReportType {
     id: string;
     name: string;
+    isActive: boolean;
 }

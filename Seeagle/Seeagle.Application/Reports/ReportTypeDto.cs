@@ -1,3 +1,3 @@
 namespace Seeagle.Application.Reports;
 
-public sealed record ReportTypeDto(Guid Id, string Name);
+public sealed record ReportTypeDto(Guid Id, string Name, bool IsActive);

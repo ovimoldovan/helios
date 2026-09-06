@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaf
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import type { Report } from '@/shared/types/report';
+import {getPriorityColor, getStatusColor} from "@/shared/constants/reportColors.ts";
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -10,6 +11,21 @@ L.Icon.Default.mergeOptions({
     iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
 });
+
+function createColoredIcon(color: string) {
+    return L.divIcon({
+        className: 'custom-marker',
+        html: `
+            <svg width="32" height="40" viewBox="0 0 32 40" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16 0C7.2 0 0 7.2 0 16c0 12 16 24 16 24s16-12 16-24C32 7.2 24.8 0 16 0z" fill="${color}" stroke="white" stroke-width="2"/>
+                <circle cx="16" cy="15" r="6" fill="white"/>
+            </svg>
+        `,
+        iconSize: [32, 40],
+        iconAnchor: [16, 40],
+        popupAnchor: [0, -40],
+    });
+}
 
 interface MapProps {
     onPinPlaced?: (position: [number, number] | null) => void;
@@ -44,20 +60,38 @@ function PinManager({ onPinPlaced, isPlacingPin, pinPosition}: {
 
 function ReportMarkers({ reports }: { reports?: Report[] }) {
     if (!reports) return null;
+    
+    return reports.map((report) => {
+        const isPending = report.status === 'Pending';
+        const markerColor = isPending
+            ? getStatusColor('Pending')
+            : getPriorityColor(report.priority);
 
-    return reports.map((report) => (
-        <Marker key={report.id} position={[report.latitude, report.longitude]}>
-            <Popup>
-                <div className="space-y-1">
-                    <strong> {report.status}</strong>
-                    {report.description && <p className="text-sm">{report.description}</p>}
-                    <small className="block text-xs text-gray-500">
-                        {new Date(report.createdUtc).toLocaleString()}
-                    </small>
-                </div>
-            </Popup>
-        </Marker>
-    ));
+        return (
+            <Marker key={report.id} position={[report.latitude, report.longitude]} icon={createColoredIcon(markerColor)}>
+                <Popup>
+                    <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                            <span
+                                className="w-3 h-3 rounded-full inline-block"
+                                style={{ backgroundColor: markerColor }}
+                            />
+                            <strong>{report.status}</strong>
+                        </div>
+                        {report.description && (<p className="text-sm">{report.description}</p>)}
+                        {report.status === 'Approved' && report.priority && (
+                            <p className="text-xs font-medium mt-1">
+                                Priority: {report.priority}
+                            </p>
+                        )}
+                        <small className="block text-xs text-gray-500">
+                            {new Date(report.createdUtc).toLocaleString()}
+                        </small>
+                    </div>
+                </Popup>
+            </Marker>
+    );
+    });
 }
 
 export function Map({ onPinPlaced, reports = [], isPlacingPin = false, pinPosition }: MapProps) {

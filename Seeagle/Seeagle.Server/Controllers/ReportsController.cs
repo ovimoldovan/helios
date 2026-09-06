@@ -58,7 +58,7 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
         return Ok(reports);
     }
 
-    [Authorize(Roles = "Moderator")]
+    [Authorize(Roles = "Moderator, Admin")]
     [HttpPut("{id:guid}/approve")]
     public async Task<ActionResult<ReportDto>> Approve(
         Guid id,
@@ -75,7 +75,7 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
         return Ok(report);
     }
 
-    [Authorize(Roles = "Moderator")]
+    [Authorize(Roles = "Moderator, Admin")]
     [HttpPut("{id:guid}/reject")]
     public async Task<ActionResult<ReportDto>> Reject(
         Guid id,
@@ -91,7 +91,7 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
         return Ok(report);
     }
     
-    [Authorize(Roles = "Moderator")]
+    [Authorize(Roles = "Moderator, Admin")]
     [HttpGet("approved-list")]
     public async Task<ActionResult<PagedResult<ReportDto>>> GetApprovedReports(
         [FromQuery] int pageNumber = 1,
@@ -105,8 +105,7 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
 
         return Ok(reports);
     }
-
-    [Authorize(Roles = "Moderator")]
+    [Authorize(Roles = "Moderator, Admin")]
     [HttpPut("{id:guid}/solved")]
     public async Task<ActionResult<ReportDto>> MarkAsSolved(
         Guid id,
@@ -123,7 +122,7 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
         return Ok(report);
     }
     
-    [Authorize(Roles = "Moderator")]
+    [Authorize(Roles = "Moderator, Admin")]
     [HttpPut("{id:guid}/message")]
     public async Task<ActionResult<ReportDto>> SendMessage(
         Guid id,
@@ -189,4 +188,26 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
 
         return File(photo.Data, photo.ContentType);
     }
+    [Authorize]
+    [HttpGet("my")]
+    public async Task<ActionResult<PagedResult<ReportDto>>> GetMyReports(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
+        CancellationToken cancellationToken = default)
+    {
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null || !Guid.TryParse(userIdClaim, out var userId))
+        {
+            return Unauthorized(new { message = "User ID claim is missing or invalid." });
+        }
+
+        var reports = await reportService.GetUserReportsAsync(
+            userId,
+            pageNumber,
+            pageSize,
+            cancellationToken);
+
+        return Ok(reports);
+    }
+    
 }
