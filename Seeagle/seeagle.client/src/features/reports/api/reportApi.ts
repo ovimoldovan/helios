@@ -18,7 +18,6 @@ export async function getApprovedReports(days: number = 30): Promise<Report[]> {
 }
 
 export async function uploadReportPhoto(reportId: string, file: File): Promise<Report> {
-export async function getMyReports(pageNumber: number = 1, pageSize: number = 10): Promise<PagedResult<Report>> {
     const token = getCookie("authToken");
     if (!token) {
         throw new Error("No authentication token found. Please login first.");
@@ -29,9 +28,14 @@ export async function getMyReports(pageNumber: number = 1, pageSize: number = 10
     
     return postFormData<Report>(`/api/reports/${reportId}/photo`, formData, token);
 }
+
+export async function getMyReports(pageNumber: number = 1, pageSize: number = 10): Promise<PagedResult<Report>> {
+    const token = getCookie("authToken");
+    if (!token) {
+        throw new Error("No authentication token found. Please login first.");
+    }
     return getJson<PagedResult<Report>>(
         `/api/reports/my?pageNumber=${pageNumber}&pageSize=${pageSize}`,
         token
     );
 }
-
