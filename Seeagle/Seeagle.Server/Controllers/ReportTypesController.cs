@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Seeagle.Application.Common;
 using Seeagle.Application.Reports;
 
 namespace Seeagle.Server.Controllers;
@@ -9,10 +10,13 @@ namespace Seeagle.Server.Controllers;
 public sealed class ReportTypesController(IReportTypeService reportTypeService) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<ReportTypeDto>>> GetAll(CancellationToken cancellationToken)
+    public async Task<ActionResult<PagedResult<ReportTypeDto>>> GetAsync(
+        [FromServices] IReportTypeQueryService reportTypeQueryService, [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10, [FromQuery] bool onlyActive = false,
+        CancellationToken cancellationToken = default)
     {
-        var reportTypes = await reportTypeService.GetAllAsync(cancellationToken);
-        return Ok(reportTypes);
+        return Ok(await reportTypeQueryService.GetReportTypesAsync(pageNumber, pageSize, cancellationToken,
+            onlyActive));
     }
 
     [HttpPost]
@@ -39,7 +43,8 @@ public sealed class ReportTypesController(IReportTypeService reportTypeService) 
 
     [HttpPut("{id:guid}")]
     [Authorize(Roles = "Admin")]
-    public async Task<ActionResult<ReportTypeDto>> Update(Guid id, UpdateReportTypeRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<ReportTypeDto>> Update(Guid id, UpdateReportTypeRequest request,
+        CancellationToken cancellationToken)
     {
         try
         {
