@@ -1,4 +1,4 @@
-import { getJson, postJson, putJson, putJsonWithBody } from '@/shared/api/httpClient';
+import {getJson, patchJson, postJson, putJsonWithBody} from '@/shared/api/httpClient';
 import type { UserListItem } from '@/shared/types/admin';
 import type { PagedResult } from '@/shared/types/pagedResult';
 import type { ReportType } from '@/shared/types/report';
@@ -28,8 +28,8 @@ export async function assignModerator(userId: string, token: string): Promise<Us
   return getJson<UserListItem>(`/api/users/${userId}/assign-moderator`, token);
 }
 
-export async function getReportTypes(token: string): Promise<ReportType[]> {
-  return getJson<ReportType[]>('/api/report-types', token);
+export async function getReportTypes(page: number, pageSize: number): Promise<PagedResult<ReportType>> {
+  return getJson<PagedResult<ReportType>>(`/api/report-types?pageNumber=${page}&pageSize=${pageSize}`)
 }
 
 export async function createReportType(
@@ -77,12 +77,12 @@ export async function updateReportType(
   }
 }
 
-export async function disableReportType(
+export async function changeReportTypeStatus(
     id: string,
     token: string
 ): Promise<ReportType> {
-  return putJson<ReportType>(
-      `/api/report-types/${id}/disable`,
+  return patchJson<ReportType>(
+      `/api/report-types/${id}/change_status`,
       token
   );
 }

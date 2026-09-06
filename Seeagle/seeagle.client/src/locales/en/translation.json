@@ -31,7 +31,7 @@
   "firstNameTooLong": "First name must be at most {{max}} characters.",
   "lastNameRequired": "Last name is required.",
   "lastNameTooLong": "Last name must be at most {{max}} characters.",
-
+  
   "cookiesPolicyTitle": "Cookies Policy",
   "registeredUsers": "Registered users",
   "loadingUsers": "Loading...",
@@ -92,7 +92,7 @@
   "failedToSubmitReport": "Failed to submit report.",
   "tapMapToPlacePin": "Tap map to place a pin",
   "description": "Description",
-  "optional": "optional",
+  "optional": "(optional)",
   "descriptionPlaceholder": "Describe what you saw...",
   "cancel": "Cancel",
   "submitting": "Submitting...",
@@ -105,8 +105,9 @@
   "goHome": "Go to homepage",
   "unexpectedErrorLoadingUsers": "Unexpected error while loading users.",
   "unexpectedErrorAssigningModerator": "Unexpected error while assigning moderator.",
-
+  
   "moderatorDashboard": "Moderator Dashboard",
+ 
   "moderationQueue": "Moderation Queue",
   "unexpectedError": "Unexpected error while loading reports.",
   "unexpectedErrorApprove": "Unexpected error while approving report.",
@@ -141,7 +142,7 @@
   "noApprovedReports": "No approved reports.",
   "unexpectedErrorLoadingApproved": "Unexpected error while loading approved reports.",
   "unexpectedErrorProcessingAction": "Unexpected error while processing action.",
-
+  
   "languageEn": "EN",
   "languageRo": "RO",
 
@@ -201,13 +202,10 @@
   "approve": "Approve",
   "reject": "Reject",
   "disable": "Disable",
+  "enable": "Enable",
   "save": "Save",
   "unexpectedErrorUpdatingReportType": "Unexpected error while updating report type.",
   "unexpectedErrorDisablingReportType": "Unexpected error while disabling report type.",
-  "unexpectedErrorLoadingReports": "Unexpected error while loading reports.",
-
-  "allRoles": "All roles",
-  "searchUsers": "Search users...",
   
   "assistantOnline": "Online",
   "assistantOffline": "Offline",

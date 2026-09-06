@@ -1,289 +1,118 @@
-import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { FieldError } from '@/components/ui/field';
-import { getCookie } from '@/shared/utils/cookies';
-import { createReportType, disableReportType, getReportTypes, updateReportType } from '@/features/admin/api/adminApi';
-import type { ReportType } from '@/shared/types/report';
+import {useEffect, useState} from 'react';
+import {useTranslation} from 'react-i18next';
+import {Button} from '@/components/ui/button';
+import {changeReportTypeStatus, getReportTypes} from '@/features/admin/api/adminApi';
+import type {ReportType} from '@/shared/types/report';
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
+import {PaginationLink} from "@/components/ui/pagination.tsx";
+import {ChevronLeftIcon, ChevronRightIcon} from "lucide-react";
+import {getCookie} from "@/shared/utils/cookies.ts";
+
+const PAGE_SIZE = 10;
 
 export function ReportTypesPage() {
+    const [reportTypes, setReportTypes] = useState<ReportType[]>([]);
+    const [page, setPage] = useState(1);
+    const [totalCount, setTotalCount] = useState(0);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const { t } = useTranslation();
 
-    const [name, setName] = useState('');
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [success, setSuccess] = useState<string | null>(null);
-    const [reportTypes, setReportTypes] = useState<ReportType[]>([]);
-    const [editingId, setEditingId] = useState<string | null>(null);
-    const [editName, setEditName] = useState('');
-    const [editError, setEditError] = useState<string | null>(null);
-    const [isUpdating, setIsUpdating] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
-
     useEffect(() => {
-        async function loadReportTypes() {
-            try {
-                const reportTypes = await getReportTypes(
-                    getCookie('authToken')!
-                );
-
-                setReportTypes(reportTypes);
-            } catch {
-                setError(t('unexpectedErrorLoadingReportTypes'));
-            } finally {
-                setIsLoading(false);
-            }
-        }
-
-        loadReportTypes();
-    }, [t]);
-    
-    async function handleAddReportType() {
-        const trimmedName = name.trim();
-
-        if (!trimmedName) {
-            setError(t('reportTypeNameRequired'));
-            setSuccess(null);
-            return;
-        }
-
-        setIsSubmitting(true);
+        setLoading(true);
         setError(null);
-        setSuccess(null);
+        
+        getReportTypes(page, PAGE_SIZE)
+            .then((result) => {
+                setReportTypes(result.items)
+                setTotalCount(result.totalCount)
+            })
+            .catch(() => setError(t('unexpectedErrorLoadingReportTypes')))
+            .finally(() => setLoading(false));
+    }, [page]);
 
-        try {
-            const created = await createReportType(
-                trimmedName,
-                getCookie('authToken')!
-            );
-
-            setReportTypes((current) => [...current, created]);
-
-            setSuccess(
-                t('reportTypeAddedSuccess', { name: created.name })
-            );
-            setName('');
-        } catch (error) {
-            if (
-                error instanceof Error &&
-                error.message === 'This report type already exists.'
-            ) {
-                setError(t('reportTypeAlreadyExists'));
-            } else {
-                setError(t('unexpectedErrorAddingReportType'));
-            }
-        }
-         finally {
-            setIsSubmitting(false);
-        }
-    }
-
-    function handleStartEdit(reportType: ReportType) {
-        setEditingId(reportType.id);
-        setEditName(reportType.name);
-        setEditError(null);
-    }
-
-    async function handleUpdateReportType(id: string) {
-        const trimmedName = editName.trim();
-
-        if (!trimmedName) {
-            setEditError(t('reportTypeNameRequired'));
-            return;
-        }
-
-        setIsUpdating(true);
-        setEditError(null);
-
-        try {
-            const updated = await updateReportType(
-                id,
-                trimmedName,
-                getCookie('authToken')!
-            );
-
-            setReportTypes((current) =>
-                current.map((reportType) =>
-                    reportType.id === id ? updated : reportType
-                )
-            );
-
-            setEditingId(null);
-            setEditName('');
-        } catch (error) {
-            if (
-                error instanceof Error &&
-                error.message === 'This report type already exists.'
-            ) {
-                setEditError(t('reportTypeAlreadyExists'));
-            } else {
-                setEditError(t('unexpectedErrorUpdatingReportType'));
-            }
-        } finally {
-            setIsUpdating(false);
-        }
-    }
-
-    async function handleDisableReportType(id: string) {
-        try {
-            const disabled = await disableReportType(
-                id,
-                getCookie('authToken')!
-            );
-
-            setReportTypes((current) =>
-                current.map((reportType) =>
-                    reportType.id === id ? disabled : reportType
-                )
-            );
-        } catch {
-            setEditError(t('unexpectedErrorDisablingReportType'));
-        }
-    }
+    const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
     
+    async function handleReportTypeStatusChange(id : string) {
+        changeReportTypeStatus(id, getCookie('authToken')!)
+            .then((updatedReportType) => {
+                setReportTypes((prevState) => 
+                prevState.map((reportType) => (reportType.id === updatedReportType.id ? updatedReportType : reportType))
+                );
+            })
+            .catch(() => setError(t('unexpectedErrorChangingReportType')))
+    }
 
     return (
-        <main className="relative min-h-screen overflow-y-auto p-8 bg-muted">
-            <Card className="relative z-10 mx-auto max-w-4xl w-full">
-                <CardHeader>
-                    <CardTitle className="text-3xl font-bold">
-                        {t('reportTypesPageTitle')}
-                    </CardTitle>
+        <main className="flex">
+            <div className="flex-1 p-6">
+                <h1 className="text-xl font-semibold mb-4">{t('reportTypesPageTitle')}</h1>
 
-                    <CardDescription>
-                        {t('reportTypesPageDescription')}
-                    </CardDescription>
-                </CardHeader>
+                {loading && <p>{t('loadingUsers')}</p>}
+                {error && <p className="text-red-600">{error}</p>}
 
-                <CardContent>
-                    <div className="flex gap-2">
-                        <Input
-                            placeholder={t('reportTypeNamePlaceholder')}
-                            maxLength={20}
-                            value={name}
-                            disabled={isSubmitting}
-                            onChange={(event) => {
-                                setName(event.target.value);
-                                setError(null);
-                                setSuccess(null);
-                            }}
-                            onKeyDown={(event) => {
-                                if (event.key === 'Enter') {
-                                    handleAddReportType();
-                                }
-                            }}
-                        />
+                {!loading && !error && (
+                    <>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>{t('reportTypeNamePlaceholder')}</TableHead>
+                                    <TableHead>{t('actionColumn')}</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {reportTypes.map((reportType) => (
+                                    <TableRow key={reportType.id}>
+                                        <TableCell className="py-2">{reportType.name}</TableCell>
+                                        <TableCell className="py-2">
+                                            <Button
+                                                size="sm"
+                                                onClick={() => handleReportTypeStatusChange(reportType.id)}
+                                            >
+                                                { reportType.isActive ? t('disable') : t('enable') }
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
 
-                        <Button
-                            onClick={handleAddReportType}
-                            disabled={isSubmitting || !name.trim()}
-                        >
-                            {isSubmitting ? t('adding') : t('add')}
-                        </Button>
-                    </div>
-
-                    {error && (
-                        <FieldError className="mt-2">
-                            {error}
-                        </FieldError>
-                    )}
-
-                    {success && (
-                        <p className="mt-2 text-sm text-primary">
-                            {success}
-                        </p>
-                    )}
-
-                    <p className="mt-2 text-xs text-muted-foreground">
-                        {t('maximum20Characters')}
-                    </p>
-
-                    <div className="mt-6 space-y-3">
-                        {isLoading && (
-                            <p className="text-sm text-muted-foreground">
-                                {t('loadingReportTypes')}
-                            </p>
-                        )}
-                        {reportTypes.map((reportType) => (
-                            <div
-                                key={reportType.id}
-                                className={`flex items-center gap-2 ${!reportType.isActive ? 'opacity-50' : ''}`}
+                        <div className="flex items-center justify-between gap-4 mt-4">
+                            <PaginationLink
+                                href="#"
+                                size="icon"
+                                aria-label="Previous"
+                                aria-disabled={page === 1}
+                                className={page === 1 ? 'cursor-not-allowed opacity-50' : undefined}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    if (page > 1) setPage(page - 1);
+                                }}
                             >
-                                {editingId === reportType.id ? (
-                                    <>
-                                        <Input
-                                            maxLength={20}
-                                            value={editName}
-                                            disabled={isUpdating}
-                                            onChange={(event) => {
-                                                setEditName(event.target.value);
-                                                setEditError(null);
-                                            }}
-                                        />
+                                <ChevronLeftIcon />
+                            </PaginationLink>
 
-                                        <Button
-                                            onClick={() => handleUpdateReportType(reportType.id)}
-                                            disabled={isUpdating || !editName.trim()}
-                                        >
-                                            {isUpdating ? t('saving') : t('save')}
-                                        </Button>
+                            <span className="text-sm">
+              {t('pageOf', { page, totalPages })}
+            </span>
 
-                                        <Button
-                                            variant="outline"
-                                            onClick={() => {
-                                                setEditingId(null);
-                                                setEditName('');
-                                                setEditError(null);
-                                            }}
-                                            disabled={isUpdating}
-                                        >
-                                            {t('cancel')}
-                                        </Button>
-                                    </>
-                                ) : (
-                                    <>
-                    <span className="flex-1">
-                        {reportType.name}
-                    </span>
-
-                                        {reportType.isActive && (
-                                            <>
-                                                <Button
-                                                    variant="outline"
-                                                    onClick={() => handleStartEdit(reportType)}
-                                                >
-                                                    {t('edit')}
-                                                </Button>
-
-                                                <Button
-                                                    variant="outline"
-                                                    onClick={() => handleDisableReportType(reportType.id)}
-                                                >
-                                                    {t('disable')}
-                                                </Button>
-                                            </>
-                                        )}
-                                    </>
-                                )}
-                            </div>
-                        ))}
-
-                        {editError && (
-                            <FieldError>
-                                {editError}
-                            </FieldError>
-                        )}
-                    </div>
-                </CardContent>
-            </Card>
+                            <PaginationLink
+                                href="#"
+                                size="icon"
+                                aria-label="Next"
+                                aria-disabled={page === totalPages}
+                                className={page === totalPages ? 'cursor-not-allowed opacity-50' : undefined}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    if (page < totalPages) setPage(page + 1);
+                                }}
+                            >
+                                <ChevronRightIcon />
+                            </PaginationLink>
+                        </div>
+                    </>
+                )}
+            </div>
         </main>
     );
 }

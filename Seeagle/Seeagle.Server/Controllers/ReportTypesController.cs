@@ -65,7 +65,7 @@ public sealed class ReportTypesController(IReportTypeService reportTypeService) 
         }
     }
 
-    [HttpPut("{id:guid}/change_status")]
+    [HttpPatch("{id:guid}/change_status")]
     [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ReportTypeDto>> ChangeStatus(Guid id, CancellationToken cancellationToken)
     {
