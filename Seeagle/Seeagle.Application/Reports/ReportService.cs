@@ -39,7 +39,7 @@ public sealed class ReportService : IReportService
             report.Location.Y,
             report.Description,
             report.CreatedUtc,
-            report.Status,
+            report.Status.ToString(),
             report.Priority.ToString());
     }
     
@@ -50,7 +50,7 @@ public sealed class ReportService : IReportService
     {
         var query = _reportRepository
             .GetAllQueryable()
-            .Where(report => report.Status == "Pending");
+            .Where(report => report.Status == ReportStatus.Pending);
 
         var totalCount = await query.CountAsync(cancellationToken);
 
@@ -64,7 +64,7 @@ public sealed class ReportService : IReportService
                 report.Location.Y,
                 report.Description,
                 report.CreatedUtc,
-                report.Status,
+                report.Status.ToString(),
                 report.Priority.ToString()))
             .ToListAsync(cancellationToken);
 
@@ -86,12 +86,14 @@ public sealed class ReportService : IReportService
             return null;
         }
  
-        if (!Enum.TryParse<Priority>(priority, ignoreCase: true, out var parsedPriority))
+         var priorityEnum = priority.ToLower() switch
         {
-            throw new ArgumentException($"Invalid priority value: '{priority}'. Expected Low, Medium, or Urgent.", nameof(priority));
-        }
- 
-        report.Approve(parsedPriority);
+            "urgent" => Priority.Urgent,
+            "medium" => Priority.Medium,
+            _ => Priority.Low
+        };
+
+        report.Approve(priorityEnum);
  
         await _reportRepository.UpdateAsync(report, cancellationToken);
  
@@ -101,7 +103,7 @@ public sealed class ReportService : IReportService
             report.Location.Y,
             report.Description,
             report.CreatedUtc,
-            report.Status,
+            report.Status.ToString(),
             report.Priority.ToString());
     }
     
@@ -126,7 +128,7 @@ public sealed class ReportService : IReportService
             report.Location.Y,
             report.Description,
             report.CreatedUtc,
-            report.Status,
+            report.Status.ToString(),
             report.Priority.ToString());
     }
     
@@ -148,7 +150,7 @@ public sealed class ReportService : IReportService
             report.Location.Y,
             report.Description,
             report.CreatedUtc,
-            report.Status,
+            report.Status.ToString(),
             report.Priority.ToString());
     }
     
@@ -174,7 +176,7 @@ public sealed class ReportService : IReportService
             report.Location.Y,
             report.Description,
             report.CreatedUtc,
-            report.Status,
+            report.Status.ToString(),
             report.Priority.ToString());
     }
     
@@ -182,7 +184,7 @@ public sealed class ReportService : IReportService
     {
         var query = _reportRepository
             .GetAllQueryable()
-            .Where(report => report.Status == "Approved" && !report.IsSolved);
+            .Where(report => report.Status == ReportStatus.Approved && !report.IsSolved);
 
         var totalCount = await query.CountAsync(cancellationToken);
 
@@ -196,7 +198,7 @@ public sealed class ReportService : IReportService
                 report.Location.Y,
                 report.Description,
                 report.CreatedUtc,
-                report.Status,
+                report.Status.ToString(),
                 report.Priority.ToString()))
             .ToListAsync(cancellationToken);
 
@@ -224,7 +226,7 @@ public sealed class ReportService : IReportService
             report.Location.Y,
             report.Description,
             report.CreatedUtc,
-            report.Status,
+            report.Status.ToString(),
             report.Priority.ToString()
         );
     }
@@ -238,7 +240,7 @@ public sealed class ReportService : IReportService
         if (report?.Photo is null)
             return null;
 
-        if (report.Status != "Approved" && !isModerator)
+        if (report.Status != ReportStatus.Approved && !isModerator)
             return null;
         
         return new ProcessedPhoto(report.Photo.ImageData, report.Photo.ContentType);

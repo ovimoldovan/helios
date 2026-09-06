@@ -18,6 +18,7 @@ public sealed class ReportConfiguration : IEntityTypeConfiguration<Report>
             .HasMaxLength(255);
 
         builder.Property(r => r.Status)
+            .HasConversion<string>()
             .IsRequired();
 
         builder.HasOne(r => r.User)

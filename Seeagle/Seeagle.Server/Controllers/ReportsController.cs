@@ -62,8 +62,8 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
     [HttpPut("{id:guid}/approve")]
     public async Task<ActionResult<ReportDto>> Approve(
         Guid id,
-        [FromBody] string priority,
-        CancellationToken cancellationToken)
+        [FromQuery] string priority = "low"  ,
+        CancellationToken cancellationToken = default)
     {
         var report = await reportService.ApproveAsync(id, priority, cancellationToken);
 
@@ -105,7 +105,9 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
 
         return Ok(reports);
     }
-    
+
+    [Authorize(Roles = "Moderator")]
+    [HttpPut("{id:guid}/solved")]
     public async Task<ActionResult<ReportDto>> MarkAsSolved(
         Guid id,
         [FromQuery] string? message = null,

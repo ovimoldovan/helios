@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Seeagle.Application.Common;
 using Seeagle.Domain.Reports;
+using Seeagle.Domain.Reports;
 
 namespace Seeagle.Application.Reports;
 
@@ -18,7 +19,7 @@ public sealed class ReportQueryService : IReportQueryService
         CancellationToken cancellationToken)
     {
         var reports = await _reportRepository.GetAllQueryable()
-            .Where(r => r.Status == "Approved" && r.CreatedUtc >= fromDate && r.Status != "Solved")
+            .Where(r => r.Status == ReportStatus.Approved && r.CreatedUtc >= fromDate && r.Status != ReportStatus.Solved)
             .OrderByDescending(r => r.CreatedUtc)
             .Select(r => new ReportDto(
                 r.Id,
@@ -26,7 +27,7 @@ public sealed class ReportQueryService : IReportQueryService
                 r.Location.Y,
                 r.Description,
                 r.CreatedUtc,
-                r.Status,
+                r.Status.ToString(),
                 r.Priority.ToString()))
             .ToListAsync(cancellationToken);
 
