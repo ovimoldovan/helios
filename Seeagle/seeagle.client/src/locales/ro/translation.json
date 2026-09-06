@@ -190,6 +190,8 @@
   "save": "Salvează",
   "saving": "Se salvează...",
   "unexpectedErrorUpdatingReportType": "A apărut o eroare neașteptată la actualizarea tipului de raport.",
-  "unexpectedErrorDisablingReportType": "A apărut o eroare neașteptată la dezactivarea tipului de raport."
+  "unexpectedErrorDisablingReportType": "A apărut o eroare neașteptată la dezactivarea tipului de raport.",
   
+  "allRoles": "Toate rolurile",
+  "searchUsers": "Caută utilizatori..."
 }
