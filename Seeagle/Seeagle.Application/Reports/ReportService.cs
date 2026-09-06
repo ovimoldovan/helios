@@ -252,7 +252,7 @@ public sealed class ReportService : IReportService
                 report.Location.Y,
                 report.Description,
                 report.CreatedUtc,
-                report.Status,
+                report.Status.ToString(),
                 report.Priority.ToString()))
             .ToListAsync(cancellationToken);
 

@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Seeagle.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class AddPhotosTable : Migration
+    public partial class AddPhotoReport : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Photo",
+                name: "Photos",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -24,9 +24,9 @@ namespace Seeagle.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Photo", x => x.Id);
+                    table.PrimaryKey("PK_Photos", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Photo_Reports_ReportId",
+                        name: "FK_Photos_Reports_ReportId",
                         column: x => x.ReportId,
                         principalTable: "Reports",
                         principalColumn: "Id",
@@ -34,8 +34,8 @@ namespace Seeagle.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Photo_ReportId",
-                table: "Photo",
+                name: "IX_Photos_ReportId",
+                table: "Photos",
                 column: "ReportId",
                 unique: true);
         }
@@ -44,7 +44,7 @@ namespace Seeagle.Infrastructure.Persistence.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Photo");
+                name: "Photos");
         }
     }
 }
