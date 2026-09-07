@@ -128,5 +128,99 @@ public sealed class ReportTypeServiceTests
                 Arg.Is<ReportType>(reportType => reportType.Name == "Traffic"),
                 CancellationToken.None);
     }
+
+    [Fact]
+    public async Task UpdateAsync_ShouldReturnNull_WhenReportTypeDoesntExist()
+    {
+        //Arrange
+        var repository = Substitute.For<IRepository<ReportType>>();
+
+        var service = new ReportTypeService(repository);
+
+        var request = new UpdateReportTypeRequest
+        {
+            Name = "NewName"
+        };
+        
+        //Act
+        var result = await service.UpdateAsync(
+            new Guid(),
+            request,
+            CancellationToken.None
+        );
+        
+        //Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_ShouldThrow_WhenReportTypeAlreadyExists()
+    {
+        //Arrange
+        var repository = Substitute.For<IRepository<ReportType>>();
+
+        var toUpdateReportType = new ReportType("ToUpdate");
+        var existingReportType = new ReportType("Existing");
+        repository
+            .GetAllQueryable()
+            .Returns(new List<ReportType>
+            {
+                toUpdateReportType,
+                existingReportType
+            }.AsQueryable());
+
+        var service = new ReportTypeService(repository);
+
+        var request = new UpdateReportTypeRequest
+        {
+            Name = "Existing"
+        };
+        
+        //Act & Assert
+        await Assert.ThrowsAsync<InvalidOperationException>(() => service.UpdateAsync(
+            toUpdateReportType.Id,
+            request,
+            CancellationToken.None));
+    }
+
+    [Fact]
+    public async Task ChangeStatusAsync_ShouldReturnNull_WhenReportTypeDoesntExist()
+    {
+        // Arrange
+        var repository = Substitute.For<IRepository<ReportType>>();
+
+        var service = new ReportTypeService(repository);
+
+        // Act
+        var result = await service.ChangeStatusAsync(new Guid(), CancellationToken.None);
+        
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task ChangeStatusAsync_ShouldSucceed_WhenReportExists()
+    {
+        // Arrange
+        var repository = Substitute.For<IRepository<ReportType>>();
+        var reportType = new ReportType("ReportType");
+        repository.GetAllQueryable().Returns(new List<ReportType> { reportType }.AsQueryable());
+
+        var service = new ReportTypeService(repository);
+        
+        // Act
+        var result = await service.ChangeStatusAsync(reportType.Id, CancellationToken.None);
+        
+        // Assert
+        Assert.NotNull(result);
+        Assert.False(result.IsActive);
+        
+        // Act
+        result = await service.ChangeStatusAsync(reportType.Id, CancellationToken.None);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.True(result.IsActive);
+    }
 }
 

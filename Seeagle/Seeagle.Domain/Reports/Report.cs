@@ -10,7 +10,7 @@ public class Report
         User = null!;
     }
 
-    public Report(Point location, string? description, User.User user)
+    public Report(Point location, string? description, User.User user, ReportType type)
     {
         if (location.Y < -90 || location.Y > 90)
             throw new ArgumentOutOfRangeException(nameof(location.Y), "Latitude must be between -90 and 90.");
@@ -24,6 +24,7 @@ public class Report
         CreatedUtc = DateTime.UtcNow;
         User = user;
         Status = "Pending";
+        Type = type;
     }
 
     public Guid Id { get; private set; }
@@ -31,7 +32,7 @@ public class Report
     public string? Description { get; private set; }
     public DateTime CreatedUtc { get; private set; }
     public User.User User { get; private set; }
-    public Guid? ReportTypeId { get; private set; }
+    public ReportType Type { get; private set; }
     public string Status { get; private set; } = string.Empty;
     public Priority Priority { get; private set; } = Priority.Low;
     public string? MessageToReporter { get; private set; }
