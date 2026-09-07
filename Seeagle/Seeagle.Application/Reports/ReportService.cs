@@ -240,10 +240,10 @@ public sealed class ReportService : IReportService
    		{
         	return null;
     	}
-        if (request.Description is not null)
-        {
-            report.UpdateDescription(request.Description);
-        }
+       if (request.Description is not null)
+		{
+    		report.UpdateDescription(string.IsNullOrEmpty(request.Description) ? null : request.Description);
+		}
         
         if (request.Priority is not null)
         {
