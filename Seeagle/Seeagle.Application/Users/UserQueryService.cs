@@ -36,20 +36,16 @@ public sealed class UserQueryService : IUserQueryService
             u.LastName.ToLower().Contains(searchTerm.ToLower()));
         }
 
-        query = (sortBy?.ToLower(), sortDescending) switch
+        IQueryable<User> sortedQuery = sortBy?.ToLower() switch
         {
-            ("email", false) => query.OrderBy(u => u.Email),
-            ("email", true) => query.OrderByDescending(u => u.Email),
-            ("firstname", false) => query.OrderBy(u => u.FirstName),
-            ("firstname", true) => query.OrderByDescending(u => u.FirstName),
-            ("lastname", false) => query.OrderBy(u => u.LastName),
-            ("lastname", true) => query.OrderByDescending(u => u.LastName),
-            _ => query.OrderBy(u => u.Email)
+            var s when s == nameof(User.Email).ToLower() => sortDescending ? query.OrderByDescending(u => u.Email) : query.OrderBy(u => u.Email),
+            var s when s == nameof(User.FirstName).ToLower() => sortDescending ? query.OrderByDescending(u => u.FirstName) : query.OrderBy(u => u.FirstName),
+            var s when s == nameof(User.LastName).ToLower() => sortDescending ? query.OrderByDescending(u => u.LastName) : query.OrderBy(u => u.LastName),
+            _ => query.OrderBy(u => u.Id)
         };
-
         var totalCount = await query.CountAsync(cancellationToken);
 
-        var users = await query
+        var users = await sortedQuery   
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .Select(u => new UserListItemDto(u.Id, u.Email, u.FirstName, u.LastName, u.Role))
