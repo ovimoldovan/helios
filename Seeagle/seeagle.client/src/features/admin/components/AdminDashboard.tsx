@@ -1,3 +1,6 @@
+import { useEffect, useState } from 'react';
+import { getAssistantHealth } from '../api/adminApi';
+import { getCookie } from '@/shared/utils/cookies';
 import {
     Card,
     CardDescription,
@@ -10,10 +13,19 @@ import './AdminDashboard.css';
 import { useTranslation } from 'react-i18next';
 import { LeftPanel } from '@/features/homepage/components/LeftPanel';
 
+import { AssistantStatus } from '@/shared/types/admin';
+
 export function AdminDashboard() {
     const navigate = useNavigate();
     const { t } = useTranslation();
 
+    const [assistantStatus, setAssistantStatus] = useState<AssistantStatus>(AssistantStatus.Checking);
+    useEffect(() => {
+    const userJwt = getCookie('authToken')!;
+    getAssistantHealth(userJwt)
+        .then((data) => setAssistantStatus(data.status as AssistantStatus))
+        .catch(() => setAssistantStatus(AssistantStatus.Offline));
+}, []);
     return (
         <div className="flex">
             <LeftPanel />
@@ -47,6 +59,21 @@ export function AdminDashboard() {
                             <span className="text-base font-semibold">{t('reportsTitle')}</span>
                             <span className="font-normal">{t('reportsDescription')}</span>
                         </Button>
+                    </div>
+                    <div className="mx-8 mb-8 flex items-center gap-3 rounded-lg border p-4">
+                        <span
+                            className={`inline-block h-3 w-3 rounded-full ${
+                            assistantStatus === AssistantStatus.Online ? 'bg-green-500' : assistantStatus === AssistantStatus.Offline ? 'bg-red-500' : 'bg-gray-400'
+                            }`}
+                        />
+                        <span className="font-medium">SeeagleAssistant</span>
+                        <span className="text-muted-foreground text-sm">
+                            {assistantStatus === AssistantStatus.Online
+                            ? t('assistantOnline')
+                            : assistantStatus === AssistantStatus.Offline
+                            ? t('assistantOffline')
+                            : t('assistantChecking')}
+                        </span>
                     </div>
                 </Card>
             </main>

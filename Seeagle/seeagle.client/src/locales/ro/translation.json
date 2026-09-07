@@ -190,6 +190,10 @@
   "save": "Salvează",
   "saving": "Se salvează...",
   "unexpectedErrorUpdatingReportType": "A apărut o eroare neașteptată la actualizarea tipului de raport.",
-  "unexpectedErrorDisablingReportType": "A apărut o eroare neașteptată la dezactivarea tipului de raport."
+  "unexpectedErrorDisablingReportType": "A apărut o eroare neașteptată la dezactivarea tipului de raport.",
+
+  "assistantOnline": "Online",
+  "assistantOffline": "Offline",
+  "assistantChecking": "Se verifică..."
   
 }
