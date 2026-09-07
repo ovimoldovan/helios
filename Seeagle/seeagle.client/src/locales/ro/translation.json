@@ -194,6 +194,8 @@
 
   "assistantOnline": "Online",
   "assistantOffline": "Offline",
-  "assistantChecking": "Se verifică..."
+  "assistantChecking": "Se verifică...",
   
+  "allRoles": "Toate rolurile",
+  "searchUsers": "Caută utilizatori..."
 }
