@@ -137,6 +137,7 @@ export function ReportManagement() {
                     </div>
 
                     {isLoading && <p>{t('loadingReports')}</p>}
+                    {error && <p className="text-red-600">{error}</p>}
                     
                     {!isLoading && !error && (
                         <>
