@@ -211,5 +211,9 @@
   
   "assistantOnline": "Online",
   "assistantOffline": "Offline",
-  "assistantChecking": "Checking..."
+  "assistantChecking": "Checking...",
+
+  "allReportsTitle": "All Reports",
+  "allReportsDescription": "Review all reports, except pending ones.",
+  "noReportsFound": "No reports found."
 }

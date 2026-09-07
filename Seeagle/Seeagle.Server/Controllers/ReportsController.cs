@@ -176,7 +176,7 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
         return Ok(reports);
     }
 	
-	[Authorize(Roles = "Moderator, Admin")]
+    [Authorize(Roles = "Moderator, Admin")]
 	[HttpPut("{id:guid}")]
 	public async Task<ActionResult<ReportDto>> UpdateReport(
     	Guid id,
@@ -189,35 +189,39 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
         		return NotFound();
     		}
     
+    	return Ok(report);
+	}
+
     [Authorize(Roles = "Moderator, Admin")]
     [HttpGet]
     public async Task<ActionResult<PagedResult<ReportDto>>> GetByStatus(
         [FromQuery] string? status = null,
+        [FromQuery] string? excludeStatus = null,
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10,
         CancellationToken cancellationToken = default)
     {
-        var reports = await reportService.GetByStatusAsync(
-            status,
-            pageNumber,
-            pageSize,
-            cancellationToken);
-
-        return Ok(reports);
+        try
+        {
+            var reports = await reportService.GetByStatusAsync(status, excludeStatus, pageNumber, pageSize, cancellationToken);
+            return Ok(reports);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
+
 
     [Authorize(Roles = "Moderator, Admin")]
     [HttpDelete("{id:guid}")]
-    public async Task<ActionResult> SoftDelete(Guid id, CancellationToken cancellationToken = default)
+    public async Task<ActionResult> SoftDelete(Guid id, CancellationToken cancellationToken)
     {
-        var result = await reportService.SoftDeleteAsync(id, cancellationToken);
-        if (!result)
+        var success = await reportService.SoftDeleteAsync(id, cancellationToken);
+        if (!success)
         {
             return NotFound();
         }
         return NoContent();
     }
-    	return Ok(report);
-	}
-   
 }

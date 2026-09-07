@@ -65,6 +65,7 @@ public class Report
     public void Delete()
     {
         IsDeleted = true;
+    }
     public void UpdateDescription(string description)
     {
         Description = description;

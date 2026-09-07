@@ -230,17 +230,31 @@ public sealed class ReportService : IReportService
 
         return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
     }
-    public async Task<PagedResult<ReportDto>> GetByStatusAsync(string? status, int pageNumber, int pageSize, CancellationToken cancellationToken)
+    public async Task<PagedResult<ReportDto>> GetByStatusAsync(string? status, string? excludeStatus, int pageNumber, int pageSize, CancellationToken cancellationToken)
     {
         if (status != null && !ValidStatuses.Contains(status))
         {
             throw new ArgumentException($"Invalid status: {status}. Valid statuses are: {string.Join(", ", ValidStatuses)}");
         }
 
+        if (excludeStatus != null && !ValidStatuses.Contains(excludeStatus))
+        {
+            throw new ArgumentException($"Invalid excludeStatus: {excludeStatus}. Valid statuses are: {string.Join(", ", ValidStatuses)}");
+        }
+
         var query = _reportRepository
             .GetAllQueryable()
             .Where(report => !report.IsDeleted);
 
+        if(!string.IsNullOrWhiteSpace(status))
+        {
+            query = query.Where(report => report.Status == status);
+        }
+        if(!string.IsNullOrWhiteSpace(excludeStatus))
+        {
+            query = query.Where(report => report.Status != excludeStatus);
+        }
+        
         var totalCount = await query.CountAsync(cancellationToken);
 
         var reports = await query
@@ -261,8 +275,6 @@ public sealed class ReportService : IReportService
     }   
 
     public async Task<bool> SoftDeleteAsync(Guid id, CancellationToken cancellationToken)
-
-	public async Task<ReportDto?> UpdateAsync(Guid id, UpdateReportRequest request, CancellationToken cancellationToken)
     {
         var report = await _reportRepository
             .GetAllQueryable()
@@ -279,7 +291,11 @@ public sealed class ReportService : IReportService
 
         return true;
     }
-}
+	public async Task<ReportDto?> UpdateAsync(Guid id, UpdateReportRequest request, CancellationToken cancellationToken)
+    {
+        var report = await _reportRepository
+            .GetAllQueryable()
+            .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
       
         if (report is null)
    		{

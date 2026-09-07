@@ -64,7 +64,7 @@ export async function putJson<TResponse>(url: string, token?: string, body?: unk
   return (await response.json()) as TResponse;
 }
 
-export async function deleteJson<TResponse>(url: string, token?: string): Promise<TResponse> {
+export async function deleteJson(url: string, token?: string): Promise<void> {
   const headers: Record<string, string> = {};
 
   if (token) {
@@ -79,8 +79,6 @@ export async function deleteJson<TResponse>(url: string, token?: string): Promis
   if (!response.ok) {
     throw new Error(`Request failed with status ${response.status}.`);
   }
-
-  return (await response.json()) as TResponse;
 }
 
 export async function putJsonWithBody<TResponse>(url: string, body: unknown, token?: string): Promise<TResponse> {

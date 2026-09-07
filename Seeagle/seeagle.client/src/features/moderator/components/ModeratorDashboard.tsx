@@ -36,8 +36,8 @@ export function ModeratorDashboard() {
                             className="admin-dashboard-button"
                             onClick={() => navigate('/moderator/approved')}
                         >
-                            <span className="text-base font-semibold">{t('approvedReportsTitle')}</span>
-                            <span className="font-normal">{t('approvedReportsDescription')}</span>
+                            <span className="text-base font-semibold">{t('allReportsTitle')}</span>
+                            <span className="font-normal">{t('allReportsDescription')}</span>
                         </Button>
 
                         <Button
