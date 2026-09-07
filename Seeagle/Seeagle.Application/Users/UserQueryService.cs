@@ -46,32 +46,6 @@ public sealed class UserQueryService : IUserQueryService
         var totalCount = await query.CountAsync(cancellationToken);
 
         var users = await sortedQuery   
-=======
-        if (roleFilter.HasValue)
-        {
-            query = query.Where(u => u.Role == roleFilter.Value);
-        }
-        
-        if (!string.IsNullOrEmpty(searchTerm))
-        {
-            query = query.Where(u => u.Email.ToLower().Contains(searchTerm.ToLower()) || 
-            u.FirstName.ToLower().Contains(searchTerm.ToLower()) || 
-            u.LastName.ToLower().Contains(searchTerm.ToLower()));
-        }
-
-        IQueryable<User> sortedQuery = sortBy?.ToLower() switch
-        {
-           var s when s == nameof(User.Email).ToLower() => sortDescending ? query.OrderByDescending(u => u.Email) : query.OrderBy(u => u.Email),
-           var s when s == nameof(User.FirstName).ToLower() => sortDescending ? query.OrderByDescending(u => u.FirstName) : query.OrderBy(u => u.FirstName),
-           var s when s == nameof(User.LastName).ToLower() => sortDescending ? query.OrderByDescending(u => u.LastName) : query.OrderBy(u => u.LastName),
-           var s when s == nameof(User.Role).ToLower() => sortDescending ? query.OrderByDescending(u => u.Role) : query.OrderBy(u => u.Role),
-           _ => sortDescending ? query.OrderByDescending(u => u.Id) : query.OrderBy(u => u.Id),
-        };
-
-        var totalCount = await query.CountAsync(cancellationToken);
-
-        var users = await sortedQuery
->>>>>>> Stashed changes
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .Select(u => new UserListItemDto(u.Id, u.Email, u.FirstName, u.LastName, u.Role))
