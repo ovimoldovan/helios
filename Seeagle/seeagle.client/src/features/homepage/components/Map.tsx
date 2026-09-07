@@ -12,6 +12,21 @@ L.Icon.Default.mergeOptions({
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
 });
 
+function createColoredIcon(color: string) {
+    return L.divIcon({
+        className: 'custom-marker',
+        html: `
+            <svg width="32" height="40" viewBox="0 0 32 40" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16 0C7.2 0 0 7.2 0 16c0 12 16 24 16 24s16-12 16-24C32 7.2 24.8 0 16 0z" fill="${color}" stroke="white" stroke-width="2"/>
+                <circle cx="16" cy="15" r="6" fill="white"/>
+            </svg>
+        `,
+        iconSize: [32, 40],
+        iconAnchor: [16, 40],
+        popupAnchor: [0, -40],
+    });
+}
+
 interface MapProps {
     onPinPlaced?: (position: [number, number] | null) => void;
     reports?: Report[];
@@ -53,8 +68,8 @@ function ReportMarkers({ reports }: { reports?: Report[] }) {
             : getPriorityColor(report.priority);
 
         return (
-            <Marker key={report.id} position={[report.latitude, report.longitude]}
-            ><Popup>
+            <Marker key={report.id} position={[report.latitude, report.longitude]} icon={createColoredIcon(markerColor)}>
+                <Popup>
                     <div className="space-y-1">
                         <div className="flex items-center gap-2">
                             <span

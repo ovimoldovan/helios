@@ -13,8 +13,8 @@ using Seeagle.Infrastructure.Persistence;
 namespace Seeagle.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(SeeagleDbContext))]
-    [Migration("20260903062723_SyncModelsAfterMerge")]
-    partial class SyncModelsAfterMerge
+    [Migration("20260903063955_SyncModelChanges")]
+    partial class SyncModelChanges
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,6 +26,29 @@ namespace Seeagle.Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "postgis");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Seeagle.Domain.Areas.Area", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Geometry>("Geometry")
+                        .IsRequired()
+                        .HasColumnType("geometry(Geometry, 4326)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Areas", (string)null);
+                });
 
             modelBuilder.Entity("Seeagle.Domain.Reports.Report", b =>
                 {
@@ -75,6 +98,9 @@ namespace Seeagle.Infrastructure.Persistence.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()

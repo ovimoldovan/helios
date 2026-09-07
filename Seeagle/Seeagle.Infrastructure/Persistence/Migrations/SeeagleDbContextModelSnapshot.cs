@@ -47,22 +47,6 @@ namespace Seeagle.Infrastructure.Persistence.Migrations
                     b.ToTable("Areas", (string)null);
                 });
 
-            modelBuilder.Entity("Seeagle.Domain.ReportTypes.ReportType", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ReportTypes", (string)null);
-                });
-
             modelBuilder.Entity("Seeagle.Domain.Reports.Report", b =>
                 {
                     b.Property<Guid>("Id")
@@ -112,13 +96,13 @@ namespace Seeagle.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
-                    
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 

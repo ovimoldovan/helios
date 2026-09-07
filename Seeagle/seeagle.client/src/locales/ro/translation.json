@@ -205,5 +205,12 @@
   "save": "Salvează",
   "unexpectedErrorUpdatingReportType": "A apărut o eroare neașteptată la actualizarea tipului de raport.",
   "unexpectedErrorDisablingReportType": "A apărut o eroare neașteptată la dezactivarea tipului de raport.",
-  "unexpectedErrorLoadingReports": "Eroare neașteptată la încărcarea rapoartelor."
+  "unexpectedErrorLoadingReports": "Eroare neașteptată la încărcarea rapoartelor.",
+
+  "assistantOnline": "Online",
+  "assistantOffline": "Offline",
+  "assistantChecking": "Se verifică...",
+  
+  "allRoles": "Toate rolurile",
+  "searchUsers": "Caută utilizatori..."
 }
