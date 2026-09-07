@@ -204,5 +204,6 @@
   "disable": "Dezactivează",
   "save": "Salvează",
   "unexpectedErrorUpdatingReportType": "A apărut o eroare neașteptată la actualizarea tipului de raport.",
-  "unexpectedErrorDisablingReportType": "A apărut o eroare neașteptată la dezactivarea tipului de raport."
+  "unexpectedErrorDisablingReportType": "A apărut o eroare neașteptată la dezactivarea tipului de raport.",
+  "unexpectedErrorLoadingReports": "Eroare neașteptată la încărcarea rapoartelor."
 }
