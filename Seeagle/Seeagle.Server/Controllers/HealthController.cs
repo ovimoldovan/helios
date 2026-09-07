@@ -3,6 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Seeagle.Server.Controllers;
 
+public enum AssistantStatus
+{
+    Online,
+    Offline
+}
+
 [ApiController]
 [Route("api/admin/health")]
 [Authorize(Roles = "Admin")]
@@ -30,14 +36,14 @@ public class HealthController : ControllerBase
 
             if (response.IsSuccessStatusCode)
             {
-                return Ok(new { status = "online" });
+                return Ok(new { status = AssistantStatus.Online.ToString().ToLower() });
             }
 
-            return Ok(new { status = "offline" });
+            return Ok(new { status = AssistantStatus.Offline.ToString().ToLower() });
         }
         catch
         {
-            return Ok(new { status = "offline" });
+            return Ok(new { status = AssistantStatus.Offline.ToString().ToLower() });
         }
     }
 }
