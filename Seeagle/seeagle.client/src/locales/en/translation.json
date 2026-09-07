@@ -203,5 +203,6 @@
   "disable": "Disable",
   "save": "Save",
   "unexpectedErrorUpdatingReportType": "Unexpected error while updating report type.",
-  "unexpectedErrorDisablingReportType": "Unexpected error while disabling report type."
+  "unexpectedErrorDisablingReportType": "Unexpected error while disabling report type.",
+  "unexpectedErrorLoadingReports": "Unexpected error while loading reports."
 }
