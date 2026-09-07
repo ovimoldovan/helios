@@ -32,15 +32,6 @@ public sealed class ReportTypeService : IReportTypeService
         return new ReportTypeDto(reportType.Id, reportType.Name, reportType.IsActive);
     }
 
-    public async Task<IReadOnlyList<ReportTypeDto>> GetAllAsync(CancellationToken cancellationToken)
-    {
-        var reportTypes = await _reportTypeRepository.GetAllAsync(cancellationToken);
-
-        return reportTypes
-            .Select(reportType => new ReportTypeDto(reportType.Id, reportType.Name, reportType.IsActive))
-            .ToList();
-    }
-
     public async Task<ReportTypeDto?> UpdateAsync(Guid id, UpdateReportTypeRequest request, CancellationToken cancellationToken)
     {
         var reportType = _reportTypeRepository
