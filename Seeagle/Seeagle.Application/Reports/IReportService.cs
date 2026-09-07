@@ -18,4 +18,5 @@ public interface IReportService
     Task<PagedResult<ReportDto>> GetUserReportsAsync(Guid userId, int pageNumber, int pageSize, CancellationToken cancellationToken);
     Task<PagedResult<ReportDto>> GetByStatusAsync(string? status, int pageNumber, int pageSize, CancellationToken cancellationToken);
     Task<bool>SoftDeleteAsync(Guid id, CancellationToken cancellationToken);
+	Task<ReportDto?> UpdateAsync(Guid id, UpdateReportRequest request, CancellationToken cancellationToken);
 }

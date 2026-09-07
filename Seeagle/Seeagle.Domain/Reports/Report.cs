@@ -65,5 +65,13 @@ public class Report
     public void Delete()
     {
         IsDeleted = true;
+    public void UpdateDescription(string description)
+    {
+        Description = description;
+    }
+    
+    public void UpdatePriority(Priority priority)
+    {
+        Priority = priority;
     }
 }

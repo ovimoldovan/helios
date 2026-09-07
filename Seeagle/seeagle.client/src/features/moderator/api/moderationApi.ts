@@ -83,3 +83,27 @@ export async function getReportById(
 export async function DeleteReport(id: string, token?: string): Promise<void> {
     return deleteJson<void>(`/api/reports/${id}`, token);
 }
+export interface UpdateReportRequest {
+    description?: string | null;
+    priority?: string;
+}
+export async function getAllReports(
+    pageNumber: number,
+    pageSize: number,
+    sortBy?: string,
+    sortOrder?: 'asc' | 'desc',
+    token?: string
+): Promise<PagedResult<ModerationReport>> {
+    let url = `/api/reports/all?pageNumber=${pageNumber}&pageSize=${pageSize}`;
+
+    if (sortBy) {
+        url += `&sortBy=${sortBy}`;
+    }
+    if (sortOrder) {
+        url += `&sortOrder=${sortOrder}`;
+    }
+    return getJson<PagedResult<ModerationReport>>(url, token);
+}
+export async function updateReport(id: string, data: UpdateReportRequest, token?: string): Promise<ModerationReport> {
+    return putJson<ModerationReport>(`/api/reports/${id}`, token, data);
+}
