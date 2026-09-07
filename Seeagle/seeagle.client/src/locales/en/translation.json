@@ -192,4 +192,7 @@
   "allRoles": "All roles",
   "searchUsers": "Search users..."
   
+  "assistantOnline": "Online",
+  "assistantOffline": "Offline",
+  "assistantChecking": "Checking..."
 }
