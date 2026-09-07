@@ -11,14 +11,16 @@ public sealed class ReportService : IReportService
 {
     private readonly IRepository<Report> _reportRepository;
     private readonly IRepository<User> _userRepository;
+    private readonly IRepository<ReportType> _reportTypeRepository;
     private static readonly int StandardGpsFormat = 4326;
     private static readonly GeometryFactory GeometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: StandardGpsFormat);
     private static readonly string[] ValidStatuses = { "Pending", "Approved", "Rejected", "Solved" };
 
-    public ReportService(IRepository<Report> reportRepository, IRepository<User> userRepository)
+    public ReportService(IRepository<Report> reportRepository, IRepository<User> userRepository, IRepository<ReportType> reportTypeRepository)
     {
         _reportRepository = reportRepository;
         _userRepository = userRepository;
+        _reportTypeRepository = reportTypeRepository;
     }
 
     public async Task<ReportDto> CreateAsync(Guid userId, CreateReportRequest request, CancellationToken cancellationToken)
@@ -27,8 +29,13 @@ public sealed class ReportService : IReportService
         if (user == null)
             throw new InvalidOperationException("User not found");
 
+        var reportType = _reportTypeRepository.GetAllQueryable().FirstOrDefault(type => type.Id == request.ReportTypeId);
+        if (reportType == null)
+            throw new InvalidOperationException("Report type doesn't exist");
+        
+
         var point = GeometryFactory.CreatePoint(new Coordinate(request.Longitude, request.Latitude));
-        var report = new Report(point, request.Description, user);
+        var report = new Report(point, request.Description, user, reportType);
 
         await _reportRepository.AddAsync(report, cancellationToken);
 
@@ -39,7 +46,8 @@ public sealed class ReportService : IReportService
             report.Description,
             report.CreatedUtc,
             report.Status,
-            report.Priority.ToString());
+            report.Priority.ToString(),
+            reportType.Name);
     }
 
     public async Task<PagedResult<ReportDto>> GetPendingAsync(
@@ -64,7 +72,8 @@ public sealed class ReportService : IReportService
                 report.Description,
                 report.CreatedUtc,
                 report.Status,
-                report.Priority.ToString()))
+                report.Priority.ToString(),
+                report.Type.Name))
             .ToListAsync(cancellationToken);
 
         return new PagedResult<ReportDto>(
@@ -103,7 +112,8 @@ public sealed class ReportService : IReportService
             report.Description,
             report.CreatedUtc,
             report.Status,
-            report.Priority.ToString());
+            report.Priority.ToString(),
+            report.Type.Name);
     }
 
     public async Task<ReportDto?> RejectAsync(Guid id, CancellationToken cancellationToken)
@@ -128,7 +138,8 @@ public sealed class ReportService : IReportService
             report.Description,
             report.CreatedUtc,
             report.Status,
-            report.Priority.ToString());
+            report.Priority.ToString(),
+            report.Type.Name);
     }
 
     public async Task<ReportDto?> MarkAsSolvedAsync(Guid id, string? message, CancellationToken cancellationToken)
@@ -150,7 +161,8 @@ public sealed class ReportService : IReportService
             report.Description,
             report.CreatedUtc,
             report.Status,
-            report.Priority.ToString());
+            report.Priority.ToString(),
+            report.Type.Name);
     }
 
     public async Task<PagedResult<ReportDto>> GetApprovedReportsAsync(int pageNumber, int pageSize, CancellationToken cancellationToken)
@@ -172,7 +184,8 @@ public sealed class ReportService : IReportService
                 report.Description,
                 report.CreatedUtc,
                 report.Status,
-                report.Priority.ToString()))
+                report.Priority.ToString(),
+                report.Type.Name))
             .ToListAsync(cancellationToken);
 
         return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
@@ -199,7 +212,8 @@ public sealed class ReportService : IReportService
             report.Description,
             report.CreatedUtc,
             report.Status,
-            report.Priority.ToString()
+            report.Priority.ToString(),
+            report.Type.Name
         );
     }
     public async Task<PagedResult<ReportDto>> GetUserReportsAsync(
@@ -225,7 +239,8 @@ public sealed class ReportService : IReportService
                 report.Description,
                 report.CreatedUtc,
                 report.Status,
-                report.Priority.ToString()))
+                report.Priority.ToString(),
+                report.Type.Name))
             .ToListAsync(cancellationToken);
 
         return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);

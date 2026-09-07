@@ -18,16 +18,17 @@ public sealed class ReportQueryService : IReportQueryService
         CancellationToken cancellationToken)
     {
         var reports = await _reportRepository.GetAllQueryable()
-            .Where(r => r.Status == "Approved" && r.CreatedUtc >= fromDate && r.Status != "Solved")
-            .OrderByDescending(r => r.CreatedUtc)
-            .Select(r => new ReportDto(
-                r.Id,
-                r.Location.X,
-                r.Location.Y,
-                r.Description,
-                r.CreatedUtc,
-                r.Status,
-                r.Priority.ToString()))
+            .Where(report => report.Status == "Approved" && report.CreatedUtc >= fromDate && report.Status != "Solved")
+            .OrderByDescending(report => report.CreatedUtc)
+            .Select(report => new ReportDto(
+                report.Id,
+                report.Location.X,
+                report.Location.Y,
+                report.Description,
+                report.CreatedUtc,
+                report.Status,
+                report.Priority.ToString(),
+                report.Type.Name))
             .ToListAsync(cancellationToken);
 
         return reports;
