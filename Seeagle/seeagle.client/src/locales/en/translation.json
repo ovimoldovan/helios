@@ -187,6 +187,12 @@
   "save": "Save",
   "saving": "Saving...",
   "unexpectedErrorUpdatingReportType": "Unexpected error while updating report type.",
-  "unexpectedErrorDisablingReportType": "Unexpected error while disabling report type."
+  "unexpectedErrorDisablingReportType": "Unexpected error while disabling report type.",
+
+  "allRoles": "All roles",
+  "searchUsers": "Search users...",
   
+  "assistantOnline": "Online",
+  "assistantOffline": "Offline",
+  "assistantChecking": "Checking..."
 }
