@@ -16,4 +16,5 @@ export interface Report {
 export interface ReportType {
     id: string;
     name: string;
+    isActive: boolean;
 }

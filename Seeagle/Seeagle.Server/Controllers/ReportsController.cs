@@ -58,7 +58,7 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
         return Ok(reports);
     }
 
-    [Authorize(Roles = "Moderator")]
+    [Authorize(Roles = "Moderator, Admin")]
     [HttpPut("{id:guid}/approve")]
     public async Task<ActionResult<ReportDto>> Approve(
         Guid id,
@@ -73,7 +73,7 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
         return Ok(report);
     }
 
-    [Authorize(Roles = "Moderator")]
+    [Authorize(Roles = "Moderator, Admin")]
     [HttpPut("{id:guid}/reject")]
     public async Task<ActionResult<ReportDto>> Reject(
         Guid id,
@@ -87,7 +87,7 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
         return Ok(report);
     }
     
-    [Authorize(Roles = "Moderator")]
+    [Authorize(Roles = "Moderator, Admin")]
     [HttpGet("approved-list")]
     public async Task<ActionResult<PagedResult<ReportDto>>> GetApprovedReports(
         [FromQuery] int pageNumber = 1,
@@ -101,7 +101,7 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
 
         return Ok(reports);
     }
-    [Authorize(Roles = "Moderator")]
+    [Authorize(Roles = "Moderator, Admin")]
     [HttpPut("{id:guid}/solved")]
     public async Task<ActionResult<ReportDto>> MarkAsSolved(
         Guid id,
@@ -118,7 +118,7 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
         return Ok(report);
     }
     
-    [Authorize(Roles = "Moderator")]
+    [Authorize(Roles = "Moderator, Admin")]
     [HttpPut("{id:guid}/message")]
     public async Task<ActionResult<ReportDto>> SendMessage(
         Guid id,

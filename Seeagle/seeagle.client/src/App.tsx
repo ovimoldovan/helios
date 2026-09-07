@@ -7,6 +7,7 @@ import { Homepage } from './features/homepage/components/Homepage';
 import { LoginPage } from '@/features/login/components/LoginPage.tsx';
 import { RegisterPage } from '@/features/registration/components/RegisterPage.tsx';
 import { AdminDashboard } from '@/features/admin/components/AdminDashboard';
+import { AdminAreasPage } from './features/admin/components/AdminAreasPage';
 import { ModeratorDashboard } from '@/features/moderator/components/ModeratorDashboard';
 import { ErrorPage } from "@/shared/error_page/components/ErrorPage.tsx";
 import { PrivateRoutes } from "@/shared/utils/PrivateRoutes.tsx";
@@ -64,6 +65,8 @@ function App() {
                             <ReportTypesPage />
                         }
                     />
+
+                    <Route path="/admin/areas" element={<AdminAreasPage />} />
                 </Route>
 
                 <Route element={<PrivateRoutes allowedRoles={['Moderator', 'Admin']}/>}>
