@@ -157,4 +157,32 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
         return Ok(reports);
     }
     
+    [Authorize(Roles = "Moderator, Admin")]
+    [HttpGet]
+    public async Task<ActionResult<PagedResult<ReportDto>>> GetByStatus(
+        [FromQuery] string? status = null,
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
+        CancellationToken cancellationToken = default)
+    {
+        var reports = await reportService.GetByStatusAsync(
+            status,
+            pageNumber,
+            pageSize,
+            cancellationToken);
+
+        return Ok(reports);
+    }
+
+    [Authorize(Roles = "Moderator, Admin")]
+    [HttpDelete("{id:guid}")]
+    public async Task<ActionResult> SoftDelete(Guid id, CancellationToken cancellationToken = default)
+    {
+        var result = await reportService.SoftDeleteAsync(id, cancellationToken);
+        if (!result)
+        {
+            return NotFound();
+        }
+        return NoContent();
+    }
 }

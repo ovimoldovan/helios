@@ -59,4 +59,11 @@ public class Report
     {
         Status = "Rejected";
     }
+
+    public bool IsDeleted { get; private set; }
+
+    public void Delete()
+    {
+        IsDeleted = true;
+    }
 }

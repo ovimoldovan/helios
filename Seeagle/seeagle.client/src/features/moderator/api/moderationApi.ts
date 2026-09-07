@@ -1,4 +1,4 @@
-import { getJson, putJson } from '@/shared/api/httpClient';
+import { deleteJson, getJson, putJson } from '@/shared/api/httpClient';
 import type { PagedResult } from '@/shared/types/pagedResult';
 import { getAuthToken } from '@/shared/auth/getAuthToken';
 
@@ -63,4 +63,23 @@ export async function sendMessageToReporter(
         ? `/api/reports/${id}/message?message=${encodeURIComponent(message)}`
         : `/api/reports/${id}/message`;
     return putJson<ModerationReport>(url, token);
+}
+
+export async function getReportById(
+    status: string | null,
+    pageNumber: number,
+    pageSize: number
+): Promise<PagedResult<ModerationReport>> {
+    const token = getAuthToken();
+
+    const statusParam = status ? '&status=${status}' : '';
+
+    return getJson<PagedResult<ModerationReport>>(
+        `/api/reports?&pageNumber=${pageNumber}&pageSize=${pageSize}${statusParam}`,
+        token ?? undefined
+    );
+}
+
+export async function DeleteReport(id: string, token?: string): Promise<void> {
+    return deleteJson<void>(`/api/reports/${id}`, token);
 }
