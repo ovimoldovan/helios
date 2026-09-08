@@ -14,14 +14,12 @@ import { PaginationLink } from '@/components/ui/pagination';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/shared/context/AuthContext';
-import { useNavigate } from 'react-router-dom';
 
 const PAGE_SIZE = 10;
 
 export function MyReports() {
     const { t } = useTranslation();
     const { isAuthenticated } = useAuth();
-    const navigate = useNavigate();
     const [reports, setReports] = useState<Report[]>([]);
     const [page, setPage] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
