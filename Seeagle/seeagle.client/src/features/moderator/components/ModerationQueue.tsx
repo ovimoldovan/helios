@@ -18,7 +18,6 @@ import { PaginationLink } from '@/components/ui/pagination';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
-import { LeftPanel } from '@/features/homepage/components/LeftPanel';
 import { PriorityModal } from './PriorityModal';
 const PAGE_SIZE = 10;
 
@@ -99,9 +98,7 @@ export function ModerationQueue() {
     }
 
     return (
-        <div className="flex">
-            <LeftPanel />
-            <div className="flex-1 p-6">
+        <div className="p-6">
                 <h1 className="text-xl font-semibold mb-4">
                     {t('moderationQueueTitle')}
                 </h1>
@@ -210,7 +207,7 @@ export function ModerationQueue() {
                         </div>
                     </>
                 )}
-            </div>
+            
             <PriorityModal
                 isOpen={modalOpen}
                 onClose={handleModalClose}
