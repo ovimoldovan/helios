@@ -12,8 +12,6 @@ We will delegate AI image detection to the new Python microservice (Seeagle Assi
 2. **Image Uploading:** The C# backend receives the image.
 3. **Seeagle Assistant Analysis:** C# backend sends the raw image to Seeagle Assistant. The Assistant analyzes the image for AI generation signatures and returns a unified Confidence Score.
 4. **Data Persistence:** The score is saved to the PostgreSQL database on the Report entity so it can be displayed on the Moderator Dashboard.
-5. **Processing:** The C# backend proceeds with standard image resizing.
-6. **Storage:** The resized image is saved to disk/object storage.
 
 ## Methods Evaluated
 
@@ -23,17 +21,16 @@ We will delegate AI image detection to the new Python microservice (Seeagle Assi
 
 ### 2. Google SynthID Watermarking (Selected)
 * **Description:** Google's proprietary technology that embeds imperceptible digital watermarks directly into the pixels of AI-generated images (e.g., from Gemini or Imagen).
-* **Why we will use it:** Unlike EXIF metadata which can be maliciously stripped by users, SynthID survives cropping, resizing, and compression. It provides a highly reliable check for Google-ecosystem images.
+* **Why we will use it:** Unlike metadata which can be maliciously stripped by users, SynthID survives cropping, resizing, and compression. It provides a highly reliable check for Google-ecosystem images.
 
 ### 3. Noise Inconsistency Analysis / Digital Forensics (Future Consideration)
 * **Description:** Analyzing the pixel noise distribution across different regions of the image to spot spliced or unnaturally smooth areas.
 * **Why it is a secondary method:** While computationally fast, modern smartphones use heavy "computational photography" (auto-denoising and stitching) which causes high false-positive rates.
 
 ### 4. Deep Learning Classification Models (e.g., Hugging Face) (Future Consideration)
-* **Description:** Convolutional Neural Networks (CNNs) trained to spot visual artifacts in AI images.
+* **Description:** Convolutional Neural Networks trained to spot visual artifacts in AI images.
 * **Why it is a secondary method:** Running deep learning inference on every uploaded image is computationally expensive and introduces significant latency.
 
-## Architecture & Implementation Details
 
 ### Scoring Engine (Confidence Score) 
 The Seeagle Assistant will calculate and return an AiConfidenceScore  for every uploaded photo.
