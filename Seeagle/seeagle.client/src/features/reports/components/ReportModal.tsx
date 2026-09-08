@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import {
     Dialog,
     DialogContent,
@@ -9,10 +9,9 @@ import {
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { createReport } from '@/features/reports/api/reportApi.ts';
+import { createReport, uploadReportPhoto} from '@/features/reports/api/reportApi.ts';
 import type { Report } from '@/shared/types/report';
 import { useTranslation } from 'react-i18next';
-
 interface AddReportModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -27,12 +26,18 @@ export function AddReportModal({
     pinPosition 
 }: AddReportModalProps) {
     const [description, setDescription] = useState('');
+    const [photoFile, setPhotoFile] = useState<File | null>(null);
+    const [photoPreviewUrl, setPhotoPreviewUrl] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    
+    const MAX_PHOTO_BYTES = 10 * 1024 * 1024;
 
     const handleClose = () => {
         setDescription('');
         setError(null);
+        resetPhoto();
         onClose();
     };
 
@@ -56,6 +61,18 @@ export function AddReportModal({
                 latitude: pinPosition[0],
                 description: description.trim() || null,
             });
+
+            if (photoFile) {
+                try {
+                    await uploadReportPhoto(report.id, photoFile);
+                } catch {
+                    onReportCreated(report);
+                    handleClose();
+                    setError(t('reportCreatedPhotoFailed'));
+                    setIsSubmitting(false);
+                    return;
+                }
+            }
             onReportCreated(report);
             handleClose();
         } catch {
@@ -63,6 +80,41 @@ export function AddReportModal({
         } finally {
             setIsSubmitting(false);
         }
+    };
+    
+    const resetPhoto = () => {
+        if (photoPreviewUrl) {
+            URL.revokeObjectURL(photoPreviewUrl);
+        }
+        setPhotoFile(null);
+        setPhotoPreviewUrl(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    };
+
+    const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) {
+            return;
+        }
+
+        if (!file.type.startsWith('image/')) {
+            setError(t('photoMustBeImage'));
+            return;
+        }
+
+        if (file.size > MAX_PHOTO_BYTES) {
+            setError(t('photoTooLarge'));
+            return;
+        }
+
+        setError(null);
+        if (photoPreviewUrl) {
+            URL.revokeObjectURL(photoPreviewUrl);
+        }
+        setPhotoFile(file);
+        setPhotoPreviewUrl(URL.createObjectURL(file));
     };
 
     const { t } = useTranslation();
@@ -100,6 +152,39 @@ export function AddReportModal({
                         />
                         <div className="text-right text-xs text-gray-400">
                             {description.length}/255
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="photo">
+                                {t('Photo')} <span className="text-gray-400 text-xs">({t('optional')})</span>
+                            </Label>
+
+                            {photoPreviewUrl ? (
+                                <div className="relative">
+                                    <img
+                                        src={photoPreviewUrl}
+                                        alt={t('photoPreview')}
+                                        className="w-full max-h-48 object-cover rounded-md border border-gray-200"
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        className="absolute top-2 right-2"
+                                        onClick={resetPhoto}
+                                    >
+                                        {t('remove')}
+                                    </Button>
+                                </div>
+                            ) : (
+                                <input
+                                    id="photo"
+                                    ref={fileInputRef}
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handlePhotoChange}
+                                    className="text-sm text-gray-600 file:mr-3 file:rounded-md file:border file:border-gray-200 file:bg-gray-50 file:px-3 file:py-1.5 file:text-sm"
+                                />
+                            )}
                         </div>
                     </div>
 

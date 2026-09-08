@@ -201,6 +201,12 @@
   "errorWhileRejectingReport": "Eroare la respingerea raportului.",
   "approve": "Aprobă",
   "reject": "Respinge",
+"Photo": "Imagine",
+  "photoPreview": "Previzualizare imagine",
+  "remove": "Șterge",
+  "optional": "Opțional"
+,
+  "edit": "Editează",
   "disable": "Dezactivează",
   "save": "Salvează",
   "unexpectedErrorUpdatingReportType": "A apărut o eroare neașteptată la actualizarea tipului de raport.",

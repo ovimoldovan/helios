@@ -17,11 +17,12 @@ public sealed class ReportServiceTests
         // Arrange
         var reportRepository = Substitute.For<IRepository<Report>>();
         var userRepository = Substitute.For<IRepository<User>>();
+        var photoProcessor = Substitute.For<IPhotoProcessor>();
 
         var user = new User("test@test.com", "password", "firstname", "lastname");
         userRepository.GetAllQueryable().Returns(new List<User> { user }.AsQueryable());
 
-        var service = new ReportService(reportRepository, userRepository);
+        var service = new ReportService(reportRepository, userRepository, photoProcessor);
         var request = new CreateReportRequest
         {
             Latitude = 44.4268,
@@ -45,11 +46,12 @@ public sealed class ReportServiceTests
         // Arrange
         var reportRepository = Substitute.For<IRepository<Report>>();
         var userRepository = Substitute.For<IRepository<User>>();
+        var photoProcessor = Substitute.For<IPhotoProcessor>();
 
         var user = new User("test@test.com", "password", "firstname", "lastname");
         userRepository.GetAllQueryable().Returns(new List<User> { user }.AsQueryable());
 
-        var service = new ReportService(reportRepository, userRepository);
+        var service = new ReportService(reportRepository, userRepository, photoProcessor);
         var request = new CreateReportRequest
         {
             Latitude = 44.4268,
@@ -77,11 +79,12 @@ public sealed class ReportServiceTests
         // Arrange
         var reportRepository = Substitute.For<IRepository<Report>>();
         var userRepository = Substitute.For<IRepository<User>>();
+        var photoProcessor = Substitute.For<IPhotoProcessor>();
 
         var user = new User("test@test.com", "password", "firstname", "lastname");
         userRepository.GetAllQueryable().Returns(new List<User> { user }.AsQueryable());
 
-        var service = new ReportService(reportRepository, userRepository);
+        var service = new ReportService(reportRepository, userRepository, photoProcessor);
         var request = new CreateReportRequest
         {
             Latitude = 44.4268,
@@ -105,11 +108,12 @@ public sealed class ReportServiceTests
         // Arrange
         var reportRepository = Substitute.For<IRepository<Report>>();
         var userRepository = Substitute.For<IRepository<User>>();
+        var photoProcessor = Substitute.For<IPhotoProcessor>();
 
         var user = new User("test@test.com", "password", "firstname", "lastname");
         userRepository.GetAllQueryable().Returns(new List<User> { user }.AsQueryable());
 
-        var service = new ReportService(reportRepository, userRepository);
+        var service = new ReportService(reportRepository, userRepository, photoProcessor);
         var request = new CreateReportRequest
         {
             Latitude = 999,
@@ -130,7 +134,9 @@ public sealed class ReportServiceTests
         // Arrange
         var reportRepository = Substitute.For<IRepository<Report>>();
         var userRepository = Substitute.For<IRepository<User>>();
-        var service = new ReportService(reportRepository, userRepository);
+        var photoProcessor = Substitute.For<IPhotoProcessor>();
+        
+        var service = new ReportService(reportRepository, userRepository, photoProcessor);
 
         var user = new User(
             "moderator@test.com",
@@ -180,7 +186,9 @@ public sealed class ReportServiceTests
         // Arrange
         var reportRepository = Substitute.For<IRepository<Report>>();
         var userRepository = Substitute.For<IRepository<User>>();
-        var service = new ReportService(reportRepository, userRepository);
+        var photoProcessor = Substitute.For<IPhotoProcessor>();
+        
+        var service = new ReportService(reportRepository, userRepository, photoProcessor);
 
         var user = new User(
             "moderator@test.com",
@@ -219,7 +227,9 @@ public sealed class ReportServiceTests
         // Arrange
         var reportRepository = Substitute.For<IRepository<Report>>();
         var userRepository = Substitute.For<IRepository<User>>();
-        var service = new ReportService(reportRepository, userRepository);
+        var photoProcessor = Substitute.For<IPhotoProcessor>();
+        
+        var service = new ReportService(reportRepository, userRepository, photoProcessor);
 
         var user = new User(
             "moderator@test.com",
@@ -256,7 +266,9 @@ public sealed class ReportServiceTests
         // Arrange
         var reportRepository = Substitute.For<IRepository<Report>>();
         var userRepository = Substitute.For<IRepository<User>>();
-        var service = new ReportService(reportRepository, userRepository);
+        var photoProcessor = Substitute.For<IPhotoProcessor>();
+        
+        var service = new ReportService(reportRepository, userRepository, photoProcessor);
 
         var user = new User(
             "moderator@test.com",
@@ -295,7 +307,9 @@ public sealed class ReportServiceTests
         // Arrange
         var reportRepository = Substitute.For<IRepository<Report>>();
         var userRepository = Substitute.For<IRepository<User>>();
-        var service = new ReportService(reportRepository, userRepository);
+        var photoProcessor = Substitute.For<IPhotoProcessor>();
+        
+        var service = new ReportService(reportRepository, userRepository, photoProcessor);
 
         var user = new User(
             "moderator@test.com",
@@ -346,7 +360,9 @@ public sealed class ReportServiceTests
         // Arrange
         var reportRepository = Substitute.For<IRepository<Report>>();
         var userRepository = Substitute.For<IRepository<User>>();
-        var service = new ReportService(reportRepository, userRepository);
+        var photoProcessor = Substitute.For<IPhotoProcessor>();
+        
+        var service = new ReportService(reportRepository, userRepository, photoProcessor);
 
         reportRepository
             .GetAllQueryable()
@@ -365,7 +381,9 @@ public sealed class ReportServiceTests
         // Arrange
         var reportRepository = Substitute.For<IRepository<Report>>();
         var userRepository = Substitute.For<IRepository<User>>();
-        var service = new ReportService(reportRepository, userRepository);
+        var photoProcessor = Substitute.For<IPhotoProcessor>();
+        
+        var service = new ReportService(reportRepository, userRepository, photoProcessor);
 
         reportRepository
             .GetAllQueryable()
