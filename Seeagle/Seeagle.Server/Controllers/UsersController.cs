@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Seeagle.Application.Users;
 using Seeagle.Application.Common;
+using Seeagle.Domain.User;
 
 namespace Seeagle.Server.Controllers;
 
@@ -11,9 +12,16 @@ namespace Seeagle.Server.Controllers;
 public sealed class UsersController(IUserQueryService userQueryService) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<PagedResult<UserListItemDto>>> GetUsersAsync([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10, CancellationToken cancellationToken = default)
+    public async Task<ActionResult<PagedResult<UserListItemDto>>> GetUsersAsync(
+        [FromQuery] int pageNumber = 1, 
+        [FromQuery] int pageSize = 10,
+        [FromQuery] string? searchTerm = null,
+        [FromQuery] string? sortBy = null,
+        [FromQuery] bool sortDescending = false,
+        [FromQuery] Role? roleFilter = null,
+        CancellationToken cancellationToken = default)
     {
-        var result = await userQueryService.GetUsersAsync(pageNumber, pageSize, cancellationToken);
+        var result = await userQueryService.GetUsersAsync(pageNumber, pageSize, searchTerm, sortBy, roleFilter, sortDescending, cancellationToken);
         return Ok(result);
     }
 

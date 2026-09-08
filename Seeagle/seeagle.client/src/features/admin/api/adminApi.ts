@@ -3,8 +3,25 @@ import type { UserListItem } from '@/shared/types/admin';
 import type { PagedResult } from '@/shared/types/pagedResult';
 import type { ReportType } from '@/shared/types/report';
 
-export async function getUsers(page: number, pageSize: number, token: string): Promise<PagedResult<UserListItem>> {
-  return getJson<PagedResult<UserListItem>>(`/api/users?pageNumber=${page}&pageSize=${pageSize}`, token);
+export async function getUsers(
+  page: number, 
+  pageSize: number, 
+  token: string,
+  searchTerm?: string,
+  sortBy?: string,
+  roleFilter?: number,
+  sortDescending?: boolean,
+): Promise<PagedResult<UserListItem>> {
+  const params = new URLSearchParams({
+    pageNumber: String(page),
+    pageSize: String(pageSize),
+  })
+  if (searchTerm) params.set('searchTerm', searchTerm);
+  if (sortBy) params.set('sortBy', sortBy);
+  if (sortDescending) params.set('sortDescending', String(sortDescending));
+  if (roleFilter !== undefined && roleFilter !== null) params.set('roleFilter', String(roleFilter));
+  const url = `/api/users?${params.toString()}`;
+  return getJson<PagedResult<UserListItem>>(url, token);
 }
 
 export async function assignModerator(userId: string, token: string): Promise<UserListItem> {
@@ -68,4 +85,8 @@ export async function disableReportType(
       `/api/report-types/${id}/disable`,
       token
   );
+}
+
+export async function getAssistantHealth(token: string): Promise<{ status: string }> {
+  return getJson<{ status: string }>('/api/admin/health/assistant', token);
 }

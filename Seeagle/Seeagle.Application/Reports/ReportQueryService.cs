@@ -32,4 +32,43 @@ public sealed class ReportQueryService : IReportQueryService
 
         return reports;
     }
+   
+    public async Task<PagedResult<ReportDto>> GetAllReportsAsync(
+        int pageNumber,
+        int pageSize,
+        string? sortBy,
+        string? sortOrder,
+        CancellationToken cancellationToken)
+    {
+        var query = _reportRepository.GetAllQueryable();
+        query = sortBy?.ToLower() switch
+        {
+            "priority" => sortOrder == "asc" 
+                ? query.OrderBy(r => r.Priority) 
+                : query.OrderByDescending(r => r.Priority),
+            "status" => sortOrder == "asc" 
+                ? query.OrderBy(r => r.Status) 
+                : query.OrderByDescending(r => r.Status),
+            _ => sortOrder == "asc" 
+                ? query.OrderBy(r => r.CreatedUtc) 
+                : query.OrderByDescending(r => r.CreatedUtc)
+        };
+    
+        var totalCount = await query.CountAsync(cancellationToken);
+    
+        var reports = await query
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .Select(report => new ReportDto(
+                report.Id,
+                report.Location.X,
+                report.Location.Y,
+                report.Description,
+                report.CreatedUtc,
+                report.Status,
+                report.Priority.ToString()))
+            .ToListAsync(cancellationToken);
+    
+        return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
+    }
 }
