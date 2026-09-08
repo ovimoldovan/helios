@@ -64,6 +64,23 @@ export async function putJson<TResponse>(url: string, token?: string, body?: unk
   return (await response.json()) as TResponse;
 }
 
+export async function deleteJson(url: string, token?: string): Promise<void> {
+  const headers: Record<string, string> = {};
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const response = await fetch(url, {
+    method: 'DELETE',
+    headers: headers,
+  });
+
+  if (!response.ok) {
+    throw new Error(`Request failed with status ${response.status}.`);
+  }
+}
+
 export async function putJsonWithBody<TResponse>(url: string, body: unknown, token?: string): Promise<TResponse> {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json'

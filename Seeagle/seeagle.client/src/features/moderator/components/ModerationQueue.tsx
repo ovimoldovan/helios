@@ -33,7 +33,7 @@ export function ModerationQueue() {
     const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
     const [isProcessing, setIsProcessing] = useState(false);
     const [selectedReport, setSelectedReport] = useState<ModerationReport | null>(null);
-
+    
     useEffect(() => {
         setIsLoading(true);
         setError(null);

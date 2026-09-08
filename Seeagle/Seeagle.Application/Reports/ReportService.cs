@@ -13,6 +13,7 @@ public sealed class ReportService : IReportService
     private readonly IRepository<User> _userRepository;
     private static readonly int StandardGpsFormat = 4326;
     private static readonly GeometryFactory GeometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: StandardGpsFormat);
+    private static readonly string[] ValidStatuses = { "Pending", "Approved", "Rejected", "Solved" };
 
     public ReportService(IRepository<Report> reportRepository, IRepository<User> userRepository)
     {
@@ -229,7 +230,67 @@ public sealed class ReportService : IReportService
 
         return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
     }
+    public async Task<PagedResult<ReportDto>> GetByStatusAsync(string? status, string? excludeStatus, int pageNumber, int pageSize, CancellationToken cancellationToken)
+    {
+        if (status != null && !ValidStatuses.Contains(status))
+        {
+            throw new ArgumentException($"Invalid status: {status}. Valid statuses are: {string.Join(", ", ValidStatuses)}");
+        }
 
+        if (excludeStatus != null && !ValidStatuses.Contains(excludeStatus))
+        {
+            throw new ArgumentException($"Invalid excludeStatus: {excludeStatus}. Valid statuses are: {string.Join(", ", ValidStatuses)}");
+        }
+
+        var query = _reportRepository
+            .GetAllQueryable()
+            .Where(report => !report.IsDeleted);
+
+        if(!string.IsNullOrWhiteSpace(status))
+        {
+            query = query.Where(report => report.Status == status);
+        }
+        if(!string.IsNullOrWhiteSpace(excludeStatus))
+        {
+            query = query.Where(report => report.Status != excludeStatus);
+        }
+        
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var reports = await query
+            .OrderByDescending(report => report.CreatedUtc)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .Select(report => new ReportDto(
+                report.Id,
+                report.Location.X,
+                report.Location.Y,
+                report.Description,
+                report.CreatedUtc,
+                report.Status,
+                report.Priority.ToString()))
+            .ToListAsync(cancellationToken);
+
+        return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
+    }   
+
+    public async Task<bool> SoftDeleteAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var report = await _reportRepository
+            .GetAllQueryable()
+            .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
+
+        if (report is null)
+        {
+            return false;
+        }
+
+        report.Delete();
+
+        await _reportRepository.UpdateAsync(report, cancellationToken);
+
+        return true;
+    }
 	public async Task<ReportDto?> UpdateAsync(Guid id, UpdateReportRequest request, CancellationToken cancellationToken)
     {
         var report = await _reportRepository

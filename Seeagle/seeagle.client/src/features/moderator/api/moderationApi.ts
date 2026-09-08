@@ -1,4 +1,4 @@
-import { getJson, putJson } from '@/shared/api/httpClient';
+import { deleteJson, getJson, putJson } from '@/shared/api/httpClient';
 import type { PagedResult } from '@/shared/types/pagedResult';
 import { getAuthToken } from '@/shared/auth/getAuthToken';
 
@@ -65,6 +65,25 @@ export async function sendMessageToReporter(
     return putJson<ModerationReport>(url, token);
 }
 
+export async function getReportsByStatus(
+    status: string | null,
+    pageNumber: number,
+    pageSize: number
+): Promise<PagedResult<ModerationReport>> {
+    const token = getAuthToken();
+
+    const statusParam = status ? `&status=${status}` : '';
+
+    return getJson<PagedResult<ModerationReport>>(
+        `/api/reports?&pageNumber=${pageNumber}&pageSize=${pageSize}${statusParam}`,
+        token ?? undefined
+    );
+}
+
+export async function deleteReport(id: string, token?: string): Promise<void> {
+    return deleteJson(`/api/reports/${id}`, token);
+}
+
 export interface UpdateReportRequest {
     description?: string | null;
     priority?: string;
@@ -88,4 +107,16 @@ export async function getAllReports(
 }
 export async function updateReport(id: string, data: UpdateReportRequest, token?: string): Promise<ModerationReport> {
     return putJson<ModerationReport>(`/api/reports/${id}`, token, data);
+}
+
+export async function getAllReportsExceptPending(
+    pageNumber: number,
+    pageSize: number
+): Promise<PagedResult<ModerationReport>> {
+    const token = getAuthToken();
+
+    return getJson<PagedResult<ModerationReport>>(
+        `/api/reports?excludeStatus=Pending&pageNumber=${pageNumber}&pageSize=${pageSize}`,
+        token ?? undefined
+    );
 }
