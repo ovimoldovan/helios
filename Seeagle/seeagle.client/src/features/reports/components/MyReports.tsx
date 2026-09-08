@@ -83,8 +83,8 @@ export function MyReports() {
                                             <TableHead>{t('description')}</TableHead>
                                             <TableHead>{t('reportType')}</TableHead>
                                             <TableHead>{t('status')}</TableHead>
-                                            <TableHead>{t('priority')}</TableHead>
                                             <TableHead>{t('created')}</TableHead>
+                                            <TableHead>{t('priority')}</TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
@@ -102,10 +102,10 @@ export function MyReports() {
                                                     </span>
                                                 </TableCell>
                                                 <TableCell className="py-2">
-                                                    {report.priority || '-'}
+                                                    {new Date(report.createdUtc).toLocaleString()}
                                                 </TableCell>
                                                 <TableCell className="py-2">
-                                                    {new Date(report.createdUtc).toLocaleString()}
+                                                    {report.priority || '-'}
                                                 </TableCell>
                                             </TableRow>
                                         ))}
