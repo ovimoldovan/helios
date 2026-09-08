@@ -12,6 +12,7 @@ export interface Report {
     createdUtc: string;
     status: string;
     priority: string;
+    type: string;
 }
 
 export interface ReportType {

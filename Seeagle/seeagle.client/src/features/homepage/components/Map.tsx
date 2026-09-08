@@ -94,6 +94,9 @@ function ReportMarkers({ reports }: { reports?: Report[]; }) {
                             <strong>{report.status}</strong>
                         </div>
                         {report.description && (<p className="text-sm">{report.description}</p>)}
+                        <p className="text-xs font-medium mt-1">
+                            Type: {report.type}
+                        </p>
                         {report.status === 'Approved' && report.priority && (
                             <p className="text-xs font-medium mt-1">
                                 Priority: {report.priority}
