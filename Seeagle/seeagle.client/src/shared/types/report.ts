@@ -2,6 +2,7 @@ export interface CreateReportRequest {
     latitude: number;
     longitude: number;
     description?: string | null;
+    reportTypeId: string;
 }
 export interface Report {
     id: string;
@@ -11,6 +12,7 @@ export interface Report {
     createdUtc: string;
     status: string;
     priority: string;
+    type: string;
 }
 
 export interface ReportType {

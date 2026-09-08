@@ -36,6 +36,7 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAreaService, AreaService>();
 builder.Services.AddScoped<IReportTypeService, ReportTypeService>();
+builder.Services.AddScoped<IReportTypeQueryService, ReportTypeQueryService>();
 builder.Services.AddScoped<ISampleNameService, SampleNameService>();
 builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddScoped<IUserQueryService, UserQueryService>();

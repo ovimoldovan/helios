@@ -63,6 +63,9 @@
   "reportsTitle": "Rapoarte",
   "reportsDescription": "Revizuiește rapoartele trimise de utilizatori.",
   "reportTypesPageTitle": "Tipuri de rapoarte",
+  "newReportType": "Tip nou de raport",
+  "editReportType": "Editează tipul de raport",
+  "newReportTypeButtonText": "Nou",
   "reportTypesPageDescription": "Adaugă tipuri de rapoarte pe care utilizatorii le pot selecta când creează rapoarte.",
   "reportTypeNamePlaceholder": "Numele tipului de raport",
   "reportTypeNameRequired": "Numele tipului de raport este obligatoriu.",
@@ -74,7 +77,7 @@
   "reportTypeAlreadyExists": "Acest tip de raport există deja.",
   "loadingReportTypes": "Se încarcă tipurile de rapoarte...",
   "unexpectedErrorLoadingReportTypes": "A apărut o eroare neașteptată la încărcarea tipurilor de rapoarte.",
-
+  
   "moderatorDashboardTitle": "Panou de moderare",
   "moderatorDashboardDescription": "Gestionează rapoartele care necesită moderare.",
   "moderationQueueTitle": "Coadă de moderare",
@@ -94,7 +97,7 @@
   "failedToSubmitReport": "Trimiterea raportului a eșuat.",
   "tapMapToPlacePin": "Atinge harta pentru a plasa un pin",
   "description": "Descriere",
-  "optional": "opțional",
+  "optional": "(opțional)",
   "descriptionPlaceholder": "Descrie ce ai observat...",
   "cancel": "Anulează",
   "submitting": "Se trimite...",
@@ -107,7 +110,7 @@
   "goHome": "Mergi la pagina principală",
   "unexpectedErrorLoadingUsers": "Eroare neașteptată la încărcarea utilizatorilor.",
   "unexpectedErrorAssigningModerator": "Eroare neașteptată la atribuirea rolului de moderator.",
-
+  
   "moderatorDashboard": "Panou Moderator",
   "moderationQueue": "Coadă de Moderare",
   "unexpectedError": "Eroare neașteptată la încărcarea rapoartelor.",
@@ -185,12 +188,10 @@
   "placingPin": "Plasează pin...",
   "clickMapToDrop": "Click pe hartă pentru a plasa un pin",
   "lineReport": "Raport linie",
-
-  "edit": "Editează",
+  
   "editReport": "Editează Raport",
   "selectPriority": "Selectează prioritatea",
   "saveChanges": "Salvează Modificările",
-  "saving": "Se salvează...",
   "unexpectedErrorUpdatingReport": "Eroare neașteptată la actualizarea raportului.",
   "backToDashboard": "Înapoi la panoul de moderare",
   "all": "Toate",
@@ -201,21 +202,17 @@
   "errorWhileRejectingReport": "Eroare la respingerea raportului.",
   "approve": "Aprobă",
   "reject": "Respinge",
-"Photo": "Imagine",
+  "edit": "Editează",
+  "Photo": "Imagine",
   "photoPreview": "Previzualizare imagine",
   "remove": "Șterge",
-  "optional": "Opțional"
-,
-  "edit": "Editează",
   "disable": "Dezactivează",
+  "enable": "Activează",
   "save": "Salvează",
+  "saving": "Se salvează...",
   "unexpectedErrorUpdatingReportType": "A apărut o eroare neașteptată la actualizarea tipului de raport.",
-  "unexpectedErrorDisablingReportType": "A apărut o eroare neașteptată la dezactivarea tipului de raport.",
-  "unexpectedErrorLoadingReports": "Eroare neașteptată la încărcarea rapoartelor.",
-
-  "assistantOnline": "Online",
-  "assistantOffline": "Offline",
-  "assistantChecking": "Se verifică...",
+  "reportType": "Tipul raportului",
+  "unexpectedErrorChangingReportType": "A apărut o eroare neașteptată la schimbarea statusului tipului de raport.",
   
   "allRoles": "Toate rolurile",
   "searchUsers": "Caută utilizatori...",

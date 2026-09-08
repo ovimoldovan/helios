@@ -1,5 +1,5 @@
-import { postJson, getJson, postFormData} from '@/shared/api/httpClient.ts';
-import type { CreateReportRequest, Report } from "@/shared/types/report.ts";
+import { postJson, getJson, postFormData } from '@/shared/api/httpClient.ts';
+import type {CreateReportRequest, Report, ReportType} from "@/shared/types/report.ts";
 import { getCookie } from "@/shared/utils/cookies.ts";
 import type {PagedResult} from "@/shared/types/pagedResult.ts";
 
@@ -38,4 +38,8 @@ export async function getMyReports(pageNumber: number = 1, pageSize: number = 10
         `/api/reports/my?pageNumber=${pageNumber}&pageSize=${pageSize}`,
         token
     );
+}
+
+export async function getActiveReportTypes(page: number, pageSize: number): Promise<PagedResult<ReportType>> {
+    return getJson<PagedResult<ReportType>>(`/api/report-types?pageNumber=${page}&pageSize=${pageSize}&onlyActive=true`)
 }

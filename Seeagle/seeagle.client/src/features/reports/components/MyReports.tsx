@@ -14,14 +14,12 @@ import { PaginationLink } from '@/components/ui/pagination';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/shared/context/AuthContext';
-import { useNavigate } from 'react-router-dom';
 
 const PAGE_SIZE = 10;
 
 export function MyReports() {
     const { t } = useTranslation();
     const { isAuthenticated } = useAuth();
-    const navigate = useNavigate();
     const [reports, setReports] = useState<Report[]>([]);
     const [page, setPage] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
@@ -72,46 +70,46 @@ export function MyReports() {
 
                 {error && <p className="text-red-600">{error}</p>}
 
-                {!isLoading && !error && (
-                    <>
-                        {reports.length === 0 ? (
-                            <p className="text-muted-foreground">{t('noReports')}</p>
-                        ) : (
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead>{t('description')}</TableHead>
-                                        <TableHead>{t('status')}</TableHead>
-                                        <TableHead>{t('priority')}</TableHead>
-                                        <TableHead>{t('created')}</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {reports.map((report) => (
-                                        <TableRow
-                                            key={report.id}
-                                            className="cursor-pointer"
-                                            onClick={() => navigate('/', { state: { selectedReport: report } })}
-                                        >
-                                            <TableCell className="py-2">
-                                                {report.description ?? t('noDescription')}
-                                            </TableCell>
-                                            <TableCell className="py-2">
-                                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusBadge(report.status)}`}>
-                                                    {report.status}
-                                                </span>
-                                            </TableCell>
-                                            <TableCell className="py-2">
-                                                {report.priority || '-'}
-                                            </TableCell>
-                                            <TableCell className="py-2">
-                                                {new Date(report.createdUtc).toLocaleString()}
-                                            </TableCell>
+                    {!isLoading && !error && (
+                        <>
+                            {reports.length === 0 ? (
+                                <p className="text-muted-foreground">{t('noReports')}</p>
+                            ) : (
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>{t('description')}</TableHead>
+                                            <TableHead>{t('reportType')}</TableHead>
+                                            <TableHead>{t('status')}</TableHead>
+                                            <TableHead>{t('created')}</TableHead>
+                                            <TableHead>{t('priority')}</TableHead>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        )}
+                                    </TableHeader>
+                                    <TableBody>
+                                        {reports.map((report) => (
+                                            <TableRow key={report.id}>
+                                                <TableCell className="py-2">
+                                                    {report.description ?? t('noDescription')}
+                                                </TableCell>
+                                                <TableCell className="py-2">
+                                                    {report.type}
+                                                </TableCell>
+                                                <TableCell className="py-2">
+                                                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusBadge(report.status)}`}>
+                                                        {report.status}
+                                                    </span>
+                                                </TableCell>
+                                                <TableCell className="py-2">
+                                                    {new Date(report.createdUtc).toLocaleString()}
+                                                </TableCell>
+                                                <TableCell className="py-2">
+                                                    {report.priority || '-'}
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            )}
 
                         <div className="flex items-center justify-between gap-4 mt-4">
                             <PaginationLink

@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Seeagle.Application.Common;
 using Seeagle.Domain.Reports;
-using Seeagle.Domain.Reports;
 
 namespace Seeagle.Application.Reports;
 
@@ -19,16 +18,17 @@ public sealed class ReportQueryService : IReportQueryService
         CancellationToken cancellationToken)
     {
         var reports = await _reportRepository.GetAllQueryable()
-            .Where(r => r.Status == ReportStatus.Approved && r.CreatedUtc >= fromDate && r.Status != ReportStatus.Solved)
-            .OrderByDescending(r => r.CreatedUtc)
-            .Select(r => new ReportDto(
-                r.Id,
-                r.Location.X,
-                r.Location.Y,
-                r.Description,
-                r.CreatedUtc,
-                r.Status.ToString(),
-                r.Priority.ToString()))
+            .Where(report => report.Status == ReportStatus.Approved && report.CreatedUtc >= fromDate && report.Status != ReportStatus.Solved)
+            .OrderByDescending(report => report.CreatedUtc)
+            .Select(report => new ReportDto(
+                report.Id,
+                report.Location.X,
+                report.Location.Y,
+                report.Description,
+                report.CreatedUtc,
+                report.Status.ToString(),
+                report.Priority.ToString(),
+                report.Type.Name))
             .ToListAsync(cancellationToken);
 
         return reports;
@@ -67,7 +67,8 @@ public sealed class ReportQueryService : IReportQueryService
                 report.Description,
                 report.CreatedUtc,
                 report.Status.ToString(),
-                report.Priority.ToString()))
+                report.Priority.ToString(),
+                report.Type.Name))
             .ToListAsync(cancellationToken);
     
         return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);

@@ -12,6 +12,7 @@ export interface ModerationReport {
     priority: string;
     isSolved?: boolean;
     messageToReporter?: string | null;
+    type: string;
 }
 
 export async function getPendingReports(
