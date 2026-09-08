@@ -209,5 +209,72 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
 
         return Ok(reports);
     }
+
+    [Authorize(Roles = "Moderator, Admin")]
+    [HttpGet("all")]
+    public async Task<ActionResult<PagedResult<ReportDto>>> GetAllReports(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
+        [FromQuery] string? sortBy = null,
+        [FromQuery] string? sortOrder = "desc",
+        CancellationToken cancellationToken = default)
+    {
+        var reports = await reportQueryService.GetAllReportsAsync(
+            pageNumber,
+            pageSize,
+            sortBy,
+            sortOrder,
+            cancellationToken);
+        
+        return Ok(reports);
+    }
+	
+    [Authorize(Roles = "Moderator, Admin")]
+	[HttpPut("{id:guid}")]
+	public async Task<ActionResult<ReportDto>> UpdateReport(
+    	Guid id,
+    	[FromBody] UpdateReportRequest request,
+    	CancellationToken cancellationToken)
+	{
+    	var report = await reportService.UpdateAsync(id, request, cancellationToken);
+        if (report is null)
+    		{
+        		return NotFound();
+    		}
     
+    	return Ok(report);
+	}
+
+    [Authorize(Roles = "Moderator, Admin")]
+    [HttpGet]
+    public async Task<ActionResult<PagedResult<ReportDto>>> GetByStatus(
+        [FromQuery] string? status = null,
+        [FromQuery] string? excludeStatus = null,
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var reports = await reportService.GetByStatusAsync(status, excludeStatus, pageNumber, pageSize, cancellationToken);
+            return Ok(reports);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+
+    [Authorize(Roles = "Moderator, Admin")]
+    [HttpDelete("{id:guid}")]
+    public async Task<ActionResult> SoftDelete(Guid id, CancellationToken cancellationToken)
+    {
+        var success = await reportService.SoftDeleteAsync(id, cancellationToken);
+        if (!success)
+        {
+            return NotFound();
+        }
+        return NoContent();
+    }
 }

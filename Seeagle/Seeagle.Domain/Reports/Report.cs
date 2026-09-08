@@ -66,4 +66,20 @@ public class Report
             throw new InvalidOperationException("Photo already attached to report.");
         Photo = photo;
     }
+
+    public bool IsDeleted { get; private set; }
+
+    public void Delete()
+    {
+        IsDeleted = true;
+    }
+    public void UpdateDescription(string description)
+    {
+        Description = description;
+    }
+    
+    public void UpdatePriority(Priority priority)
+    {
+        Priority = priority;
+    }
 }
