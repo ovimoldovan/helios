@@ -13,11 +13,16 @@ import {
 import {
   PaginationLink,
 } from '@/components/ui/pagination';
-import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
+import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
+import { LeftPanel } from '@/features/homepage/components/LeftPanel';
+import { Input } from '@base-ui/react';
 
 const PAGE_SIZE = 10;
+
+type SortColumn = 'email' | 'firstName' | 'lastName';
+
 
 export function UsersListPage() {
   const [users, setUsers] = useState<UserListItem[]>([]);
@@ -26,22 +31,27 @@ export function UsersListPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [assigningModeratorId, setAssigningModeratorId] = useState<string | null>(null);
-
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [sortBy, setSortBy] = useState<SortColumn>('email');
+  const [roleFilter, setRoleFilter] = useState<string>('');
+  const [sortDescending, setSortDescending] = useState<boolean>(false);
+ 
   const { t } = useTranslation();
 
   useEffect(() => {
     setLoading(true);
     setError(null);
     
-    getUsers(page, PAGE_SIZE, getCookie('authToken')!)
+    const roleFilterValue = roleFilter === '' ? undefined : Number(roleFilter);
+    getUsers(page, PAGE_SIZE, getCookie('authToken')!, searchTerm, sortBy, roleFilterValue, sortDescending)
       .then((result) => {
         setUsers(result.items);
         setTotalCount(result.totalCount);
       })
       .catch(() => setError(t('unexpectedErrorLoadingUsers')))
       .finally(() => setLoading(false));
-  }, [page]);
-
+  }, [page, searchTerm, sortBy, sortDescending, roleFilter]);
+  
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
 
   function handleAssignModerator(userId: string) {
@@ -67,11 +77,54 @@ export function UsersListPage() {
         return t('user');
     }
   }
-  
+
+  function handleSort(column: SortColumn) {
+    if (sortBy === column) {
+      setSortDescending((prev) => !prev);
+    } else {
+      setSortBy(column);
+      setSortDescending(false);
+    }
+    setPage(1);
+  }
+
+  function SortIcon({ column }: { column: SortColumn }) {
+    if (sortBy !== column){
+      return <ChevronUpIcon className="inline w-3 h-3 ml-1 opacity-30" />;
+    }
+    return sortDescending ? <ChevronDownIcon className="w-4 h-4 inline" /> : <ChevronUpIcon className="w-4 h-4 inline" />;
+  }
   return (
-      <div className="p-6">
+    <div className="flex">
+      <LeftPanel />
+      <div className="flex-1 p-6">
         <h1 className="text-xl font-semibold mb-4">{t('registeredUsers')}</h1>
 
+        <Input
+          type="text"
+          placeholder={t('searchUsers')}
+          value={searchTerm}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setPage(1);
+          }}
+          className="mb-4 max-w-xs"
+        />
+
+        <select
+          value={roleFilter}
+          onChange={(e) => {
+            setRoleFilter(e.target.value);
+            setPage(1);
+          }}
+          className="border rounded-md px-3 py-2 text-sm"
+          >
+            <option value="">{t('allRoles')}</option>
+            <option value="1">{t('admin')}</option>
+            <option value="2">{t('moderator')}</option>
+            <option value="0">{t('user')}</option>
+          </select>
+          
         {loading && <p>{t('loadingUsers')}</p>}
         {error && <p className="text-red-600">{error}</p>}
 
@@ -80,11 +133,17 @@ export function UsersListPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>{t('emailColumn')}</TableHead>
-                  <TableHead>{t('firstNameColumn')}</TableHead>
-                  <TableHead>{t('lastNameColumn')}</TableHead>
+                  <TableHead className="cursor-pointer" onClick={() => handleSort('email')}>
+                    {t('emailColumn')} {<SortIcon column="email" />}
+                  </TableHead>
+                  <TableHead className="cursor-pointer" onClick={() => handleSort('firstName')}>
+                    {t('firstNameColumn')} {<SortIcon column="firstName" />}
+                  </TableHead>
+                  <TableHead className="cursor-pointer" onClick={() => handleSort('lastName')}>
+                    {t('lastNameColumn')} {<SortIcon column="lastName" />}
+                  </TableHead>
                   <TableHead>{t('roleColumn')}</TableHead>
-                  <TableHead>{t('actionColumn')}</TableHead>
+                  <TableHead>{t('actionColumn')} </TableHead>
                 </TableRow>
               </TableHeader>
             <TableBody>
@@ -148,5 +207,6 @@ export function UsersListPage() {
         </>
       )}
       </div>
+    </div>
   );
 }

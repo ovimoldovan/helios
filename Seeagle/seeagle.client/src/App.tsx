@@ -18,6 +18,7 @@ import {ApprovedReports} from "@/features/moderator/components/ApprovedReports.t
 import { MyReports } from '@/features/reports/components/MyReports';
 import { AdminAreasPage } from './features/admin/components/AdminAreasPage';
 import { AppLayout } from '@/shared/layout/AppLayout';
+import {ReportManagement} from "@/features/moderator/components/ReportManagemnt.tsx";
 
 function App() {
     return (
@@ -27,105 +28,113 @@ function App() {
 
                 <Route element={<AppLayout />}>
 
-                <Route
-                    path="/login"
-                    element={
-                        <LoginPage/>
-                    }
-                />
+                    <Route
+                        path="/login"
+                        element={
+                            <LoginPage/>
+                        }
+                    />
 
-                <Route
-                    path="/register"
-                    element={
-                        <RegisterPage/>
-                    }
-                />
-                <Route
-                    path="/my-reports"
-                    element={
+                    <Route
+                        path="/register"
+                        element={
+                            <RegisterPage/>
+                        }
+                    />
+
+                    <Route
+                        path="/my-reports"
+                        element={
                             <MyReports />
-                    }
-                />
-
-                <Route element={<PrivateRoutes allowedRoles={['Admin']}/>}>
-                    <Route
-                        path="/admin"
-                        element={
-                            <AdminDashboard/>
                         }
                     />
 
-                    <Route
-                        path="/admin/users"
-                        element={
-                            <UsersListPage />
-                        }
-                    />
-
-                    <Route
-                        path="/admin/report-types"
-                        element={
-                            <ReportTypesPage />
-                        }
-                    />
-
-                    <Route 
-                        path="/admin/areas" 
-                        element={
-                        <AdminAreasPage />
-                        }
-                    />
-                    
-                </Route>
-
-                <Route element={<PrivateRoutes allowedRoles={['Moderator', 'Admin']}/>}>
-                    <Route
-                        path="/moderator"
-                        element={
-                            <ModeratorDashboard/>
-                        }
-                    />
-
-                    <Route
-                        path="/moderator/queue"
-                        element={<ModerationQueue />}
-                    />
-                    <Route
-                        path="/moderator/approved"
-                        element={<ApprovedReports />}
-                    />
-                    
-                </Route>
-                
-
-                <Route
-                    path="/unauthorized"
-                    element={
-                        <ErrorPage errorCode={"401"} 
-                                   errorTitle={"Access Denied"} 
-                                   errorText={"Oops, not allowed here!"}
+                    <Route element={<PrivateRoutes allowedRoles={['Admin']}/>}>
+                        <Route
+                            path="/admin"
+                            element={
+                                <AdminDashboard/>
+                            }
                         />
-                    }
-                />
-                
-                <Route
-                    path="*"
-                    element={
-                        <ErrorPage errorCode={"404"} 
-                                   errorTitle={"Not Found"} 
-                                   errorText={"Oops, looks like this URL doesn't exist!"}
+
+                        <Route
+                            path="/admin/users"
+                            element={
+                                <UsersListPage />
+                            }
                         />
-                    }
-                />
-                
-                <Route
-                    path="/cookies"
-                    element={
-                        <CookiesPolicy/>
-                    }
-                />
+
+                        <Route
+                            path="/admin/report-types"
+                            element={
+                                <ReportTypesPage />
+                            }
+                        />
+
+                        <Route
+                            path="/admin/areas"
+                            element={
+                                <AdminAreasPage />
+                            }
+                        />
+                    </Route>
+
+                    <Route element={<PrivateRoutes allowedRoles={['Moderator', 'Admin']}/>}>
+                        <Route
+                            path="/moderator"
+                            element={
+                                <ModeratorDashboard/>
+                            }
+                        />
+
+                        <Route
+                            path="/moderator/queue"
+                            element={<ModerationQueue />}
+                        />
+
+                        <Route
+                            path="/moderator/approved"
+                            element={<ApprovedReports />}
+                        />
+
+                        <Route
+                            path="/moderator/reports"
+                            element={<ReportManagement />}
+                        />
+                    </Route>
+
+                    <Route
+                        path="/unauthorized"
+                        element={
+                            <ErrorPage
+                                errorCode={"401"}
+                                errorTitle={"Access Denied"}
+                                errorText={"Oops, not allowed here!"}
+                            />
+                        }
+                    />
+
+                    <Route
+                        path="*"
+                        element={
+                            <ErrorPage
+                                errorCode={"404"}
+                                errorTitle={"Not Found"}
+                                errorText={"Oops, looks like this URL doesn't exist!"}
+                            />
+                        }
+                    />
+
+                    <Route
+                        path="/cookies"
+                        element={
+                            <CookiesPolicy/>
+                        }
+                    />
+
                 </Route>
             </Routes>
+
             <Toaster />
         </AuthProvider>
     );
