@@ -283,7 +283,8 @@ public sealed class ReportService : IReportService
                 report.Description,
                 report.CreatedUtc,
                 report.Status,
-                report.Priority.ToString()))
+                report.Priority.ToString(),
+                report.Type.Name))
             .ToListAsync(cancellationToken);
 
         return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
@@ -341,7 +342,8 @@ public sealed class ReportService : IReportService
             report.Description,
             report.CreatedUtc,
             report.Status,
-            report.Priority.ToString()
+            report.Priority.ToString(),
+            report.Type.Name
         );
     }
   
