@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents, Tooltip, Polygon } from 'react-leaflet'; // ← Polygon importat din react-leaflet
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents, Tooltip, Polygon } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import L from 'leaflet'; // ← doar L, nu și Polygon
+import L from 'leaflet'; 
 import type { Report } from '@/shared/types/report';
 import { getPriorityColor, getStatusColor } from "@/shared/constants/reportColors.ts";
 import type { Area } from '@/features/admin/types';

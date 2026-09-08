@@ -75,15 +75,7 @@ public sealed class AreaService(IRepository<Area> repository) : IAreaService
             return null;
         }
 
-        // Actualizează numele
         area.UpdateName(request.Name);
-
-        // Dacă s-au trimis și coordonate noi, actualizează și geometria
-        if (request.Coordinates is not null && request.Coordinates.Length > 0)
-        {
-            // TODO: Implementează actualizarea geometriei
-            // area.UpdateGeometry(newGeometry);
-        }
 
         await repository.UpdateAsync(area, cancellationToken);
 

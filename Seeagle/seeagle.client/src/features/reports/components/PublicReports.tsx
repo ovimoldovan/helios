@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getJson } from '@/shared/api/httpClient';
-import { getCookie } from '@/shared/utils/cookies'; // ← Adaugă asta
+import { getCookie } from '@/shared/utils/cookies'; 
 import type { Report } from '@/shared/types/report';
 import type { PagedResult } from '@/shared/types/pagedResult';
 import {
@@ -38,11 +38,10 @@ export function PublicReports() {
     const [areas, setAreas] = useState<Area[]>([]);
     const [areaFilter, setAreaFilter] = useState<string>('all');
 
-    // Încarcă ariile la pornire
     useEffect(() => {
         const loadAreas = async () => {
             try {
-                const token = getCookie('authToken'); // ← Adaugă token
+                const token = getCookie('authToken'); 
                 const data = await getJson<Area[]>('/api/areas', token ?? undefined);
                 setAreas(data);
             } catch (error) {
@@ -52,7 +51,6 @@ export function PublicReports() {
         loadAreas();
     }, []);
 
-    // Încarcă rapoartele când se schimbă filtrele
     useEffect(() => {
         loadReports();
     }, [page, statusFilter, sortOrder, areaFilter]);
@@ -61,7 +59,7 @@ export function PublicReports() {
         setIsLoading(true);
         setError(null);
         try {
-            const token = getCookie('authToken'); // ← Adaugă token
+            const token = getCookie('authToken'); 
 
             const url = new URL('/api/reports/public', window.location.origin);
             url.searchParams.set('pageNumber', String(page));
@@ -80,7 +78,7 @@ export function PublicReports() {
 
             const result = await getJson<PagedResult<Report>>(
                 url.toString(),
-                token ?? undefined // ← Trimite token-ul
+                token ?? undefined 
             );
             setReports(result.items);
             setTotalCount(result.totalCount);
@@ -131,7 +129,6 @@ export function PublicReports() {
                         <h1 className="text-xl font-semibold">{t('publicReports')}</h1>
 
                         <div className="flex items-center gap-4 flex-wrap">
-                            {/* Filtru după arie */}
                             <Select
                                 value={areaFilter}
                                 onValueChange={handleAreaChange}
@@ -149,7 +146,6 @@ export function PublicReports() {
                                 </SelectContent>
                             </Select>
 
-                            {/* Filtru după status */}
                             <Select
                                 value={statusFilter}
                                 onValueChange={handleStatusChange}
