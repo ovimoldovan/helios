@@ -121,10 +121,11 @@ export function ModerationQueue() {
                             <Table>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead>{t('descriptionColumn')}</TableHead>
-                                        <TableHead>{t('createdColumn')}</TableHead>
-                                        <TableHead>{t('statusColumn')}</TableHead>
-                                        <TableHead>{t('actionColumn')}</TableHead>
+                                        <TableHead>{t('description')}</TableHead>
+                                        <TableHead>{t('reportType')}</TableHead>
+                                        <TableHead>{t('status')}</TableHead>
+                                        <TableHead>{t('created')}</TableHead>
+                                        <TableHead>{t('action')}</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -134,10 +135,13 @@ export function ModerationQueue() {
                                                 {report.description ?? t('noDescription')}
                                             </TableCell>
                                             <TableCell className="py-2">
-                                                {new Date(report.createdUtc).toLocaleString()}
+                                                {report.type}
                                             </TableCell>
                                             <TableCell className="py-2">
                                                 {report.status}
+                                            </TableCell>
+                                            <TableCell className="py-2">
+                                                {new Date(report.createdUtc).toLocaleString()}
                                             </TableCell>
                                             <TableCell className="py-2">
                                                 <div className="flex gap-2">

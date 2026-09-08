@@ -208,6 +208,8 @@
   "enable": "Enable",
   "save": "Save",
   "unexpectedErrorUpdatingReportType": "Unexpected error while updating report type.",
+  "unexpectedErrorChangingReportType": "Unexpected error while changing report type.",
+  "reportType": "Report Type",
   "unexpectedErrorDisablingReportType": "Unexpected error while disabling report type.",
   
   "assistantOnline": "Online",
