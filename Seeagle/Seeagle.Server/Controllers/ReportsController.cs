@@ -156,5 +156,28 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
 
         return Ok(reports);
     }
+
+	[Authorize]
+	[HttpGet("public")]
+	public async Task<ActionResult<PagedResult<ReportDto>>> GetPublicReports(
+    	[FromQuery] int pageNumber = 1,
+    	[FromQuery] int pageSize = 10,
+    	[FromQuery] string? status = null,
+    	[FromQuery] Guid? areaId = null,
+    	[FromQuery] string? sortBy = "createdUtc",
+    	[FromQuery] string? sortOrder = "desc",
+    	CancellationToken cancellationToken = default)
+	{
+    	var reports = await reportQueryService.GetPublicReportsAsync(
+        	pageNumber,
+        	pageSize,
+        	status,
+        	areaId,
+        	sortBy,
+        	sortOrder,
+        	cancellationToken);
+    
+    	return Ok(reports);
+	}
     
 }

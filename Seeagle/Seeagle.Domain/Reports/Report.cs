@@ -37,6 +37,11 @@ public class Report
     public string? MessageToReporter { get; private set; }
     public bool IsSolved { get; private set; }
     
+	public Guid? AreaId { get; private set; }
+	public void SetAreaId(Guid? areaId)
+    {
+        AreaId = areaId;
+    }
     public void MarkAsSolved(string? message)
     {
         IsSolved =  true;

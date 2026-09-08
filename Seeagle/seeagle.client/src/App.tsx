@@ -17,6 +17,7 @@ import { ReportTypesPage } from '@/features/admin/components/ReportTypesPage';
 import { ModerationQueue } from '@/features/moderator/components/ModerationQueue';
 import {ApprovedReports} from "@/features/moderator/components/ApprovedReports.tsx";
 import { MyReports } from '@/features/reports/components/MyReports';
+import { PublicReports } from '@/features/reports/components/PublicReports';
 
 function App() {
     return (
@@ -87,6 +88,7 @@ function App() {
                     />
                     
                 </Route>
+                <Route path="/reports" element={<PublicReports />} />
                 
 
                 <Route

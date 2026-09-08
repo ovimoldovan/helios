@@ -25,7 +25,9 @@ export function AdminDashboard() {
                     </CardHeader>
 
                     <div className="m-8 grid gap-6 md:grid-cols-2 auto-rows-fr">
-                        <Button className="admin-dashboard-button h-full" disabled>
+                        <Button className="admin-dashboard-button h-full"
+                                onClick={() => navigate('/admin/areas')}
+                        >
                             <span className="text-base font-semibold">{t('areasTitle')}</span>
                             <span className="font-normal">{t('areasDescription')}</span>
                         </Button>

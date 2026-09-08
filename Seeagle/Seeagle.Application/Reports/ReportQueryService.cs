@@ -32,4 +32,48 @@ public sealed class ReportQueryService : IReportQueryService
 
         return reports;
     }
+	
+	public async Task<PagedResult<ReportDto>> GetPublicReportsAsync( int pageNumber, int pageSize, string? status, Guid? areaId, string? sortBy, string? sortOrder, CancellationToken cancellationToken)
+	{
+    	var query = _reportRepository.GetAllQueryable()
+        .Where(r => r.Status == "Approved" || r.Status == "Solved" || r.Status == "Pending");
+    	if (!string.IsNullOrEmpty(status))
+    	{
+       	 	query = query.Where(r => r.Status == status);
+    	}	
+   
+    	if (areaId.HasValue)
+    	{
+        	query = query.Where(r => r.AreaId == areaId.Value);
+    	}
+    
+    	query = (sortBy?.ToLower(), sortOrder?.ToLower()) switch
+    	{
+        	("priority", "asc") => query.OrderBy(r => r.Priority),
+        	("priority", "desc") => query.OrderByDescending(r => r.Priority),
+        	("status", "asc") => query.OrderBy(r => r.Status),
+        	("status", "desc") => query.OrderByDescending(r => r.Status),
+       		 _ => sortOrder == "asc" 
+            	? query.OrderBy(r => r.CreatedUtc) 
+            	: query.OrderByDescending(r => r.CreatedUtc)
+    	};
+    
+    	var totalCount = await query.CountAsync(cancellationToken);
+    
+    	var reports = await query
+        	.Skip((pageNumber - 1) * pageSize)
+        	.Take(pageSize)
+        	.Select(r => new ReportDto(
+           	 	r.Id,
+            	r.Location.X,
+            	r.Location.Y,
+            	r.Description,
+            	r.CreatedUtc,
+            	r.Status,
+            	r.Priority.ToString()))
+        	.ToListAsync(cancellationToken);
+    
+    	return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
+	}
+
 }

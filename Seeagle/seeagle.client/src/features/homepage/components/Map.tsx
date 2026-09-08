@@ -1,9 +1,11 @@
-import {useEffect, useState} from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
+import { useEffect, useState } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents, Tooltip, Polygon } from 'react-leaflet'; // ← Polygon importat din react-leaflet
 import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
+import L from 'leaflet'; // ← doar L, nu și Polygon
 import type { Report } from '@/shared/types/report';
-import {getPriorityColor, getStatusColor} from "@/shared/constants/reportColors.ts";
+import { getPriorityColor, getStatusColor } from "@/shared/constants/reportColors.ts";
+import type { Area } from '@/features/admin/types';
+
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -32,6 +34,7 @@ interface MapProps {
     reports?: Report[];
     isPlacingPin?: boolean;
     pinPosition?: [number, number] | null;
+    areas?: Area[];
 }
 
 function PinManager({ onPinPlaced, isPlacingPin, pinPosition}: {
@@ -93,8 +96,31 @@ function ReportMarkers({ reports }: { reports?: Report[] }) {
     );
     });
 }
+function AreaLayers({ areas }: { areas?: Area[] }) {
+    if (!areas || areas.length === 0) return null;
 
-export function Map({ onPinPlaced, reports = [], isPlacingPin = false, pinPosition }: MapProps) {
+    return areas.map((area) => {
+        const positions: [number, number][] = area.coordinates.map(c => [c[0], c[1]]);
+        return (
+            <Polygon
+                key={area.id}
+                positions={positions}
+                pathOptions={{
+                    color: '#15803d',
+                    fillColor: '#15803d',
+                    fillOpacity: 0.15,
+                    weight: 2,
+                }}
+            >
+                <Tooltip permanent direction="center">
+                    {area.name}
+                </Tooltip>
+            </Polygon>
+        );
+    });
+}
+
+export function Map({ onPinPlaced, reports = [], isPlacingPin = false, pinPosition, areas = [] }: MapProps) {
     return (
         <MapContainer
             center={[45.9432, 24.9668]}
@@ -107,6 +133,7 @@ export function Map({ onPinPlaced, reports = [], isPlacingPin = false, pinPositi
                 attribution='&copy; OpenStreetMap contributors'
             />
             <PinManager onPinPlaced={onPinPlaced} isPlacingPin={isPlacingPin} pinPosition={pinPosition}/>
+            <AreaLayers areas={areas} />
             <ReportMarkers reports={reports} />
         </MapContainer>
     );
