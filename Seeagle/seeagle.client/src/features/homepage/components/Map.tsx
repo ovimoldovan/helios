@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import type { Report } from '@/shared/types/report';
@@ -26,12 +26,12 @@ function createColoredIcon(color: string) {
         popupAnchor: [0, -40],
     });
 }
-
 interface MapProps {
     onPinPlaced?: (position: [number, number] | null) => void;
     reports?: Report[];
     isPlacingPin?: boolean;
     pinPosition?: [number, number] | null;
+    selectedReportId?: string;
 }
 
 function PinManager({ onPinPlaced, isPlacingPin, pinPosition}: {
@@ -58,7 +58,22 @@ function PinManager({ onPinPlaced, isPlacingPin, pinPosition}: {
     return position ? <Marker position={position} /> : null;
 }
 
-function ReportMarkers({ reports }: { reports?: Report[] }) {
+function SelectedReportFocus({ reports, selectedReportId }: { reports?: Report[]; selectedReportId?: string }) {
+    const map = useMap();
+
+    useEffect(() => {
+        if (!reports || !selectedReportId) return;
+
+        const selectedReport = reports.find(report => report.id === selectedReportId);
+        if (!selectedReport) return;
+
+        map.flyTo([selectedReport.latitude, selectedReport.longitude], 16);
+    }, [map, reports, selectedReportId]);
+
+    return null;
+}
+
+function ReportMarkers({ reports }: { reports?: Report[]; }) {
     if (!reports) return null;
     
     return reports.map((report) => {
@@ -94,7 +109,7 @@ function ReportMarkers({ reports }: { reports?: Report[] }) {
     });
 }
 
-export function Map({ onPinPlaced, reports = [], isPlacingPin = false, pinPosition }: MapProps) {
+export function Map({ onPinPlaced, reports = [], isPlacingPin = false, pinPosition, selectedReportId }: MapProps) {
     return (
         <MapContainer
             center={[45.9432, 24.9668]}
@@ -106,6 +121,7 @@ export function Map({ onPinPlaced, reports = [], isPlacingPin = false, pinPositi
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; OpenStreetMap contributors'
             />
+            <SelectedReportFocus reports={reports} selectedReportId={selectedReportId} />
             <PinManager onPinPlaced={onPinPlaced} isPlacingPin={isPlacingPin} pinPosition={pinPosition}/>
             <ReportMarkers reports={reports} />
         </MapContainer>
