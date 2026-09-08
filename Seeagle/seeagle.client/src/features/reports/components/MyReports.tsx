@@ -15,12 +15,14 @@ import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/shared/context/AuthContext';
 import { LeftPanel } from "@/features/homepage/components/LeftPanel.tsx";
+import { useNavigate } from 'react-router-dom';
 
 const PAGE_SIZE = 10;
 
 export function MyReports() {
     const { t } = useTranslation();
     const { isAuthenticated } = useAuth();
+    const navigate = useNavigate();
     const [reports, setReports] = useState<Report[]>([]);
     const [page, setPage] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
@@ -92,7 +94,11 @@ export function MyReports() {
                                     </TableHeader>
                                     <TableBody>
                                         {reports.map((report) => (
-                                            <TableRow key={report.id}>
+                                            <TableRow
+                                                key={report.id}
+                                                className="cursor-pointer"
+                                                onClick={() => navigate('/', { state: { selectedReport: report } })}
+                                            >
                                                 <TableCell className="py-2">
                                                     {report.description ?? t('noDescription')}
                                                 </TableCell>
