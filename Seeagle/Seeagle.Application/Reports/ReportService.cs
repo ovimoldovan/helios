@@ -14,13 +14,15 @@ public sealed class ReportService : IReportService
     private readonly IRepository<ReportType> _reportTypeRepository;
     private static readonly int StandardGpsFormat = 4326;
     private static readonly GeometryFactory GeometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: StandardGpsFormat);
+    private readonly IPhotoProcessor _photoProcessor;
     private static readonly string[] ValidStatuses = { "Pending", "Approved", "Rejected", "Solved" };
 
-    public ReportService(IRepository<Report> reportRepository, IRepository<User> userRepository, IRepository<ReportType> reportTypeRepository)
+    public ReportService(IRepository<Report> reportRepository, IRepository<User> userRepository, IRepository<ReportType> reportTypeRepository, IPhotoProcessor photoProcessor)
     {
         _reportRepository = reportRepository;
         _userRepository = userRepository;
         _reportTypeRepository = reportTypeRepository;
+        _photoProcessor = photoProcessor;
     }
 
     public async Task<ReportDto> CreateAsync(Guid userId, CreateReportRequest request, CancellationToken cancellationToken)
@@ -45,7 +47,7 @@ public sealed class ReportService : IReportService
             report.Location.Y,
             report.Description,
             report.CreatedUtc,
-            report.Status,
+            report.Status.ToString(),
             report.Priority.ToString(),
             reportType.Name);
     }
@@ -57,7 +59,7 @@ public sealed class ReportService : IReportService
     {
         var query = _reportRepository
             .GetAllQueryable()
-            .Where(report => report.Status == "Pending");
+            .Where(report => report.Status == ReportStatus.Pending);
 
         var totalCount = await query.CountAsync(cancellationToken);
 
@@ -71,7 +73,7 @@ public sealed class ReportService : IReportService
                 report.Location.Y,
                 report.Description,
                 report.CreatedUtc,
-                report.Status,
+                report.Status.ToString(),
                 report.Priority.ToString(),
                 report.Type.Name))
             .ToListAsync(cancellationToken);
@@ -111,7 +113,7 @@ public sealed class ReportService : IReportService
             report.Location.Y,
             report.Description,
             report.CreatedUtc,
-            report.Status,
+            report.Status.ToString(),
             report.Priority.ToString(),
             report.Type.Name);
     }
@@ -137,7 +139,7 @@ public sealed class ReportService : IReportService
             report.Location.Y,
             report.Description,
             report.CreatedUtc,
-            report.Status,
+            report.Status.ToString(),
             report.Priority.ToString(),
             report.Type.Name);
     }
@@ -160,7 +162,7 @@ public sealed class ReportService : IReportService
             report.Location.Y,
             report.Description,
             report.CreatedUtc,
-            report.Status,
+            report.Status.ToString(),
             report.Priority.ToString(),
             report.Type.Name);
     }
@@ -169,7 +171,7 @@ public sealed class ReportService : IReportService
     {
         var query = _reportRepository
             .GetAllQueryable()
-            .Where(report => report.Status == "Approved" && !report.IsSolved);
+            .Where(report => report.Status == ReportStatus.Approved && !report.IsSolved);
 
         var totalCount = await query.CountAsync(cancellationToken);
 
@@ -183,13 +185,14 @@ public sealed class ReportService : IReportService
                 report.Location.Y,
                 report.Description,
                 report.CreatedUtc,
-                report.Status,
+                report.Status.ToString(),
                 report.Priority.ToString(),
                 report.Type.Name))
             .ToListAsync(cancellationToken);
 
         return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
     }
+
     public async Task<ReportDto?> SendMessageToReporterAsync(Guid id, string? message, CancellationToken cancellationToken)
     {
         var report = await _reportRepository
@@ -211,7 +214,7 @@ public sealed class ReportService : IReportService
             report.Location.Y,
             report.Description,
             report.CreatedUtc,
-            report.Status,
+            report.Status.ToString(),
             report.Priority.ToString(),
             report.Type.Name
         );
@@ -238,7 +241,7 @@ public sealed class ReportService : IReportService
                 report.Location.Y,
                 report.Description,
                 report.CreatedUtc,
-                report.Status,
+                report.Status.ToString(),
                 report.Priority.ToString(),
                 report.Type.Name))
             .ToListAsync(cancellationToken);
@@ -263,11 +266,11 @@ public sealed class ReportService : IReportService
 
         if(!string.IsNullOrWhiteSpace(status))
         {
-            query = query.Where(report => report.Status == status);
+            query = query.Where(report => report.Status.ToString() == status);
         }
         if(!string.IsNullOrWhiteSpace(excludeStatus))
         {
-            query = query.Where(report => report.Status != excludeStatus);
+            query = query.Where(report => report.Status.ToString() != excludeStatus);
         }
         
         var totalCount = await query.CountAsync(cancellationToken);
@@ -282,7 +285,7 @@ public sealed class ReportService : IReportService
                 report.Location.Y,
                 report.Description,
                 report.CreatedUtc,
-                report.Status,
+                report.Status.ToString(),
                 report.Priority.ToString(),
                 report.Type.Name))
             .ToListAsync(cancellationToken);
@@ -341,10 +344,51 @@ public sealed class ReportService : IReportService
             report.Location.Y,
             report.Description,
             report.CreatedUtc,
-            report.Status,
+            report.Status.ToString(),
             report.Priority.ToString(),
             report.Type.Name
         );
     }
-  
+    
+    public async Task<ReportDto?> AttachPhotoAsync(Guid reportId, Guid userId, byte[] data, string contentType, CancellationToken cancellationToken)
+    {
+        var report = _reportRepository
+            .GetAllQueryable()
+            .FirstOrDefault(report => report.Id == reportId);
+        if (report is null)
+            return null;
+        if (report.User.Id != userId)
+            throw new UnauthorizedAccessException("You can only attach a photo to your own report.");
+        
+        var processed = await _photoProcessor.ProcessAsync(new MemoryStream(data), cancellationToken);
+        var photo = new Photo(processed.Data, processed.ContentType, report);
+        report.AttachPhoto(photo);
+        
+        await _reportRepository.UpdateAsync(report, cancellationToken);
+        
+        return new ReportDto(
+            report.Id,
+            report.Location.X,
+            report.Location.Y,
+            report.Description,
+            report.CreatedUtc,
+            report.Status.ToString(),
+            report.Priority.ToString(),
+            report.Type.Name);
+    }
+    
+    public async Task<ProcessedPhoto?> GetPhotoAsync(Guid reportId, bool isModerator, CancellationToken cancellationToken)
+    {
+        var report = _reportRepository
+            .GetAllQueryable()
+            .FirstOrDefault(report => report.Id == reportId);
+        
+        if (report?.Photo is null)
+            return null;
+
+        if (report.Status != ReportStatus.Approved && !isModerator)
+            return null;
+        
+        return new ProcessedPhoto(report.Photo.ImageData, report.Photo.ContentType);
+    }
 }

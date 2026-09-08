@@ -18,7 +18,7 @@ public sealed class ReportQueryService : IReportQueryService
         CancellationToken cancellationToken)
     {
         var reports = await _reportRepository.GetAllQueryable()
-            .Where(report => report.Status == "Approved" && report.CreatedUtc >= fromDate && report.Status != "Solved")
+            .Where(report => report.Status == ReportStatus.Approved && report.CreatedUtc >= fromDate && report.Status != ReportStatus.Solved)
             .OrderByDescending(report => report.CreatedUtc)
             .Select(report => new ReportDto(
                 report.Id,
@@ -26,7 +26,7 @@ public sealed class ReportQueryService : IReportQueryService
                 report.Location.Y,
                 report.Description,
                 report.CreatedUtc,
-                report.Status,
+                report.Status.ToString(),
                 report.Priority.ToString(),
                 report.Type.Name))
             .ToListAsync(cancellationToken);
@@ -66,7 +66,7 @@ public sealed class ReportQueryService : IReportQueryService
                 report.Location.Y,
                 report.Description,
                 report.CreatedUtc,
-                report.Status,
+                report.Status.ToString(),
                 report.Priority.ToString(),
                 report.Type.Name))
             .ToListAsync(cancellationToken);

@@ -33,7 +33,6 @@
   "lastNameRequired": "Numele este obligatoriu.",
   "lastNameTooLong": "Numele trebuie să aibă maxim {{max}} caractere.",
 
-
   "cookiesPolicyTitle": "Politica de cookie-uri",
   "registeredUsers": "Utilizatori înregistrați",
   "loadingUsers": "Se încarcă...",
@@ -147,7 +146,6 @@
   "noApprovedReports": "Niciun raport aprobat.",
   "unexpectedErrorLoadingApproved": "Eroare neașteptată la încărcarea rapoartelor aprobate.",
   "unexpectedErrorProcessingAction": "Eroare neașteptată la procesarea acțiunii.",
- 
 
   "languageEn": "EN",
   "languageRo": "RO",
@@ -205,6 +203,9 @@
   "approve": "Aprobă",
   "reject": "Respinge",
   "edit": "Editează",
+  "Photo": "Imagine",
+  "photoPreview": "Previzualizare imagine",
+  "remove": "Șterge",
   "disable": "Dezactivează",
   "enable": "Activează",
   "save": "Salvează",

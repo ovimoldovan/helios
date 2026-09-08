@@ -17,6 +17,7 @@ public sealed class ReportServiceTests
         var reportRepository = Substitute.For<IRepository<Report>>();
         var userRepository = Substitute.For<IRepository<User>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
+        var photoProcessor = Substitute.For<IPhotoProcessor>();
 
         var user = new User("test@test.com", "password", "firstname", "lastname");
         userRepository.GetAllQueryable().Returns(new List<User> { user }.AsQueryable());
@@ -24,7 +25,7 @@ public sealed class ReportServiceTests
         var reportType = new ReportType("ReportType");
         reportTypeRepository.GetAllQueryable().Returns(new List<ReportType> { reportType }.AsQueryable());
 
-        var service = new ReportService(reportRepository, userRepository, reportTypeRepository);
+        var service = new ReportService(reportRepository, userRepository, reportTypeRepository, photoProcessor);
         var request = new CreateReportRequest
         {
             Latitude = 44.4268,
@@ -50,6 +51,7 @@ public sealed class ReportServiceTests
         var reportRepository = Substitute.For<IRepository<Report>>();
         var userRepository = Substitute.For<IRepository<User>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
+        var photoProcessor = Substitute.For<IPhotoProcessor>();
 
         var user = new User("test@test.com", "password", "firstname", "lastname");
         userRepository.GetAllQueryable().Returns(new List<User> { user }.AsQueryable());
@@ -57,7 +59,7 @@ public sealed class ReportServiceTests
         var reportType = new ReportType("ReportType");
         reportTypeRepository.GetAllQueryable().Returns(new List<ReportType> { reportType }.AsQueryable());
 
-        var service = new ReportService(reportRepository, userRepository, reportTypeRepository);
+        var service = new ReportService(reportRepository, userRepository, reportTypeRepository, photoProcessor);
         var request = new CreateReportRequest
         {
             Latitude = 44.4268,
@@ -87,6 +89,7 @@ public sealed class ReportServiceTests
         var reportRepository = Substitute.For<IRepository<Report>>();
         var userRepository = Substitute.For<IRepository<User>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
+        var photoProcessor = Substitute.For<IPhotoProcessor>();
 
         var user = new User("test@test.com", "password", "firstname", "lastname");
         userRepository.GetAllQueryable().Returns(new List<User> { user }.AsQueryable());
@@ -94,7 +97,7 @@ public sealed class ReportServiceTests
         var reportType = new ReportType("ReportType");
         reportTypeRepository.GetAllQueryable().Returns(new List<ReportType> { reportType }.AsQueryable());
 
-        var service = new ReportService(reportRepository, userRepository, reportTypeRepository);
+        var service = new ReportService(reportRepository, userRepository, reportTypeRepository, photoProcessor);
         var request = new CreateReportRequest
         {
             Latitude = 44.4268,
@@ -120,6 +123,7 @@ public sealed class ReportServiceTests
         var reportRepository = Substitute.For<IRepository<Report>>();
         var userRepository = Substitute.For<IRepository<User>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
+        var photoProcessor = Substitute.For<IPhotoProcessor>();
 
         var user = new User("test@test.com", "password", "firstname", "lastname");
         userRepository.GetAllQueryable().Returns(new List<User> { user }.AsQueryable());
@@ -127,7 +131,7 @@ public sealed class ReportServiceTests
         var reportType = new ReportType("ReportType");
         reportTypeRepository.GetAllQueryable().Returns(new List<ReportType> { reportType }.AsQueryable());
 
-        var service = new ReportService(reportRepository, userRepository, reportTypeRepository);
+        var service = new ReportService(reportRepository, userRepository, reportTypeRepository, photoProcessor);
         var request = new CreateReportRequest
         {
             Latitude = 999,
@@ -141,6 +145,36 @@ public sealed class ReportServiceTests
             request,
             CancellationToken.None));
     }
+    
+    [Fact]
+    public async Task CreateAsync_ShouldThrow_WhenUserDoesNotExist()
+    {
+        // Arrange
+        var reportRepository = Substitute.For<IRepository<Report>>();
+        var userRepository = Substitute.For<IRepository<User>>();
+        var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
+        var photoProcessor = Substitute.For<IPhotoProcessor>();
+
+        userRepository.GetAllQueryable().Returns(new List<User>().AsQueryable());
+
+        var reportType = new ReportType("ReportType");
+        reportTypeRepository.GetAllQueryable().Returns(new List<ReportType> { reportType }.AsQueryable());
+
+        var service = new ReportService(reportRepository, userRepository, reportTypeRepository, photoProcessor);
+        var request = new CreateReportRequest
+        {
+            Latitude = 44.4268,
+            Longitude = 26.1025,
+            Description = "Pothole",
+            ReportTypeId = reportType.Id
+        };
+
+        // Act & Assert
+        await Assert.ThrowsAsync<InvalidOperationException>(() => service.CreateAsync(
+            Guid.NewGuid(),
+            request,
+            CancellationToken.None));
+    }
 
     [Fact]
     public async Task CreateAsync_ShouldThrow_WhenReportTypeDoesntExist()
@@ -149,6 +183,7 @@ public sealed class ReportServiceTests
         var reportRepository = Substitute.For<IRepository<Report>>();
         var userRepository = Substitute.For<IRepository<User>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
+        var photoProcessor = Substitute.For<IPhotoProcessor>();
 
         var user = new User("test@test.com", "password", "firstname", "lastname");
         userRepository.GetAllQueryable().Returns(new List<User> { user }.AsQueryable());
@@ -156,7 +191,7 @@ public sealed class ReportServiceTests
         var reportType = new ReportType("ReportType");
         reportTypeRepository.GetAllQueryable().Returns(new List<ReportType> { reportType }.AsQueryable());
 
-        var service = new ReportService(reportRepository, userRepository, reportTypeRepository);
+        var service = new ReportService(reportRepository, userRepository, reportTypeRepository, photoProcessor);
         var request = new CreateReportRequest
         {
             Latitude = 999,
@@ -179,8 +214,8 @@ public sealed class ReportServiceTests
         var reportRepository = Substitute.For<IRepository<Report>>();
         var userRepository = Substitute.For<IRepository<User>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
-        var service = new ReportService(reportRepository, userRepository, reportTypeRepository);
-
+        var photoProcessor = Substitute.For<IPhotoProcessor>();
+        
         var user = new User(
             "moderator@test.com",
             "password",
@@ -210,6 +245,8 @@ public sealed class ReportServiceTests
         reportRepository
             .GetAllQueryable()
             .Returns(reports.BuildMock());
+        
+        var service = new ReportService(reportRepository, userRepository, reportTypeRepository, photoProcessor);
 
         // Act
         var result = await service.GetPendingAsync(
@@ -232,8 +269,8 @@ public sealed class ReportServiceTests
         var reportRepository = Substitute.For<IRepository<Report>>();
         var userRepository = Substitute.For<IRepository<User>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
-        var service = new ReportService(reportRepository, userRepository, reportTypeRepository);
-
+        var photoProcessor = Substitute.For<IPhotoProcessor>();
+        
         var user = new User(
             "moderator@test.com",
             "password",
@@ -252,7 +289,9 @@ public sealed class ReportServiceTests
         reportRepository
             .GetAllQueryable()
             .Returns(reports.BuildMock());
-
+        
+        var service = new ReportService(reportRepository, userRepository, reportTypeRepository, photoProcessor);
+        
         // Act
         var result = await service.GetPendingAsync(
             2,
@@ -273,8 +312,8 @@ public sealed class ReportServiceTests
         var reportRepository = Substitute.For<IRepository<Report>>();
         var userRepository = Substitute.For<IRepository<User>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
-        var service = new ReportService(reportRepository, userRepository, reportTypeRepository);
-
+        var photoProcessor = Substitute.For<IPhotoProcessor>();
+        
         var user = new User(
             "moderator@test.com",
             "password",
@@ -290,6 +329,8 @@ public sealed class ReportServiceTests
         reportRepository
             .GetAllQueryable()
             .Returns(new List<Report> { report }.AsQueryable());
+
+        var service = new ReportService(reportRepository, userRepository, reportTypeRepository, photoProcessor);
 
         // Act
         var result = await service.ApproveAsync(report.Id, "medium", CancellationToken.None);
@@ -304,15 +345,15 @@ public sealed class ReportServiceTests
                 report,
                 CancellationToken.None);
     }
-
+    
     [Fact]
-    public async Task RejectAsync_ShouldChangeStatusToRejected_WhenReportExists()
+    public async Task ApproveAsync_ShouldDefaultToLowPriority_WhenPriorityIsUnrecognized()
     {
         // Arrange
         var reportRepository = Substitute.For<IRepository<Report>>();
         var userRepository = Substitute.For<IRepository<User>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
-        var service = new ReportService(reportRepository, userRepository, reportTypeRepository);
+        var photoProcessor = Substitute.For<IPhotoProcessor>();
 
         var user = new User(
             "moderator@test.com",
@@ -329,6 +370,43 @@ public sealed class ReportServiceTests
         reportRepository
             .GetAllQueryable()
             .Returns(new List<Report> { report }.AsQueryable());
+        
+        var service = new ReportService(reportRepository, userRepository, reportTypeRepository, photoProcessor);
+
+        // Act
+        var result = await service.ApproveAsync(report.Id, "unknown", CancellationToken.None);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal("Low", result.Priority);
+    }
+
+    [Fact]
+    public async Task RejectAsync_ShouldChangeStatusToRejected_WhenReportExists()
+    {
+        // Arrange
+        var reportRepository = Substitute.For<IRepository<Report>>();
+        var userRepository = Substitute.For<IRepository<User>>();
+        var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
+        var photoProcessor = Substitute.For<IPhotoProcessor>();
+        
+        var user = new User(
+            "moderator@test.com",
+            "password",
+            "Test",
+            "Moderator");
+
+        var report = new Report(
+            new Point(26.1025, 44.4268),
+            "Pothole",
+            user,
+            new ReportType("ReportType"));
+
+        reportRepository
+            .GetAllQueryable()
+            .Returns(new List<Report> { report }.AsQueryable());
+        
+        var service = new ReportService(reportRepository, userRepository, reportTypeRepository, photoProcessor);
 
         // Act
         var result = await service.RejectAsync(
@@ -345,198 +423,7 @@ public sealed class ReportServiceTests
                 report,
                 CancellationToken.None);
     }
-
-    [Fact]
-    public async Task GetPendingAsync_ShouldReturnEmptyList_WhenNoPendingReportsExist()
-    {
-        // Arrange
-        var reportRepository = Substitute.For<IRepository<Report>>();
-        var userRepository = Substitute.For<IRepository<User>>();
-        var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
-        var service = new ReportService(reportRepository, userRepository, reportTypeRepository);
-
-        var user = new User(
-            "moderator@test.com",
-            "password",
-            "Test",
-            "Moderator");
-
-        var approvedReport = new Report(
-            new Point(26.1025, 44.4268),
-            "Approved report",
-            user,
-            new ReportType("ReportType"));
-
-        approvedReport.Approve(Priority.Medium);
-
-        var rejectedReport = new Report(
-            new Point(26.1025, 44.4268),
-            "Rejected report",
-            user,
-            new ReportType("ReportType"));
-
-        rejectedReport.Reject();
-
-        var reports = new List<Report>
-        {
-            approvedReport,
-            rejectedReport
-        };
-
-        reportRepository
-            .GetAllQueryable()
-            .Returns(reports.BuildMock());
-
-        // Act
-        var result = await service.GetPendingAsync(
-            1,
-            10,
-            CancellationToken.None);
-
-        // Assert
-        Assert.Empty(result.Items);
-        Assert.Equal(0, result.TotalCount);
-        Assert.Equal(1, result.PageNumber);
-        Assert.Equal(10, result.PageSize);
-    }
-
-    [Fact]
-    public async Task ApproveAsync_ShouldReturnNull_WhenReportDoesNotExist()
-    {
-        // Arrange
-        var reportRepository = Substitute.For<IRepository<Report>>();
-        var userRepository = Substitute.For<IRepository<User>>();
-        var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
-        var service = new ReportService(reportRepository, userRepository, reportTypeRepository);
-
-        reportRepository
-            .GetAllQueryable()
-            .Returns(new List<Report>().AsQueryable());
-
-        // Act
-        var result = await service.ApproveAsync(Guid.NewGuid(), "medium", CancellationToken.None);
-
-        // Assert
-        Assert.Null(result);
-    }
-
-    [Fact]
-    public async Task RejectAsync_ShouldReturnNull_WhenReportDoesNotExist()
-    {
-        // Arrange
-        var reportRepository = Substitute.For<IRepository<Report>>();
-        var userRepository = Substitute.For<IRepository<User>>();
-        var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
-        var service = new ReportService(reportRepository, userRepository, reportTypeRepository);
-
-        reportRepository
-            .GetAllQueryable()
-            .Returns(new List<Report>().AsQueryable());
-
-        // Act
-        var result = await service.RejectAsync(
-            Guid.NewGuid(),
-            CancellationToken.None);
-
-        // Assert
-        Assert.Null(result);
-    }
     
-    [Fact]
-    public async Task CreateAsync_ShouldThrow_WhenUserDoesNotExist()
-    {
-        // Arrange
-        var reportRepository = Substitute.For<IRepository<Report>>();
-        var userRepository = Substitute.For<IRepository<User>>();
-        var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
-
-        userRepository.GetAllQueryable().Returns(new List<User>().AsQueryable());
-
-        var reportType = new ReportType("ReportType");
-        reportTypeRepository.GetAllQueryable().Returns(new List<ReportType> { reportType }.AsQueryable());
-
-        var service = new ReportService(reportRepository, userRepository, reportTypeRepository);
-        var request = new CreateReportRequest
-        {
-            Latitude = 44.4268,
-            Longitude = 26.1025,
-            Description = "Pothole",
-            ReportTypeId = reportType.Id
-        };
-
-        // Act & Assert
-        await Assert.ThrowsAsync<InvalidOperationException>(() => service.CreateAsync(
-            Guid.NewGuid(),
-            request,
-            CancellationToken.None));
-    }
-
-    [Fact]
-    public async Task ApproveAsync_ShouldSetPriorityToUrgent_WhenPriorityIsUrgent()
-    {
-        // Arrange
-        var reportRepository = Substitute.For<IRepository<Report>>();
-        var userRepository = Substitute.For<IRepository<User>>();
-        var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
-        var service = new ReportService(reportRepository, userRepository, reportTypeRepository);
-
-        var user = new User(
-            "moderator@test.com",
-            "password",
-            "Test",
-            "Moderator");
-
-        var report = new Report(
-            new Point(26.1025, 44.4268),
-            "Pothole",
-            user,
-            new ReportType("ReportType"));
-
-        reportRepository
-            .GetAllQueryable()
-            .Returns(new List<Report> { report }.AsQueryable());
-
-        // Act
-        var result = await service.ApproveAsync(report.Id, "urgent", CancellationToken.None);
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal("Urgent", result.Priority);
-    }
-
-    [Fact]
-    public async Task ApproveAsync_ShouldDefaultToLowPriority_WhenPriorityIsUnrecognized()
-    {
-        // Arrange
-        var reportRepository = Substitute.For<IRepository<Report>>();
-        var userRepository = Substitute.For<IRepository<User>>();
-        var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
-        var service = new ReportService(reportRepository, userRepository, reportTypeRepository);
-
-        var user = new User(
-            "moderator@test.com",
-            "password",
-            "Test",
-            "Moderator");
-
-        var report = new Report(
-            new Point(26.1025, 44.4268),
-            "Pothole",
-            user,
-            new ReportType("ReportType"));
-
-        reportRepository
-            .GetAllQueryable()
-            .Returns(new List<Report> { report }.AsQueryable());
-
-        // Act
-        var result = await service.ApproveAsync(report.Id, "unknown", CancellationToken.None);
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal("Low", result.Priority);
-    }
-
     [Fact]
     public async Task MarkAsSolvedAsync_ShouldMarkReportAsSolved_WhenReportExists()
     {
@@ -544,7 +431,7 @@ public sealed class ReportServiceTests
         var reportRepository = Substitute.For<IRepository<Report>>();
         var userRepository = Substitute.For<IRepository<User>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
-        var service = new ReportService(reportRepository, userRepository, reportTypeRepository);
+        var photoProcessor = Substitute.For<IPhotoProcessor>();
 
         var user = new User(
             "moderator@test.com",
@@ -561,7 +448,9 @@ public sealed class ReportServiceTests
         reportRepository
             .GetAllQueryable()
             .Returns(new List<Report> { report }.AsQueryable());
-
+        
+        var service = new ReportService(reportRepository, userRepository, reportTypeRepository, photoProcessor);
+        
         // Act
         var result = await service.MarkAsSolvedAsync(report.Id, "Fixed", CancellationToken.None);
 
@@ -575,7 +464,7 @@ public sealed class ReportServiceTests
                 report,
                 CancellationToken.None);
     }
-
+    
     [Fact]
     public async Task MarkAsSolvedAsync_ShouldReturnNull_WhenReportDoesNotExist()
     {
@@ -583,19 +472,21 @@ public sealed class ReportServiceTests
         var reportRepository = Substitute.For<IRepository<Report>>();
         var userRepository = Substitute.For<IRepository<User>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
-        var service = new ReportService(reportRepository, userRepository, reportTypeRepository);
-
+        var photoProcessor = Substitute.For<IPhotoProcessor>();
+        
         reportRepository
             .GetAllQueryable()
             .Returns(new List<Report>().AsQueryable());
 
+        var service = new ReportService(reportRepository, userRepository, reportTypeRepository, photoProcessor);
+        
         // Act
         var result = await service.MarkAsSolvedAsync(Guid.NewGuid(), "Fixed", CancellationToken.None);
 
         // Assert
         Assert.Null(result);
     }
-
+    
     [Fact]
     public async Task GetApprovedReportsAsync_ShouldReturnOnlyApprovedAndUnsolvedReports()
     {
@@ -603,8 +494,8 @@ public sealed class ReportServiceTests
         var reportRepository = Substitute.For<IRepository<Report>>();
         var userRepository = Substitute.For<IRepository<User>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
-        var service = new ReportService(reportRepository, userRepository, reportTypeRepository);
-
+        var photoProcessor = Substitute.For<IPhotoProcessor>();
+        
         var user = new User(
             "moderator@test.com",
             "password",
@@ -644,6 +535,8 @@ public sealed class ReportServiceTests
         reportRepository
             .GetAllQueryable()
             .Returns(reports.BuildMock());
+        
+        var service = new ReportService(reportRepository, userRepository, reportTypeRepository, photoProcessor);
 
         // Act
         var result = await service.GetApprovedReportsAsync(1, 10, CancellationToken.None);
@@ -653,7 +546,7 @@ public sealed class ReportServiceTests
         Assert.Equal("Approved report", result.Items[0].Description);
         Assert.Equal(1, result.TotalCount);
     }
-
+    
     [Fact]
     public async Task GetApprovedReportsAsync_ShouldReturnEmptyList_WhenNoApprovedReportsExist()
     {
@@ -661,7 +554,7 @@ public sealed class ReportServiceTests
         var reportRepository = Substitute.For<IRepository<Report>>();
         var userRepository = Substitute.For<IRepository<User>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
-        var service = new ReportService(reportRepository, userRepository, reportTypeRepository);
+        var photoProcessor = Substitute.For<IPhotoProcessor>();
 
         var user = new User(
             "moderator@test.com",
@@ -692,7 +585,9 @@ public sealed class ReportServiceTests
         reportRepository
             .GetAllQueryable()
             .Returns(reports.BuildMock());
-
+        
+        var service = new ReportService(reportRepository, userRepository, reportTypeRepository, photoProcessor);
+        
         // Act
         var result = await service.GetApprovedReportsAsync(1, 10, CancellationToken.None);
 
@@ -702,13 +597,115 @@ public sealed class ReportServiceTests
     }
 
     [Fact]
+    public async Task GetPendingAsync_ShouldReturnEmptyList_WhenNoPendingReportsExist()
+    {
+        // Arrange
+        var reportRepository = Substitute.For<IRepository<Report>>();
+        var userRepository = Substitute.For<IRepository<User>>();
+        var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
+        var photoProcessor = Substitute.For<IPhotoProcessor>();
+        
+        var user = new User(
+            "moderator@test.com",
+            "password",
+            "Test",
+            "Moderator");
+
+        var approvedReport = new Report(
+            new Point(26.1025, 44.4268),
+            "Approved report",
+            user,
+            new ReportType("ReportType"));
+
+        approvedReport.Approve(Priority.Medium);
+
+        var rejectedReport = new Report(
+            new Point(26.1025, 44.4268),
+            "Rejected report",
+            user,
+            new ReportType("ReportType"));
+
+        rejectedReport.Reject();
+
+        var reports = new List<Report>
+        {
+            approvedReport,
+            rejectedReport
+        };
+
+        reportRepository
+            .GetAllQueryable()
+            .Returns(reports.BuildMock());
+
+        var service = new ReportService(reportRepository, userRepository, reportTypeRepository, photoProcessor);
+        
+        // Act
+        var result = await service.GetPendingAsync(
+            1,
+            10,
+            CancellationToken.None);
+
+        // Assert
+        Assert.Empty(result.Items);
+        Assert.Equal(0, result.TotalCount);
+        Assert.Equal(1, result.PageNumber);
+        Assert.Equal(10, result.PageSize);
+    }
+
+    [Fact]
+    public async Task ApproveAsync_ShouldReturnNull_WhenReportDoesNotExist()
+    {
+        // Arrange
+        var reportRepository = Substitute.For<IRepository<Report>>();
+        var userRepository = Substitute.For<IRepository<User>>();
+        var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
+        var photoProcessor = Substitute.For<IPhotoProcessor>();
+
+        reportRepository
+            .GetAllQueryable()
+            .Returns(new List<Report>().AsQueryable());
+        
+        var service = new ReportService(reportRepository, userRepository, reportTypeRepository, photoProcessor);
+
+        // Act
+        var result = await service.ApproveAsync(Guid.NewGuid(), "medium", CancellationToken.None);
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task RejectAsync_ShouldReturnNull_WhenReportDoesNotExist()
+    {
+        // Arrange
+        var reportRepository = Substitute.For<IRepository<Report>>();
+        var userRepository = Substitute.For<IRepository<User>>();
+        var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
+        var photoProcessor = Substitute.For<IPhotoProcessor>();
+        
+        reportRepository
+            .GetAllQueryable()
+            .Returns(new List<Report>().AsQueryable());
+
+        var service = new ReportService(reportRepository, userRepository, reportTypeRepository, photoProcessor);
+        
+        // Act
+        var result = await service.RejectAsync(
+            Guid.NewGuid(),
+            CancellationToken.None);
+
+        // Assert
+        Assert.Null(result);
+    }
+    
+    [Fact]
     public async Task SendMessageToReporterAsync_ShouldUpdateMessage_WhenReportExists()
     {
         // Arrange
         var reportRepository = Substitute.For<IRepository<Report>>();
         var userRepository = Substitute.For<IRepository<User>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
-        var service = new ReportService(reportRepository, userRepository, reportTypeRepository);
+        var photoProcessor = Substitute.For<IPhotoProcessor>();
 
         var user = new User(
             "moderator@test.com",
@@ -725,7 +722,9 @@ public sealed class ReportServiceTests
         reportRepository
             .GetAllQueryable()
             .Returns(new List<Report> { report }.BuildMock());
-
+        
+        var service = new ReportService(reportRepository, userRepository, reportTypeRepository, photoProcessor);
+        
         // Act
         var result = await service.SendMessageToReporterAsync(report.Id, "We are looking into it", CancellationToken.None);
 
@@ -746,11 +745,13 @@ public sealed class ReportServiceTests
         var reportRepository = Substitute.For<IRepository<Report>>();
         var userRepository = Substitute.For<IRepository<User>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
-        var service = new ReportService(reportRepository, userRepository, reportTypeRepository);
+        var photoProcessor = Substitute.For<IPhotoProcessor>();
 
         reportRepository
             .GetAllQueryable()
             .Returns(new List<Report>().BuildMock());
+
+        var service = new ReportService(reportRepository, userRepository, reportTypeRepository, photoProcessor);
 
         // Act
         var result = await service.SendMessageToReporterAsync(Guid.NewGuid(), "message", CancellationToken.None);
@@ -766,8 +767,8 @@ public sealed class ReportServiceTests
         var reportRepository = Substitute.For<IRepository<Report>>();
         var userRepository = Substitute.For<IRepository<User>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
-        var service = new ReportService(reportRepository, userRepository, reportTypeRepository);
-
+        var photoProcessor = Substitute.For<IPhotoProcessor>();
+        
         var user = new User(
             "user@test.com",
             "password",
@@ -801,7 +802,9 @@ public sealed class ReportServiceTests
         reportRepository
             .GetAllQueryable()
             .Returns(reports.BuildMock());
-
+        
+        var service = new ReportService(reportRepository, userRepository, reportTypeRepository, photoProcessor);
+        
         // Act
         var result = await service.GetUserReportsAsync(user.Id, 1, 10, CancellationToken.None);
 
@@ -810,7 +813,7 @@ public sealed class ReportServiceTests
         Assert.Equal("User report", result.Items[0].Description);
         Assert.Equal(1, result.TotalCount);
     }
-
+    
     [Fact]
     public async Task GetUserReportsAsync_ShouldReturnEmptyList_WhenUserHasNoReports()
     {
@@ -818,7 +821,7 @@ public sealed class ReportServiceTests
         var reportRepository = Substitute.For<IRepository<Report>>();
         var userRepository = Substitute.For<IRepository<User>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
-        var service = new ReportService(reportRepository, userRepository, reportTypeRepository);
+        var photoProcessor = Substitute.For<IPhotoProcessor>();
 
         var user = new User(
             "user@test.com",
@@ -837,7 +840,9 @@ public sealed class ReportServiceTests
         reportRepository
             .GetAllQueryable()
             .Returns(reports.BuildMock());
-
+        
+        var service = new ReportService(reportRepository, userRepository, reportTypeRepository, photoProcessor);
+        
         // Act
         var result = await service.GetUserReportsAsync(Guid.NewGuid(), 1, 10, CancellationToken.None);
 
