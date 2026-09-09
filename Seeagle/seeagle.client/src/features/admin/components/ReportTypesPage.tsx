@@ -9,7 +9,6 @@ import {ChevronLeftIcon, ChevronRightIcon, CirclePlus, Pencil} from "lucide-reac
 import {getCookie} from "@/shared/utils/cookies.ts";
 import {AddReportTypeModal} from "./AddReportTypeModal";
 import {EditReportTypeModal} from "./EditReportTypeModal";
-import {LeftPanel} from "@/features/homepage/components/LeftPanel.tsx";
 
 const PAGE_SIZE = 10;
 
@@ -64,7 +63,6 @@ export function ReportTypesPage() {
 
     return (
         <div className="flex h-screen bg-background text-foreground">
-            <LeftPanel/>
             <div className="flex-1 p-6">
                 <h1 className="text-xl font-semibold mb-4 flex items-center">
                     {t('reportTypesPageTitle')}
