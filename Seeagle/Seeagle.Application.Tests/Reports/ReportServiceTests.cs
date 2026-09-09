@@ -4,6 +4,7 @@ using Seeagle.Application.Common;
 using Seeagle.Application.Reports;
 using Seeagle.Domain.Reports;
 using Seeagle.Domain.User;
+using Seeagle.Domain.Areas; 
 using MockQueryable;
 
 namespace Seeagle.Application.Tests.Reports;
@@ -36,7 +37,7 @@ public sealed class ReportServiceTests
         var reportType = new ReportType("ReportType");
         reportTypeRepository.GetAllQueryable().Returns(new List<ReportType> { reportType }.AsQueryable());
 
-        var service = new ReportService(reportRepository, userRepository, reportTypeRepository, photoProcessor);
+        var service = CreateReportService(reportRepository, userRepository, reportTypeRepository);
         var request = new CreateReportRequest
         {
             Latitude = 44.4268,
