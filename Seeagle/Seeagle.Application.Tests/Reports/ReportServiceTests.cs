@@ -10,19 +10,15 @@ namespace Seeagle.Application.Tests.Reports;
 
 public sealed class ReportServiceTests
 {
-    private static ReportService CreateReportService(
-        Mock<IRepository<Report>> reportRepo,
-        Mock<IRepository<User>> userRepo,
-        Mock<IRepository<Area>> areaRepo,
-        Mock<IRepository<ReportType>> reportTypeRepo)
+    private static ReportService CreateReportService(IRepository<Report> reportRepo, IRepository<User> userRepo, IRepository<Area> areaRepo, IRepository<ReportType> reportTypeRepo)
     {
-        var photoProcessorMock = new Mock<IPhotoProcessor>();
+        var photoProcessorMock = Substitute.For<IPhotoProcessor>();
         return new ReportService(
-            reportRepo.Object,
-            userRepo.Object,
-            areaRepo.Object,
-            reportTypeRepo.Object,
-            photoProcessorMock.Object
+            reportRepo,
+            userRepo,
+            areaRepo,
+            reportTypeRepo,
+            photoProcessorMock
         );
     }
     [Fact]
