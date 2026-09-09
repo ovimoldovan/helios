@@ -142,7 +142,7 @@ export function ApprovedReports() {
             {!isLoading && !error && (
                 <>
                     {reports.length === 0 ? (
-                        <p className="text-muted-foreground">{t('noReports')}</p>
+                        <p className="text-muted-foreground">{t('noReportsFound')}</p>
                     ) : (
                         <Table>
                             <TableHeader>

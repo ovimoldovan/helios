@@ -219,5 +219,11 @@
 
   "allReportsTitle": "Toate rapoartele",
   "allReportsDescription": "Revizuiește toate rapoartele, cu excepția celor în așteptare.",
-  "noReportsFound": "Niciun raport găsit."
+  "noReportsFound": "Niciun raport găsit.",
+  "searchUsers": "Caută utilizatori...",
+  "allRoles": "Toate rolurile",
+  "status_All": "Toate",
+  "status_Approved": "Aprobate",
+  "status_Rejected": "Respinse",
+  "status_Solved": "Rezolvate"
 }

@@ -223,5 +223,11 @@
 
   "allReportsTitle": "All Reports",
   "allReportsDescription": "Review all reports, except pending ones.",
-  "noReportsFound": "No reports found."
+  "noReportsFound": "No reports found.",
+  "searchUsers": "Search users...",
+  "allRoles": "All roles",
+  "status_All": "All",
+  "status_Approved": "Approved",
+  "status_Rejected": "Rejected",
+  "status_Solved": "Solved"
 }
