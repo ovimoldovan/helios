@@ -5,6 +5,7 @@ using Seeagle.Domain.Reports;
 using Seeagle.Domain.User;
 using Microsoft.EntityFrameworkCore;
 using Seeagle.Domain.Areas; 
+using System.Linq;
 
 namespace Seeagle.Application.Reports;
 
@@ -43,9 +44,8 @@ public sealed class ReportService : IReportService
         var point = GeometryFactory.CreatePoint(new Coordinate(request.Longitude, request.Latitude));
         var report = new Report(point, request.Description, user, reportType);
 
-        var area = await _areaRepository.GetAllQueryable()
-            .FirstOrDefaultAsync(a => a.Geometry.Contains(point), cancellationToken);
-        
+        var area = _areaRepository.GetAllQueryable()
+   				.FirstOrDefault(a => a.Geometry.Contains(point));
         if (area != null)
         {
             report.SetAreaId(area.Id);
