@@ -10,6 +10,21 @@ namespace Seeagle.Application.Tests.Reports;
 
 public sealed class ReportServiceTests
 {
+    private static ReportService CreateReportService(
+        Mock<IRepository<Report>> reportRepo,
+        Mock<IRepository<User>> userRepo,
+        Mock<IRepository<Area>> areaRepo,
+        Mock<IRepository<ReportType>> reportTypeRepo)
+    {
+        var photoProcessorMock = new Mock<IPhotoProcessor>();
+        return new ReportService(
+            reportRepo.Object,
+            userRepo.Object,
+            areaRepo.Object,
+            reportTypeRepo.Object,
+            photoProcessorMock.Object
+        );
+    }
     [Fact]
     public async Task CreateAsync_ShouldReturnPendingStatus_WhenRequestIsValid()
     {

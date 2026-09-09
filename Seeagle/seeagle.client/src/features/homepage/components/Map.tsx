@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap, Tooltip, Polygon } from 'react-leaflet'; 
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap, Tooltip, Polygon } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import type { Report } from '@/shared/types/report';
@@ -33,7 +33,7 @@ interface MapProps {
     reports?: Report[];
     isPlacingPin?: boolean;
     pinPosition?: [number, number] | null;
-    areas?: Area[]; 
+    areas?: Area[];
     selectedReportId?: string;
 }
 
@@ -76,21 +76,19 @@ function SelectedReportFocus({ reports, selectedReportId }: { reports?: Report[]
     return null;
 }
 
-function ReportMarkers({ reports, selectedReportId }: { reports?: Report[]; selectedReportId?: string }) {
+function ReportMarkers({ reports }: { reports?: Report[] }) {
     if (!reports) return null;
-    
+
     return reports.map((report) => {
         const isPending = report.status === 'Pending';
         const markerColor = isPending
             ? getStatusColor('Pending')
             : getPriorityColor(report.priority);
-        
-        const isSelected = report.id === selectedReportId;
 
         return (
-            <Marker 
-                key={report.id} 
-                position={[report.latitude, report.longitude]} 
+            <Marker
+                key={report.id}
+                position={[report.latitude, report.longitude]}
                 icon={createColoredIcon(markerColor)}
             >
                 <Popup>
@@ -147,14 +145,7 @@ function AreaLayers({ areas }: { areas?: Area[] }) {
     });
 }
 
-export function Map({ 
-    onPinPlaced, 
-    reports = [], 
-    isPlacingPin = false, 
-    pinPosition, 
-    areas = [], 
-    selectedReportId 
-}: MapProps) {
+export function Map({onPinPlaced, reports = [], isPlacingPin = false, pinPosition, areas = [], selectedReportId}: MapProps) {
     return (
         <MapContainer
             center={[45.9432, 24.9668]}
@@ -169,7 +160,7 @@ export function Map({
             <SelectedReportFocus reports={reports} selectedReportId={selectedReportId} />
             <PinManager onPinPlaced={onPinPlaced} isPlacingPin={isPlacingPin} pinPosition={pinPosition}/>
             <AreaLayers areas={areas} />
-            <ReportMarkers reports={reports} selectedReportId={selectedReportId} />
+            <ReportMarkers reports={reports} />
         </MapContainer>
     );
 }
