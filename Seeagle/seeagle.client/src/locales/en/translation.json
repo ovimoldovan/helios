@@ -187,6 +187,21 @@
   "save": "Save",
   "saving": "Saving...",
   "unexpectedErrorUpdatingReportType": "Unexpected error while updating report type.",
-  "unexpectedErrorDisablingReportType": "Unexpected error while disabling report type."
+  "unexpectedErrorDisablingReportType": "Unexpected error while disabling report type.",
+
+  "publicReports": "Public Reports",
+  "filterByArea": "Filter by area",
+  "filterByStatus": "Filter by status",
+  "allAreas": "All areas",
+  "all": "All",
+  "approved": "Approved",
+  "solved": "Solved",
+  "pending": "Pending",
+  "rejected": "Rejected",
+
+  "unexpectedErrorLoadingReports": "Unexpected error while loading reports.",
+
+  "backToDashboard": "Back to Dashboard"
+
   
 }

@@ -190,6 +190,19 @@
   "save": "Salvează",
   "saving": "Se salvează...",
   "unexpectedErrorUpdatingReportType": "A apărut o eroare neașteptată la actualizarea tipului de raport.",
-  "unexpectedErrorDisablingReportType": "A apărut o eroare neașteptată la dezactivarea tipului de raport."
+  "unexpectedErrorDisablingReportType": "A apărut o eroare neașteptată la dezactivarea tipului de raport.",
+
+  "publicReports": "Rapoarte Publice",
+  "filterByArea": "Filtrează după zonă",
+  "filterByStatus": "Filtrează după status",
+  "allAreas": "Toate zonele",
+  "all": "Toate",
+  "approved": "Aprobate",
+  "solved": "Rezolvate",
+  "pending": "În așteptare",
+  "rejected": "Respins",
+
+  "unexpectedErrorLoadingReports": "Eroare neașteptată la încărcarea rapoartelor.",
   
+  "backToDashboard": "Înapoi la panoul de moderare"
 }
