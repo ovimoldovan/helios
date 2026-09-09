@@ -12,16 +12,21 @@ public sealed class ReportService : IReportService
 {
     private readonly IRepository<Report> _reportRepository;
     private readonly IRepository<User> _userRepository;
-	private readonly IRepository<Area> _areaRepository;
+    private readonly IRepository<Area> _areaRepository; 
+    private readonly IRepository<ReportType> _reportTypeRepository; 
+    private readonly IPhotoProcessor _photoProcessor; 
     
     private static readonly int StandardGpsFormat = 4326;
     private static readonly GeometryFactory GeometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: StandardGpsFormat);
+    private static readonly string[] ValidStatuses = { "Pending", "Approved", "Rejected", "Solved" };
 
-    public ReportService(IRepository<Report> reportRepository, IRepository<User> userRepository, IRepository<Area> areaRepository)
+    public ReportService( IRepository<Report> reportRepository, IRepository<User> userRepository, IRepository<Area> areaRepository, IRepository<ReportType> reportTypeRepository, IPhotoProcessor photoProcessor) 
     {
         _reportRepository = reportRepository;
         _userRepository = userRepository;
-		_areaRepository = areaRepository;
+        _areaRepository = areaRepository;
+        _reportTypeRepository = reportTypeRepository;
+        _photoProcessor = photoProcessor;
     }
 
     public async Task<ReportDto> CreateAsync(Guid userId, CreateReportRequest request, CancellationToken cancellationToken)
@@ -30,28 +35,33 @@ public sealed class ReportService : IReportService
         if (user == null)
             throw new InvalidOperationException("User not found");
 
+        var reportType = _reportTypeRepository.GetAllQueryable().FirstOrDefault(type => type.Id == request.ReportTypeId);
+        if (reportType == null)
+            throw new InvalidOperationException("Report type doesn't exist");
+        
+
         var point = GeometryFactory.CreatePoint(new Coordinate(request.Longitude, request.Latitude));
-        var report = new Report(point, request.Description, user);
+        var report = new Report(point, request.Description, user, reportType);
 
         var area = await _areaRepository.GetAllQueryable()
             .FirstOrDefaultAsync(a => a.Geometry.Contains(point), cancellationToken);
-    	
-		if (area != null)
-    	{
-       	 	report.SetAreaId(area.Id);
-    	}
+        
+        if (area != null)
+        {
+            report.SetAreaId(area.Id);
+        }
 
-    	await _reportRepository.AddAsync(report, cancellationToken);
+        await _reportRepository.AddAsync(report, cancellationToken);
 
-    	return new ReportDto(
-        	report.Id,
-       	 	report.Location.X,
-        	report.Location.Y,
-        	report.Description,
-        	report.CreatedUtc,
-        	report.Status,
-        	report.Priority.ToString()
-    	);
+        return new ReportDto(
+            report.Id,
+            report.Location.X,
+            report.Location.Y,
+            report.Description,
+            report.CreatedUtc,
+            report.Status.ToString(),
+            report.Priority.ToString(),
+            reportType.Name);
     }
 
     public async Task<PagedResult<ReportDto>> GetPendingAsync(
@@ -61,7 +71,7 @@ public sealed class ReportService : IReportService
     {
         var query = _reportRepository
             .GetAllQueryable()
-            .Where(report => report.Status == "Pending");
+            .Where(report => report.Status == ReportStatus.Pending);
 
         var totalCount = await query.CountAsync(cancellationToken);
 
@@ -75,8 +85,9 @@ public sealed class ReportService : IReportService
                 report.Location.Y,
                 report.Description,
                 report.CreatedUtc,
-                report.Status,
-                report.Priority.ToString()))
+                report.Status.ToString(),
+                report.Priority.ToString(),
+                report.Type.Name))
             .ToListAsync(cancellationToken);
 
         return new PagedResult<ReportDto>(
@@ -114,8 +125,9 @@ public sealed class ReportService : IReportService
             report.Location.Y,
             report.Description,
             report.CreatedUtc,
-            report.Status,
-            report.Priority.ToString());
+            report.Status.ToString(),
+            report.Priority.ToString(),
+            report.Type.Name);
     }
 
     public async Task<ReportDto?> RejectAsync(Guid id, CancellationToken cancellationToken)
@@ -139,8 +151,9 @@ public sealed class ReportService : IReportService
             report.Location.Y,
             report.Description,
             report.CreatedUtc,
-            report.Status,
-            report.Priority.ToString());
+            report.Status.ToString(),
+            report.Priority.ToString(),
+            report.Type.Name);
     }
 
     public async Task<ReportDto?> MarkAsSolvedAsync(Guid id, string? message, CancellationToken cancellationToken)
@@ -161,15 +174,16 @@ public sealed class ReportService : IReportService
             report.Location.Y,
             report.Description,
             report.CreatedUtc,
-            report.Status,
-            report.Priority.ToString());
+            report.Status.ToString(),
+            report.Priority.ToString(),
+            report.Type.Name);
     }
 
     public async Task<PagedResult<ReportDto>> GetApprovedReportsAsync(int pageNumber, int pageSize, CancellationToken cancellationToken)
     {
         var query = _reportRepository
             .GetAllQueryable()
-            .Where(report => report.Status == "Approved" && !report.IsSolved);
+            .Where(report => report.Status == ReportStatus.Approved && !report.IsSolved);
 
         var totalCount = await query.CountAsync(cancellationToken);
 
@@ -183,12 +197,14 @@ public sealed class ReportService : IReportService
                 report.Location.Y,
                 report.Description,
                 report.CreatedUtc,
-                report.Status,
-                report.Priority.ToString()))
+                report.Status.ToString(),
+                report.Priority.ToString(),
+                report.Type.Name))
             .ToListAsync(cancellationToken);
 
         return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
     }
+
     public async Task<ReportDto?> SendMessageToReporterAsync(Guid id, string? message, CancellationToken cancellationToken)
     {
         var report = await _reportRepository
@@ -210,8 +226,9 @@ public sealed class ReportService : IReportService
             report.Location.Y,
             report.Description,
             report.CreatedUtc,
-            report.Status,
-            report.Priority.ToString()
+            report.Status.ToString(),
+            report.Priority.ToString(),
+            report.Type.Name
         );
     }
     public async Task<PagedResult<ReportDto>> GetUserReportsAsync(
@@ -236,11 +253,154 @@ public sealed class ReportService : IReportService
                 report.Location.Y,
                 report.Description,
                 report.CreatedUtc,
-                report.Status,
-                report.Priority.ToString()))
+                report.Status.ToString(),
+                report.Priority.ToString(),
+                report.Type.Name))
             .ToListAsync(cancellationToken);
 
         return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
     }
+    public async Task<PagedResult<ReportDto>> GetByStatusAsync(string? status, string? excludeStatus, int pageNumber, int pageSize, CancellationToken cancellationToken)
+    {
+        if (status != null && !ValidStatuses.Contains(status))
+        {
+            throw new ArgumentException($"Invalid status: {status}. Valid statuses are: {string.Join(", ", ValidStatuses)}");
+        }
+
+        if (excludeStatus != null && !ValidStatuses.Contains(excludeStatus))
+        {
+            throw new ArgumentException($"Invalid excludeStatus: {excludeStatus}. Valid statuses are: {string.Join(", ", ValidStatuses)}");
+        }
+
+        var query = _reportRepository
+            .GetAllQueryable()
+            .Where(report => !report.IsDeleted);
+
+        if(!string.IsNullOrWhiteSpace(status))
+        {
+            query = query.Where(report => report.Status.ToString() == status);
+        }
+        if(!string.IsNullOrWhiteSpace(excludeStatus))
+        {
+            query = query.Where(report => report.Status.ToString() != excludeStatus);
+        }
+        
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var reports = await query
+            .OrderByDescending(report => report.CreatedUtc)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .Select(report => new ReportDto(
+                report.Id,
+                report.Location.X,
+                report.Location.Y,
+                report.Description,
+                report.CreatedUtc,
+                report.Status.ToString(),
+                report.Priority.ToString(),
+                report.Type.Name))
+            .ToListAsync(cancellationToken);
+
+        return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
+    }   
+
+    public async Task<bool> SoftDeleteAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var report = await _reportRepository
+            .GetAllQueryable()
+            .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
+
+        if (report is null)
+        {
+            return false;
+        }
+
+        report.Delete();
+
+        await _reportRepository.UpdateAsync(report, cancellationToken);
+
+        return true;
+    }
+	public async Task<ReportDto?> UpdateAsync(Guid id, UpdateReportRequest request, CancellationToken cancellationToken)
+    {
+        var report = await _reportRepository
+            .GetAllQueryable()
+            .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
+      
+        if (report is null)
+   		{
+        	return null;
+    	}
+       if (request.Description is not null)
+		{
+    		report.UpdateDescription(string.IsNullOrEmpty(request.Description) ? null : request.Description);
+		}
+        
+        if (request.Priority is not null)
+        {
+            var priorityEnum = request.Priority.ToLower() switch
+            {
+                "urgent" => Priority.Urgent,
+                "medium" => Priority.Medium,
+                _ => Priority.Low
+            };
+            report.UpdatePriority(priorityEnum);
+        }
+        
+        await _reportRepository.UpdateAsync(report, cancellationToken);
+        
+        return new ReportDto(
+            report.Id,
+            report.Location.X,
+            report.Location.Y,
+            report.Description,
+            report.CreatedUtc,
+            report.Status.ToString(),
+            report.Priority.ToString(),
+            report.Type.Name
+        );
+    }
     
+    public async Task<ReportDto?> AttachPhotoAsync(Guid reportId, Guid userId, byte[] data, string contentType, CancellationToken cancellationToken)
+    {
+        var report = _reportRepository
+            .GetAllQueryable()
+            .FirstOrDefault(report => report.Id == reportId);
+        if (report is null)
+            return null;
+        if (report.User.Id != userId)
+            throw new UnauthorizedAccessException("You can only attach a photo to your own report.");
+        
+        var processed = await _photoProcessor.ProcessAsync(new MemoryStream(data), cancellationToken);
+        var photo = new Photo(processed.Data, processed.ContentType, report);
+        report.AttachPhoto(photo);
+        
+        await _reportRepository.UpdateAsync(report, cancellationToken);
+        
+        return new ReportDto(
+            report.Id,
+            report.Location.X,
+            report.Location.Y,
+            report.Description,
+            report.CreatedUtc,
+            report.Status.ToString(),
+            report.Priority.ToString(),
+            report.Type.Name);
+    }
+    
+    public async Task<ProcessedPhoto?> GetPhotoAsync(Guid reportId, bool isModerator, CancellationToken cancellationToken)
+    {
+        var report = _reportRepository
+            .GetAllQueryable()
+            .FirstOrDefault(report => report.Id == reportId);
+        
+        if (report?.Photo is null)
+            return null;
+
+        if (report.Status != ReportStatus.Approved && !isModerator)
+            return null;
+        
+        return new ProcessedPhoto(report.Photo.ImageData, report.Photo.ContentType);
+    }
 }

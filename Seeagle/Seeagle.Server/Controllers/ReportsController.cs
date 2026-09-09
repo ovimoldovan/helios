@@ -3,13 +3,16 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Seeagle.Application.Reports;
 using Seeagle.Application.Common;
+using Seeagle.Domain.Reports;
 
 namespace Seeagle.Server.Controllers;
 
 [ApiController]
 [Route("api/reports")]
-public sealed class ReportsController(IReportService reportService, IReportQueryService reportQueryService)
-    : ControllerBase
+public sealed class ReportsController(
+    IReportService reportService, 
+    IReportQueryService reportQueryService, 
+    IPhotoProcessor photoProcessor) : ControllerBase
 {
     [Authorize]
     [HttpPost]
@@ -24,7 +27,6 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
             {
                 return Unauthorized(new { message = "User ID claim is missing or invalid." });
             }
-
             var result = await reportService.CreateAsync(userId, request, cancellationToken);
             return Ok(result);
         }
@@ -44,6 +46,7 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
         return Ok(reports);
     }
 
+    [Authorize(Roles = "Moderator")]
     [HttpGet("pending")]
     public async Task<ActionResult<PagedResult<ReportDto>>> GetPending(
         [FromQuery] int pageNumber = 1,
@@ -66,10 +69,12 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
         CancellationToken cancellationToken = default)
     {
         var report = await reportService.ApproveAsync(id, priority, cancellationToken);
+
         if (report is null)
         {
             return NotFound();
         }
+
         return Ok(report);
     }
 
@@ -80,10 +85,12 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
         CancellationToken cancellationToken)
     {
         var report = await reportService.RejectAsync(id, cancellationToken);
+
         if (report is null)
         {
             return NotFound();
         }
+
         return Ok(report);
     }
     
@@ -101,6 +108,7 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
 
         return Ok(reports);
     }
+
     [Authorize(Roles = "Moderator, Admin")]
     [HttpPut("{id:guid}/solved")]
     public async Task<ActionResult<ReportDto>> MarkAsSolved(
@@ -134,7 +142,57 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
 
         return Ok(report);
     }
+
+    [Authorize]
+    [RequestSizeLimit(10_000_000)]
+    [HttpPost("{reportId:guid}/photo")]
+    public async Task<IActionResult> UploadPhoto(Guid reportId, IFormFile file, CancellationToken cancellationToken)
+    {
+        if (file is null || file.Length == 0)
+            return BadRequest(new { message = "No file was provided." });
+        if (!file.ContentType.StartsWith("image/"))
+            return BadRequest(new { message = "File must be an image." });
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null || !Guid.TryParse(userIdClaim, out var userId))
+        {
+            return Unauthorized(new { message = "User ID claim is missing or invalid." });
+        }
+        
+        try
+        {
+            await using var stream = file.OpenReadStream();
+            var processed = await photoProcessor.ProcessAsync(stream, cancellationToken);
+
+            var result = await reportService.AttachPhotoAsync(
+                reportId, userId, processed.Data, processed.ContentType, cancellationToken);
+
+            if (result is null)
+                return NotFound();
+
+            return Ok(result);
+        }
+        catch (PhotoTooLargeException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
     
+    [HttpGet("{reportId}/photo")]
+    public async Task<IActionResult> GetPhoto(Guid reportId, CancellationToken cancellationToken)
+    {
+        var isModerator = User.IsInRole("Moderator");
+        var photo = await reportService.GetPhotoAsync(reportId, isModerator, cancellationToken);
+
+        if (photo is null)
+            return NotFound();
+
+        return File(photo.Data, photo.ContentType);
+    }
+
     [Authorize]
     [HttpGet("my")]
     public async Task<ActionResult<PagedResult<ReportDto>>> GetMyReports(
@@ -157,27 +215,94 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
         return Ok(reports);
     }
 
-	[Authorize]
-	[HttpGet("public")]
-	public async Task<ActionResult<PagedResult<ReportDto>>> GetPublicReports(
-    	[FromQuery] int pageNumber = 1,
-    	[FromQuery] int pageSize = 10,
-    	[FromQuery] string? status = null,
-    	[FromQuery] Guid? areaId = null,
-    	[FromQuery] string? sortBy = "createdUtc",
-    	[FromQuery] string? sortOrder = "desc",
-    	CancellationToken cancellationToken = default)
-	{
-    	var reports = await reportQueryService.GetPublicReportsAsync(
-        	pageNumber,
-        	pageSize,
-        	status,
-        	areaId,
-        	sortBy,
-        	sortOrder,
-        	cancellationToken);
+    // ✅ Păstrează ambele metode: GetPublicReports (branch-ul tău) și GetAllReports (main)
+
+    [Authorize]
+    [HttpGet("public")]
+    public async Task<ActionResult<PagedResult<ReportDto>>> GetPublicReports(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
+        [FromQuery] string? status = null,
+        [FromQuery] Guid? areaId = null,
+        [FromQuery] string? sortBy = "createdUtc",
+        [FromQuery] string? sortOrder = "desc",
+        CancellationToken cancellationToken = default)
+    {
+        var reports = await reportQueryService.GetPublicReportsAsync(
+            pageNumber,
+            pageSize,
+            status,
+            areaId,
+            sortBy,
+            sortOrder,
+            cancellationToken);
     
-    	return Ok(reports);
-	}
+        return Ok(reports);
+    }
+
+    [Authorize(Roles = "Moderator, Admin")]
+    [HttpGet("all")]
+    public async Task<ActionResult<PagedResult<ReportDto>>> GetAllReports(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
+        [FromQuery] string? sortBy = null,
+        [FromQuery] string? sortOrder = "desc",
+        CancellationToken cancellationToken = default)
+    {
+        var reports = await reportQueryService.GetAllReportsAsync(
+            pageNumber,
+            pageSize,
+            sortBy,
+            sortOrder,
+            cancellationToken);
+        
+        return Ok(reports);
+    }
     
+    [Authorize(Roles = "Moderator, Admin")]
+    [HttpPut("{id:guid}")]
+    public async Task<ActionResult<ReportDto>> UpdateReport(
+        Guid id,
+        [FromBody] UpdateReportRequest request,
+        CancellationToken cancellationToken)
+    {
+        var report = await reportService.UpdateAsync(id, request, cancellationToken);
+        if (report is null)
+        {
+            return NotFound();
+        }
+        return Ok(report);
+    }
+
+    [Authorize(Roles = "Moderator, Admin")]
+    [HttpGet]
+    public async Task<ActionResult<PagedResult<ReportDto>>> GetByStatus(
+        [FromQuery] string? status = null,
+        [FromQuery] string? excludeStatus = null,
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var reports = await reportService.GetByStatusAsync(status, excludeStatus, pageNumber, pageSize, cancellationToken);
+            return Ok(reports);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [Authorize(Roles = "Moderator, Admin")]
+    [HttpDelete("{id:guid}")]
+    public async Task<ActionResult> SoftDelete(Guid id, CancellationToken cancellationToken)
+    {
+        var success = await reportService.SoftDeleteAsync(id, cancellationToken);
+        if (!success)
+        {
+            return NotFound();
+        }
+        return NoContent();
+    }
 }

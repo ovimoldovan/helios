@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import {
-    getApprovedReports,
+    getAllReportsExceptPending,
+    getReportsByStatus,
+    deleteReport,
     markAsSolved,
     sendMessageToReporter,
     type ModerationReport,
@@ -15,12 +17,13 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { PaginationLink } from '@/components/ui/pagination';
-import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
+import { ChevronLeftIcon, ChevronRightIcon, TrashIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ActionModal } from './ActionModal';
 import { useTranslation } from 'react-i18next';
 
 const PAGE_SIZE = 10;
+const STATUS_OPTIONS = ['All', 'Approved', 'Rejected', 'Solved'];
 
 export function ApprovedReports() {
     const { t } = useTranslation();
@@ -29,6 +32,8 @@ export function ApprovedReports() {
     const [totalCount, setTotalCount] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [statusFilter, setStatusFilter] = useState<string>('All');
+    const [deletingId, setDeletingId] = useState<string | null>(null);
 
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedReport, setSelectedReport] = useState<ModerationReport | null>(null);
@@ -38,16 +43,24 @@ export function ApprovedReports() {
         setIsLoading(true);
         setError(null);
 
-        getApprovedReports(page, PAGE_SIZE)
+        const request = statusFilter === 'All'
+            ? getAllReportsExceptPending(page, PAGE_SIZE)
+            : getReportsByStatus(statusFilter, page, PAGE_SIZE);
+        request
             .then((result) => {
                 setReports(result.items);
                 setTotalCount(result.totalCount);
             })
-            .catch(() => setError(t('unexpectedErrorLoadingApproved')))
+            .catch(() => setError(t('errorLoadingReports')))
             .finally(() => setIsLoading(false));
-    }, [page, t]);
+    }, [page, statusFilter, t]);
 
     const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+
+    function handleFilterChange(status: string) {
+        setStatusFilter(status);
+        setPage(1);
+    }
 
     const handleActionClick = (report: ModerationReport) => {
         setSelectedReport(report);
@@ -81,6 +94,21 @@ export function ApprovedReports() {
         }
     };
 
+    async function handleDelete(id: string) {
+        setDeletingId(id);
+        try {
+            const token = getAuthToken();
+            await deleteReport(id, token ?? undefined);
+
+            setReports((current) => current.filter((report) => report.id !== id));
+            setTotalCount((current) => Math.max(0, current - 1));
+        } catch {
+            setError(t('errorWhileDeletingReport'));
+        } finally {
+            setDeletingId(null);
+        }
+    }
+
     const priorityBadge = (priority: string) => {
         const config = {
             Urgent: 'bg-red-100 text-red-700',
@@ -92,7 +120,20 @@ export function ApprovedReports() {
 
     return (
         <div className="p-6">
-            <h1 className="text-xl font-semibold mb-4">{t('approvedReportsTitle')}</h1>
+            <h1 className="text-xl font-semibold mb-4">{t('allReportsTitle')}</h1>
+
+            <div className="flex gap-2 mb-4">
+                {STATUS_OPTIONS.map((status) => (
+                    <Button
+                        key={status}
+                        size="sm"
+                        variant={statusFilter === status ? 'default' : 'outline'}
+                        onClick={() => handleFilterChange(status)}
+                    >
+                        {t(`status_${status}`)}
+                    </Button>
+                ))}
+            </div>
 
             {isLoading && <p>{t('loadingReports')}</p>}
 
@@ -101,7 +142,7 @@ export function ApprovedReports() {
             {!isLoading && !error && (
                 <>
                     {reports.length === 0 ? (
-                        <p className="text-muted-foreground">{t('noApprovedReports')}</p>
+                        <p className="text-muted-foreground">{t('noReports')}</p>
                     ) : (
                         <Table>
                             <TableHeader>
@@ -109,6 +150,7 @@ export function ApprovedReports() {
                                     <TableHead>{t('description')}</TableHead>
                                     <TableHead>{t('priority')}</TableHead>
                                     <TableHead>{t('created')}</TableHead>
+                                    <TableHead>{t('status')}</TableHead>
                                     <TableHead>{t('action')}</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -127,13 +169,29 @@ export function ApprovedReports() {
                                             {new Date(report.createdUtc).toLocaleString()}
                                         </TableCell>
                                         <TableCell className="py-2">
-                                            <Button
-                                                size="sm"
-                                                variant="outline"
-                                                onClick={() => handleActionClick(report)}
-                                            >
-                                                {t('action')}
-                                            </Button>
+                                            {report.status}
+                                        </TableCell>
+                                        <TableCell className="py-2">
+                                            <div className="flex gap-2 item">
+                                                {report.status == 'Approved' && (
+                                                    <Button
+                                                        size="sm"
+                                                        variant="outline"
+                                                        onClick={() => handleActionClick(report)}
+                                                    >
+                                                        {t('action')}
+                                                    </Button>
+                                                )}
+                                                <Button
+                                                    size="sm"
+                                                    variant="ghost"
+                                                    disabled={deletingId === report.id}
+                                                    onClick={() => void handleDelete(report.id)}
+                                                    aria-label={t('deleteReport')}
+                                                >
+                                                    <TrashIcon className="w-4 h-4 text-red-500" />
+                                                </Button>
+                                            </div>
                                         </TableCell>
                                     </TableRow>
                                 ))}

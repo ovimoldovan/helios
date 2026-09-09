@@ -1,18 +1,35 @@
-import { getJson, postJson, putJson, putJsonWithBody } from '@/shared/api/httpClient';
+import {getJson, patchJson, postJson, putJsonWithBody} from '@/shared/api/httpClient';
 import type { UserListItem } from '@/shared/types/admin';
 import type { PagedResult } from '@/shared/types/pagedResult';
 import type { ReportType } from '@/shared/types/report';
 
-export async function getUsers(page: number, pageSize: number, token: string): Promise<PagedResult<UserListItem>> {
-  return getJson<PagedResult<UserListItem>>(`/api/users?pageNumber=${page}&pageSize=${pageSize}`, token);
+export async function getUsers(
+  page: number, 
+  pageSize: number, 
+  token: string,
+  searchTerm?: string,
+  sortBy?: string,
+  roleFilter?: number,
+  sortDescending?: boolean,
+): Promise<PagedResult<UserListItem>> {
+  const params = new URLSearchParams({
+    pageNumber: String(page),
+    pageSize: String(pageSize),
+  })
+  if (searchTerm) params.set('searchTerm', searchTerm);
+  if (sortBy) params.set('sortBy', sortBy);
+  if (sortDescending) params.set('sortDescending', String(sortDescending));
+  if (roleFilter !== undefined && roleFilter !== null) params.set('roleFilter', String(roleFilter));
+  const url = `/api/users?${params.toString()}`;
+  return getJson<PagedResult<UserListItem>>(url, token);
 }
 
 export async function assignModerator(userId: string, token: string): Promise<UserListItem> {
   return getJson<UserListItem>(`/api/users/${userId}/assign-moderator`, token);
 }
 
-export async function getReportTypes(token: string): Promise<ReportType[]> {
-  return getJson<ReportType[]>('/api/report-types', token);
+export async function getReportTypes(page: number, pageSize: number): Promise<PagedResult<ReportType>> {
+  return getJson<PagedResult<ReportType>>(`/api/report-types?pageNumber=${page}&pageSize=${pageSize}`)
 }
 
 export async function createReportType(
@@ -60,12 +77,16 @@ export async function updateReportType(
   }
 }
 
-export async function disableReportType(
+export async function changeReportTypeStatus(
     id: string,
     token: string
 ): Promise<ReportType> {
-  return putJson<ReportType>(
-      `/api/report-types/${id}/disable`,
+  return patchJson<ReportType>(
+      `/api/report-types/${id}/change_status`,
       token
   );
+}
+
+export async function getAssistantHealth(token: string): Promise<{ status: string }> {
+  return getJson<{ status: string }>('/api/admin/health/assistant', token);
 }

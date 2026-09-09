@@ -87,7 +87,7 @@ export function LoginForm({
 
             if (response.token) {
                 login();
-                navigate(state?.from ? state.from : '/');
+                navigate('/');
             } else {
                 setLoginSuccessful(false);
             }

@@ -7,9 +7,12 @@ import type { Report } from '@/shared/types/report';
 import { MapSidebarExtra } from '../MapSidebarExtra';
 import { getApprovedReports, getMyReports } from "@/features/reports/api/reportApi.ts";
 import { useAuth } from '@/shared/context/AuthContext';
+import { useLocation } from 'react-router-dom';
 
 export function Homepage() {
     const { isAuthenticated } = useAuth();
+    const location = useLocation();
+    const selectedReport = location.state?.selectedReport as Report | undefined;
     const [isPlacingPin, setIsPlacingPin] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -32,6 +35,10 @@ export function Homepage() {
     }, []);
 
     const allReports = [...reports, ...myPendingReports];
+
+    if (selectedReport && !allReports.some(report => report.id === selectedReport.id)) {
+        allReports.push(selectedReport);
+    }
 
     const handlePinPlaced = (position: [number, number] | null) => {
         setPinPosition(position);
@@ -62,6 +69,10 @@ export function Homepage() {
                     <MapSidebarExtra
                         onNewReport={handleNewReportClick}
                         isPlacingPin={isPlacingPin}
+                        onCancelPlacePin={() => {
+                            setIsPlacingPin(false);
+                            setPinPosition(null);
+                        }}
                     />
                 }
             />
@@ -72,6 +83,7 @@ export function Homepage() {
                     reports={allReports}
                     isPlacingPin={isPlacingPin}
                     pinPosition={pinPosition}
+                    selectedReportId={selectedReport?.id}
                 />
             </div>
 

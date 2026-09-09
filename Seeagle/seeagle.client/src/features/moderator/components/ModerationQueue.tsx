@@ -18,7 +18,6 @@ import { PaginationLink } from '@/components/ui/pagination';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
-import { LeftPanel } from '@/features/homepage/components/LeftPanel';
 import { PriorityModal } from './PriorityModal';
 const PAGE_SIZE = 10;
 
@@ -33,7 +32,7 @@ export function ModerationQueue() {
     const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
     const [isProcessing, setIsProcessing] = useState(false);
     const [selectedReport, setSelectedReport] = useState<ModerationReport | null>(null);
-
+    
     useEffect(() => {
         setIsLoading(true);
         setError(null);
@@ -99,9 +98,7 @@ export function ModerationQueue() {
     }
 
     return (
-        <div className="flex">
-            <LeftPanel />
-            <div className="flex-1 p-6">
+        <div className="p-6">
                 <h1 className="text-xl font-semibold mb-4">
                     {t('moderationQueueTitle')}
                 </h1>
@@ -124,10 +121,11 @@ export function ModerationQueue() {
                             <Table>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead>{t('descriptionColumn')}</TableHead>
-                                        <TableHead>{t('createdColumn')}</TableHead>
-                                        <TableHead>{t('statusColumn')}</TableHead>
-                                        <TableHead>{t('actionColumn')}</TableHead>
+                                        <TableHead>{t('description')}</TableHead>
+                                        <TableHead>{t('reportType')}</TableHead>
+                                        <TableHead>{t('status')}</TableHead>
+                                        <TableHead>{t('created')}</TableHead>
+                                        <TableHead>{t('action')}</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -137,10 +135,13 @@ export function ModerationQueue() {
                                                 {report.description ?? t('noDescription')}
                                             </TableCell>
                                             <TableCell className="py-2">
-                                                {new Date(report.createdUtc).toLocaleString()}
+                                                {report.type}
                                             </TableCell>
                                             <TableCell className="py-2">
                                                 {report.status}
+                                            </TableCell>
+                                            <TableCell className="py-2">
+                                                {new Date(report.createdUtc).toLocaleString()}
                                             </TableCell>
                                             <TableCell className="py-2">
                                                 <div className="flex gap-2">
@@ -210,7 +211,7 @@ export function ModerationQueue() {
                         </div>
                     </>
                 )}
-            </div>
+            
             <PriorityModal
                 isOpen={modalOpen}
                 onClose={handleModalClose}

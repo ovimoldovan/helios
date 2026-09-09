@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents, Tooltip, Polygon } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap, Tooltip, Polygon } from 'react-leaflet'; 
 import 'leaflet/dist/leaflet.css';
-import L from 'leaflet'; 
+import L from 'leaflet';
 import type { Report } from '@/shared/types/report';
 import { getPriorityColor, getStatusColor } from "@/shared/constants/reportColors.ts";
 import type { Area } from '@/features/admin/types';
-
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -34,7 +33,8 @@ interface MapProps {
     reports?: Report[];
     isPlacingPin?: boolean;
     pinPosition?: [number, number] | null;
-    areas?: Area[];
+    areas?: Area[]; 
+    selectedReportId?: string;
 }
 
 function PinManager({ onPinPlaced, isPlacingPin, pinPosition}: {
@@ -61,7 +61,22 @@ function PinManager({ onPinPlaced, isPlacingPin, pinPosition}: {
     return position ? <Marker position={position} /> : null;
 }
 
-function ReportMarkers({ reports }: { reports?: Report[] }) {
+function SelectedReportFocus({ reports, selectedReportId }: { reports?: Report[]; selectedReportId?: string }) {
+    const map = useMap();
+
+    useEffect(() => {
+        if (!reports || !selectedReportId) return;
+
+        const selectedReport = reports.find(report => report.id === selectedReportId);
+        if (!selectedReport) return;
+
+        map.flyTo([selectedReport.latitude, selectedReport.longitude], 16);
+    }, [map, reports, selectedReportId]);
+
+    return null;
+}
+
+function ReportMarkers({ reports, selectedReportId }: { reports?: Report[]; selectedReportId?: string }) {
     if (!reports) return null;
     
     return reports.map((report) => {
@@ -69,9 +84,15 @@ function ReportMarkers({ reports }: { reports?: Report[] }) {
         const markerColor = isPending
             ? getStatusColor('Pending')
             : getPriorityColor(report.priority);
+        
+        const isSelected = report.id === selectedReportId;
 
         return (
-            <Marker key={report.id} position={[report.latitude, report.longitude]} icon={createColoredIcon(markerColor)}>
+            <Marker 
+                key={report.id} 
+                position={[report.latitude, report.longitude]} 
+                icon={createColoredIcon(markerColor)}
+            >
                 <Popup>
                     <div className="space-y-1">
                         <div className="flex items-center gap-2">
@@ -82,6 +103,11 @@ function ReportMarkers({ reports }: { reports?: Report[] }) {
                             <strong>{report.status}</strong>
                         </div>
                         {report.description && (<p className="text-sm">{report.description}</p>)}
+                        {report.type && (
+                            <p className="text-xs font-medium mt-1">
+                                Type: {report.type}
+                            </p>
+                        )}
                         {report.status === 'Approved' && report.priority && (
                             <p className="text-xs font-medium mt-1">
                                 Priority: {report.priority}
@@ -93,9 +119,10 @@ function ReportMarkers({ reports }: { reports?: Report[] }) {
                     </div>
                 </Popup>
             </Marker>
-    );
+        );
     });
 }
+
 function AreaLayers({ areas }: { areas?: Area[] }) {
     if (!areas || areas.length === 0) return null;
 
@@ -120,7 +147,14 @@ function AreaLayers({ areas }: { areas?: Area[] }) {
     });
 }
 
-export function Map({ onPinPlaced, reports = [], isPlacingPin = false, pinPosition, areas = [] }: MapProps) {
+export function Map({ 
+    onPinPlaced, 
+    reports = [], 
+    isPlacingPin = false, 
+    pinPosition, 
+    areas = [], 
+    selectedReportId 
+}: MapProps) {
     return (
         <MapContainer
             center={[45.9432, 24.9668]}
@@ -132,9 +166,10 @@ export function Map({ onPinPlaced, reports = [], isPlacingPin = false, pinPositi
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; OpenStreetMap contributors'
             />
+            <SelectedReportFocus reports={reports} selectedReportId={selectedReportId} />
             <PinManager onPinPlaced={onPinPlaced} isPlacingPin={isPlacingPin} pinPosition={pinPosition}/>
             <AreaLayers areas={areas} />
-            <ReportMarkers reports={reports} />
+            <ReportMarkers reports={reports} selectedReportId={selectedReportId} />
         </MapContainer>
     );
 }

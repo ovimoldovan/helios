@@ -42,8 +42,10 @@ export async function postJson<TResponse>(url: string, body: unknown, token?: st
   return (await response.json()) as TResponse;
 }
 
-export async function putJson<TResponse>(url: string, token?: string): Promise<TResponse> {
-  const headers: Record<string, string> = {};
+export async function putJson<TResponse>(url: string, token?: string, body?: unknown): Promise<TResponse> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json' 
+  };
 
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
@@ -52,6 +54,7 @@ export async function putJson<TResponse>(url: string, token?: string): Promise<T
   const response = await fetch(url, {
     method: 'PUT',
     headers: headers,
+    body: body ? JSON.stringify(body) : undefined,
   });
 
   if (!response.ok) {
@@ -59,6 +62,23 @@ export async function putJson<TResponse>(url: string, token?: string): Promise<T
   }
 
   return (await response.json()) as TResponse;
+}
+
+export async function deleteJson(url: string, token?: string): Promise<void> {
+  const headers: Record<string, string> = {};
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const response = await fetch(url, {
+    method: 'DELETE',
+    headers: headers,
+  });
+
+  if (!response.ok) {
+    throw new Error(`Request failed with status ${response.status}.`);
+  }
 }
 
 export async function putJsonWithBody<TResponse>(url: string, body: unknown, token?: string): Promise<TResponse> {
@@ -108,4 +128,28 @@ export async function patchJson<TResponse>(url: string, token?: string): Promise
   }
 
   return (await response.json()) as TResponse;
+}
+
+export async function postFormData<TRespoonse>(url:string, formData: FormData, token?: string): Promise<TRespoonse> {
+  const headers: Record<string, string> = {};
+  
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: headers,
+    body: formData,
+  });
+  
+  if (!response.ok) {
+    if (response.status === 400) {
+      throw await response.json();
+    }
+    
+    throw new Error(`Request failed with status ${response.status}.`);
+  }
+  
+  return (await response.json()) as TRespoonse;
 }

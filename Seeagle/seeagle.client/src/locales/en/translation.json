@@ -62,6 +62,9 @@
   "reportsTitle": "Reports",
   "reportsDescription": "Review reports submitted by users.",
   "reportTypesPageTitle": "Report Types",
+  "newReportType": "New report type",
+  "editReportType": "Edit report type",
+  "newReportTypeButtonText": "New",
   "reportTypesPageDescription": "Add report types that users can select when creating reports.",
   "reportTypeNamePlaceholder": "Report type name",
   "reportTypeNameRequired": "Report type name is required.",
@@ -180,14 +183,41 @@
 
   "authRequiredTitle": "Authentication Required",
   "authRequiredDescription": "Please log in or create an account to submit a report.",
+
+  "placingPin": "Placing pin...",
+  "clickMapToDrop": "Click on the map to drop a pin",
+  "lineReport": "Line report",
+
+  "edit": "Edit",
+  "editReport": "Edit Report",
+  "selectPriority": "Select priority",
+  "saveChanges": "Save Changes",
+  "saving": "Saving...",
+  "unexpectedErrorUpdatingReport": "Unexpected error while updating report.",
+
+  "backToDashboard": "Back to Dashboard",
+  "all": "All",
+  "pending": "Pending",
+  "approved": "Approved",
+
+  "errorWhileApprovingReport": "Error while approving report.",
+  "errorWhileRejectingReport": "Error while rejecting report.",
   "approve": "Approve",
   "reject": "Reject",
+"Photo": "Photo",
+  "photoPreview": "Photo Preview",
+  "remove": "Remove",
+  "optional": "Optional",
   "edit": "Edit",
   "disable": "Disable",
+  "enable": "Enable",
   "save": "Save",
   "saving": "Saving...",
+
   "unexpectedErrorUpdatingReportType": "Unexpected error while updating report type.",
+  "unexpectedErrorChangingReportType": "Unexpected error while changing report type.",
   "unexpectedErrorDisablingReportType": "Unexpected error while disabling report type.",
+  "reportType": "Report Type",
 
   "publicReports": "Public Reports",
   "filterByArea": "Filter by area",
@@ -201,7 +231,14 @@
 
   "unexpectedErrorLoadingReports": "Unexpected error while loading reports.",
 
-  "backToDashboard": "Back to Dashboard"
 
-  
+  "assistantOnline": "Online",
+  "assistantOffline": "Offline",
+  "assistantChecking": "Checking...",
+
+  "allReportsTitle": "All Reports",
+  "allReportsDescription": "Review all reports, except pending ones.",
+  "noReportsFound": "No reports found.",
+  "backToDashboard": "Back to Dashboard"
 }
+  

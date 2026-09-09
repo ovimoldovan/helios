@@ -10,7 +10,7 @@ public class Report
         User = null!;
     }
 
-    public Report(Point location, string? description, User.User user)
+    public Report(Point location, string? description, User.User user, ReportType type)
     {
         if (location.Y < -90 || location.Y > 90)
             throw new ArgumentOutOfRangeException(nameof(location.Y), "Latitude must be between -90 and 90.");
@@ -23,16 +23,17 @@ public class Report
         Description = description;
         CreatedUtc = DateTime.UtcNow;
         User = user;
-        Status = "Pending";
+        Type = type;
     }
 
     public Guid Id { get; private set; }
     public Point Location { get; set; }
     public string? Description { get; private set; }
     public DateTime CreatedUtc { get; private set; }
+    public Photo? Photo { get; private set; }
     public User.User User { get; private set; }
-    public Guid? ReportTypeId { get; private set; }
-    public string Status { get; private set; } = string.Empty;
+    public ReportType Type { get; private set; }
+    public ReportStatus Status { get; private set; } = ReportStatus.Pending;
     public Priority Priority { get; private set; } = Priority.Low;
     public string? MessageToReporter { get; private set; }
     public bool IsSolved { get; private set; }
@@ -46,7 +47,7 @@ public class Report
     {
         IsSolved =  true;
         MessageToReporter = message;
-        Status = "Solved";
+        Status = ReportStatus.Solved;
     }
     
     public void UpdateMessageToReporter(string? message)
@@ -56,12 +57,35 @@ public class Report
     
     public void Approve(Priority priority)
     {
-        Status = "Approved";
+        Status = ReportStatus.Approved;
         Priority = priority;
     }
     
     public void Reject()
     {
-        Status = "Rejected";
+        Status = ReportStatus.Rejected;
+    }
+    
+    public void AttachPhoto(Photo photo)
+    {
+        if (Photo is not null)
+            throw new InvalidOperationException("Photo already attached to report.");
+        Photo = photo;
+    }
+
+    public bool IsDeleted { get; private set; }
+
+    public void Delete()
+    {
+        IsDeleted = true;
+    }
+    public void UpdateDescription(string description)
+    {
+        Description = description;
+    }
+    
+    public void UpdatePriority(Priority priority)
+    {
+        Priority = priority;
     }
 }
