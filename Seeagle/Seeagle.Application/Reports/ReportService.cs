@@ -297,11 +297,13 @@ public sealed class ReportService : IReportService
 
         if (!string.IsNullOrWhiteSpace(status))
         {
-            query = query.Where(report => report.Status.ToString() == status);
+            var statusEnum = Enum.Parse<ReportStatus>(status);
+            query = query.Where(report => report.Status == statusEnum);
         }
         if (!string.IsNullOrWhiteSpace(excludeStatus))
         {
-            query = query.Where(report => report.Status.ToString() != excludeStatus);
+            var excludeEnum = Enum.Parse<ReportStatus>(excludeStatus);
+            query = query.Where(report => report.Status != excludeEnum);
         }
 
         var totalCount = await query.CountAsync(cancellationToken);
