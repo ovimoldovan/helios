@@ -9,7 +9,10 @@ namespace Seeagle.Server.Controllers;
 
 [ApiController]
 [Route("api/reports")]
-public sealed class ReportsController(IReportService reportService, IReportQueryService reportQueryService, IPhotoProcessor photoProcessor) : ControllerBase
+public sealed class ReportsController(
+    IReportService reportService, 
+    IReportQueryService reportQueryService, 
+    IPhotoProcessor photoProcessor) : ControllerBase
 {
     [Authorize]
     [HttpPost]
@@ -62,7 +65,7 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
     [HttpPut("{id:guid}/approve")]
     public async Task<ActionResult<ReportDto>> Approve(
         Guid id,
-        [FromQuery] string priority = "low"  ,
+        [FromQuery] string priority = "low",
         CancellationToken cancellationToken = default)
     {
         var report = await reportService.ApproveAsync(id, priority, cancellationToken);
@@ -79,9 +82,10 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
     [HttpPut("{id:guid}/reject")]
     public async Task<ActionResult<ReportDto>> Reject(
         Guid id,
-        CancellationToken cancellationToken)
+        [FromQuery] string? message = null,
+        CancellationToken cancellationToken = default)
     {
-        var report = await reportService.RejectAsync(id, cancellationToken);
+        var report = await reportService.RejectAsync(id, message, cancellationToken);
 
         if (report is null)
         {
@@ -105,6 +109,7 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
 
         return Ok(reports);
     }
+
     [Authorize(Roles = "Moderator, Admin")]
     [HttpPut("{id:guid}/solved")]
     public async Task<ActionResult<ReportDto>> MarkAsSolved(
@@ -188,6 +193,7 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
 
         return File(photo.Data, photo.ContentType);
     }
+
     [Authorize]
     [HttpGet("my")]
     public async Task<ActionResult<PagedResult<ReportDto>>> GetMyReports(
@@ -210,6 +216,30 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
         return Ok(reports);
     }
 
+   
+    [Authorize]
+    [HttpGet("public")]
+    public async Task<ActionResult<PagedResult<ReportDto>>> GetPublicReports(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
+        [FromQuery] string? status = null,
+        [FromQuery] Guid? areaId = null,
+        [FromQuery] string? sortBy = "createdUtc",
+        [FromQuery] string? sortOrder = "desc",
+        CancellationToken cancellationToken = default)
+    {
+        var reports = await reportQueryService.GetPublicReportsAsync(
+            pageNumber,
+            pageSize,
+            status,
+            areaId,
+            sortBy,
+            sortOrder,
+            cancellationToken);
+    
+        return Ok(reports);
+    }
+
     [Authorize(Roles = "Moderator, Admin")]
     [HttpGet("all")]
     public async Task<ActionResult<PagedResult<ReportDto>>> GetAllReports(
@@ -228,22 +258,21 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
         
         return Ok(reports);
     }
-	
-    [Authorize(Roles = "Moderator, Admin")]
-	[HttpPut("{id:guid}")]
-	public async Task<ActionResult<ReportDto>> UpdateReport(
-    	Guid id,
-    	[FromBody] UpdateReportRequest request,
-    	CancellationToken cancellationToken)
-	{
-    	var report = await reportService.UpdateAsync(id, request, cancellationToken);
-        if (report is null)
-    		{
-        		return NotFound();
-    		}
     
-    	return Ok(report);
-	}
+    [Authorize(Roles = "Moderator, Admin")]
+    [HttpPut("{id:guid}")]
+    public async Task<ActionResult<ReportDto>> UpdateReport(
+        Guid id,
+        [FromBody] UpdateReportRequest request,
+        CancellationToken cancellationToken)
+    {
+        var report = await reportService.UpdateAsync(id, request, cancellationToken);
+        if (report is null)
+        {
+            return NotFound();
+        }
+        return Ok(report);
+    }
 
     [Authorize(Roles = "Moderator, Admin")]
     [HttpGet]
@@ -264,7 +293,6 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
             return BadRequest(new { message = ex.Message });
         }
     }
-
 
     [Authorize(Roles = "Moderator, Admin")]
     [HttpDelete("{id:guid}")]

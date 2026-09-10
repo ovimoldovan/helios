@@ -1,8 +1,9 @@
-import { useState, useCallback } from 'react';
+import {useState, useCallback, useEffect} from 'react';
 import { Link } from 'react-router-dom';
 import { DrawableMap } from './DrawableMap';
 import { AreasSidePanel } from './AreasSidePanel';
-import { postJson } from '@/shared/api/httpClient';
+import {getJson, postJson} from '@/shared/api/httpClient';
+import { putJsonWithBody, deleteJson } from '@/shared/api/httpClient';
 import { getCookie } from '@/shared/utils/cookies';
 import type { Area, CreateAreaRequest, CreateAreaResponse } from '../types';
 
@@ -11,8 +12,18 @@ export function AdminAreasPage() {
     const [nextId, setNextId] = useState(1);
     const [drawMode, setDrawMode] = useState<'rectangle' | 'polygon' | null>(null);
 
-    // TODO (Backend): fetch existing areas on page load using getJson
-
+    useEffect(() => {
+        const loadAreas = async () => {
+            try {
+                const token = getCookie('authToken');
+                const data = await getJson<Area[]>('/api/areas', token ?? undefined);
+                setAreas(data);
+            } catch (error) {
+                console.error('Failed to load areas:', error);
+            }
+        };
+        loadAreas();
+    }, []);
     const handleAreaCreated = useCallback(async(coordinates: number[][]) => {
         const request: CreateAreaRequest = {
             name: `Area ${nextId}`,
@@ -40,14 +51,26 @@ export function AdminAreasPage() {
     }, [nextId]);
 
     function handleDeleteArea(id: string) {
-        // TODO (Backend): Make a DELETE request to `/api/areas/${id}` 
-        setAreas(areas.filter((a) => a.id !== id));
+        const token = getCookie('authToken');
+        deleteJson(`/api/areas/${id}`, token ?? undefined)
+            .then(() => {
+                setAreas(areas.filter((a) => a.id !== id));
+            })
+            .catch((error) => {
+                console.error('Failed to delete area:', error);
+            });
     }
-
     function handleRenameArea(id: string, newName: string) {
-        // TODO (Backend): Make a PUT request to `/api/areas/${id}`
-        setAreas(areas.map((a) => a.id === id ? { ...a, name: newName } : a));
+        const token = getCookie('authToken');
+        putJsonWithBody<Area>(`/api/areas/${id}`, { name: newName }, token ?? undefined)
+            .then((updated) => {
+                setAreas(areas.map((a) => a.id === id ? updated : a));
+            })
+            .catch((error) => {
+                console.error('Failed to rename area:', error);
+            });
     }
+    
 
     return (
         <div className="relative h-screen w-screen overflow-hidden">
