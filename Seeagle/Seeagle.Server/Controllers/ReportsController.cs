@@ -215,8 +215,7 @@ public sealed class ReportsController(
         return Ok(reports);
     }
 
-    // ✅ Păstrează ambele metode: GetPublicReports (branch-ul tău) și GetAllReports (main)
-
+   
     [Authorize]
     [HttpGet("public")]
     public async Task<ActionResult<PagedResult<ReportDto>>> GetPublicReports(

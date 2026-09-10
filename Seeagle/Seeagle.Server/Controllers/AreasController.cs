@@ -1,6 +1,6 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Seeagle.Application.Areas;
-
 namespace Seeagle.Server.Controllers;
 
 [ApiController]
@@ -24,6 +24,7 @@ public sealed class AreasController(IAreaService areaService) : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<AreaDto>> Update(
         Guid id,
         [FromBody] UpdateAreaRequest request,
@@ -40,6 +41,7 @@ public sealed class AreasController(IAreaService areaService) : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
         var deleted = await areaService.DeleteAsync(id, cancellationToken);

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { DrawableMap } from './DrawableMap';
 import { AreasSidePanel } from './AreasSidePanel';
 import {getJson, postJson} from '@/shared/api/httpClient';
-import { putJsonWithBody } from '@/shared/api/httpClient';
+import { putJsonWithBody, deleteJson } from '@/shared/api/httpClient';
 import { getCookie } from '@/shared/utils/cookies';
 import type { Area, CreateAreaRequest, CreateAreaResponse } from '../types';
 
@@ -51,8 +51,14 @@ export function AdminAreasPage() {
     }, [nextId]);
 
     function handleDeleteArea(id: string) {
-        // TODO (Backend): Make a DELETE request to `/api/areas/${id}` 
-        setAreas(areas.filter((a) => a.id !== id));
+        const token = getCookie('authToken');
+        deleteJson(`/api/areas/${id}`, token ?? undefined)
+            .then(() => {
+                setAreas(areas.filter((a) => a.id !== id));
+            })
+            .catch((error) => {
+                console.error('Failed to delete area:', error);
+            });
     }
     function handleRenameArea(id: string, newName: string) {
         const token = getCookie('authToken');

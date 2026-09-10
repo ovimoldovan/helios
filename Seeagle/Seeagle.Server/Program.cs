@@ -38,7 +38,6 @@ builder.Services.AddScoped<IAreaService, AreaService>();
 builder.Services.AddScoped<IReportTypeService, ReportTypeService>();
 builder.Services.AddScoped<IReportTypeQueryService, ReportTypeQueryService>();
 builder.Services.AddScoped<ISampleNameService, SampleNameService>();
-builder.Services.AddScoped<IAreaService, AreaService>();
 builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddScoped<IUserQueryService, UserQueryService>();
 builder.Services.AddScoped<IReportQueryService, ReportQueryService>();

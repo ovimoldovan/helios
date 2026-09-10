@@ -44,7 +44,8 @@ public sealed class ReportQueryService : IReportQueryService
         CancellationToken cancellationToken)
     {
         var query = _reportRepository.GetAllQueryable()
-            .Where(r => r.Status == ReportStatus.Approved || r.Status == ReportStatus.Solved || r.Status == ReportStatus.Pending);
+			.Where(r => !r.IsDeleted)
+            .Where(r => r.Status == ReportStatus.Approved || r.Status == ReportStatus.Solved);
         
 		if (!string.IsNullOrEmpty(status))
     	{
