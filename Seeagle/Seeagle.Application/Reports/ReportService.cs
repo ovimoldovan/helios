@@ -24,6 +24,11 @@ public sealed class ReportService : IReportService
         _reportTypeRepository = reportTypeRepository;
         _photoProcessor = photoProcessor;
     }
+    
+    private static string GetTypeName(Report report)
+    {
+        return report.Type?.Name ?? "General";
+    }
 
     public async Task<ReportDto> CreateAsync(Guid userId, CreateReportRequest request, CancellationToken cancellationToken)
     {
@@ -49,7 +54,7 @@ public sealed class ReportService : IReportService
             report.CreatedUtc,
             report.Status.ToString(),
             report.Priority.ToString(),
-            reportType.Name,
+            GetTypeName(report),
             report.MessageToReporter);
     }
 
@@ -91,7 +96,6 @@ public sealed class ReportService : IReportService
     {
         var report = _reportRepository
             .GetAllQueryable()
-            .Include(report => report.Type)
             .FirstOrDefault(report => report.Id == id);
 
         if (report is null)
@@ -118,7 +122,7 @@ public sealed class ReportService : IReportService
             report.CreatedUtc,
             report.Status.ToString(),
             report.Priority.ToString(),
-            report.Type.Name,
+            GetTypeName(report),
             report.MessageToReporter);
     }
 
@@ -126,7 +130,6 @@ public sealed class ReportService : IReportService
     {
         var report = _reportRepository
             .GetAllQueryable()
-            .Include(report => report.Type)
             .FirstOrDefault(report => report.Id == id);
 
         if (report is null)
@@ -147,7 +150,7 @@ public sealed class ReportService : IReportService
             report.CreatedUtc,
             report.Status.ToString(),
             report.Priority.ToString(),
-            report.Type.Name,
+            GetTypeName(report),
             report.MessageToReporter);
     }
 
@@ -155,7 +158,6 @@ public sealed class ReportService : IReportService
     {
         var report = _reportRepository
             .GetAllQueryable()
-            .Include(report => report.Type)
             .FirstOrDefault(report => report.Id == id);
         if (report is null)
         {
@@ -172,7 +174,7 @@ public sealed class ReportService : IReportService
             report.CreatedUtc,
             report.Status.ToString(),
             report.Priority.ToString(),
-            report.Type.Name,
+            GetTypeName(report),
             report.MessageToReporter);
     }
 
@@ -207,7 +209,6 @@ public sealed class ReportService : IReportService
     {
         var report = await _reportRepository
             .GetAllQueryable()
-            .Include(report => report.Type)
             .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
 
         if (report is null)
@@ -227,7 +228,7 @@ public sealed class ReportService : IReportService
             report.CreatedUtc,
             report.Status.ToString(),
             report.Priority.ToString(),
-            report.Type.Name,
+            GetTypeName(report),
             report.MessageToReporter
         );
     }
@@ -328,7 +329,6 @@ public sealed class ReportService : IReportService
     {
         var report = await _reportRepository
             .GetAllQueryable()
-            .Include(report => report.Type)
             .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
       
         if (report is null)
@@ -361,7 +361,7 @@ public sealed class ReportService : IReportService
             report.CreatedUtc,
             report.Status.ToString(),
             report.Priority.ToString(),
-            report.Type.Name,
+            GetTypeName(report),
             report.MessageToReporter
         );
     }
@@ -370,7 +370,6 @@ public sealed class ReportService : IReportService
     {
         var report = _reportRepository
             .GetAllQueryable()
-            .Include(report => report.Type)
             .FirstOrDefault(report => report.Id == reportId);
         if (report is null)
             return null;
@@ -391,7 +390,7 @@ public sealed class ReportService : IReportService
             report.CreatedUtc,
             report.Status.ToString(),
             report.Priority.ToString(),
-            report.Type.Name,
+            GetTypeName(report),
             report.MessageToReporter);
     }
     
