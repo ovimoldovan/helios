@@ -77,7 +77,7 @@
   "reportTypeAlreadyExists": "Acest tip de raport există deja.",
   "loadingReportTypes": "Se încarcă tipurile de rapoarte...",
   "unexpectedErrorLoadingReportTypes": "A apărut o eroare neașteptată la încărcarea tipurilor de rapoarte.",
-  
+
   "moderatorDashboardTitle": "Panou de moderare",
   "moderatorDashboardDescription": "Gestionează rapoartele care necesită moderare.",
   "moderationQueueTitle": "Coadă de moderare",
@@ -110,7 +110,7 @@
   "goHome": "Mergi la pagina principală",
   "unexpectedErrorLoadingUsers": "Eroare neașteptată la încărcarea utilizatorilor.",
   "unexpectedErrorAssigningModerator": "Eroare neașteptată la atribuirea rolului de moderator.",
-  
+
   "moderatorDashboard": "Panou Moderator",
   "moderationQueue": "Coadă de Moderare",
   "unexpectedError": "Eroare neașteptată la încărcarea rapoartelor.",
@@ -188,7 +188,7 @@
   "placingPin": "Plasează pin...",
   "clickMapToDrop": "Click pe hartă pentru a plasa un pin",
   "lineReport": "Raport linie",
-  
+
   "editReport": "Editează Raport",
   "selectPriority": "Selectează prioritatea",
   "saveChanges": "Salvează Modificările",
@@ -240,5 +240,3 @@
   "moderatorMessage": "Mesaj moderator",
   "rejectReport": "Respinge raportul"
 }
-
- 

@@ -143,35 +143,33 @@ public sealed class ReportService : IReportService
             GetTypeName(report),
             report.MessageToReporter);
     }
+	public async Task<ReportDto?> RejectAsync(Guid id, string? message, CancellationToken cancellationToken)
+	{
+    	var report = await _reportRepository
+        	.GetAllQueryable()
+        	.FirstOrDefaultAsync(report => report.Id == id, cancellationToken);
 
-    public async Task<ReportDto?> RejectAsync(Guid id, string? message, CancellationToken cancellationToken)
-    {
-        var report = await _reportRepository
-            .GetAllQueryable()
-            .FirstOrDefaultAsync(report => report.Id == id, cancellationToken);
+    	if (report is null)
+    	{
+        	return null;
+    	}
 
-        if (report is null)
-        {
-            return null;
-        }
+    	report.Reject();
+    	report.UpdateMessageToReporter(message);
 
-        report.Reject();
-        report.UpdateMessageToReporter(message);
+    	await _reportRepository.UpdateAsync(report, cancellationToken);
 
-        await _reportRepository.UpdateAsync(report, cancellationToken);
-
-        return new ReportDto(
-            report.Id,
-            report.Location.X,
-            report.Location.Y,
-            report.Description,
-            report.CreatedUtc,
-            report.Status.ToString(),
-            report.Priority.ToString(),
-            GetTypeName(report),
-            report.MessageToReporter);
-    }
-
+    	return new ReportDto(
+        	report.Id,
+        	report.Location.X,
+        	report.Location.Y,
+        	report.Description,
+        	report.CreatedUtc,
+        	report.Status.ToString(),
+        	report.Priority.ToString(),
+        	GetTypeName(report),
+        	report.MessageToReporter);
+	}
     public async Task<ReportDto?> MarkAsSolvedAsync(Guid id, string? message, CancellationToken cancellationToken)
     {
         var report = await _reportRepository

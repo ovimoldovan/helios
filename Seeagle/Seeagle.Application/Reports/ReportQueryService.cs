@@ -45,16 +45,16 @@ public sealed class ReportQueryService : IReportQueryService
         CancellationToken cancellationToken)
     {
         var query = _reportRepository.GetAllQueryable()
-			.Where(r => !r.IsDeleted)
+            .Where(r => !r.IsDeleted)
             .Where(r => r.Status == ReportStatus.Approved || r.Status == ReportStatus.Solved);
         
-		if (!string.IsNullOrEmpty(status))
-    	{
-        	if (Enum.TryParse<ReportStatus>(status, true, out var statusEnum))
-        	{
-            	query = query.Where(r => r.Status == statusEnum);
-        	}
-    	}
+        if (!string.IsNullOrEmpty(status))
+        {
+            if (Enum.TryParse<ReportStatus>(status, true, out var statusEnum))
+            {
+                query = query.Where(r => r.Status == statusEnum);
+            }
+        }
 
         if (areaId.HasValue)
         {
@@ -78,14 +78,15 @@ public sealed class ReportQueryService : IReportQueryService
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .Select(r => new ReportDto(
-    			r.Id,
-    			r.Location.X,
-   				r.Location.Y,
-    			r.Description,
-    			r.CreatedUtc,
-    			r.Status.ToString(),
-    			r.Priority.ToString(),
-    			r.Type.Name))
+                r.Id,
+                r.Location.X,
+                r.Location.Y,
+                r.Description,
+                r.CreatedUtc,
+                r.Status.ToString(),
+                r.Priority.ToString(),
+                r.Type.Name,
+                r.MessageToReporter))
             .ToListAsync(cancellationToken);
 
         return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
