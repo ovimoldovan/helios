@@ -11,7 +11,6 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import './AdminDashboard.css';
 import { useTranslation } from 'react-i18next';
-
 import { AssistantStatus } from '@/shared/types/admin';
 
 export function AdminDashboard() {

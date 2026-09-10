@@ -43,7 +43,7 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
         return Ok(reports);
     }
 
-    [Authorize(Roles = "Moderator")]
+    [Authorize(Roles = "Moderator, Admin")]
     [HttpGet("pending")]
     public async Task<ActionResult<PagedResult<ReportDto>>> GetPending(
         [FromQuery] int pageNumber = 1,
@@ -79,9 +79,10 @@ public sealed class ReportsController(IReportService reportService, IReportQuery
     [HttpPut("{id:guid}/reject")]
     public async Task<ActionResult<ReportDto>> Reject(
         Guid id,
-        CancellationToken cancellationToken)
+        [FromQuery] string? message = null,
+        CancellationToken cancellationToken = default)
     {
-        var report = await reportService.RejectAsync(id, cancellationToken);
+        var report = await reportService.RejectAsync(id, message, cancellationToken);
 
         if (report is null)
         {

@@ -219,5 +219,8 @@
 
   "allReportsTitle": "Toate rapoartele",
   "allReportsDescription": "Revizuiește toate rapoartele, cu excepția celor în așteptare.",
-  "noReportsFound": "Niciun raport găsit."
+  "noReportsFound": "Niciun raport găsit.",
+
+  "moderatorMessage": "Mesajul moderatorului",
+  "rejectReport": "Respinge raportul"
 }

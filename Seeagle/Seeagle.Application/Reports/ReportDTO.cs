@@ -8,5 +8,6 @@ public sealed record ReportDto(
     DateTime CreatedUtc,
     string Status,
     string Priority,
-    string Type
+    string Type,
+    string? MessageToReporter
     );

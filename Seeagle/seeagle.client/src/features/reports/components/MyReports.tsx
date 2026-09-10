@@ -98,6 +98,11 @@ export function MyReports() {
                                                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusBadge(report.status)}`}>
                                                         {report.status}
                                                     </span>
+                                                    {(report.status === 'Rejected' || report.status === 'Solved') && report.messageToReporter && (
+                                                        <p className="mt-2 text-sm text-muted-foreground">
+                                                            {t('moderatorMessage')}: {report.messageToReporter}
+                                                        </p>
+                                                    )}
                                                 </TableCell>
                                                 <TableCell className="py-2">
                                                     {new Date(report.createdUtc).toLocaleString()}
