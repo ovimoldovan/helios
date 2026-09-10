@@ -27,6 +27,8 @@ public sealed class ReportServiceTests
         var reportType = new ReportType("ReportType");
         reportTypeRepository.GetAllQueryable().Returns(new List<ReportType> { reportType }.BuildMock());
 
+        areaRepository.GetAllQueryable().Returns(new List<Area>().BuildMock());
+
         var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoProcessor);
         var request = new CreateReportRequest
         {
@@ -61,6 +63,8 @@ public sealed class ReportServiceTests
         
         var reportType = new ReportType("ReportType");
         reportTypeRepository.GetAllQueryable().Returns(new List<ReportType> { reportType }.BuildMock());
+
+        areaRepository.GetAllQueryable().Returns(new List<Area>().BuildMock());
 
         var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoProcessor);
         var request = new CreateReportRequest
@@ -100,6 +104,8 @@ public sealed class ReportServiceTests
         
         var reportType = new ReportType("ReportType");
         reportTypeRepository.GetAllQueryable().Returns(new List<ReportType> { reportType }.BuildMock());
+
+        areaRepository.GetAllQueryable().Returns(new List<Area>().BuildMock());
 
         var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoProcessor);
         var request = new CreateReportRequest
