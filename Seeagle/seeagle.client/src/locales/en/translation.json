@@ -207,16 +207,25 @@
 "Photo": "Photo",
   "photoPreview": "Photo Preview",
   "remove": "Remove",
-  "optional": "Optional",
-  "edit": "Edit",
   "disable": "Disable",
   "enable": "Enable",
   "save": "Save",
+
   "unexpectedErrorUpdatingReportType": "Unexpected error while updating report type.",
   "unexpectedErrorChangingReportType": "Unexpected error while changing report type.",
   "reportType": "Report Type",
   "unexpectedErrorDisablingReportType": "Unexpected error while disabling report type.",
-  
+
+  "publicReports": "Public Reports",
+  "filterByArea": "Filter by area",
+  "filterByStatus": "Filter by status",
+  "allAreas": "All areas",
+  "solved": "Solved",
+  "rejected": "Rejected",
+
+  "unexpectedErrorLoadingReports": "Unexpected error while loading reports.",
+
+
   "assistantOnline": "Online",
   "assistantOffline": "Offline",
   "assistantChecking": "Checking...",

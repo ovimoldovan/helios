@@ -210,20 +210,27 @@
   "enable": "Activează",
   "save": "Salvează",
   "saving": "Se salvează...",
-  "unexpectedErrorUpdatingReportType": "A apărut o eroare neașteptată la actualizarea tipului de raport.",
-  "reportType": "Tipul raportului",
-  "unexpectedErrorChangingReportType": "A apărut o eroare neașteptată la schimbarea statusului tipului de raport.",
-  
-  "allRoles": "Toate rolurile",
-  "searchUsers": "Caută utilizatori...",
 
-  "allReportsTitle": "Toate rapoartele",
+  "unexpectedErrorUpdatingReportType": "Eroare neașteptată la actualizarea tipului de raport.",
+  "unexpectedErrorChangingReportType": "Eroare neașteptată la modificarea tipului de raport.",
+  "unexpectedErrorDisablingReportType": "Eroare neașteptată la dezactivarea tipului de raport.",
+  "reportType": "Tip raport",
+
+  "publicReports": "Rapoarte Publice",
+  "filterByArea": "Filtrează după zonă",
+  "filterByStatus": "Filtrează după status",
+  "allAreas": "Toate zonele",
+  "solved": "Rezolvate",
+  "rejected": "Respins",
+
+  "unexpectedErrorLoadingReports": "Eroare neașteptată la încărcarea rapoartelor.",
+  
+  "assistantOnline": "Online",
+  "assistantOffline": "Offline",
+  "assistantChecking": "Se verifică...",
+
+  "allReportsTitle": "Toate Rapoartele",
   "allReportsDescription": "Revizuiește toate rapoartele, cu excepția celor în așteptare.",
-  "noReportsFound": "Niciun raport găsit.",
-  "searchUsers": "Caută utilizatori...",
-  "allRoles": "Toate rolurile",
-  "status_All": "Toate",
-  "status_Approved": "Aprobate",
-  "status_Rejected": "Respinse",
-  "status_Solved": "Rezolvate"
+  "moderatorMessage": "Mesaj moderator",
+  "rejectReport": "Respinge raportul"
 }

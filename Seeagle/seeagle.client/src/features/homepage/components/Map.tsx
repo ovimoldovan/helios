@@ -1,9 +1,10 @@
-import {useEffect, useState} from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from 'react-leaflet';
+import { useEffect, useState } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap, Tooltip, Polygon } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import type { Report } from '@/shared/types/report';
-import {getPriorityColor, getStatusColor} from "@/shared/constants/reportColors.ts";
+import { getPriorityColor, getStatusColor } from "@/shared/constants/reportColors.ts";
+import type { Area } from '@/features/admin/types';
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -26,11 +27,13 @@ function createColoredIcon(color: string) {
         popupAnchor: [0, -40],
     });
 }
+
 interface MapProps {
     onPinPlaced?: (position: [number, number] | null) => void;
     reports?: Report[];
     isPlacingPin?: boolean;
     pinPosition?: [number, number] | null;
+    areas?: Area[];
     selectedReportId?: string;
 }
 
@@ -73,9 +76,9 @@ function SelectedReportFocus({ reports, selectedReportId }: { reports?: Report[]
     return null;
 }
 
-function ReportMarkers({ reports }: { reports?: Report[]; }) {
+function ReportMarkers({ reports }: { reports?: Report[] }) {
     if (!reports) return null;
-    
+
     return reports.map((report) => {
         const isPending = report.status === 'Pending';
         const markerColor = isPending
@@ -83,7 +86,11 @@ function ReportMarkers({ reports }: { reports?: Report[]; }) {
             : getPriorityColor(report.priority);
 
         return (
-            <Marker key={report.id} position={[report.latitude, report.longitude]} icon={createColoredIcon(markerColor)}>
+            <Marker
+                key={report.id}
+                position={[report.latitude, report.longitude]}
+                icon={createColoredIcon(markerColor)}
+            >
                 <Popup>
                     <div className="space-y-1">
                         <div className="flex items-center gap-2">
@@ -94,9 +101,11 @@ function ReportMarkers({ reports }: { reports?: Report[]; }) {
                             <strong>{report.status}</strong>
                         </div>
                         {report.description && (<p className="text-sm">{report.description}</p>)}
-                        <p className="text-xs font-medium mt-1">
-                            Type: {report.type}
-                        </p>
+                        {report.type && (
+                            <p className="text-xs font-medium mt-1">
+                                Type: {report.type}
+                            </p>
+                        )}
                         {report.status === 'Approved' && report.priority && (
                             <p className="text-xs font-medium mt-1">
                                 Priority: {report.priority}
@@ -108,11 +117,35 @@ function ReportMarkers({ reports }: { reports?: Report[]; }) {
                     </div>
                 </Popup>
             </Marker>
-    );
+        );
     });
 }
 
-export function Map({ onPinPlaced, reports = [], isPlacingPin = false, pinPosition, selectedReportId }: MapProps) {
+function AreaLayers({ areas }: { areas?: Area[] }) {
+    if (!areas || areas.length === 0) return null;
+
+    return areas.map((area) => {
+        const positions: [number, number][] = area.coordinates.map(c => [c[0], c[1]]);
+        return (
+            <Polygon
+                key={area.id}
+                positions={positions}
+                pathOptions={{
+                    color: '#15803d',
+                    fillColor: '#15803d',
+                    fillOpacity: 0.15,
+                    weight: 2,
+                }}
+            >
+                <Tooltip permanent direction="center">
+                    {area.name}
+                </Tooltip>
+            </Polygon>
+        );
+    });
+}
+
+export function Map({onPinPlaced, reports = [], isPlacingPin = false, pinPosition, areas = [], selectedReportId}: MapProps) {
     return (
         <MapContainer
             center={[45.9432, 24.9668]}
@@ -126,6 +159,7 @@ export function Map({ onPinPlaced, reports = [], isPlacingPin = false, pinPositi
             />
             <SelectedReportFocus reports={reports} selectedReportId={selectedReportId} />
             <PinManager onPinPlaced={onPinPlaced} isPlacingPin={isPlacingPin} pinPosition={pinPosition}/>
+            <AreaLayers areas={areas} />
             <ReportMarkers reports={reports} />
         </MapContainer>
     );

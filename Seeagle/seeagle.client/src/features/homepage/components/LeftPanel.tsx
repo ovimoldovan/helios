@@ -104,13 +104,22 @@ export function LeftPanel({ sidebarExtra }: LeftPanelProps) {
                             </Link>
                         )}
                         {isAuthenticated && (
-                            <Link
-                                to="/my-reports"
-                                className="block px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                                onClick={() => setIsOpen(false)}
-                            >
-                                {t('myReports')}
-                            </Link>
+                            <>
+                                <Link
+                                    to="/my-reports"
+                                    className="block px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                                    onClick={() => setIsOpen(false)}
+                                >
+                                    {t('myReports')}
+                                </Link>
+                                <Link
+                                    to="/reports"
+                                    className="block px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                                    onClick={() => setIsOpen(false)}
+                                >
+                                    {t('publicReports')}
+                                </Link>
+                            </>
                         )}
 
                         {isModerator && (

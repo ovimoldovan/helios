@@ -13,6 +13,7 @@ export interface Report {
     status: string;
     priority: string;
     type: string;
+    messageToReporter?: string | null;
 }
 
 export interface ReportType {
