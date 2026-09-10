@@ -77,7 +77,7 @@
   "reportTypeAlreadyExists": "Acest tip de raport există deja.",
   "loadingReportTypes": "Se încarcă tipurile de rapoarte...",
   "unexpectedErrorLoadingReportTypes": "A apărut o eroare neașteptată la încărcarea tipurilor de rapoarte.",
-  
+
   "moderatorDashboardTitle": "Panou de moderare",
   "moderatorDashboardDescription": "Gestionează rapoartele care necesită moderare.",
   "moderationQueueTitle": "Coadă de moderare",
@@ -110,7 +110,7 @@
   "goHome": "Mergi la pagina principală",
   "unexpectedErrorLoadingUsers": "Eroare neașteptată la încărcarea utilizatorilor.",
   "unexpectedErrorAssigningModerator": "Eroare neașteptată la atribuirea rolului de moderator.",
-  
+
   "moderatorDashboard": "Panou Moderator",
   "moderationQueue": "Coadă de Moderare",
   "unexpectedError": "Eroare neașteptată la încărcarea rapoartelor.",
@@ -188,7 +188,7 @@
   "placingPin": "Plasează pin...",
   "clickMapToDrop": "Click pe hartă pentru a plasa un pin",
   "lineReport": "Raport linie",
-  
+
   "editReport": "Editează Raport",
   "selectPriority": "Selectează prioritatea",
   "saveChanges": "Salvează Modificările",
@@ -210,17 +210,33 @@
   "enable": "Activează",
   "save": "Salvează",
   "saving": "Se salvează...",
-  "unexpectedErrorUpdatingReportType": "A apărut o eroare neașteptată la actualizarea tipului de raport.",
-  "reportType": "Tipul raportului",
-  "unexpectedErrorChangingReportType": "A apărut o eroare neașteptată la schimbarea statusului tipului de raport.",
-  
-  "allRoles": "Toate rolurile",
-  "searchUsers": "Caută utilizatori...",
 
-  "allReportsTitle": "Toate rapoartele",
+  "unexpectedErrorUpdatingReportType": "Eroare neașteptată la actualizarea tipului de raport.",
+  "unexpectedErrorChangingReportType": "Eroare neașteptată la modificarea tipului de raport.",
+  "unexpectedErrorDisablingReportType": "Eroare neașteptată la dezactivarea tipului de raport.",
+  "reportType": "Tip raport",
+
+  "publicReports": "Rapoarte Publice",
+  "filterByArea": "Filtrează după zonă",
+  "filterByStatus": "Filtrează după status",
+  "allAreas": "Toate zonele",
+  "all": "Toate",
+  "approved": "Aprobate",
+  "solved": "Rezolvate",
+  "pending": "În așteptare",
+  "rejected": "Respins",
+
+  "unexpectedErrorLoadingReports": "Eroare neașteptată la încărcarea rapoartelor.",
+
+  "backToDashboard": "Înapoi la panoul de moderare",
+
+  "assistantOnline": "Online",
+  "assistantOffline": "Offline",
+  "assistantChecking": "Se verifică...",
+
+  "allReportsTitle": "Toate Rapoartele",
   "allReportsDescription": "Revizuiește toate rapoartele, cu excepția celor în așteptare.",
-  "noReportsFound": "Niciun raport găsit.",
-
-  "moderatorMessage": "Mesajul moderatorului",
+  "noReportsFound": "Nu s-au găsit rapoarte.",
+  "moderatorMessage": "Mesaj moderator",
   "rejectReport": "Respinge raportul"
 }

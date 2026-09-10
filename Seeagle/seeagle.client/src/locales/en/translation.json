@@ -212,11 +212,26 @@
   "disable": "Disable",
   "enable": "Enable",
   "save": "Save",
+  "saving": "Saving...",
+
   "unexpectedErrorUpdatingReportType": "Unexpected error while updating report type.",
   "unexpectedErrorChangingReportType": "Unexpected error while changing report type.",
-  "reportType": "Report Type",
   "unexpectedErrorDisablingReportType": "Unexpected error while disabling report type.",
-  
+  "reportType": "Report Type",
+
+  "publicReports": "Public Reports",
+  "filterByArea": "Filter by area",
+  "filterByStatus": "Filter by status",
+  "allAreas": "All areas",
+  "all": "All",
+  "approved": "Approved",
+  "solved": "Solved",
+  "pending": "Pending",
+  "rejected": "Rejected",
+
+  "unexpectedErrorLoadingReports": "Unexpected error while loading reports.",
+
+
   "assistantOnline": "Online",
   "assistantOffline": "Offline",
   "assistantChecking": "Checking...",
@@ -224,7 +239,7 @@
   "allReportsTitle": "All Reports",
   "allReportsDescription": "Review all reports, except pending ones.",
   "noReportsFound": "No reports found.",
-
   "moderatorMessage": "Moderator message",
   "rejectReport": "Reject report"
 }
+ 
