@@ -2,6 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Seeagle.Application.Common;
@@ -43,6 +44,9 @@ builder.Services.AddScoped<IPhotoProcessor, PhotoProcessor>();
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
 builder.Services.Configure<CookieSettings>(builder.Configuration.GetSection("CookieSettings"));
 builder.Services.AddScoped<IJwtUtil, JwtUtil>();
+
+builder.Services.AddMemoryCache();
+
 var jwtOptions = builder.Configuration.GetSection("Jwt").Get<JwtOptions>()
                  ?? throw new InvalidOperationException("Jwt configuration is missing.");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -70,6 +74,24 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 {
                     context.Token = token;
                 }
+                return Task.CompletedTask;
+            },
+            OnTokenValidated = context =>
+            {
+                var token = context.Request.Cookies["AuthToken"];
+                if (string.IsNullOrEmpty(token))
+                {
+                    context.Fail("Invalid token.");
+                    return Task.CompletedTask;
+                }
+
+                var tokenBlacklist = context.HttpContext.RequestServices.GetRequiredService<IMemoryCache>();
+
+                if (tokenBlacklist.TryGetValue(token, out _))
+                {
+                    context.Fail("Token has been revoked.");
+                }
+
                 return Task.CompletedTask;
             }
         };
