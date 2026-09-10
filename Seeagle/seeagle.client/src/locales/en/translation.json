@@ -244,9 +244,7 @@
   "status_All": "All",
   "status_Approved": "Approved",
   "status_Rejected": "Rejected",
-  "status_Solved": "Solved"
-}
+  "status_Solved": "Solved",
   "moderatorMessage": "Moderator message",
   "rejectReport": "Reject report"
 }
- 
