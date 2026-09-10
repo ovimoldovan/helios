@@ -13,26 +13,31 @@ public sealed class ReportService : IReportService
     private readonly IRepository<Report> _reportRepository;
     private readonly IRepository<User> _userRepository;
     private readonly IRepository<ReportType> _reportTypeRepository;
- 	private readonly IRepository<Area> _areaRepository;
+    private readonly IRepository<Area> _areaRepository;
     
-	private static readonly int StandardGpsFormat = 4326;
+    private static readonly int StandardGpsFormat = 4326;
     private static readonly GeometryFactory GeometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: StandardGpsFormat);
     private readonly IPhotoProcessor _photoProcessor;
     private static readonly string[] ValidStatuses = { "Pending", "Approved", "Rejected", "Solved" };
 
     public ReportService(
-    	IRepository<Report> reportRepository,
-    	IRepository<User> userRepository,
-    	IRepository<Area> areaRepository,         
-    	IRepository<ReportType> reportTypeRepository, 
-    	IPhotoProcessor photoProcessor)
-	{
-    	_reportRepository = reportRepository;
-    	_userRepository = userRepository;
-    	_areaRepository = areaRepository;
-    	_reportTypeRepository = reportTypeRepository;
-    	_photoProcessor = photoProcessor;
-	}
+        IRepository<Report> reportRepository,
+        IRepository<User> userRepository,
+        IRepository<Area> areaRepository,
+        IRepository<ReportType> reportTypeRepository,
+        IPhotoProcessor photoProcessor)
+    {
+        _reportRepository = reportRepository;
+        _userRepository = userRepository;
+        _areaRepository = areaRepository;
+        _reportTypeRepository = reportTypeRepository;
+        _photoProcessor = photoProcessor;
+    }
+
+    private static string GetTypeName(Report report)
+    {
+        return report.Type?.Name ?? "General";
+    }
 
     public async Task<ReportDto> CreateAsync(Guid userId, CreateReportRequest request, CancellationToken cancellationToken)
     {
@@ -50,14 +55,14 @@ public sealed class ReportService : IReportService
         var report = new Report(point, request.Description, user, reportType);
 
         var area = await _areaRepository.GetAllQueryable()
-        .FirstOrDefaultAsync(a => a.Geometry.Contains(point), cancellationToken);
-    
-    	if (area != null)
-    	{
-        	report.SetAreaId(area.Id);
-    	}
+            .FirstOrDefaultAsync(a => a.Geometry.Contains(point), cancellationToken);
 
-    	await _reportRepository.AddAsync(report, cancellationToken);
+        if (area != null)
+        {
+            report.SetAreaId(area.Id);
+        }
+
+        await _reportRepository.AddAsync(report, cancellationToken);
 
         return new ReportDto(
             report.Id,
@@ -67,7 +72,8 @@ public sealed class ReportService : IReportService
             report.CreatedUtc,
             report.Status.ToString(),
             report.Priority.ToString(),
-            reportType.Name);
+            GetTypeName(report),
+            report.MessageToReporter);
     }
 
     public async Task<PagedResult<ReportDto>> GetPendingAsync(
@@ -93,7 +99,8 @@ public sealed class ReportService : IReportService
                 report.CreatedUtc,
                 report.Status.ToString(),
                 report.Priority.ToString(),
-                report.Type.Name))
+                report.Type.Name,
+                report.MessageToReporter))
             .ToListAsync(cancellationToken);
 
         return new PagedResult<ReportDto>(
@@ -133,10 +140,11 @@ public sealed class ReportService : IReportService
             report.CreatedUtc,
             report.Status.ToString(),
             report.Priority.ToString(),
-            report.Type?.Name ?? "General");
+            GetTypeName(report),
+            report.MessageToReporter);
     }
 
-    public async Task<ReportDto?> RejectAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<ReportDto?> RejectAsync(Guid id, string? message, CancellationToken cancellationToken)
     {
         var report = await _reportRepository
             .GetAllQueryable()
@@ -148,6 +156,7 @@ public sealed class ReportService : IReportService
         }
 
         report.Reject();
+        report.UpdateMessageToReporter(message);
 
         await _reportRepository.UpdateAsync(report, cancellationToken);
 
@@ -159,7 +168,8 @@ public sealed class ReportService : IReportService
             report.CreatedUtc,
             report.Status.ToString(),
             report.Priority.ToString(),
-            report.Type?.Name ?? "General");
+            GetTypeName(report),
+            report.MessageToReporter);
     }
 
     public async Task<ReportDto?> MarkAsSolvedAsync(Guid id, string? message, CancellationToken cancellationToken)
@@ -182,7 +192,8 @@ public sealed class ReportService : IReportService
             report.CreatedUtc,
             report.Status.ToString(),
             report.Priority.ToString(),
-            report.Type?.Name ?? "General");
+            GetTypeName(report),
+            report.MessageToReporter);
     }
 
     public async Task<PagedResult<ReportDto>> GetApprovedReportsAsync(int pageNumber, int pageSize, CancellationToken cancellationToken)
@@ -205,7 +216,8 @@ public sealed class ReportService : IReportService
                 report.CreatedUtc,
                 report.Status.ToString(),
                 report.Priority.ToString(),
-                report.Type.Name))
+                report.Type.Name,
+                report.MessageToReporter))
             .ToListAsync(cancellationToken);
 
         return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
@@ -234,7 +246,8 @@ public sealed class ReportService : IReportService
             report.CreatedUtc,
             report.Status.ToString(),
             report.Priority.ToString(),
-            report.Type?.Name ?? "General");
+            GetTypeName(report),
+            report.MessageToReporter);
     }
 
     public async Task<PagedResult<ReportDto>> GetUserReportsAsync(
@@ -261,7 +274,8 @@ public sealed class ReportService : IReportService
                 report.CreatedUtc,
                 report.Status.ToString(),
                 report.Priority.ToString(),
-                report.Type.Name))
+                report.Type.Name,
+                report.MessageToReporter))
             .ToListAsync(cancellationToken);
 
         return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
@@ -306,7 +320,8 @@ public sealed class ReportService : IReportService
                 report.CreatedUtc,
                 report.Status.ToString(),
                 report.Priority.ToString(),
-                report.Type.Name))
+                report.Type.Name,
+                report.MessageToReporter))
             .ToListAsync(cancellationToken);
 
         return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
@@ -367,7 +382,8 @@ public sealed class ReportService : IReportService
             report.CreatedUtc,
             report.Status.ToString(),
             report.Priority.ToString(),
-            report.Type?.Name ?? "General");
+            GetTypeName(report),
+            report.MessageToReporter);
     }
 
     public async Task<ReportDto?> AttachPhotoAsync(Guid reportId, Guid userId, byte[] data, string contentType, CancellationToken cancellationToken)
@@ -394,7 +410,8 @@ public sealed class ReportService : IReportService
             report.CreatedUtc,
             report.Status.ToString(),
             report.Priority.ToString(),
-            report.Type?.Name ?? "General");
+            GetTypeName(report),
+            report.MessageToReporter);
     }
 
     public async Task<ProcessedPhoto?> GetPhotoAsync(Guid reportId, bool isModerator, CancellationToken cancellationToken)

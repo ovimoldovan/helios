@@ -423,11 +423,12 @@ public sealed class ReportServiceTests
         // Act
         var result = await service.RejectAsync(
             report.Id,
+            "Duplicate report",
             CancellationToken.None);
 
         // Assert
-        Assert.NotNull(result);
         Assert.Equal("Rejected", result.Status);
+        Assert.Equal("Duplicate report", result.MessageToReporter);
 
         await reportRepository
             .Received(1)
@@ -711,6 +712,7 @@ public sealed class ReportServiceTests
         // Act
         var result = await service.RejectAsync(
             Guid.NewGuid(),
+            null,
             CancellationToken.None);
 
         // Assert
