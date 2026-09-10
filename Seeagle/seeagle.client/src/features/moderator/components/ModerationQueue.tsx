@@ -19,6 +19,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { PriorityModal } from './PriorityModal';
+import { RejectModal } from './RejectModal';
 const PAGE_SIZE = 10;
 
 export function ModerationQueue() {
@@ -32,6 +33,8 @@ export function ModerationQueue() {
     const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
     const [isProcessing, setIsProcessing] = useState(false);
     const [selectedReport, setSelectedReport] = useState<ModerationReport | null>(null);
+    const [rejectModalOpen, setRejectModalOpen] = useState(false);
+    const [reportToReject, setReportToReject] = useState<ModerationReport | null>(null);
     
     useEffect(() => {
         setIsLoading(true);
@@ -82,20 +85,33 @@ export function ModerationQueue() {
         }
     };
 
-    async function handleReject(id: string) {
+    const handleReject = (report: ModerationReport) => {
+        setReportToReject(report);
+        setRejectModalOpen(true);
+    };
+
+    const handleConfirmReject = async (message: string | null) => {
+        if (!reportToReject) return;
+
+        setIsProcessing(true);
+
         try {
             const token = getAuthToken();
-            await rejectReport(id, token ?? undefined);
+            await rejectReport(reportToReject.id, message, token ?? undefined);
 
             setReports((currentReports) =>
-                currentReports.filter((report) => report.id !== id)
+                currentReports.filter((report) => report.id !== reportToReject.id)
             );
 
             setTotalCount((currentCount) => Math.max(0, currentCount - 1));
+            setRejectModalOpen(false);
+            setReportToReject(null);
         } catch {
             setError(t('errorWhileRejectingReport'));
+        } finally {
+            setIsProcessing(false);
         }
-    }
+    };
 
     return (
         <div className="p-6">
@@ -154,7 +170,7 @@ export function ModerationQueue() {
                                                     <Button
                                                         size="sm"
                                                         variant="outline"
-                                                        onClick={() => void handleReject(report.id)}
+                                                        onClick={() => handleReject(report)}
                                                     >
                                                         {t('reject')}
                                                     </Button>
@@ -211,12 +227,22 @@ export function ModerationQueue() {
                         </div>
                     </>
                 )}
-            
             <PriorityModal
                 isOpen={modalOpen}
                 onClose={handleModalClose}
                 onConfirm={handleConfirmApprove}
                 report={selectedReport}
+                isLoading={isProcessing}
+            />
+
+            <RejectModal
+                isOpen={rejectModalOpen}
+                onClose={() => {
+                    setRejectModalOpen(false);
+                    setReportToReject(null);
+                }}
+                onConfirm={handleConfirmReject}
+                report={reportToReject}
                 isLoading={isProcessing}
             />
         </div>

@@ -49,7 +49,8 @@ public sealed class ReportService : IReportService
             report.CreatedUtc,
             report.Status.ToString(),
             report.Priority.ToString(),
-            reportType.Name);
+            reportType.Name,
+            report.MessageToReporter);
     }
 
     public async Task<PagedResult<ReportDto>> GetPendingAsync(
@@ -75,7 +76,8 @@ public sealed class ReportService : IReportService
                 report.CreatedUtc,
                 report.Status.ToString(),
                 report.Priority.ToString(),
-                report.Type.Name))
+                report.Type.Name,
+                report.MessageToReporter))
             .ToListAsync(cancellationToken);
 
         return new PagedResult<ReportDto>(
@@ -89,6 +91,7 @@ public sealed class ReportService : IReportService
     {
         var report = _reportRepository
             .GetAllQueryable()
+            .Include(report => report.Type)
             .FirstOrDefault(report => report.Id == id);
 
         if (report is null)
@@ -115,13 +118,15 @@ public sealed class ReportService : IReportService
             report.CreatedUtc,
             report.Status.ToString(),
             report.Priority.ToString(),
-            report.Type.Name);
+            report.Type.Name,
+            report.MessageToReporter);
     }
 
-    public async Task<ReportDto?> RejectAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<ReportDto?> RejectAsync(Guid id, string? message, CancellationToken cancellationToken)
     {
         var report = _reportRepository
             .GetAllQueryable()
+            .Include(report => report.Type)
             .FirstOrDefault(report => report.Id == id);
 
         if (report is null)
@@ -130,6 +135,7 @@ public sealed class ReportService : IReportService
         }
 
         report.Reject();
+        report.UpdateMessageToReporter(message);
 
         await _reportRepository.UpdateAsync(report, cancellationToken);
 
@@ -141,13 +147,15 @@ public sealed class ReportService : IReportService
             report.CreatedUtc,
             report.Status.ToString(),
             report.Priority.ToString(),
-            report.Type.Name);
+            report.Type.Name,
+            report.MessageToReporter);
     }
 
     public async Task<ReportDto?> MarkAsSolvedAsync(Guid id, string? message, CancellationToken cancellationToken)
     {
         var report = _reportRepository
             .GetAllQueryable()
+            .Include(report => report.Type)
             .FirstOrDefault(report => report.Id == id);
         if (report is null)
         {
@@ -164,7 +172,8 @@ public sealed class ReportService : IReportService
             report.CreatedUtc,
             report.Status.ToString(),
             report.Priority.ToString(),
-            report.Type.Name);
+            report.Type.Name,
+            report.MessageToReporter);
     }
 
     public async Task<PagedResult<ReportDto>> GetApprovedReportsAsync(int pageNumber, int pageSize, CancellationToken cancellationToken)
@@ -187,7 +196,8 @@ public sealed class ReportService : IReportService
                 report.CreatedUtc,
                 report.Status.ToString(),
                 report.Priority.ToString(),
-                report.Type.Name))
+                report.Type.Name,
+                report.MessageToReporter))
             .ToListAsync(cancellationToken);
 
         return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
@@ -197,6 +207,7 @@ public sealed class ReportService : IReportService
     {
         var report = await _reportRepository
             .GetAllQueryable()
+            .Include(report => report.Type)
             .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
 
         if (report is null)
@@ -216,7 +227,8 @@ public sealed class ReportService : IReportService
             report.CreatedUtc,
             report.Status.ToString(),
             report.Priority.ToString(),
-            report.Type.Name
+            report.Type.Name,
+            report.MessageToReporter
         );
     }
     public async Task<PagedResult<ReportDto>> GetUserReportsAsync(
@@ -243,7 +255,8 @@ public sealed class ReportService : IReportService
                 report.CreatedUtc,
                 report.Status.ToString(),
                 report.Priority.ToString(),
-                report.Type.Name))
+                report.Type.Name,
+                report.MessageToReporter))
             .ToListAsync(cancellationToken);
 
         return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
@@ -287,7 +300,8 @@ public sealed class ReportService : IReportService
                 report.CreatedUtc,
                 report.Status.ToString(),
                 report.Priority.ToString(),
-                report.Type.Name))
+                report.Type.Name,
+                report.MessageToReporter))
             .ToListAsync(cancellationToken);
 
         return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
@@ -314,6 +328,7 @@ public sealed class ReportService : IReportService
     {
         var report = await _reportRepository
             .GetAllQueryable()
+            .Include(report => report.Type)
             .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
       
         if (report is null)
@@ -346,7 +361,8 @@ public sealed class ReportService : IReportService
             report.CreatedUtc,
             report.Status.ToString(),
             report.Priority.ToString(),
-            report.Type.Name
+            report.Type.Name,
+            report.MessageToReporter
         );
     }
     
@@ -354,6 +370,7 @@ public sealed class ReportService : IReportService
     {
         var report = _reportRepository
             .GetAllQueryable()
+            .Include(report => report.Type)
             .FirstOrDefault(report => report.Id == reportId);
         if (report is null)
             return null;
@@ -374,7 +391,8 @@ public sealed class ReportService : IReportService
             report.CreatedUtc,
             report.Status.ToString(),
             report.Priority.ToString(),
-            report.Type.Name);
+            report.Type.Name,
+            report.MessageToReporter);
     }
     
     public async Task<ProcessedPhoto?> GetPhotoAsync(Guid reportId, bool isModerator, CancellationToken cancellationToken)

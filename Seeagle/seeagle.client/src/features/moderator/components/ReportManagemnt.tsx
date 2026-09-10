@@ -12,7 +12,6 @@ import { ChevronLeftIcon, ChevronRightIcon, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { EditReportModal } from './EditReportModal';
 import { useTranslation } from 'react-i18next';
-import { LeftPanel } from '@/features/homepage/components/LeftPanel';
 import { useNavigate } from 'react-router-dom';
 import { PRIORITY_COLORS, STATUS_COLORS } from '@/shared/constants/reportColors';
 
@@ -122,7 +121,6 @@ export function ReportManagement() {
 
     return (
         <div className="flex">
-            <LeftPanel />
             <main className="flex-1 relative min-h-screen overflow-y-auto bg-muted p-8">
                 <div className="mx-auto w-full max-w-6xl">
                     <div className="flex items-center gap-4 mb-6">

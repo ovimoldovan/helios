@@ -28,7 +28,8 @@ public sealed class ReportQueryService : IReportQueryService
                 report.CreatedUtc,
                 report.Status.ToString(),
                 report.Priority.ToString(),
-                report.Type.Name))
+                report.Type.Name,
+                report.MessageToReporter))
             .ToListAsync(cancellationToken);
 
         return reports;
@@ -68,7 +69,8 @@ public sealed class ReportQueryService : IReportQueryService
                 report.CreatedUtc,
                 report.Status.ToString(),
                 report.Priority.ToString(),
-                report.Type.Name))
+                report.Type.Name,
+                report.MessageToReporter))
             .ToListAsync(cancellationToken);
     
         return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);

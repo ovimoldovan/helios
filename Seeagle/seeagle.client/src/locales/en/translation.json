@@ -223,5 +223,7 @@
 
   "allReportsTitle": "All Reports",
   "allReportsDescription": "Review all reports, except pending ones.",
-  "noReportsFound": "No reports found."
+  "noReportsFound": "No reports found.",
+
+  "moderatorMessage": "Moderator message"
 }
