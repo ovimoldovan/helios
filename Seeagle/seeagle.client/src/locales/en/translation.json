@@ -225,5 +225,6 @@
   "allReportsDescription": "Review all reports, except pending ones.",
   "noReportsFound": "No reports found.",
 
-  "moderatorMessage": "Moderator message"
+  "moderatorMessage": "Moderator message",
+  "rejectReport": "Reject report"
 }
