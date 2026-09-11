@@ -1,5 +1,5 @@
-import { postJson, getJson } from '@/shared/api/httpClient.ts';
-import type { CreateReportRequest, Report } from "@/shared/types/report.ts";
+import { postJson, getJson, postFormData } from '@/shared/api/httpClient.ts';
+import type {CreateReportRequest, Report, ReportType} from "@/shared/types/report.ts";
 import { getCookie } from "@/shared/utils/cookies.ts";
 import type {PagedResult} from "@/shared/types/pagedResult.ts";
 
@@ -16,6 +16,19 @@ export async function getApprovedReports(days: number = 30): Promise<Report[]> {
     const token = getCookie("authToken");
     return getJson<Report[]>(`/api/reports/approved?days=${days}`, token);
 }
+
+export async function uploadReportPhoto(reportId: string, file: File): Promise<Report> {
+    const token = getCookie("authToken");
+    if (!token) {
+        throw new Error("No authentication token found. Please login first.");
+    }
+    
+    const formData = new FormData();
+    formData.append("file", file);
+    
+    return postFormData<Report>(`/api/reports/${reportId}/photo`, formData, token);
+}
+
 export async function getMyReports(pageNumber: number = 1, pageSize: number = 10): Promise<PagedResult<Report>> {
     const token = getCookie("authToken");
     if (!token) {
@@ -25,4 +38,8 @@ export async function getMyReports(pageNumber: number = 1, pageSize: number = 10
         `/api/reports/my?pageNumber=${pageNumber}&pageSize=${pageSize}`,
         token
     );
+}
+
+export async function getActiveReportTypes(page: number, pageSize: number): Promise<PagedResult<ReportType>> {
+    return getJson<PagedResult<ReportType>>(`/api/report-types?pageNumber=${page}&pageSize=${pageSize}&onlyActive=true`)
 }

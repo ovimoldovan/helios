@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
     Dialog,
     DialogContent,
@@ -9,9 +9,19 @@ import {
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { createReport } from '@/features/reports/api/reportApi.ts';
-import type { Report } from '@/shared/types/report';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { createReport, uploadReportPhoto, getActiveReportTypes } from '@/features/reports/api/reportApi.ts';
+import type { Report, ReportType } from '@/shared/types/report';
 import { useTranslation } from 'react-i18next';
+import { Spinner } from "@/components/ui/spinner";
+
+const PAGE_SIZE = 20;
 
 interface AddReportModalProps {
     isOpen: boolean;
@@ -27,18 +37,82 @@ export function AddReportModal({
     pinPosition 
 }: AddReportModalProps) {
     const [description, setDescription] = useState('');
+    const [photoFile, setPhotoFile] = useState<File | null>(null);
+    const [photoPreviewUrl, setPhotoPreviewUrl] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    
+    const MAX_PHOTO_BYTES = 10 * 1024 * 1024;
+
+    const [reportTypes, setReportTypes] = useState<ReportType[]>([]);
+    const [reportTypePage, setReportTypePage] = useState(1);
+    const [reportTypeTotalCount, setReportTypeTotalCount] = useState(0);
+    const [reportTypesLoading, setReportTypesLoading] = useState(false);
+    const [selectedReportTypeId, setSelectedReportTypeId] = useState<string | null>(null);
+    const [isSelectOpen, setIsSelectOpen] = useState(false);
+    const sentinelRef = useRef<HTMLDivElement | null>(null);
+    const selectedReportType = reportTypes.find((rt) => rt.id === selectedReportTypeId);
+    
+    const { t } = useTranslation();
+
+    const hasMoreReportTypes = reportTypes.length < reportTypeTotalCount;
+
+    function fetchReportTypes(targetPage: number) {
+        setReportTypesLoading(true);
+
+        getActiveReportTypes(targetPage, PAGE_SIZE)
+            .then((result) => {
+                setReportTypes((prev) => (targetPage === 1 ? result.items : [...prev, ...result.items]));
+                setReportTypeTotalCount(result.totalCount);
+                setReportTypePage(targetPage);
+            })
+            .catch(() => setError(t('unexpectedErrorLoadingReportTypes')))
+            .finally(() => setReportTypesLoading(false));
+    }
+
+    useEffect(() => {
+        if (isOpen) {
+            fetchReportTypes(1);
+        }
+    }, [isOpen]);
+
+    useEffect(() => {
+        if (!isSelectOpen) return;
+
+        const sentinel = sentinelRef.current;
+        if (!sentinel) return;
+
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting && hasMoreReportTypes && !reportTypesLoading) {
+                fetchReportTypes(reportTypePage + 1);
+            }
+        });
+
+        observer.observe(sentinel);
+
+        return () => observer.disconnect();
+    }, [isSelectOpen, hasMoreReportTypes, reportTypesLoading, reportTypePage]);
 
     const handleClose = () => {
         setDescription('');
         setError(null);
+        resetPhoto();
+        setSelectedReportTypeId(null);
+        setReportTypes([]);
+        setReportTypePage(1);
+        setReportTypeTotalCount(0);
         onClose();
     };
 
     const handleSubmit = async () => {
         if (!pinPosition) {
             setError(t('placePinFirst'));
+            return;
+        }
+
+        if (!selectedReportTypeId) {
+            setError(t('selectReportTypeFirst'));
             return;
         }
 
@@ -55,7 +129,20 @@ export function AddReportModal({
                 longitude: pinPosition[1], 
                 latitude: pinPosition[0],
                 description: description.trim() || null,
+                reportTypeId: selectedReportTypeId,
             });
+
+            if (photoFile) {
+                try {
+                    await uploadReportPhoto(report.id, photoFile);
+                } catch {
+                    onReportCreated(report);
+                    handleClose();
+                    setError(t('reportCreatedPhotoFailed'));
+                    setIsSubmitting(false);
+                    return;
+                }
+            }
             onReportCreated(report);
             handleClose();
         } catch {
@@ -64,8 +151,41 @@ export function AddReportModal({
             setIsSubmitting(false);
         }
     };
+    
+    const resetPhoto = () => {
+        if (photoPreviewUrl) {
+            URL.revokeObjectURL(photoPreviewUrl);
+        }
+        setPhotoFile(null);
+        setPhotoPreviewUrl(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    };
+    
+    const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) {
+            return;
+        }
 
-    const { t } = useTranslation();
+        if (!file.type.startsWith('image/')) {
+            setError(t('photoMustBeImage'));
+            return;
+        }
+
+        if (file.size > MAX_PHOTO_BYTES) {
+            setError(t('photoTooLarge'));
+            return;
+        }
+
+        setError(null);
+        if (photoPreviewUrl) {
+            URL.revokeObjectURL(photoPreviewUrl);
+        }
+        setPhotoFile(file);
+        setPhotoPreviewUrl(URL.createObjectURL(file));
+    };
 
     return (
         <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -87,6 +207,33 @@ export function AddReportModal({
                     </div>
 
                     <div className="space-y-2">
+                        <Select
+                            value={selectedReportTypeId ?? undefined}
+                            onValueChange={setSelectedReportTypeId}
+                            onOpenChange={setIsSelectOpen}
+                        >
+                            <SelectTrigger id="reportType" className="w-full">
+                                <SelectValue placeholder={t('reportType')}>
+                                    {selectedReportType?.name}
+                                </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent alignItemWithTrigger={false}>
+                                {reportTypes.map((reportType) => (
+                                    <SelectItem key={reportType.id} value={reportType.id}>
+                                        {reportType.name}
+                                    </SelectItem>
+                                ))}
+                                <div ref={sentinelRef} className="h-1" />
+                                {reportTypesLoading && (
+                                    <div className="flex justify-center items-center">
+                                        <Spinner className="size-6"/>
+                                    </div>
+                                )}
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    <div className="space-y-2">
                         <Label htmlFor="description">
                             {t('description')} <span className="text-gray-400 text-xs">(optional)</span>
                         </Label>
@@ -101,6 +248,39 @@ export function AddReportModal({
                         <div className="text-right text-xs text-gray-400">
                             {description.length}/255
                         </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="photo">
+                                {t('Photo')} <span className="text-gray-400 text-xs">({t('optional')})</span>
+                            </Label>
+
+                            {photoPreviewUrl ? (
+                                <div className="relative">
+                                    <img
+                                        src={photoPreviewUrl}
+                                        alt={t('photoPreview')}
+                                        className="w-full max-h-48 object-cover rounded-md border border-gray-200"
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        className="absolute top-2 right-2"
+                                        onClick={resetPhoto}
+                                    >
+                                        {t('remove')}
+                                    </Button>
+                                </div>
+                            ) : (
+                                <input
+                                    id="photo"
+                                    ref={fileInputRef}
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handlePhotoChange}
+                                    className="text-sm text-gray-600 file:mr-3 file:rounded-md file:border file:border-gray-200 file:bg-gray-50 file:px-3 file:py-1.5 file:text-sm"
+                                />
+                            )}
+                        </div>
                     </div>
 
                     {error && (
@@ -114,7 +294,7 @@ export function AddReportModal({
                     <Button variant="outline" onClick={handleClose} disabled={isSubmitting}>
                         {t('cancel')}
                     </Button>
-                    <Button onClick={handleSubmit} disabled={isSubmitting || !pinPosition}>
+                    <Button onClick={handleSubmit} disabled={isSubmitting || !pinPosition || !selectedReportTypeId}>
                         {isSubmitting ? t('submitting') : t('submitReport')}
                     </Button>
                 </DialogFooter>

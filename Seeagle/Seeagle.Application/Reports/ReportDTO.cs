@@ -7,5 +7,7 @@ public sealed record ReportDto(
     string? Description,
     DateTime CreatedUtc,
     string Status,
-    string Priority
+    string Priority,
+    string Type,
+    string? MessageToReporter
     );

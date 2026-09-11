@@ -31,7 +31,7 @@
   "firstNameTooLong": "First name must be at most {{max}} characters.",
   "lastNameRequired": "Last name is required.",
   "lastNameTooLong": "Last name must be at most {{max}} characters.",
-
+  
   "cookiesPolicyTitle": "Cookies Policy",
   "registeredUsers": "Registered users",
   "loadingUsers": "Loading...",
@@ -62,6 +62,9 @@
   "reportsTitle": "Reports",
   "reportsDescription": "Review reports submitted by users.",
   "reportTypesPageTitle": "Report Types",
+  "newReportType": "New report type",
+  "editReportType": "Edit report type",
+  "newReportTypeButtonText": "New",
   "reportTypesPageDescription": "Add report types that users can select when creating reports.",
   "reportTypeNamePlaceholder": "Report type name",
   "reportTypeNameRequired": "Report type name is required.",
@@ -92,7 +95,7 @@
   "failedToSubmitReport": "Failed to submit report.",
   "tapMapToPlacePin": "Tap map to place a pin",
   "description": "Description",
-  "optional": "optional",
+  "optional": "(optional)",
   "descriptionPlaceholder": "Describe what you saw...",
   "cancel": "Cancel",
   "submitting": "Submitting...",
@@ -105,8 +108,9 @@
   "goHome": "Go to homepage",
   "unexpectedErrorLoadingUsers": "Unexpected error while loading users.",
   "unexpectedErrorAssigningModerator": "Unexpected error while assigning moderator.",
-
+  
   "moderatorDashboard": "Moderator Dashboard",
+ 
   "moderationQueue": "Moderation Queue",
   "unexpectedError": "Unexpected error while loading reports.",
   "unexpectedErrorApprove": "Unexpected error while approving report.",
@@ -141,7 +145,7 @@
   "noApprovedReports": "No approved reports.",
   "unexpectedErrorLoadingApproved": "Unexpected error while loading approved reports.",
   "unexpectedErrorProcessingAction": "Unexpected error while processing action.",
-
+  
   "languageEn": "EN",
   "languageRo": "RO",
 
@@ -200,20 +204,39 @@
   "errorWhileRejectingReport": "Error while rejecting report.",
   "approve": "Approve",
   "reject": "Reject",
+"Photo": "Photo",
+  "photoPreview": "Photo Preview",
+  "remove": "Remove",
   "disable": "Disable",
+  "enable": "Enable",
   "save": "Save",
+
   "unexpectedErrorUpdatingReportType": "Unexpected error while updating report type.",
+  "unexpectedErrorChangingReportType": "Unexpected error while changing report type.",
+  "reportType": "Report Type",
   "unexpectedErrorDisablingReportType": "Unexpected error while disabling report type.",
+
+  "publicReports": "Public Reports",
+  "filterByArea": "Filter by area",
+  "filterByStatus": "Filter by status",
+  "allAreas": "All areas",
+  "solved": "Solved",
+  "rejected": "Rejected",
+
   "unexpectedErrorLoadingReports": "Unexpected error while loading reports.",
 
-  "allRoles": "All roles",
-  "searchUsers": "Search users...",
-  
+
   "assistantOnline": "Online",
   "assistantOffline": "Offline",
   "assistantChecking": "Checking...",
 
   "allReportsTitle": "All Reports",
   "allReportsDescription": "Review all reports, except pending ones.",
-  "noReportsFound": "No reports found."
+  "noReportsFound": "No reports found.",
+  "searchUsers": "Search users...",
+  "allRoles": "All roles",
+  "status_All": "All",
+  "status_Approved": "Approved",
+  "status_Rejected": "Rejected",
+  "status_Solved": "Solved"
 }

@@ -18,21 +18,80 @@ public sealed class ReportQueryService : IReportQueryService
         CancellationToken cancellationToken)
     {
         var reports = await _reportRepository.GetAllQueryable()
-            .Where(r => r.Status == "Approved" && r.CreatedUtc >= fromDate && r.Status != "Solved")
-            .OrderByDescending(r => r.CreatedUtc)
+            .Where(report => report.Status == ReportStatus.Approved && report.CreatedUtc >= fromDate && report.Status != ReportStatus.Solved)
+            .OrderByDescending(report => report.CreatedUtc)
+            .Select(report => new ReportDto(
+                report.Id,
+                report.Location.X,
+                report.Location.Y,
+                report.Description,
+                report.CreatedUtc,
+                report.Status.ToString(),
+                report.Priority.ToString(),
+                report.Type.Name,
+                report.MessageToReporter))
+            .ToListAsync(cancellationToken);
+
+        return reports;
+    }
+    
+    public async Task<PagedResult<ReportDto>> GetPublicReportsAsync(
+        int pageNumber,
+        int pageSize,
+        string? status,
+        Guid? areaId,
+        string? sortBy,
+        string? sortOrder,
+        CancellationToken cancellationToken)
+    {
+        var query = _reportRepository.GetAllQueryable()
+            .Where(r => !r.IsDeleted)
+            .Where(r => r.Status == ReportStatus.Approved || r.Status == ReportStatus.Solved);
+        
+        if (!string.IsNullOrEmpty(status))
+        {
+            if (Enum.TryParse<ReportStatus>(status, true, out var statusEnum))
+            {
+                query = query.Where(r => r.Status == statusEnum);
+            }
+        }
+
+        if (areaId.HasValue)
+        {
+            query = query.Where(r => r.AreaId == areaId.Value);
+        }
+
+        query = (sortBy?.ToLower(), sortOrder?.ToLower()) switch
+        {
+            ("priority", "asc") => query.OrderBy(r => r.Priority),
+            ("priority", "desc") => query.OrderByDescending(r => r.Priority),
+            ("status", "asc") => query.OrderBy(r => r.Status),
+            ("status", "desc") => query.OrderByDescending(r => r.Status),
+            _ => sortOrder == "asc"
+                ? query.OrderBy(r => r.CreatedUtc)
+                : query.OrderByDescending(r => r.CreatedUtc)
+        };
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var reports = await query
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
             .Select(r => new ReportDto(
                 r.Id,
                 r.Location.X,
                 r.Location.Y,
                 r.Description,
                 r.CreatedUtc,
-                r.Status,
-                r.Priority.ToString()))
+                r.Status.ToString(),
+                r.Priority.ToString(),
+                r.Type.Name,
+                r.MessageToReporter))
             .ToListAsync(cancellationToken);
 
-        return reports;
+        return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
     }
-   
+
     public async Task<PagedResult<ReportDto>> GetAllReportsAsync(
         int pageNumber,
         int pageSize,
@@ -43,19 +102,19 @@ public sealed class ReportQueryService : IReportQueryService
         var query = _reportRepository.GetAllQueryable();
         query = sortBy?.ToLower() switch
         {
-            "priority" => sortOrder == "asc" 
-                ? query.OrderBy(r => r.Priority) 
+            "priority" => sortOrder == "asc"
+                ? query.OrderBy(r => r.Priority)
                 : query.OrderByDescending(r => r.Priority),
-            "status" => sortOrder == "asc" 
-                ? query.OrderBy(r => r.Status) 
+            "status" => sortOrder == "asc"
+                ? query.OrderBy(r => r.Status)
                 : query.OrderByDescending(r => r.Status),
-            _ => sortOrder == "asc" 
-                ? query.OrderBy(r => r.CreatedUtc) 
+            _ => sortOrder == "asc"
+                ? query.OrderBy(r => r.CreatedUtc)
                 : query.OrderByDescending(r => r.CreatedUtc)
         };
-    
+
         var totalCount = await query.CountAsync(cancellationToken);
-    
+
         var reports = await query
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
@@ -65,10 +124,12 @@ public sealed class ReportQueryService : IReportQueryService
                 report.Location.Y,
                 report.Description,
                 report.CreatedUtc,
-                report.Status,
-                report.Priority.ToString()))
+                report.Status.ToString(),
+                report.Priority.ToString(),
+                report.Type.Name,
+                report.MessageToReporter))
             .ToListAsync(cancellationToken);
-    
+
         return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
     }
 }

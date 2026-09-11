@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Geometries;
 using Seeagle.Application.Common;
 using Seeagle.Domain.Areas;
@@ -54,4 +55,45 @@ public sealed class AreaService(IRepository<Area> repository) : IAreaService
 
         return new AreaDto(area.Id, area.Name, coords, area.CreatedUtc);
     }
+    
+    public async Task<IReadOnlyList<AreaDto>> GetAllAsync(CancellationToken cancellationToken)
+    {
+        var areas = await repository.GetAllQueryable()
+            .OrderBy(a => a.Name)
+            .ToListAsync(cancellationToken);
+
+        return areas.Select(ToDto).ToList();
+    }
+
+    public async Task<AreaDto?> UpdateAsync(Guid id, UpdateAreaRequest request, CancellationToken cancellationToken)
+    {
+        var area = await repository.GetAllQueryable()
+            .FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
+
+        if (area is null)
+        {
+            return null;
+        }
+
+        area.UpdateName(request.Name);
+
+        await repository.UpdateAsync(area, cancellationToken);
+
+        return ToDto(area);
+    }
+
+    public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var area = await repository.GetAllQueryable()
+            .FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
+
+        if (area is null)
+        {
+            return false;
+        }
+
+        await repository.DeleteAsync(area, cancellationToken);
+        return true;
+    }
+    
 }

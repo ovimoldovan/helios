@@ -12,8 +12,6 @@ import { ChevronLeftIcon, ChevronRightIcon, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { EditReportModal } from './EditReportModal';
 import { useTranslation } from 'react-i18next';
-import { LeftPanel } from '@/features/homepage/components/LeftPanel';
-import { useNavigate } from 'react-router-dom';
 import { PRIORITY_COLORS, STATUS_COLORS } from '@/shared/constants/reportColors';
 
 const PAGE_SIZE = 10;
@@ -36,7 +34,6 @@ const Badge = ({ color, text }: { color: string; text: string }) => (
 
 export function ReportManagement() {
     const { t } = useTranslation();
-    const navigate = useNavigate();
 
     const [reports, setReports] = useState<ModerationReport[]>([]);
     const [page, setPage] = useState(1);
@@ -122,17 +119,9 @@ export function ReportManagement() {
 
     return (
         <div className="flex">
-            <LeftPanel />
             <main className="flex-1 relative min-h-screen overflow-y-auto bg-muted p-8">
                 <div className="mx-auto w-full max-w-6xl">
                     <div className="flex items-center gap-4 mb-6">
-                        <Button variant="outline" size="sm"
-                            onClick={() => navigate('/moderator')}
-                            className="flex items-center gap-2"
-                        >
-                            <ChevronLeftIcon className="h-4 w-4" />
-                            {t('backToDashboard')}
-                        </Button>
                         <h1 className="text-xl font-semibold">{t('reportManagementTitle')}</h1>
                     </div>
 

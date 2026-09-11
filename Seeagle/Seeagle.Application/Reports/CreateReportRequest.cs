@@ -14,4 +14,7 @@ public sealed class CreateReportRequest
 
     [MaxLength(255)]
     public string? Description { get; set; }
+    
+    [Required]
+    public Guid ReportTypeId { get; set; }
 }

@@ -32,15 +32,6 @@ public sealed class ReportTypeService : IReportTypeService
         return new ReportTypeDto(reportType.Id, reportType.Name, reportType.IsActive);
     }
 
-    public async Task<IReadOnlyList<ReportTypeDto>> GetAllAsync(CancellationToken cancellationToken)
-    {
-        var reportTypes = await _reportTypeRepository.GetAllAsync(cancellationToken);
-
-        return reportTypes
-            .Select(reportType => new ReportTypeDto(reportType.Id, reportType.Name, reportType.IsActive))
-            .ToList();
-    }
-
     public async Task<ReportTypeDto?> UpdateAsync(Guid id, UpdateReportTypeRequest request, CancellationToken cancellationToken)
     {
         var reportType = _reportTypeRepository
@@ -68,7 +59,7 @@ public sealed class ReportTypeService : IReportTypeService
         return new ReportTypeDto(reportType.Id, reportType.Name, reportType.IsActive);
     }
 
-    public async Task<ReportTypeDto?> DisableAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<ReportTypeDto?> ChangeStatusAsync(Guid id, CancellationToken cancellationToken)
     {
         var reportType = _reportTypeRepository
             .GetAllQueryable()
@@ -77,7 +68,7 @@ public sealed class ReportTypeService : IReportTypeService
         if (reportType is null)
             return null;
 
-        reportType.Disable();
+        reportType.ChangeStatus();
 
         await _reportTypeRepository.UpdateAsync(reportType, cancellationToken);
 
