@@ -39,10 +39,11 @@ public sealed class ReportsController(
     [HttpGet("approved")]
     public async Task<ActionResult<IReadOnlyList<ReportDto>>> GetApprovedReports(
         [FromQuery] int days = 30,
+        [FromQuery] Guid? areaId = null,
         CancellationToken cancellationToken = default)
     {
         var fromDate = DateTime.UtcNow.AddDays(-days);
-        var reports = await reportQueryService.GetApprovedReportsAsync(fromDate, cancellationToken);
+        var reports = await reportQueryService.GetApprovedReportsAsync(fromDate, areaId, cancellationToken);
         return Ok(reports);
     }
 

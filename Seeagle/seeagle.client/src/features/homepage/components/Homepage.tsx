@@ -6,6 +6,8 @@ import { AuthRequiredModal } from '@/features/reports/components/AuthRequiredMod
 import type { Report } from '@/shared/types/report';
 import { MapSidebarExtra } from '../MapSidebarExtra';
 import { getApprovedReports, getMyReports } from "@/features/reports/api/reportApi.ts";
+import { getAreas } from "@/features/areas/api/areaApi.ts";
+import type { Area } from '@/features/admin/types';
 import { useAuth } from '@/shared/context/AuthContext';
 import { useLocation } from 'react-router-dom';
 
@@ -19,26 +21,42 @@ export function Homepage() {
     const [pinPosition, setPinPosition] = useState<[number, number] | null>(null);
     const [reports, setReports] = useState<Report[]>([]);
     const [myPendingReports, setMyPendingReports] = useState<Report[]>([]);
+    const [areas, setAreas] = useState<Area[]>([]);
+    const [selectedAreaId, setSelectedAreaId] = useState<string | null>(null);
 
     useEffect(() => {
-        const loadApprovedReports = async () => {
-            const data = await getApprovedReports(30);
-            setReports(data);
+        const loadAreas = async () => {
+            try {
+                const data = await getAreas();
+                setAreas(data);
+            } catch (error) {
+                console.error('Failed to load areas:', error);
+            }
         };
-        loadApprovedReports();
+        loadAreas();
+
         const loadMyPendingReports = async () => {
             const result = await getMyReports(1, 1000);
             setMyPendingReports(result.items.filter(report => report.status === 'Pending'));
         };
         loadMyPendingReports();
-        
     }, []);
+
+    useEffect(() => {
+        const loadApprovedReports = async () => {
+            const data = await getApprovedReports(30, selectedAreaId ?? undefined);
+            setReports(data);
+        };
+        loadApprovedReports();
+    }, [selectedAreaId]);
 
     const allReports = [...reports, ...myPendingReports];
 
     if (selectedReport && !allReports.some(report => report.id === selectedReport.id)) {
         allReports.push(selectedReport);
     }
+
+    const selectedArea = areas.find(a => a.id === selectedAreaId) ?? null;
 
     const handlePinPlaced = (position: [number, number] | null) => {
         setPinPosition(position);
@@ -73,6 +91,9 @@ export function Homepage() {
                             setIsPlacingPin(false);
                             setPinPosition(null);
                         }}
+                        areas={areas}
+                        selectedAreaId={selectedAreaId}
+                        onAreaChange={setSelectedAreaId}
                     />
                 }
             />
@@ -84,6 +105,7 @@ export function Homepage() {
                     isPlacingPin={isPlacingPin}
                     pinPosition={pinPosition}
                     selectedReportId={selectedReport?.id}
+                    areas={selectedArea ? [selectedArea] : []}
                 />
             </div>
 

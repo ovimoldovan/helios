@@ -1,24 +1,41 @@
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
 using Seeagle.Application.Common;
 using Seeagle.Domain.Reports;
+using Seeagle.Domain.Areas;
 
 namespace Seeagle.Application.Reports;
 
 public sealed class ReportQueryService : IReportQueryService
 {
     private readonly IRepository<Report> _reportRepository;
+    private readonly IRepository<Area> _areaRepository;
 
-    public ReportQueryService(IRepository<Report> reportRepository)
+    public ReportQueryService(IRepository<Report> reportRepository, IRepository<Area> areaRepository)
     {
         _reportRepository = reportRepository;
+        _areaRepository = areaRepository;
     }
 
     public async Task<IReadOnlyList<ReportDto>> GetApprovedReportsAsync(
         DateTime fromDate,
+        Guid? areaId,
         CancellationToken cancellationToken)
     {
-        var reports = await _reportRepository.GetAllQueryable()
-            .Where(report => report.Status == ReportStatus.Approved && report.CreatedUtc >= fromDate && report.Status != ReportStatus.Solved)
+        var query = _reportRepository.GetAllQueryable()
+            .Where(report => report.Status == ReportStatus.Approved && report.CreatedUtc >= fromDate && report.Status != ReportStatus.Solved);
+
+        if (areaId.HasValue)
+        {
+            var areaGeometry = await GetAreaGeometryAsync(areaId.Value, cancellationToken);
+            
+            if (areaGeometry is null)
+                return Array.Empty<ReportDto>();
+
+            query = ApplyAreaFilter(query, areaGeometry);
+        }
+
+        var reports = await query
             .OrderByDescending(report => report.CreatedUtc)
             .Select(report => new ReportDto(
                 report.Id,
@@ -35,6 +52,19 @@ public sealed class ReportQueryService : IReportQueryService
         return reports;
     }
     
+    private async Task<Geometry?> GetAreaGeometryAsync(Guid areaId, CancellationToken cancellationToken)
+    {
+        return await _areaRepository.GetAllQueryable()
+            .Where(a => a.Id == areaId)
+            .Select(a => a.Geometry)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+    
+    private static IQueryable<Report> ApplyAreaFilter(IQueryable<Report> query, Geometry areaGeometry)
+    {
+        return query.Where(r => areaGeometry.Contains(r.Location));
+    }
+
     public async Task<PagedResult<ReportDto>> GetPublicReportsAsync(
         int pageNumber,
         int pageSize,
@@ -58,7 +88,11 @@ public sealed class ReportQueryService : IReportQueryService
 
         if (areaId.HasValue)
         {
-            query = query.Where(r => r.AreaId == areaId.Value);
+            var areaGeometry = await GetAreaGeometryAsync(areaId.Value, cancellationToken);
+            if (areaGeometry is null)
+                return new PagedResult<ReportDto>(Array.Empty<ReportDto>(), 0, pageNumber, pageSize);
+
+            query = ApplyAreaFilter(query, areaGeometry);
         }
 
         query = (sortBy?.ToLower(), sortOrder?.ToLower()) switch

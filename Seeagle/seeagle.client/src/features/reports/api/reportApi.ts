@@ -12,9 +12,13 @@ export async function createReport(data: CreateReportRequest): Promise<Report> {
     return postJson<Report>('/api/reports', data, token);
 }
 
-export async function getApprovedReports(days: number = 30): Promise<Report[]> {
+export async function getApprovedReports(days: number = 30, areaId?: string): Promise<Report[]> {
     const token = getCookie("authToken");
-    return getJson<Report[]>(`/api/reports/approved?days=${days}`, token);
+    const parameters = new URLSearchParams({ days: days.toString() });
+    if (areaId) {
+        parameters.set("areaId", areaId);
+    }
+    return getJson<Report[]>(`/api/reports/approved?${parameters.toString()}`, token);
 }
 
 export async function uploadReportPhoto(reportId: string, file: File): Promise<Report> {
