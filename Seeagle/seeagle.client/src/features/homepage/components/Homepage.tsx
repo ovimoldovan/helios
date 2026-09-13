@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Map } from './Map';
 import { LeftPanel } from '@/features/homepage/components/LeftPanel';
 import { AddReportModal } from '@/features/reports/components/ReportModal.tsx';
@@ -51,10 +51,15 @@ export function Homepage() {
     }, [selectedAreaId]);
 
     const allReports = [...reports, ...myPendingReports];
+    const allReports = useMemo(() => {
+        const combinedReports = [...reports, ...myPendingReports];
 
-    if (selectedReport && !allReports.some(report => report.id === selectedReport.id)) {
-        allReports.push(selectedReport);
-    }
+        if (selectedReport && !combinedReports.some(report => report.id === selectedReport.id)) {
+            combinedReports.push(selectedReport);
+        }
+
+        return combinedReports;
+    }, [reports, myPendingReports, selectedReport]);
 
     const selectedArea = areas.find(a => a.id === selectedAreaId) ?? null;
 
