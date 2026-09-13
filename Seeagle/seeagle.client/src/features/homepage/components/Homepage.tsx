@@ -50,7 +50,6 @@ export function Homepage() {
         loadApprovedReports();
     }, [selectedAreaId]);
 
-    const allReports = [...reports, ...myPendingReports];
     const allReports = useMemo(() => {
         const combinedReports = [...reports, ...myPendingReports];
 
