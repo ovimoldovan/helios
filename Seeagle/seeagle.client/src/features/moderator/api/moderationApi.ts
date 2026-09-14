@@ -125,3 +125,26 @@ export async function getAllReportsExceptPending(
         token ?? undefined
     );
 }
+
+export async function exportReportsCsv(
+    status?: string | null,
+    excludeStatus?: string | null
+): Promise<void> {
+    const token = getAuthToken();
+    const params = new URLSearchParams();
+    if (status) params.append('status', status);
+    if (excludeStatus) params.append('excludeStatus', excludeStatus);
+
+    const response = await fetch(`/api/reports/export-csv?${params.toString()}`, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (!response.ok) throw new Error('Export failed');
+
+    const blob = await response.blob();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'reports.csv';
+    a.click();
+    URL.revokeObjectURL(a.href);
+}
