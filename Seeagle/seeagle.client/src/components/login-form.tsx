@@ -18,7 +18,7 @@ import React, {useEffect, useState} from "react";
 import {useAuth} from "@/shared/context/AuthContext.tsx";
 import {useLocation, useNavigate} from "react-router-dom";
 import {toast} from "@/components/ui/toast.tsx";
-import {loginUser} from "@/features/login/api/loginApi.ts";
+import {loginUser} from "@/shared/context/api/loginApi.ts";
 import { useTranslation } from 'react-i18next';
 
 interface LoginFormErrors {

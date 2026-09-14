@@ -17,6 +17,7 @@ public sealed class SeeagleDbContext(DbContextOptions<SeeagleDbContext> options)
 
     public DbSet<Area> Areas => Set<Area>();
 
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

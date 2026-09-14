@@ -9,3 +9,7 @@ export async function loginUser(credentials: LoginRequest): Promise<AuthUser> {
 export async function getCurrentUser(): Promise<AuthUser> {
     return getJson<AuthUser>('/api/auth/me');
 }
+
+export async function refreshAuthToken(): Promise<void> {
+    await postJson<void>('/api/auth/refresh', null);
+}

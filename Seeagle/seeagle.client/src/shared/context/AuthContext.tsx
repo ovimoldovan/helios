@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { AuthUser } from '@/shared/types/authentication';
-import { getCurrentUser } from '@/features/login/api/loginApi';
+import { getCurrentUser, refreshAuthToken } from "./api/loginApi";
 
 interface AuthContextType {
     isAuthenticated: boolean;
@@ -24,10 +24,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 const response = await getCurrentUser();
                 setUser(response);
                 setIsAuthenticated(true);
-            } catch (error) {
-                console.error('Failed to load current user:', error);
-                setUser(null);
-                setIsAuthenticated(false);
+            } catch {
+                try {
+                    await refreshAuthToken();
+                    const response = await getCurrentUser();
+                    setUser(response);
+                    setIsAuthenticated(true);
+                } catch {
+                    setUser(null);
+                    setIsAuthenticated(false);
+                }
             } finally {
                 setIsLoading(false);
             }

@@ -18,17 +18,20 @@ public sealed class AuthController : ControllerBase
     private readonly IJwtUtil _jwtUtil;
     private readonly CookieSettings _cookieSettings;
     private readonly IMemoryCache _tokenBlacklist;
+    private readonly IRefreshTokenService _refreshTokenService;
 
     public AuthController(
         IUserService userService, 
         IJwtUtil jwtUtil,
         IOptions<CookieSettings> cookieSettings, 
-        IMemoryCache tokenBlacklist)
+        IMemoryCache tokenBlacklist, 
+        IRefreshTokenService refreshTokenService)
     {
         _userService = userService;
         _jwtUtil = jwtUtil;
         _cookieSettings = cookieSettings.Value;
         _tokenBlacklist = tokenBlacklist;
+        _refreshTokenService = refreshTokenService;
     }
 
     [HttpPost("register")]
@@ -53,17 +56,27 @@ public sealed class AuthController : ControllerBase
         if (user is null)
             return Unauthorized(new { message = "Invalid email or password" });
         
-        var token = _jwtUtil.GenerateToken(user);
+        var authToken = _jwtUtil.GenerateToken(user);
+        var refreshToken = await _refreshTokenService.CreateAsync(user, _cookieSettings.RefreshTokenExpiryTimeSpanInDays, cancellationToken);
         
-        var cookieOptions = new CookieOptions
+        var authTokenCookieOptions = new CookieOptions
         {
-            Expires = DateTime.UtcNow.AddMinutes(_cookieSettings.ExpireTimeSpanMinutes),
+            Expires = DateTime.UtcNow.AddMinutes(_cookieSettings.AuthTokenExpiryTimeSpanInMinutes),
             Secure = _cookieSettings.SecurePolicy,
             SameSite = Enum.Parse<SameSiteMode>(_cookieSettings.SameSite),
             HttpOnly = _cookieSettings.HttpOnly
         };
         
-        Response.Cookies.Append(_cookieSettings.Name, token, cookieOptions);
+        var refreshTokenCookieOptions = new CookieOptions
+        {
+            Expires = DateTime.UtcNow.AddDays(_cookieSettings.RefreshTokenExpiryTimeSpanInDays),
+            Secure = _cookieSettings.SecurePolicy,
+            SameSite = Enum.Parse<SameSiteMode>(_cookieSettings.SameSite),
+            HttpOnly = _cookieSettings.HttpOnly
+        };
+        
+        Response.Cookies.Append(_cookieSettings.AuthTokenName, authToken, authTokenCookieOptions);
+        Response.Cookies.Append(_cookieSettings.RefreshTokenName, refreshToken.Token, refreshTokenCookieOptions);
         
         return Ok(new UserDto(
             user.Id,
@@ -102,20 +115,30 @@ public sealed class AuthController : ControllerBase
         ));
     }
     
-    //TODO: Add refresh token logic
-    //TODO: Store refrehs tokens as a column in the DB with a TTL, when the user logs-in, check if the refresh token is expired, and if yes, issue a new one
     [Authorize]
     [HttpPost("logout")]
-    public IActionResult Logout()
+    public async Task<IActionResult> Logout(CancellationToken cancellationToken)
     {
-        var authToken = Request.Cookies[_cookieSettings.Name]!;
+        var authToken = Request.Cookies[_cookieSettings.AuthTokenName];
+        var refreshToken = Request.Cookies[_cookieSettings.RefreshTokenName];
+
+        if (authToken == null || refreshToken == null)
+            return Ok();
         
-        Response.Cookies.Delete(_cookieSettings.Name, new CookieOptions
+        Response.Cookies.Delete(_cookieSettings.AuthTokenName, new CookieOptions
         {
             Secure = _cookieSettings.SecurePolicy,
             SameSite = Enum.Parse<SameSiteMode>(_cookieSettings.SameSite),
             HttpOnly = _cookieSettings.HttpOnly
         });
+        Response.Cookies.Delete(_cookieSettings.RefreshTokenName, new CookieOptions
+        {
+            Secure = _cookieSettings.SecurePolicy,
+            SameSite = Enum.Parse<SameSiteMode>(_cookieSettings.SameSite),
+            HttpOnly = _cookieSettings.HttpOnly
+        });
+
+        await _refreshTokenService.RevokeExistingAsync(refreshToken, cancellationToken);
 
         if (_tokenBlacklist.TryGetValue(authToken, out _))
         {
@@ -141,4 +164,56 @@ public sealed class AuthController : ControllerBase
         
         return Ok();
     }
+
+    [HttpPost("refresh")]
+    public async Task<IActionResult> RefreshAsync(CancellationToken cancellationToken)
+    {
+        var clientRefreshToken = Request.Cookies[_cookieSettings.RefreshTokenName];
+        if (clientRefreshToken == null)
+            return Unauthorized();
+
+        var existing = await _refreshTokenService.GetByTokenAsync(clientRefreshToken, cancellationToken);
+        if (existing == null)
+            return Unauthorized();
+
+        if (!existing.IsActive)
+        {
+            if (existing.Revoked != null)
+            {
+                await _refreshTokenService.RevokeAllActiveForUserAsync(existing.User.Id, cancellationToken); 
+            }
+            return Unauthorized();
+        }
+        
+        await _refreshTokenService.RevokeExistingAsync(existing.Token, cancellationToken);
+
+        var user = await _userService.GetByIdAsync(existing.User.Id, cancellationToken);
+        if (user == null)
+            return Unauthorized();
+        
+        var newAuthToken = _jwtUtil.GenerateToken(user);
+        var newRefreshToken = await _refreshTokenService.CreateAsync(user, _cookieSettings.RefreshTokenExpiryTimeSpanInDays, cancellationToken);
+        
+        var authTokenCookieOptions = new CookieOptions
+        {
+            Expires = DateTime.UtcNow.AddMinutes(_cookieSettings.AuthTokenExpiryTimeSpanInMinutes),
+            Secure = _cookieSettings.SecurePolicy,
+            SameSite = Enum.Parse<SameSiteMode>(_cookieSettings.SameSite),
+            HttpOnly = _cookieSettings.HttpOnly
+        };
+        
+        var refreshTokenCookieOptions = new CookieOptions
+        {
+            Expires = DateTime.UtcNow.AddDays(_cookieSettings.RefreshTokenExpiryTimeSpanInDays),
+            Secure = _cookieSettings.SecurePolicy,
+            SameSite = Enum.Parse<SameSiteMode>(_cookieSettings.SameSite),
+            HttpOnly = _cookieSettings.HttpOnly
+        };
+        
+        Response.Cookies.Append(_cookieSettings.AuthTokenName, newAuthToken, authTokenCookieOptions);
+        Response.Cookies.Append(_cookieSettings.RefreshTokenName, newRefreshToken.Token, refreshTokenCookieOptions);
+
+        return Ok();
+    }
+    
 }
