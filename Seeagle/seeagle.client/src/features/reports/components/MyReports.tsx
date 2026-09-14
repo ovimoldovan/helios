@@ -19,17 +19,17 @@ const PAGE_SIZE = 10;
 
 export function MyReports() {
     const { t } = useTranslation();
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, isLoading } = useAuth();
     const [reports, setReports] = useState<Report[]>([]);
     const [page, setPage] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
-    const [isLoading, setIsLoading] = useState(true);
+    const [reportsLoading, setReportsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         if (!isAuthenticated) return;
 
-        setIsLoading(true);
+        setReportsLoading(true);
         setError(null);
 
         getMyReports(page, PAGE_SIZE)
@@ -38,7 +38,7 @@ export function MyReports() {
                 setTotalCount(result.totalCount);
             })
             .catch(() => setError(t('unexpectedErrorLoadingReports')))
-            .finally(() => setIsLoading(false));
+            .finally(() => setReportsLoading(false));
     }, [page, isAuthenticated, t]);
 
     const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
@@ -53,6 +53,10 @@ export function MyReports() {
         return config[status] || 'bg-gray-100 text-gray-700';
     };
 
+    if (isLoading) {
+        return <main className="flex-1 p-6" />;
+    }
+
     if (!isAuthenticated) {
         return (
             <main className="flex-1 p-6">
@@ -66,11 +70,11 @@ export function MyReports() {
             <div className="mx-auto w-full max-w-6xl">
                 <h1 className="text-xl font-semibold mb-4">{t('myReports')}</h1>
 
-                {isLoading && <p>{t('loadingReports')}</p>}
+                {reportsLoading && <p>{t('loadingReports')}</p>}
 
                 {error && <p className="text-red-600">{error}</p>}
 
-                    {!isLoading && !error && (
+                    {!reportsLoading && !error && (
                         <>
                             {reports.length === 0 ? (
                                 <p className="text-muted-foreground">{t('noReports')}</p>
