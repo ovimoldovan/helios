@@ -187,7 +187,7 @@ public sealed class AuthController : ControllerBase
         
         await _refreshTokenService.RevokeExistingAsync(existing.Token, cancellationToken);
 
-        var user = await _userService.GetByIdAsync(existing.User.Id, cancellationToken);
+        var user = await _userService.GetByIdAsync(existing.User.Id);
         if (user == null)
             return Unauthorized();
         

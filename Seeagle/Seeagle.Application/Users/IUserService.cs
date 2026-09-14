@@ -10,5 +10,5 @@ public interface IUserService
 
     Task<UserListItemDto> AssignModeratorRoleAsync(Guid userId, CancellationToken cancellationToken);
 
-    Task<User?> GetByIdAsync(Guid userId, CancellationToken cancellationToken);
+    Task<User?> GetByIdAsync(Guid userId);
 }

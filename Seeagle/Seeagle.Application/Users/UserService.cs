@@ -68,7 +68,7 @@ public class UserService : IUserService
         );
     }
 
-    public async Task<User?> GetByIdAsync(Guid userId, CancellationToken cancellationToken)
+    public async Task<User?> GetByIdAsync(Guid userId)
     {
         return await _userRepository.GetAllQueryable()
             .FirstOrDefaultAsync(u => u.Id == userId);
