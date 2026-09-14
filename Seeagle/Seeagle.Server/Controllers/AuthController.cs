@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
+using System.Security.Claims;
 using Seeagle.Application.Users;
 using Seeagle.Server.Utils.JWT;
 using Seeagle.Server.Utils.Cookies;
@@ -45,7 +46,7 @@ public sealed class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> LoginAsync(LoginUserRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<UserDto>> LoginAsync(LoginUserRequest request, CancellationToken cancellationToken)
     {
         var user = await _userService.ValidateCredentialsAsync(request, cancellationToken);
         
@@ -64,7 +65,41 @@ public sealed class AuthController : ControllerBase
         
         Response.Cookies.Append(_cookieSettings.Name, token, cookieOptions);
         
-        return Ok();
+        return Ok(new UserDto(
+            user.Id,
+            user.Email,
+            user.FirstName,
+            user.LastName,
+            user.Role.ToString()
+        ));
+    }
+
+    [Authorize]
+    [HttpGet("me")]
+    public ActionResult<UserDto> Me()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var email = User.FindFirstValue(ClaimTypes.Email);
+        var firstName = User.FindFirstValue(ClaimTypes.GivenName);
+        var lastName = User.FindFirstValue(ClaimTypes.Surname);
+        var role = User.FindFirstValue(ClaimTypes.Role);
+
+        if (string.IsNullOrWhiteSpace(userId) ||
+            string.IsNullOrWhiteSpace(email) ||
+            string.IsNullOrWhiteSpace(firstName) ||
+            string.IsNullOrWhiteSpace(lastName) ||
+            string.IsNullOrWhiteSpace(role))
+        {
+            return Unauthorized();
+        }
+
+        return Ok(new UserDto(
+            Guid.Parse(userId),
+            email,
+            firstName,
+            lastName,
+            role
+        ));
     }
     
     //TODO: Add refresh token logic
