@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { getAssistantHealth } from '../api/adminApi';
-import { getCookie } from '@/shared/utils/cookies';
 import {
     Card,
     CardDescription,
@@ -20,8 +19,7 @@ export function AdminDashboard() {
 
     const [assistantStatus, setAssistantStatus] = useState<AssistantStatus>(AssistantStatus.Checking);
     useEffect(() => {
-    const userJwt = getCookie('authToken')!;
-    getAssistantHealth(userJwt)
+    getAssistantHealth()
         .then((data) => setAssistantStatus(data.status as AssistantStatus))
         .catch(() => setAssistantStatus(AssistantStatus.Offline));
 }, []);

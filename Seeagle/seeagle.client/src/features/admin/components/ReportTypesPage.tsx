@@ -6,7 +6,6 @@ import type {ReportType} from '@/shared/types/report';
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
 import {PaginationLink} from "@/components/ui/pagination.tsx";
 import {ChevronLeftIcon, ChevronRightIcon, CirclePlus, Pencil} from "lucide-react";
-import {getCookie} from "@/shared/utils/cookies.ts";
 import {AddReportTypeModal} from "./AddReportTypeModal";
 import {EditReportTypeModal} from "./EditReportTypeModal";
 import {LeftPanel} from "@/features/homepage/components/LeftPanel.tsx";
@@ -43,7 +42,7 @@ export function ReportTypesPage() {
     const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
 
     async function handleReportTypeStatusChange(id: string) {
-        changeReportTypeStatus(id, getCookie('authToken')!)
+        changeReportTypeStatus(id)
             .then(() => {
                 fetchReportTypes();
             })

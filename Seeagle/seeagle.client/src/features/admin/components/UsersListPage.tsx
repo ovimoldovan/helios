@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { getCookie } from '@/shared/utils/cookies';
 import { assignModerator, getUsers } from '@/features/admin/api/adminApi';
 import type { UserListItem } from '@/shared/types/admin';
 import {
@@ -43,7 +42,7 @@ export function UsersListPage() {
     setError(null);
     
     const roleFilterValue = roleFilter === '' ? undefined : Number(roleFilter);
-    getUsers(page, PAGE_SIZE, getCookie('authToken')!, searchTerm, sortBy, roleFilterValue, sortDescending)
+    getUsers(page, PAGE_SIZE, searchTerm, sortBy, roleFilterValue, sortDescending)
       .then((result) => {
         setUsers(result.items);
         setTotalCount(result.totalCount);
@@ -57,7 +56,7 @@ export function UsersListPage() {
   function handleAssignModerator(userId: string) {
     setAssigningModeratorId(userId);
 
-    assignModerator(userId, getCookie('authToken')!)
+    assignModerator(userId)
       .then((updatedUser) => {
         setUsers((prevUsers) =>
           prevUsers.map((user) => (user.id === updatedUser.id ? updatedUser : user))

@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { DrawableMap } from './DrawableMap';
 import { AreasSidePanel } from './AreasSidePanel';
 import { postJson } from '@/shared/api/httpClient';
-import { getCookie } from '@/shared/utils/cookies';
 import type { Area, CreateAreaRequest, CreateAreaResponse } from '../types';
 
 export function AdminAreasPage() {
@@ -19,8 +18,7 @@ export function AdminAreasPage() {
             coordinates
         };
         try {
-            const token = getCookie('authToken');
-            const response = await postJson<CreateAreaResponse>('/api/areas', request, token ?? undefined);
+            const response = await postJson<CreateAreaResponse>('/api/areas', request);
             const newArea: Area = {
                 id: response.id,
                 name: request.name,
