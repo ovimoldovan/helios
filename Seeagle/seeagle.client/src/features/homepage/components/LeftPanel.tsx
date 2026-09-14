@@ -5,7 +5,6 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/shared/context/AuthContext';
-import { getUserFromToken } from '@/shared/utils/getUserFromToken.ts';
 import { Menu } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
@@ -20,14 +19,11 @@ export function LeftPanel({ sidebarExtra }: LeftPanelProps) {
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
 
-    const { isAuthenticated, logout } = useAuth();
-    const user = getUserFromToken();
+    const { isAuthenticated, logout, user } = useAuth();
 
     const getInitials = () => {
         if (!user) return '?';
-        const firstName = user.given_name || '';
-        const lastName = user.family_name || '';
-        return `${firstName[0] || ''}${lastName[0] || ''}`.toUpperCase() || '?';
+        return `${user.firstName[0] ?? ''}${user.lastName[0] ?? ''}`.toUpperCase() || '?';
     };
 
     const handleAuthAction = () => {
@@ -138,7 +134,7 @@ export function LeftPanel({ sidebarExtra }: LeftPanelProps) {
                                 </Avatar>
                                 <div className="hidden sm:block">
                                     <p className="font-medium text-xs">
-                                        {user.given_name} {user.family_name}
+                                        {user.firstName} {user.lastName}
                                     </p>
                                     <p className="text-[10px] text-muted-foreground">
                                         {user.email}

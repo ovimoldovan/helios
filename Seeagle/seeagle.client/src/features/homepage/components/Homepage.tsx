@@ -10,7 +10,7 @@ import { useAuth } from '@/shared/context/AuthContext';
 import { useLocation } from 'react-router-dom';
 
 export function Homepage() {
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, isLoading } = useAuth();
     const location = useLocation();
     const selectedReport = location.state?.selectedReport as Report | undefined;
     const [isPlacingPin, setIsPlacingPin] = useState(false);
@@ -26,18 +26,30 @@ export function Homepage() {
             setReports(data);
         };
         loadApprovedReports();
+    }, []);
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            setMyPendingReports([]);
+            return;
+        }
+
         const loadMyPendingReports = async () => {
             const result = await getMyReports(1, 1000);
             setMyPendingReports(result.items.filter(report => report.status === 'Pending'));
         };
-        loadMyPendingReports();
-        
-    }, []);
+
+        void loadMyPendingReports();
+    }, [isAuthenticated]);
 
     const allReports = [...reports, ...myPendingReports];
 
     if (selectedReport && !allReports.some(report => report.id === selectedReport.id)) {
         allReports.push(selectedReport);
+    }
+
+    if (isLoading) {
+        return null;
     }
 
     const handlePinPlaced = (position: [number, number] | null) => {
