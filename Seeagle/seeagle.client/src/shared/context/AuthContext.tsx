@@ -1,10 +1,13 @@
-﻿import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-import { getCookie, deleteCookie } from '@/shared/utils/cookies';
+import type { AuthUser } from '@/shared/types/authentication';
+import { getCurrentUser } from '@/features/login/api/loginApi';
 
 interface AuthContextType {
     isAuthenticated: boolean;
-    login: () => void;
+    user: AuthUser | null;
+    isLoading: boolean;
+    login: (user: AuthUser) => void;
     logout: () => Promise<void>;
 }
 
@@ -12,16 +15,32 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [user, setUser] = useState<AuthUser | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const token = getCookie('authToken');
-        setIsAuthenticated(!!token);
+        async function loadCurrentUser() {
+            try {
+                const response = await getCurrentUser();
+                setUser(response);
+                setIsAuthenticated(true);
+            } catch (error) {
+                console.error('Failed to load current user:', error);
+                setUser(null);
+                setIsAuthenticated(false);
+            } finally {
+                setIsLoading(false);
+            }
+        }
+
+        void loadCurrentUser();
     }, []);
 
-    function login() {
+    function login(nextUser: AuthUser) {
+        setUser(nextUser);
         setIsAuthenticated(true);
     }
-    
+
     async function logout() {
         try {
             await fetch('/api/auth/logout', {
@@ -34,13 +53,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } catch (error) {
             console.error('Failed to notify server logout:', error);
         } finally {
-            deleteCookie('authToken');
             setIsAuthenticated(false);
+            setUser(null);
         }
     }
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+        <AuthContext.Provider value={{ isAuthenticated, user, isLoading, login, logout }}>
             {children}
         </AuthContext.Provider>
     );
