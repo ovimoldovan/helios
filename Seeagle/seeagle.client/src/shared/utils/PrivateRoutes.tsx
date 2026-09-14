@@ -1,16 +1,19 @@
 import {Navigate, Outlet, useLocation} from 'react-router-dom';
-import {getAuthToken} from '@/shared/auth/getAuthToken';
-import {getUserRole} from '@/shared/auth/getUserRole';
+import {useAuth} from '@/shared/context/AuthContext';
 
 interface PrivateRoutesProps {
     allowedRoles?: string[];
 }
 
 export function PrivateRoutes({ allowedRoles }: PrivateRoutesProps = {}) {
-    const token = getAuthToken();
+    const { isAuthenticated, isLoading, user } = useAuth();
     const location = useLocation();
 
-    if (!token) {
+    if (isLoading) {
+        return null;
+    }
+
+    if (!isAuthenticated) {
         return (
             <Navigate
                 to="/login"
@@ -24,9 +27,7 @@ export function PrivateRoutes({ allowedRoles }: PrivateRoutesProps = {}) {
         );
     }
 
-    const userRole = getUserRole(token);
-
-    if (allowedRoles && (!userRole || !allowedRoles.includes(userRole))) {
+    if (allowedRoles && (!user || !allowedRoles.includes(user.role))) {
         return <Navigate to="/unauthorized" />;
     }
     
