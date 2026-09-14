@@ -84,13 +84,8 @@ export function LoginForm({
 
         try {
             const response = await loginUser({email, password});
-
-            if (response.token) {
-                login();
-                navigate('/');
-            } else {
-                setLoginSuccessful(false);
-            }
+            login(response);
+            navigate('/');
         } catch (apiError) {
             setLoginSuccessful(false);
         } finally {
