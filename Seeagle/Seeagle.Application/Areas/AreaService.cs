@@ -59,6 +59,7 @@ public sealed class AreaService(IRepository<Area> repository) : IAreaService
     public async Task<IReadOnlyList<AreaDto>> GetAllAsync(CancellationToken cancellationToken)
     {
         var areas = await repository.GetAllQueryable()
+            .Where(a => !a.IsDeleted)
             .OrderBy(a => a.Name)
             .ToListAsync(cancellationToken);
 
@@ -92,7 +93,10 @@ public sealed class AreaService(IRepository<Area> repository) : IAreaService
             return false;
         }
 
-        await repository.DeleteAsync(area, cancellationToken);
+        area.Delete();
+
+        await repository.UpdateAsync(area, cancellationToken);
+
         return true;
     }
     
