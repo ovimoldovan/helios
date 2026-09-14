@@ -1,8 +1,8 @@
-import { useState, useCallback } from 'react';
+import {useState, useCallback, useEffect} from 'react';
 import { Link } from 'react-router-dom';
 import { DrawableMap } from './DrawableMap';
 import { AreasSidePanel } from './AreasSidePanel';
-import { postJson } from '@/shared/api/httpClient';
+import { getJson, postJson, putJsonWithBody, deleteJson } from '@/shared/api/httpClient';
 import type { Area, CreateAreaRequest, CreateAreaResponse } from '../types';
 
 export function AdminAreasPage() {
@@ -10,8 +10,17 @@ export function AdminAreasPage() {
     const [nextId, setNextId] = useState(1);
     const [drawMode, setDrawMode] = useState<'rectangle' | 'polygon' | null>(null);
 
-    // TODO (Backend): fetch existing areas on page load using getJson
-
+    useEffect(() => {
+        const loadAreas = async () => {
+            try {
+                const data = await getJson<Area[]>('/api/areas');
+                setAreas(data);
+            } catch (error) {
+                console.error('Failed to load areas:', error);
+            }
+        };
+        loadAreas();
+    }, []);
     const handleAreaCreated = useCallback(async(coordinates: number[][]) => {
         const request: CreateAreaRequest = {
             name: `Area ${nextId}`,
@@ -38,13 +47,23 @@ export function AdminAreasPage() {
     }, [nextId]);
 
     function handleDeleteArea(id: string) {
-        // TODO (Backend): Make a DELETE request to `/api/areas/${id}` 
-        setAreas(areas.filter((a) => a.id !== id));
+        deleteJson(`/api/areas/${id}`)
+            .then(() => {
+                setAreas(areas.filter((a) => a.id !== id));
+            })
+            .catch((error) => {
+                console.error('Failed to delete area:', error);
+            });
     }
 
     function handleRenameArea(id: string, newName: string) {
-        // TODO (Backend): Make a PUT request to `/api/areas/${id}`
-        setAreas(areas.map((a) => a.id === id ? { ...a, name: newName } : a));
+        putJsonWithBody<Area>(`/api/areas/${id}`, { name: newName })
+            .then((updated) => {
+                setAreas(areas.map((a) => a.id === id ? updated : a));
+            })
+            .catch((error) => {
+                console.error('Failed to rename area:', error);
+            });
     }
 
     return (

@@ -23,4 +23,19 @@ public class Area
     public string Name { get; private set; } = string.Empty;
     public Geometry Geometry { get; private set; } = null!;
     public DateTime CreatedUtc { get; private set; }
+    
+    public bool IsDeleted { get; private set; }
+
+    public void Delete()
+    {
+        IsDeleted = true;
+    }
+    
+    public void UpdateName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException("Name cannot be empty.", nameof(name));
+        
+        Name = name;
+    }
 }

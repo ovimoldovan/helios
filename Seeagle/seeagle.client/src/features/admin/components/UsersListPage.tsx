@@ -15,7 +15,6 @@ import {
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
-import { LeftPanel } from '@/features/homepage/components/LeftPanel';
 import { Input } from '@base-ui/react';
 
 const PAGE_SIZE = 10;
@@ -95,7 +94,6 @@ export function UsersListPage() {
   }
   return (
     <div className="flex">
-      <LeftPanel />
       <div className="flex-1 p-6">
         <h1 className="text-xl font-semibold mb-4">{t('registeredUsers')}</h1>
 

@@ -29,8 +29,12 @@ export async function approveReport( id: string, priority: string): Promise<Mode
     );
 }
 
-export async function rejectReport(id: string): Promise<ModerationReport> {
-    return putJson<ModerationReport>(`/api/reports/${id}/reject`);
+export async function rejectReport(id: string, message?: string | null): Promise<ModerationReport> {
+    const url = message
+        ? `/api/reports/${id}/reject?message=${encodeURIComponent(message)}`
+        : `/api/reports/${id}/reject`;
+
+    return putJson<ModerationReport>(url);
 }
 
 export async function getApprovedReports(

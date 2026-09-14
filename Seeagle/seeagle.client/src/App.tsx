@@ -14,11 +14,12 @@ import { Toaster } from "@/components/ui/toast.tsx";
 import { CookiesPolicy } from "@/pages/CookiesPolicy.tsx";
 import { ReportTypesPage } from '@/features/admin/components/ReportTypesPage';
 import { ModerationQueue } from '@/features/moderator/components/ModerationQueue';
-import {ApprovedReports} from "@/features/moderator/components/ApprovedReports.tsx";
+import { ApprovedReports } from "@/features/moderator/components/ApprovedReports.tsx";
 import { MyReports } from '@/features/reports/components/MyReports';
+import { PublicReports } from '@/features/reports/components/PublicReports'; 
 import { AdminAreasPage } from './features/admin/components/AdminAreasPage';
 import { AppLayout } from '@/shared/layout/AppLayout';
-import {ReportManagement} from "@/features/moderator/components/ReportManagemnt.tsx";
+import { ReportManagement } from "@/features/moderator/components/ReportManagemnt.tsx"; 
 
 function App() {
     return (
@@ -27,7 +28,6 @@ function App() {
                 <Route path="/" element={<Homepage />} />
 
                 <Route element={<AppLayout />}>
-
                     <Route
                         path="/login"
                         element={
@@ -46,6 +46,13 @@ function App() {
                         path="/my-reports"
                         element={
                             <MyReports />
+                        }
+                    />
+
+                    <Route
+                        path="/reports"
+                        element={
+                            <PublicReports />
                         }
                     />
 
@@ -131,7 +138,6 @@ function App() {
                             <CookiesPolicy/>
                         }
                     />
-
                 </Route>
             </Routes>
 
