@@ -1,33 +1,28 @@
-export async function getJson<T>(url: string, token?: string): Promise<T> {
-  const headers: Record<string, string> = {};
-
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
-
+export async function getJson<T>(url: string): Promise<T> {
   const response = await fetch(url, {
-    headers: headers
+    credentials: 'include',
   });
 
   if (!response.ok) {
     throw new Error(`Request failed with status ${response.status}.`);
   }
 
+  if (response.status === 204 || response.headers.get('content-length') === '0') {
+    return undefined as T;
+  }
+
   return (await response.json()) as T;
 }
 
-export async function postJson<TResponse>(url: string, body: unknown, token?: string): Promise<TResponse> {
+export async function postJson<TResponse>(url: string, body: unknown): Promise<TResponse> {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json'
   };
 
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
-
   const response = await fetch(url, {
     method: 'POST',
     headers: headers,
+    credentials: 'include',
     body: JSON.stringify(body),
   });
 
@@ -39,21 +34,22 @@ export async function postJson<TResponse>(url: string, body: unknown, token?: st
     throw new Error(`Request failed with status ${response.status}.`);
   }
 
+  if (response.status === 204 || response.headers.get('content-length') === '0') {
+    return undefined as TResponse;
+  }
+
   return (await response.json()) as TResponse;
 }
 
-export async function putJson<TResponse>(url: string, token?: string, body?: unknown): Promise<TResponse> {
+export async function putJson<TResponse>(url: string, body?: unknown): Promise<TResponse> {
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json' 
+    'Content-Type': 'application/json'
   };
-
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
 
   const response = await fetch(url, {
     method: 'PUT',
     headers: headers,
+    credentials: 'include',
     body: body ? JSON.stringify(body) : undefined,
   });
 
@@ -61,19 +57,17 @@ export async function putJson<TResponse>(url: string, token?: string, body?: unk
     throw new Error(`Request failed with status ${response.status}.`);
   }
 
+  if (response.status === 204 || response.headers.get('content-length') === '0') {
+    return undefined as TResponse;
+  }
+
   return (await response.json()) as TResponse;
 }
 
-export async function deleteJson(url: string, token?: string): Promise<void> {
-  const headers: Record<string, string> = {};
-
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
-
+export async function deleteJson(url: string): Promise<void> {
   const response = await fetch(url, {
     method: 'DELETE',
-    headers: headers,
+    credentials: 'include',
   });
 
   if (!response.ok) {
@@ -81,18 +75,15 @@ export async function deleteJson(url: string, token?: string): Promise<void> {
   }
 }
 
-export async function putJsonWithBody<TResponse>(url: string, body: unknown, token?: string): Promise<TResponse> {
+export async function putJsonWithBody<TResponse>(url: string, body: unknown): Promise<TResponse> {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json'
   };
 
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
-
   const response = await fetch(url, {
     method: 'PUT',
     headers: headers,
+    credentials: 'include',
     body: JSON.stringify(body),
   });
 
@@ -104,19 +95,17 @@ export async function putJsonWithBody<TResponse>(url: string, body: unknown, tok
     throw new Error(`Request failed with status ${response.status}.`);
   }
 
+  if (response.status === 204 || response.headers.get('content-length') === '0') {
+    return undefined as TResponse;
+  }
+
   return (await response.json()) as TResponse;
 }
 
-export async function patchJson<TResponse>(url: string, token?: string): Promise<TResponse> {
-  const headers: Record<string, string> = {};
-
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
-
+export async function patchJson<TResponse>(url: string): Promise<TResponse> {
   const response = await fetch(url, {
     method: 'PATCH',
-    headers: headers,
+    credentials: 'include',
   });
 
   if (!response.ok) {
@@ -125,31 +114,33 @@ export async function patchJson<TResponse>(url: string, token?: string): Promise
     }
 
     throw new Error(`Request failed with status ${response.status}.`);
+  }
+
+  if (response.status === 204 || response.headers.get('content-length') === '0') {
+    return undefined as TResponse;
   }
 
   return (await response.json()) as TResponse;
 }
 
-export async function postFormData<TRespoonse>(url:string, formData: FormData, token?: string): Promise<TRespoonse> {
-  const headers: Record<string, string> = {};
-  
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
-  
+export async function postFormData<TRespoonse>(url:string, formData: FormData): Promise<TRespoonse> {
   const response = await fetch(url, {
     method: 'POST',
-    headers: headers,
+    credentials: 'include',
     body: formData,
   });
-  
+
   if (!response.ok) {
     if (response.status === 400) {
       throw await response.json();
     }
-    
+
     throw new Error(`Request failed with status ${response.status}.`);
   }
-  
+
+  if (response.status === 204 || response.headers.get('content-length') === '0') {
+    return undefined as TRespoonse;
+  }
+
   return (await response.json()) as TRespoonse;
 }

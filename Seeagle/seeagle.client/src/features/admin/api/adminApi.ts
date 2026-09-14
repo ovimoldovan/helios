@@ -6,7 +6,6 @@ import type { ReportType } from '@/shared/types/report';
 export async function getUsers(
   page: number, 
   pageSize: number, 
-  token: string,
   searchTerm?: string,
   sortBy?: string,
   roleFilter?: number,
@@ -21,11 +20,11 @@ export async function getUsers(
   if (sortDescending) params.set('sortDescending', String(sortDescending));
   if (roleFilter !== undefined && roleFilter !== null) params.set('roleFilter', String(roleFilter));
   const url = `/api/users?${params.toString()}`;
-  return getJson<PagedResult<UserListItem>>(url, token);
+  return getJson<PagedResult<UserListItem>>(url);
 }
 
-export async function assignModerator(userId: string, token: string): Promise<UserListItem> {
-  return getJson<UserListItem>(`/api/users/${userId}/assign-moderator`, token);
+export async function assignModerator(userId: string): Promise<UserListItem> {
+  return getJson<UserListItem>(`/api/users/${userId}/assign-moderator`);
 }
 
 export async function getReportTypes(page: number, pageSize: number): Promise<PagedResult<ReportType>> {
@@ -34,13 +33,11 @@ export async function getReportTypes(page: number, pageSize: number): Promise<Pa
 
 export async function createReportType(
     name: string,
-    token: string
 ): Promise<ReportType> {
   try {
     return await postJson<ReportType>(
         '/api/report-types',
-        { name },
-        token
+        { name }
     );
   } catch (error) {
     if (
@@ -57,13 +54,11 @@ export async function createReportType(
 export async function updateReportType(
     id: string,
     name: string,
-    token: string
 ): Promise<ReportType> {
   try {
     return await putJsonWithBody<ReportType>(
         `/api/report-types/${id}`,
-        { name },
-        token
+        { name }
     );
   } catch (error) {
     if (
@@ -79,14 +74,12 @@ export async function updateReportType(
 
 export async function changeReportTypeStatus(
     id: string,
-    token: string
 ): Promise<ReportType> {
   return patchJson<ReportType>(
-      `/api/report-types/${id}/change_status`,
-      token
+      `/api/report-types/${id}/change_status`
   );
 }
 
-export async function getAssistantHealth(token: string): Promise<{ status: string }> {
-  return getJson<{ status: string }>('/api/admin/health/assistant', token);
+export async function getAssistantHealth(): Promise<{ status: string }> {
+  return getJson<{ status: string }>('/api/admin/health/assistant');
 }
