@@ -89,6 +89,7 @@ public sealed class ReportService : IReportService
     {
         var report = _reportRepository
             .GetAllQueryable()
+            .Include(report => report.Type)
             .FirstOrDefault(report => report.Id == id);
 
         if (report is null)
@@ -122,6 +123,7 @@ public sealed class ReportService : IReportService
     {
         var report = _reportRepository
             .GetAllQueryable()
+            .Include(report => report.Type)
             .FirstOrDefault(report => report.Id == id);
 
         if (report is null)
@@ -148,6 +150,7 @@ public sealed class ReportService : IReportService
     {
         var report = _reportRepository
             .GetAllQueryable()
+            .Include(report => report.Type)
             .FirstOrDefault(report => report.Id == id);
         if (report is null)
         {
@@ -197,7 +200,8 @@ public sealed class ReportService : IReportService
     {
         var report = await _reportRepository
             .GetAllQueryable()
-            .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
+            .Include(report => report.Type)
+            .FirstOrDefaultAsync(report => report.Id == id, cancellationToken);
 
         if (report is null)
         {
@@ -297,7 +301,7 @@ public sealed class ReportService : IReportService
     {
         var report = await _reportRepository
             .GetAllQueryable()
-            .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
+            .FirstOrDefaultAsync(report => report.Id == id, cancellationToken);
 
         if (report is null)
         {
@@ -314,7 +318,8 @@ public sealed class ReportService : IReportService
     {
         var report = await _reportRepository
             .GetAllQueryable()
-            .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
+            .Include(report => report.Type)
+            .FirstOrDefaultAsync(report => report.Id == id, cancellationToken);
       
         if (report is null)
    		{
@@ -354,6 +359,7 @@ public sealed class ReportService : IReportService
     {
         var report = _reportRepository
             .GetAllQueryable()
+            .Include(report => report.Type)
             .FirstOrDefault(report => report.Id == reportId);
         if (report is null)
             return null;
