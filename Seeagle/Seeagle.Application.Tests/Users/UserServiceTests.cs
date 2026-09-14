@@ -234,6 +234,7 @@ public sealed class UserServiceTests
         Assert.NotNull(result);
         Assert.Equal("test@test.com", result!.Email);
     }
+    
     [Fact]
     public async Task RegisterUserAsync_ShouldReturnStandardUserRole_WhenUserRegisters()
     {
@@ -254,5 +255,41 @@ public sealed class UserServiceTests
 
         // Assert
         Assert.Equal("User", result.Role); 
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_ShouldReturnUser_WhenUserExists()
+    {
+        // Arrange
+        var repository = Substitute.For<IRepository<User>>();
+        var user = new User("test@test.com", "placeholder", "Ana", "Popescu");
+        repository.GetAllQueryable().Returns(new List<User> { user }.BuildMock());
+        var service = new UserService(repository);
+
+        // Act
+        var result = await service.GetByIdAsync(user.Id);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(user.Id, result.Id);
+        Assert.Equal(user.Email, result.Email);
+        Assert.Equal(user.FirstName, result.FirstName);
+        Assert.Equal(user.LastName, result.LastName);
+    }
+    
+    [Fact]
+    public async Task GetByIdAsync_ShouldReturnNull_WhenUserDoesntExist()
+    {
+        // Arrange
+        var repository = Substitute.For<IRepository<User>>();
+        var user = new User("test@test.com", "placeholder", "Ana", "Popescu");
+        repository.GetAllQueryable().Returns(new List<User> { user }.BuildMock());
+        var service = new UserService(repository);
+
+        // Act
+        var result = await service.GetByIdAsync(Guid.NewGuid());
+
+        // Assert
+        Assert.Null(result);
     }
 }
