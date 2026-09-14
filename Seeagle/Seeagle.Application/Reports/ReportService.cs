@@ -55,8 +55,10 @@ public sealed class ReportService : IReportService
         var report = new Report(point, request.Description, user, reportType);
 
         var area = await _areaRepository.GetAllQueryable()
-            .FirstOrDefaultAsync(a => a.Geometry.Contains(point), cancellationToken);
-
+            .FirstOrDefaultAsync(
+                a => !a.IsDeleted && a.Geometry.Contains(point),
+                cancellationToken);
+        
         if (area != null)
         {
             report.SetAreaId(area.Id);
