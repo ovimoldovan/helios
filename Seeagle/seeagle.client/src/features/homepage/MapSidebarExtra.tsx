@@ -1,20 +1,62 @@
 import { Button } from "@/components/ui/button";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import {Plus, X} from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from '@/shared/context/AuthContext';
+import type { Area } from '@/features/admin/types';
 
 interface MapSidebarExtraProps {
     onNewReport?: () => void;
     isPlacingPin?: boolean;
     onCancelPlacePin?: () => void;
+    areas?: Area[];
+    selectedAreaId?: string | null;
+    onAreaChange?: (areaId: string | null) => void;
 }
 
-export function MapSidebarExtra({ onNewReport, isPlacingPin = false, onCancelPlacePin }: MapSidebarExtraProps) {
+export function MapSidebarExtra({
+                                    onNewReport,
+                                    isPlacingPin = false,
+                                    onCancelPlacePin,
+                                    areas,
+                                    selectedAreaId,
+                                    onAreaChange,
+                                }: MapSidebarExtraProps) {
     const { t } = useTranslation();
     const { isAuthenticated } = useAuth();
 
     return (
         <div className="space-y-3">
+            {areas && areas.length > 0 && (
+                <div className="space-y-1">
+                    <label className="text-xs font-medium text-muted-foreground px-1">
+                        {t('filterByArea')}
+                    </label>
+                    <Select
+                        value={selectedAreaId ?? ''}
+                        onValueChange={(value) => onAreaChange?.(value === 'all' ? null : value)}
+                    >
+                        <SelectTrigger className="w-full rounded-full border-2">
+                            <SelectValue placeholder={t('allAreas')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">{t('allAreas')}</SelectItem>
+                            {areas.map((area) => (
+                                <SelectItem key={area.id} value={area.id}>
+                                    {area.name}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+            )}
+
             {isAuthenticated ? (
                 isPlacingPin ? (
                     <div className="grid grid-cols-2">
