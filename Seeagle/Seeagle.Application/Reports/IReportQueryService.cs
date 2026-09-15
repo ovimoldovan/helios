@@ -21,4 +21,6 @@ public interface IReportQueryService
         string? sortBy,
         string? sortOrder,
         CancellationToken cancellationToken);
+    
+	  Task<ReportSummaryDto> GetSummaryAsync(CancellationToken cancellationToken);
 }

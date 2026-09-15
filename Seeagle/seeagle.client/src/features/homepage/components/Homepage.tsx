@@ -12,7 +12,7 @@ import { useAuth } from '@/shared/context/AuthContext';
 import { useLocation } from 'react-router-dom';
 
 export function Homepage() {
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, isLoading } = useAuth();
     const location = useLocation();
     const selectedReport = location.state?.selectedReport as Report | undefined;
     const [isPlacingPin, setIsPlacingPin] = useState(false);
@@ -34,13 +34,21 @@ export function Homepage() {
             }
         };
         loadAreas();
+    }, []);
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            setMyPendingReports([]);
+            return;
+        }
 
         const loadMyPendingReports = async () => {
             const result = await getMyReports(1, 1000);
             setMyPendingReports(result.items.filter(report => report.status === 'Pending'));
         };
-        loadMyPendingReports();
-    }, []);
+
+        void loadMyPendingReports();
+    }, [isAuthenticated]);
 
     useEffect(() => {
         const loadApprovedReports = async () => {
@@ -59,9 +67,13 @@ export function Homepage() {
 
         return combinedReports;
     }, [reports, myPendingReports, selectedReport]);
-
+    
+    if (isLoading) {
+        return null;
+    }
+  
     const selectedArea = areas.find(a => a.id === selectedAreaId) ?? null;
-
+  
     const handlePinPlaced = (position: [number, number] | null) => {
         setPinPosition(position);
         if (position) {

@@ -9,4 +9,6 @@ public interface IUserService
     Task<User?> ValidateCredentialsAsync(LoginUserRequest request, CancellationToken cancellationToken);
 
     Task<UserListItemDto> AssignModeratorRoleAsync(Guid userId, CancellationToken cancellationToken);
+
+    Task<User?> GetByIdAsync(Guid userId);
 }
