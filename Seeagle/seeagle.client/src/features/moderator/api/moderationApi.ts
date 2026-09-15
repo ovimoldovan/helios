@@ -1,4 +1,4 @@
-import { deleteJson, getJson, putJson } from '@/shared/api/httpClient';
+import { deleteJson, getJson, putJson, getBlob } from '@/shared/api/httpClient';
 import type { PagedResult } from '@/shared/types/pagedResult';
 
 export interface ModerationReport {
@@ -114,18 +114,10 @@ export async function exportReportsCsv(
     status?: string | null,
     excludeStatus?: string | null
 ): Promise<void> {
-    const token = getAuthToken();
     const params = new URLSearchParams();
     if (status) params.append('status', status);
     if (excludeStatus) params.append('excludeStatus', excludeStatus);
-
-    const response = await fetch(`/api/reports/export-csv?${params.toString()}`, {
-        headers: { Authorization: `Bearer ${token}` },
-    });
-
-    if (!response.ok) throw new Error('Export failed');
-
-    const blob = await response.blob();
+    const blob = await getBlob(`/api/reports/export-csv?${params.toString()}`);
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = 'reports.csv';
