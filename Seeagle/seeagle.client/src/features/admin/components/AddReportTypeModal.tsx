@@ -12,7 +12,6 @@ import { Label } from '@/components/ui/label';
 import { createReportType } from '@/features/admin/api/adminApi';
 import type { ReportType } from '@/shared/types/report';
 import { useTranslation } from 'react-i18next';
-import { getCookie } from '@/shared/utils/cookies';
 
 interface AddReportTypeModalProps {
     isOpen: boolean;
@@ -52,8 +51,7 @@ export function AddReportTypeModal({
         setError(null);
 
         try {
-            const token = getCookie('authToken');
-            const newReportType = await createReportType(trimmedName, token!);
+            const newReportType = await createReportType(trimmedName);
             onReportTypeCreated(newReportType);
             handleClose();
         } catch (err: unknown) {

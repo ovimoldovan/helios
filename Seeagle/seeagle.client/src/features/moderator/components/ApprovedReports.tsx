@@ -8,7 +8,6 @@ import {
     exportReportsCsv,
     type ModerationReport,
 } from '@/features/moderator/api/moderationApi';
-import { getAuthToken } from '@/shared/auth/getAuthToken';
 import {
     Table,
     TableBody,
@@ -74,11 +73,10 @@ export function ApprovedReports() {
         setIsProcessing(true);
 
         try {
-            const token = getAuthToken();
             if (shouldMarkAsSolved) {
-                await markAsSolved(selectedReport.id, message, token ?? undefined);
+                await markAsSolved(selectedReport.id, message);
             } else {
-                await sendMessageToReporter(selectedReport.id, message, token ?? undefined);
+                await sendMessageToReporter(selectedReport.id, message);
             }
 
             if (shouldMarkAsSolved) {
@@ -98,8 +96,7 @@ export function ApprovedReports() {
     async function handleDelete(id: string) {
         setDeletingId(id);
         try {
-            const token = getAuthToken();
-            await deleteReport(id, token ?? undefined);
+            await deleteReport(id);
 
             setReports((current) => current.filter((report) => report.id !== id));
             setTotalCount((current) => Math.max(0, current - 1));

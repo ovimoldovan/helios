@@ -2,9 +2,7 @@ import {useState, useCallback, useEffect} from 'react';
 import { Link } from 'react-router-dom';
 import { DrawableMap } from './DrawableMap';
 import { AreasSidePanel } from './AreasSidePanel';
-import {getJson, postJson} from '@/shared/api/httpClient';
-import { putJsonWithBody, deleteJson } from '@/shared/api/httpClient';
-import { getCookie } from '@/shared/utils/cookies';
+import { getJson, postJson, putJsonWithBody, deleteJson } from '@/shared/api/httpClient';
 import type { Area, CreateAreaRequest, CreateAreaResponse } from '../types';
 
 export function AdminAreasPage() {
@@ -15,8 +13,7 @@ export function AdminAreasPage() {
     useEffect(() => {
         const loadAreas = async () => {
             try {
-                const token = getCookie('authToken');
-                const data = await getJson<Area[]>('/api/areas', token ?? undefined);
+                const data = await getJson<Area[]>('/api/areas');
                 setAreas(data);
             } catch (error) {
                 console.error('Failed to load areas:', error);
@@ -30,8 +27,7 @@ export function AdminAreasPage() {
             coordinates
         };
         try {
-            const token = getCookie('authToken');
-            const response = await postJson<CreateAreaResponse>('/api/areas', request, token ?? undefined);
+            const response = await postJson<CreateAreaResponse>('/api/areas', request);
             const newArea: Area = {
                 id: response.id,
                 name: request.name,
@@ -51,8 +47,7 @@ export function AdminAreasPage() {
     }, [nextId]);
 
     function handleDeleteArea(id: string) {
-        const token = getCookie('authToken');
-        deleteJson(`/api/areas/${id}`, token ?? undefined)
+        deleteJson(`/api/areas/${id}`)
             .then(() => {
                 setAreas(areas.filter((a) => a.id !== id));
             })
@@ -60,9 +55,9 @@ export function AdminAreasPage() {
                 console.error('Failed to delete area:', error);
             });
     }
+
     function handleRenameArea(id: string, newName: string) {
-        const token = getCookie('authToken');
-        putJsonWithBody<Area>(`/api/areas/${id}`, { name: newName }, token ?? undefined)
+        putJsonWithBody<Area>(`/api/areas/${id}`, { name: newName })
             .then((updated) => {
                 setAreas(areas.map((a) => a.id === id ? updated : a));
             })
@@ -70,7 +65,6 @@ export function AdminAreasPage() {
                 console.error('Failed to rename area:', error);
             });
     }
-    
 
     return (
         <div className="relative h-screen w-screen overflow-hidden">

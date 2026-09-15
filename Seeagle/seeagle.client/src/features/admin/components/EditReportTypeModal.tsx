@@ -12,7 +12,6 @@ import { Label } from '@/components/ui/label';
 import { updateReportType } from '@/features/admin/api/adminApi';
 import type { ReportType } from '@/shared/types/report';
 import { useTranslation } from 'react-i18next';
-import { getCookie } from '@/shared/utils/cookies';
 
 interface EditReportTypeModalProps {
     isOpen: boolean;
@@ -62,8 +61,7 @@ export function EditReportTypeModal({
         setError(null);
 
         try {
-            const token = getCookie('authToken');
-            const updatedReportType = await updateReportType(reportType.id, trimmedName, token!);
+            const updatedReportType = await updateReportType(reportType.id, trimmedName);
             onReportTypeUpdated(updatedReportType);
             handleClose();
         } catch (err: unknown) {

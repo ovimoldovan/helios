@@ -21,8 +21,8 @@ public sealed class ReportsController(
         CancellationToken cancellationToken)
     {
         try
-        {
-            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        { 
+            var userIdClaim = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userIdClaim == null || !Guid.TryParse(userIdClaim, out var userId))
             {
                 return Unauthorized(new { message = "User ID claim is missing or invalid." });
@@ -153,7 +153,7 @@ public sealed class ReportsController(
             return BadRequest(new { message = "No file was provided." });
         if (!file.ContentType.StartsWith("image/"))
             return BadRequest(new { message = "File must be an image." });
-        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userIdClaim = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userIdClaim == null || !Guid.TryParse(userIdClaim, out var userId))
         {
             return Unauthorized(new { message = "User ID claim is missing or invalid." });
@@ -201,7 +201,7 @@ public sealed class ReportsController(
         [FromQuery] int pageSize = 10,
         CancellationToken cancellationToken = default)
     {
-        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userIdClaim = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userIdClaim == null || !Guid.TryParse(userIdClaim, out var userId))
         {
             return Unauthorized(new { message = "User ID claim is missing or invalid." });

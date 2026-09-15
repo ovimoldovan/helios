@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Seeagle.Application.Users;
 using Seeagle.Domain.User;
 using Seeagle.Application.Common;
 
@@ -68,6 +67,13 @@ public class UserService : IUserService
             user.Role
         );
     }
+
+    public async Task<User?> GetByIdAsync(Guid userId)
+    {
+        return await _userRepository.GetAllQueryable()
+            .FirstOrDefaultAsync(u => u.Id == userId);
+    }
+
     private UserDto ConvertToDto(User user)
     {
         return new UserDto(

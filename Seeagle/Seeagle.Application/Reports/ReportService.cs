@@ -55,8 +55,10 @@ public sealed class ReportService : IReportService
         var report = new Report(point, request.Description, user, reportType);
 
         var area = await _areaRepository.GetAllQueryable()
-            .FirstOrDefaultAsync(a => a.Geometry.Contains(point), cancellationToken);
-
+            .FirstOrDefaultAsync(
+                a => !a.IsDeleted && a.Geometry.Contains(point),
+                cancellationToken);
+        
         if (area != null)
         {
             report.SetAreaId(area.Id);
@@ -114,6 +116,7 @@ public sealed class ReportService : IReportService
     {
         var report = await _reportRepository
             .GetAllQueryable()
+            .Include(report => report.Type)
             .FirstOrDefaultAsync(report => report.Id == id, cancellationToken);
 
         if (report is null)
@@ -143,11 +146,13 @@ public sealed class ReportService : IReportService
             GetTypeName(report),
             report.MessageToReporter);
     }
-	public async Task<ReportDto?> RejectAsync(Guid id, string? message, CancellationToken cancellationToken)
-	{
-    	var report = await _reportRepository
-        	.GetAllQueryable()
-        	.FirstOrDefaultAsync(report => report.Id == id, cancellationToken);
+
+    public async Task<ReportDto?> RejectAsync(Guid id, string? message, CancellationToken cancellationToken)
+    {
+        var report = await _reportRepository
+            .GetAllQueryable()
+            .Include(report => report.Type)
+            .FirstOrDefaultAsync(report => report.Id == id);
 
     	if (report is null)
     	{
@@ -157,7 +162,7 @@ public sealed class ReportService : IReportService
     	report.Reject();
     	report.UpdateMessageToReporter(message);
 
-    	await _reportRepository.UpdateAsync(report, cancellationToken);
+        await _reportRepository.UpdateAsync(report, cancellationToken);
 
     	return new ReportDto(
         	report.Id,
@@ -174,14 +179,15 @@ public sealed class ReportService : IReportService
     {
         var report = await _reportRepository
             .GetAllQueryable()
-            .FirstOrDefaultAsync(report => report.Id == id, cancellationToken);
+            .Include(report => report.Type)
+            .FirstOrDefaultAsync(report => report.Id == id);
         if (report is null)
         {
             return null;
         }
         report.MarkAsSolved(message);
         await _reportRepository.UpdateAsync(report, cancellationToken);
-
+        
         return new ReportDto(
             report.Id,
             report.Location.X,
@@ -225,7 +231,8 @@ public sealed class ReportService : IReportService
     {
         var report = await _reportRepository
             .GetAllQueryable()
-            .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
+            .Include(report => report.Type)
+            .FirstOrDefaultAsync(report => report.Id == id, cancellationToken);
 
         if (report is null)
         {
@@ -331,7 +338,7 @@ public sealed class ReportService : IReportService
     {
         var report = await _reportRepository
             .GetAllQueryable()
-            .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
+            .FirstOrDefaultAsync(report => report.Id == id, cancellationToken);
 
         if (report is null)
         {
@@ -349,8 +356,9 @@ public sealed class ReportService : IReportService
     {
         var report = await _reportRepository
             .GetAllQueryable()
-            .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
-
+            .Include(report => report.Type)
+            .FirstOrDefaultAsync(report => report.Id == id, cancellationToken);
+        
         if (report is null)
         {
             return null;
@@ -390,7 +398,9 @@ public sealed class ReportService : IReportService
     {
         var report = await _reportRepository
             .GetAllQueryable()
+            .Include(report => report.Type)
             .FirstOrDefaultAsync(report => report.Id == reportId, cancellationToken);
+        
         if (report is null)
             return null;
         if (report.User.Id != userId)

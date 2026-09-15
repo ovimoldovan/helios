@@ -2,6 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Seeagle.Application.Common;
@@ -9,10 +10,9 @@ using Seeagle.Application.SampleNames;
 using Seeagle.Infrastructure.Persistence;
 using Seeagle.Application.Users;
 using Seeagle.Application.Reports;
-using Seeagle.Domain.Reports;
 using Seeagle.Server.Utils.JWT;
-using Swashbuckle.AspNetCore.Filters;
 using Seeagle.Application.Areas;
+using Seeagle.Server.Utils.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,17 +20,15 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    options.AddSecurityDefinition("cookieAuth", new OpenApiSecurityScheme
     {
-        Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        Scheme = "bearer",
-        BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Description = "Enter your JWT token."
+        Name = "AuthToken",
+        Type = SecuritySchemeType.ApiKey,
+        In = ParameterLocation.Cookie,
+        Description = "JWT stored in an httpOnly cookie"
     });
-    
-    options.OperationFilter<SecurityRequirementsOperationFilter>(true, "Bearer");
+
+    options.OperationFilter<CookieAuthOperationFilter>();
 });
 
 builder.Services.AddScoped<IUserService, UserService>();
@@ -42,9 +40,14 @@ builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddScoped<IUserQueryService, UserQueryService>();
 builder.Services.AddScoped<IReportQueryService, ReportQueryService>();
 builder.Services.AddScoped<IPhotoProcessor, PhotoProcessor>();
+builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
+builder.Services.Configure<CookieSettings>(builder.Configuration.GetSection("CookieSettings"));
 builder.Services.AddScoped<IJwtUtil, JwtUtil>();
+
+builder.Services.AddMemoryCache();
+
 var jwtOptions = builder.Configuration.GetSection("Jwt").Get<JwtOptions>()
                  ?? throw new InvalidOperationException("Jwt configuration is missing.");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -55,11 +58,47 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Secret)),
-            ValidateIssuer = false,   
-            ValidateAudience = false
+            
+            ValidateIssuer = true,
+            ValidIssuer = jwtOptions.Issuer,
+            
+            ValidateAudience = true,
+            ValidAudience = jwtOptions.Audience
+        };
+        
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var token = context.Request.Cookies["AuthToken"];
+                if (!string.IsNullOrEmpty(token))
+                {
+                    context.Token = token;
+                }
+                return Task.CompletedTask;
+            },
+            OnTokenValidated = context =>
+            {
+                var token = context.Request.Cookies["AuthToken"];
+                if (string.IsNullOrEmpty(token))
+                {
+                    context.Fail("Invalid token.");
+                    return Task.CompletedTask;
+                }
+
+                var tokenBlacklist = context.HttpContext.RequestServices.GetRequiredService<IMemoryCache>();
+
+                if (tokenBlacklist.TryGetValue(token, out _))
+                {
+                    context.Fail("Token has been revoked.");
+                }
+
+                return Task.CompletedTask;
+            }
         };
     });
 builder.Services.AddAuthorization();
+
 SetupDatabase(builder);
 
 var app = builder.Build();
