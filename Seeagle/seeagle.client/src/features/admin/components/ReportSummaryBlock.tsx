@@ -23,7 +23,7 @@ export function ReportSummaryBlock() {
             }
         };
         loadSummary();
-    }, [t]);
+    }, []);
 
     if (isLoading) return <p className="text-sm text-muted-foreground">{t('loadingSummary')}</p>;
     if (error) return <p className="text-sm text-red-600">{error}</p>;
@@ -67,7 +67,9 @@ export function ReportSummaryBlock() {
                         <ul className="space-y-1 text-sm">
                             {summary.byArea.map((item) => (
                                 <li key={item.areaId ?? 'no-area'} className="flex justify-between">
-                                    <span>{item.areaName}</span>
+                                    <span>
+                                        {item.areaId === null ? t('noArea') : item.areaName}
+                                    </span>
                                     <span className="font-medium">{item.count}</span>
                                 </li>
                             ))}

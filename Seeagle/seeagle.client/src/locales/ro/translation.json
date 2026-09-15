@@ -232,5 +232,7 @@
   "allReportsTitle": "Toate Rapoartele",
   "allReportsDescription": "Revizuiește toate rapoartele, cu excepția celor în așteptare.",
   "moderatorMessage": "Mesaj moderator",
-  "rejectReport": "Respinge raportul"
+  "rejectReport": "Respinge raportul",
+
+  "noArea": "Fără Arie"
 }

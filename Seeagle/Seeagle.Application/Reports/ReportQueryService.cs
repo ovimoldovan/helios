@@ -173,7 +173,7 @@ public sealed class ReportQueryService : IReportQueryService
     	var byArea = byAreaRaw
         	.Select(a => new AreaCountDto(
             	a.AreaId,
-            	a.AreaId.HasValue && areaNames.TryGetValue(a.AreaId.Value, out var name) ? name : "No area",
+            	a.AreaId.HasValue && areaNames.TryGetValue(a.AreaId.Value, out var name) ? name : null,
             	a.Count))
         	.ToList();
 
