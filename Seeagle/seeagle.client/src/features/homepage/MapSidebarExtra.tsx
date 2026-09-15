@@ -36,17 +36,17 @@ export function MapSidebarExtra({
             {areas && areas.length > 0 && (
                 <div className="space-y-1">
                     <label className="text-xs font-medium text-muted-foreground px-1">
-                        {t('filterByArea', 'Filter by area')}
+                        {t('filterByArea')}
                     </label>
                     <Select
-                        value={selectedAreaId ?? 'all'}
+                        value={selectedAreaId ?? ''}
                         onValueChange={(value) => onAreaChange?.(value === 'all' ? null : value)}
                     >
                         <SelectTrigger className="w-full rounded-full border-2">
-                            <SelectValue placeholder={t('allAreas', 'All areas')} />
+                            <SelectValue placeholder={t('allAreas')} />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all">{t('allAreas', 'All areas')}</SelectItem>
+                            <SelectItem value="all">{t('allAreas')}</SelectItem>
                             {areas.map((area) => (
                                 <SelectItem key={area.id} value={area.id}>
                                     {area.name}
