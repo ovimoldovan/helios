@@ -1,3 +1,5 @@
+import {useNavigate} from "react-router-dom";
+
 let refreshPromise: Promise<void> | null = null;
 
 async function refreshSession(): Promise<void> {
@@ -29,7 +31,19 @@ async function request(url: string, init: RequestInit, isRetry = false): Promise
     try {
       await refreshSession();
     } catch {
-      window.location.href = '/login';
+      const navigate = useNavigate();
+      try {
+        const logoutResponse = await fetch('/api/logout', {
+          method: 'POST',
+          credentials: 'include'
+        });
+        
+        if (logoutResponse.status == 400)
+          navigate('/login');
+      } catch {
+        navigate('/login');
+      }
+      
       return new Promise<Response>(() => {});
     }
 
