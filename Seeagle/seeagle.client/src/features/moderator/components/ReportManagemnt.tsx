@@ -5,7 +5,6 @@ import {
     type ModerationReport,
     type UpdateReportRequest,
 } from '@/features/moderator/api/moderationApi';
-import { getAuthToken } from '@/shared/auth/getAuthToken';
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from '@/components/ui/table';
 import { PaginationLink } from '@/components/ui/pagination';
 import { ChevronLeftIcon, ChevronRightIcon, Edit } from 'lucide-react';
@@ -56,8 +55,7 @@ export function ReportManagement() {
         setIsLoading(true);
         setError(null);
         try {
-            const token = getAuthToken();
-            const result = await getAllReports(page, PAGE_SIZE, sortBy, sortOrder, token ?? undefined);
+            const result = await getAllReports(page, PAGE_SIZE, sortBy, sortOrder);
             setReports(result.items);
             setTotalCount(result.totalCount);
         } catch {
@@ -82,8 +80,7 @@ export function ReportManagement() {
     const handleSave = async (id: string, data: UpdateReportRequest) => {
         setIsSaving(true);
         try {
-            const token = getAuthToken();
-            const updated = await updateReport(id, data, token ?? undefined);
+            const updated = await updateReport(id, data);
             setReports((prev) => prev.map((r) => (r.id === id ? updated : r)));
         } catch {
             throw new Error(t('unexpectedErrorUpdatingReport'));

@@ -1,155 +1,127 @@
-export async function getJson<T>(url: string, token?: string): Promise<T> {
-  const headers: Record<string, string> = {};
+import {useNavigate} from "react-router-dom";
 
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+let refreshPromise: Promise<void> | null = null;
+
+async function refreshSession(): Promise<void> {
+  if (!refreshPromise) {
+    refreshPromise = (async () => {
+      const res = await fetch('/api/auth/refresh', {
+        method: 'POST',
+        credentials: 'include',
+      });
+
+      if (!res.ok) {
+        throw new Error('Session expired');
+      }
+    })().finally(() => {
+      refreshPromise = null;
+    });
   }
 
+  return refreshPromise;
+}
+
+async function request(url: string, init: RequestInit, isRetry = false): Promise<Response> {
   const response = await fetch(url, {
-    headers: headers
+    credentials: 'include',
+    ...init,
   });
 
+  if (response.status === 401 && !isRetry && !url.includes('/api/auth/')) {
+    try {
+      await refreshSession();
+    } catch {
+      const navigate = useNavigate();
+      try {
+        const logoutResponse = await fetch('/api/logout', {
+          method: 'POST',
+          credentials: 'include'
+        });
+        
+        if (logoutResponse.status == 400)
+          navigate('/login');
+      } catch {
+        navigate('/login');
+      }
+      
+      return new Promise<Response>(() => {});
+    }
+
+    return request(url, init, true);
+  }
+
+  return response;
+}
+
+async function parseJsonResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
+    if (response.status === 400) {
+      throw await response.json();
+    }
+
     throw new Error(`Request failed with status ${response.status}.`);
+  }
+
+  if (response.status === 204 || response.headers.get('content-length') === '0') {
+    return undefined as T;
   }
 
   return (await response.json()) as T;
 }
 
-export async function postJson<TResponse>(url: string, body: unknown, token?: string): Promise<TResponse> {
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json'
-  };
+export async function getJson<T>(url: string): Promise<T> {
+  const response = await request(url, { method: 'GET' });
+  return parseJsonResponse<T>(response);
+}
 
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
-
-  const response = await fetch(url, {
+export async function postJson<TResponse>(url: string, body: unknown): Promise<TResponse> {
+  const response = await request(url, {
     method: 'POST',
-    headers: headers,
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   });
 
-  if (!response.ok) {
-    if (response.status === 400) {
-      throw await response.json();
-    }
-
-    throw new Error(`Request failed with status ${response.status}.`);
-  }
-
-  return (await response.json()) as TResponse;
+  return parseJsonResponse<TResponse>(response);
 }
 
-export async function putJson<TResponse>(url: string, token?: string, body?: unknown): Promise<TResponse> {
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json' 
-  };
-
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
-
-  const response = await fetch(url, {
+export async function putJson<TResponse>(url: string, body?: unknown): Promise<TResponse> {
+  const response = await request(url, {
     method: 'PUT',
-    headers: headers,
+    headers: { 'Content-Type': 'application/json' },
     body: body ? JSON.stringify(body) : undefined,
   });
 
-  if (!response.ok) {
-    throw new Error(`Request failed with status ${response.status}.`);
-  }
-
-  return (await response.json()) as TResponse;
+  return parseJsonResponse<TResponse>(response);
 }
 
-export async function deleteJson(url: string, token?: string): Promise<void> {
-  const headers: Record<string, string> = {};
-
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
-
-  const response = await fetch(url, {
-    method: 'DELETE',
-    headers: headers,
-  });
-
-  if (!response.ok) {
-    throw new Error(`Request failed with status ${response.status}.`);
-  }
-}
-
-export async function putJsonWithBody<TResponse>(url: string, body: unknown, token?: string): Promise<TResponse> {
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json'
-  };
-
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
-
-  const response = await fetch(url, {
+export async function putJsonWithBody<TResponse>(url: string, body: unknown): Promise<TResponse> {
+  const response = await request(url, {
     method: 'PUT',
-    headers: headers,
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   });
 
-  if (!response.ok) {
-    if (response.status === 400) {
-      throw await response.json();
-    }
-
-    throw new Error(`Request failed with status ${response.status}.`);
-  }
-
-  return (await response.json()) as TResponse;
+  return parseJsonResponse<TResponse>(response);
 }
 
-export async function patchJson<TResponse>(url: string, token?: string): Promise<TResponse> {
-  const headers: Record<string, string> = {};
-
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
-
-  const response = await fetch(url, {
-    method: 'PATCH',
-    headers: headers,
-  });
-
-  if (!response.ok) {
-    if (response.status === 400) {
-      throw await response.json();
-    }
-
-    throw new Error(`Request failed with status ${response.status}.`);
-  }
-
-  return (await response.json()) as TResponse;
+export async function patchJson<TResponse>(url: string): Promise<TResponse> {
+  const response = await request(url, { method: 'PATCH' });
+  return parseJsonResponse<TResponse>(response);
 }
 
-export async function postFormData<TRespoonse>(url:string, formData: FormData, token?: string): Promise<TRespoonse> {
-  const headers: Record<string, string> = {};
-  
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+export async function deleteJson(url: string): Promise<void> {
+  const response = await request(url, { method: 'DELETE' });
+
+  if (!response.ok) {
+    throw new Error(`Request failed with status ${response.status}.`);
   }
-  
-  const response = await fetch(url, {
+}
+
+export async function postFormData<TResponse>(url: string, formData: FormData): Promise<TResponse> {
+  const response = await request(url, {
     method: 'POST',
-    headers: headers,
     body: formData,
   });
-  
-  if (!response.ok) {
-    if (response.status === 400) {
-      throw await response.json();
-    }
-    
-    throw new Error(`Request failed with status ${response.status}.`);
-  }
-  
-  return (await response.json()) as TRespoonse;
+
+  return parseJsonResponse<TResponse>(response);
 }

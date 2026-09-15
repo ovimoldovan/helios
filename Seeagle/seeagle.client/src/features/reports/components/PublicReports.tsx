@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { getJson } from '@/shared/api/httpClient';
-import { getCookie } from '@/shared/utils/cookies'; 
 import type { Report } from '@/shared/types/report';
 import type { PagedResult } from '@/shared/types/pagedResult';
 import {
@@ -39,8 +38,7 @@ export function PublicReports() {
     useEffect(() => {
         const loadAreas = async () => {
             try {
-                const token = getCookie('authToken'); 
-                const data = await getJson<Area[]>('/api/areas', token ?? undefined);
+                const data = await getJson<Area[]>('/api/areas');
                 setAreas(data);
             } catch (error) {
                 console.error('Failed to load areas:', error);
@@ -57,8 +55,6 @@ export function PublicReports() {
         setIsLoading(true);
         setError(null);
         try {
-            const token = getCookie('authToken'); 
-
             const url = new URL('/api/reports/public', window.location.origin);
             url.searchParams.set('pageNumber', String(page));
             url.searchParams.set('pageSize', String(PAGE_SIZE));
@@ -75,8 +71,7 @@ export function PublicReports() {
             url.searchParams.set('sortOrder', sortOrder);
 
             const result = await getJson<PagedResult<Report>>(
-                url.toString(),
-                token ?? undefined 
+                url.toString()
             );
             setReports(result.items);
             setTotalCount(result.totalCount);

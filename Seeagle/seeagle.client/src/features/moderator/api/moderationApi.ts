@@ -1,6 +1,5 @@
 import { deleteJson, getJson, putJson } from '@/shared/api/httpClient';
 import type { PagedResult } from '@/shared/types/pagedResult';
-import { getAuthToken } from '@/shared/auth/getAuthToken';
 
 export interface ModerationReport {
     id: string;
@@ -19,55 +18,47 @@ export async function getPendingReports(
     pageNumber: number,
     pageSize: number
 ): Promise<PagedResult<ModerationReport>> {
-    const token = getAuthToken();
-
     return getJson<PagedResult<ModerationReport>>(
-        `/api/reports/pending?pageNumber=${pageNumber}&pageSize=${pageSize}`,
-        token ?? undefined
+        `/api/reports/pending?pageNumber=${pageNumber}&pageSize=${pageSize}`
     );
 }
 
-export async function approveReport( id: string, priority: string, token?: string): Promise<ModerationReport> {
+export async function approveReport( id: string, priority: string): Promise<ModerationReport> {
     return putJson<ModerationReport>(
-        `/api/reports/${id}/approve?priority=${priority}`,
-        token
+        `/api/reports/${id}/approve?priority=${priority}`
     );
 }
 
-export async function rejectReport(id: string, message?: string | null, token?: string): Promise<ModerationReport> {
+export async function rejectReport(id: string, message?: string | null): Promise<ModerationReport> {
     const url = message
         ? `/api/reports/${id}/reject?message=${encodeURIComponent(message)}`
         : `/api/reports/${id}/reject`;
 
-    return putJson<ModerationReport>(url, token);
+    return putJson<ModerationReport>(url);
 }
 
 export async function getApprovedReports(
     pageNumber: number,
     pageSize: number
 ): Promise<PagedResult<ModerationReport>> {
-    const token = getAuthToken();
-
     return getJson<PagedResult<ModerationReport>>(
-        `/api/reports/approved-list?pageNumber=${pageNumber}&pageSize=${pageSize}`,
-        token ?? undefined
+        `/api/reports/approved-list?pageNumber=${pageNumber}&pageSize=${pageSize}`
     );
 }
-export async function markAsSolved(id: string, message?: string | null,  token?: string): Promise<ModerationReport> {
+export async function markAsSolved(id: string, message?: string | null): Promise<ModerationReport> {
     const url = message
         ? `/api/reports/${id}/solved?message=${encodeURIComponent(message)}`
         : `/api/reports/${id}/solved`;
-    return putJson<ModerationReport>(url, token);
+    return putJson<ModerationReport>(url);
 }
 export async function sendMessageToReporter(
     id: string,
-    message?: string | null,
-    token?: string
+    message?: string | null
 ): Promise<ModerationReport> {
     const url = message
         ? `/api/reports/${id}/message?message=${encodeURIComponent(message)}`
         : `/api/reports/${id}/message`;
-    return putJson<ModerationReport>(url, token);
+    return putJson<ModerationReport>(url);
 }
 
 export async function getReportsByStatus(
@@ -75,18 +66,15 @@ export async function getReportsByStatus(
     pageNumber: number,
     pageSize: number
 ): Promise<PagedResult<ModerationReport>> {
-    const token = getAuthToken();
-
     const statusParam = status ? `&status=${status}` : '';
 
     return getJson<PagedResult<ModerationReport>>(
-        `/api/reports?&pageNumber=${pageNumber}&pageSize=${pageSize}${statusParam}`,
-        token ?? undefined
+        `/api/reports?&pageNumber=${pageNumber}&pageSize=${pageSize}${statusParam}`
     );
 }
 
-export async function deleteReport(id: string, token?: string): Promise<void> {
-    return deleteJson(`/api/reports/${id}`, token);
+export async function deleteReport(id: string): Promise<void> {
+    return deleteJson(`/api/reports/${id}`);
 }
 
 export interface UpdateReportRequest {
@@ -97,8 +85,7 @@ export async function getAllReports(
     pageNumber: number,
     pageSize: number,
     sortBy?: string,
-    sortOrder?: 'asc' | 'desc',
-    token?: string
+    sortOrder?: 'asc' | 'desc'
 ): Promise<PagedResult<ModerationReport>> {
     let url = `/api/reports/all?pageNumber=${pageNumber}&pageSize=${pageSize}`;
 
@@ -108,20 +95,17 @@ export async function getAllReports(
     if (sortOrder) {
         url += `&sortOrder=${sortOrder}`;
     }
-    return getJson<PagedResult<ModerationReport>>(url, token);
+    return getJson<PagedResult<ModerationReport>>(url);
 }
-export async function updateReport(id: string, data: UpdateReportRequest, token?: string): Promise<ModerationReport> {
-    return putJson<ModerationReport>(`/api/reports/${id}`, token, data);
+export async function updateReport(id: string, data: UpdateReportRequest): Promise<ModerationReport> {
+    return putJson<ModerationReport>(`/api/reports/${id}`, data);
 }
 
 export async function getAllReportsExceptPending(
     pageNumber: number,
     pageSize: number
 ): Promise<PagedResult<ModerationReport>> {
-    const token = getAuthToken();
-
     return getJson<PagedResult<ModerationReport>>(
-        `/api/reports?excludeStatus=Pending&pageNumber=${pageNumber}&pageSize=${pageSize}`,
-        token ?? undefined
+        `/api/reports?excludeStatus=Pending&pageNumber=${pageNumber}&pageSize=${pageSize}`
     );
 }
