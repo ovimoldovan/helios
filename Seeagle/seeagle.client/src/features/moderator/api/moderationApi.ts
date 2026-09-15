@@ -1,4 +1,4 @@
-import { deleteJson, getJson, putJson } from '@/shared/api/httpClient';
+import { deleteJson, getJson, putJson, getBlob } from '@/shared/api/httpClient';
 import type { PagedResult } from '@/shared/types/pagedResult';
 
 export interface ModerationReport {
@@ -108,4 +108,19 @@ export async function getAllReportsExceptPending(
     return getJson<PagedResult<ModerationReport>>(
         `/api/reports?excludeStatus=Pending&pageNumber=${pageNumber}&pageSize=${pageSize}`
     );
+}
+
+export async function exportReportsCsv(
+    status?: string | null,
+    excludeStatus?: string | null
+): Promise<void> {
+    const params = new URLSearchParams();
+    if (status) params.append('status', status);
+    if (excludeStatus) params.append('excludeStatus', excludeStatus);
+    const blob = await getBlob(`/api/reports/export-csv?${params.toString()}`);
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'reports.csv';
+    a.click();
+    URL.revokeObjectURL(a.href);
 }

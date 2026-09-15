@@ -125,3 +125,13 @@ export async function postFormData<TResponse>(url: string, formData: FormData): 
 
   return parseJsonResponse<TResponse>(response);
 }
+
+export async function getBlob(url: string): Promise<Blob> {
+  const response = await request(url, { method: 'GET' });
+
+  if (!response.ok) {
+    throw new Error(`Request failed with status ${response.status}.`);
+  }
+
+  return response.blob();
+}
