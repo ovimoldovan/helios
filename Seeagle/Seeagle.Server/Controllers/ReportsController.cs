@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Seeagle.Application.Reports;
 using Seeagle.Application.Common;
+using Seeagle.Application.Users;
 using Seeagle.Domain.Reports;
+using Seeagle.Server.Utils.MailService;
 
 namespace Seeagle.Server.Controllers;
 
@@ -12,7 +14,8 @@ namespace Seeagle.Server.Controllers;
 public sealed class ReportsController(
     IReportService reportService, 
     IReportQueryService reportQueryService, 
-    IPhotoProcessor photoProcessor) : ControllerBase
+    IPhotoProcessor photoProcessor,
+    IMailService mailService) : ControllerBase
 {
     [Authorize]
     [HttpPost]
@@ -75,7 +78,19 @@ public sealed class ReportsController(
             return NotFound();
         }
 
-        return Ok(report);
+        await mailService.SendEmail(report.User.Email, report.User.FirstName + " " + report.User.LastName, report.Description ?? "-",
+            report.Status);
+
+        return Ok(new ReportDto(
+            report.Id,
+            report.Location.X,
+            report.Location.Y,
+            report.Description,
+            report.CreatedUtc,
+            report.Status.ToString(),
+            report.Priority.ToString(),
+            report.Type.Name,
+            report.MessageToReporter));
     }
 
     [Authorize(Roles = "Moderator, Admin")]
@@ -92,7 +107,26 @@ public sealed class ReportsController(
             return NotFound();
         }
 
-        return Ok(report);
+        if (message != null)
+            await mailService.SendEmail(report.User.Email, report.User.FirstName + " " + report.User.LastName,
+                report.Description ?? "-",
+                report.Status,
+                message);
+        else
+            await mailService.SendEmail(report.User.Email, report.User.FirstName + " " + report.User.LastName,
+                report.Description ?? "-",
+                report.Status);
+
+        return Ok(new ReportDto(
+            report.Id,
+            report.Location.X,
+            report.Location.Y,
+            report.Description,
+            report.CreatedUtc,
+            report.Status.ToString(),
+            report.Priority.ToString(),
+            report.Type.Name,
+            report.MessageToReporter));
     }
     
     [Authorize(Roles = "Moderator, Admin")]
@@ -123,8 +157,27 @@ public sealed class ReportsController(
         {
             return NotFound();
         }
+        
+        if (message != null)
+            await mailService.SendEmail(report.User.Email, report.User.FirstName + " " + report.User.LastName,
+                report.Description ?? "-",
+                report.Status,
+                message);
+        else
+            await mailService.SendEmail(report.User.Email, report.User.FirstName + " " + report.User.LastName,
+                report.Description ?? "-",
+                report.Status);
 
-        return Ok(report);
+        return Ok(new ReportDto(
+            report.Id,
+            report.Location.X,
+            report.Location.Y,
+            report.Description,
+            report.CreatedUtc,
+            report.Status.ToString(),
+            report.Priority.ToString(),
+            report.Type.Name,
+            report.MessageToReporter));
     }
     
     [Authorize(Roles = "Moderator, Admin")]
@@ -141,7 +194,21 @@ public sealed class ReportsController(
             return NotFound();
         }
 
-        return Ok(report);
+        if (message != null)
+            await mailService.SendEmail(report.User.Email, report.User.FirstName + " " + report.User.LastName,
+                report.Description ?? "-",
+                message);
+        
+        return Ok(new ReportDto(
+            report.Id,
+            report.Location.X,
+            report.Location.Y,
+            report.Description,
+            report.CreatedUtc,
+            report.Status.ToString(),
+            report.Priority.ToString(),
+            report.Type.Name,
+            report.MessageToReporter));
     }
 
     [Authorize]
