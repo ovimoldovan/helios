@@ -239,6 +239,5 @@
   "status_Approved": "Approved",
   "status_Rejected": "Rejected",
   "status_Solved": "Solved",
-
-  "exportCsv": "Export CSV"
+  "noArea": "No Area"
 }

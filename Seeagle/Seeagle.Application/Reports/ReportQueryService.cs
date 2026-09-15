@@ -1,16 +1,21 @@
 using Microsoft.EntityFrameworkCore;
 using Seeagle.Application.Common;
 using Seeagle.Domain.Reports;
+using Seeagle.Domain.Areas;
 
 namespace Seeagle.Application.Reports;
 
 public sealed class ReportQueryService : IReportQueryService
 {
     private readonly IRepository<Report> _reportRepository;
+    private readonly IRepository<Area> _areaRepository;
 
-    public ReportQueryService(IRepository<Report> reportRepository)
+    public ReportQueryService(
+        IRepository<Report> reportRepository,
+        IRepository<Area> areaRepository)
     {
         _reportRepository = reportRepository;
+        _areaRepository = areaRepository;
     }
 
     public async Task<IReadOnlyList<ReportDto>> GetApprovedReportsAsync(
@@ -132,4 +137,47 @@ public sealed class ReportQueryService : IReportQueryService
 
         return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
     }
+
+
+    public async Task<ReportSummaryDto> GetSummaryAsync(CancellationToken cancellationToken)
+	{
+    	var query = _reportRepository.GetAllQueryable()
+        	.Where(r => !r.IsDeleted);
+
+   	 	var totalCount = await query.CountAsync(cancellationToken);
+
+    	var byStatus = await query
+        	.GroupBy(r => r.Status)
+        	.Select(g => new StatusCountDto(g.Key.ToString(), g.Count()))
+        	.ToListAsync(cancellationToken);
+
+    	var byType = await query
+        	.GroupBy(r => r.Type.Name)
+        	.Select(g => new TypeCountDto(g.Key, g.Count()))
+        	.ToListAsync(cancellationToken);
+
+    	var byAreaRaw = await query
+        	.GroupBy(r => r.AreaId)
+        	.Select(g => new { AreaId = g.Key, Count = g.Count() })
+        	.ToListAsync(cancellationToken);
+
+    	var areaIds = byAreaRaw
+        	.Where(a => a.AreaId.HasValue)
+        	.Select(a => a.AreaId!.Value)
+        	.ToList();
+
+    	var areaNames = await _areaRepository.GetAllQueryable()
+        	.Where(a => areaIds.Contains(a.Id))
+        	.ToDictionaryAsync(a => a.Id, a => a.Name, cancellationToken);
+
+    	var byArea = byAreaRaw
+        	.Select(a => new AreaCountDto(
+            	a.AreaId,
+            	a.AreaId.HasValue && areaNames.TryGetValue(a.AreaId.Value, out var name) ? name : null,
+            	a.Count))
+        	.ToList();
+
+    	return new ReportSummaryDto(byStatus, byType, byArea, totalCount);
+	}
+
 }
