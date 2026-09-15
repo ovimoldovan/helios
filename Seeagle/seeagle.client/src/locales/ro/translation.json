@@ -232,5 +232,12 @@
   "allReportsTitle": "Toate Rapoartele",
   "allReportsDescription": "Revizuiește toate rapoartele, cu excepția celor în așteptare.",
   "moderatorMessage": "Mesaj moderator",
-  "rejectReport": "Respinge raportul"
+  "rejectReport": "Respinge raportul",
+
+  "reportSummaryTitle": "Sumar Rapoarte",
+  "byStatus": "După Status",
+  "byType": "După Tip",
+  "byArea": "După Zonă",
+  "loadingSummary": "Se încarcă sumarul...",
+  "unexpectedErrorLoadingSummary": "Eroare neașteptată la încărcarea sumarului."
 }

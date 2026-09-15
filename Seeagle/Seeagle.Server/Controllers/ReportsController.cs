@@ -305,4 +305,13 @@ public sealed class ReportsController(
         }
         return NoContent();
     }
+
+	[Authorize(Roles = "Admin")]
+	[HttpGet("summary")]
+	public async Task<ActionResult<ReportSummaryDto>> GetSummary(
+    	CancellationToken cancellationToken = default)
+	{
+    	var summary = await reportQueryService.GetSummaryAsync(cancellationToken);
+    	return Ok(summary);
+	}
 }
