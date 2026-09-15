@@ -353,7 +353,7 @@ public sealed class ReportServiceTests
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal("Approved", result.Status);
+        Assert.Equal("Approved", result.Status.ToString());
 
         await reportRepository
             .Received(1)
@@ -395,7 +395,7 @@ public sealed class ReportServiceTests
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal("Low", result.Priority);
+        Assert.Equal("Low", result.Priority.ToString());
     }
 
     [Fact]
@@ -433,7 +433,7 @@ public sealed class ReportServiceTests
             CancellationToken.None);
 
         // Assert
-        Assert.Equal("Rejected", result.Status);
+        Assert.Equal("Rejected", result.Status.ToString());
         Assert.Equal("Duplicate report", result.MessageToReporter);
 
         await reportRepository
