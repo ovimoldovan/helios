@@ -5,6 +5,7 @@ import {
     deleteReport,
     markAsSolved,
     sendMessageToReporter,
+    exportReportsCsv,
     type ModerationReport,
 } from '@/features/moderator/api/moderationApi';
 import {
@@ -16,7 +17,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { PaginationLink } from '@/components/ui/pagination';
-import { ChevronLeftIcon, ChevronRightIcon, TrashIcon } from 'lucide-react';
+import { ChevronLeftIcon, ChevronRightIcon, TrashIcon, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ActionModal } from './ActionModal';
 import { useTranslation } from 'react-i18next';
@@ -130,6 +131,21 @@ export function ApprovedReports() {
                         {t(`status_${status}`)}
                     </Button>
                 ))}
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        className="ml-auto flex items-center gap-2"
+                        onClick={() => {
+                            if (statusFilter === 'All') {
+                                exportReportsCsv(null, 'Pending');
+                            } else {
+                                exportReportsCsv(statusFilter);
+                            }
+                        }}
+                    >
+                        <Download className="h-4 w-4" />
+                        {t('exportCsv')}
+                    </Button>
             </div>
 
             {isLoading && <p>{t('loadingReports')}</p>}
