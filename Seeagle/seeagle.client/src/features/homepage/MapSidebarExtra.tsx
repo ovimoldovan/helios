@@ -48,11 +48,11 @@ export function MapSidebarExtra({ onNewReport, isPlacingPin = false, onCancelPla
             ) : (
                 <Button
                     variant="outline"
-                    className="w-full justify-start gap-2 border-2 rounded-full"
+                    className="w-full justify-start gap-2 border-2 rounded-full h-auto min-h-9 py-2 whitespace-normal text-left"
                     onClick={onNewReport}
                 >
                     <Plus className="w-4 h-4" />
-                    {t("loginToAddReport")}
+                    <span className="leading-tight">{t("loginToAddReport")}</span>
                 </Button>
             )}
         </div>
