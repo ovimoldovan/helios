@@ -244,7 +244,7 @@
   
   "makeNormalUser": "Fă utilizator normal",
   "unexpectedErrorRemovingModerator": "Eroare neașteptată la retragerea rolului de moderator.",
-  "user": "Utilizator"
-  
-  
+  "user": "Utilizator",
+
+  "moderatorMessageTooShort": "Mesajul trebuie să aibă cel puțin 3 caractere"
 }
