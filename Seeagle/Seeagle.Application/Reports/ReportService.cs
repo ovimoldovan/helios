@@ -339,4 +339,67 @@ public sealed class ReportService : IReportService
 
         return new ProcessedPhoto(report.Photo.ImageData, report.Photo.ContentType);
     }
+
+        public async Task<List<CsvReportDto>> GetByStatusForExportAsync(string? status, string? excludeStatus, CancellationToken cancellationToken)
+    {
+        if (status != null && !ValidStatuses.Contains(status))
+        {
+            throw new ArgumentException($"Invalid status: {status}. Valid statuses are: {string.Join(", ", ValidStatuses)}");
+        }
+
+        if (excludeStatus != null && !ValidStatuses.Contains(excludeStatus))
+        {
+            throw new ArgumentException($"Invalid excludeStatus: {excludeStatus}. Valid statuses are: {string.Join(", ", ValidStatuses)}");
+        }
+
+        var query = _reportRepository
+            .GetAllQueryable()
+            .Where(report => !report.IsDeleted);
+
+        if (!string.IsNullOrWhiteSpace(status))
+        {
+            var statusEnum = Enum.Parse<ReportStatus>(status);
+            query = query.Where(report => report.Status == statusEnum);
+        }
+        if (!string.IsNullOrWhiteSpace(excludeStatus))
+        {
+            var excludeEnum = Enum.Parse<ReportStatus>(excludeStatus);
+            query = query.Where(report => report.Status != excludeEnum);
+        }
+
+        var reports = await query
+            .OrderByDescending(report => report.CreatedUtc)
+            .Select(report => new
+            {
+                report.Id,
+                report.Description,
+                Status = report.Status.ToString(),
+                Priority = report.Priority.ToString(),
+                Type = report.Type.Name,
+                report.CreatedUtc,
+                report.AreaId
+            })
+            .ToListAsync(cancellationToken);
+
+        var areaIds = reports
+            .Where(r => r.AreaId != null)
+            .Select(r => r.AreaId!.Value)
+            .Distinct()
+            .ToList();
+
+        var areas = await _areaRepository
+            .GetAllQueryable()
+            .Where(a => areaIds.Contains(a.Id))
+            .ToDictionaryAsync(a => a.Id, a => a.Name, cancellationToken);
+
+        return reports.Select(r => new CsvReportDto(
+            r.Id,
+            r.Description,
+            r.Status,
+            r.Priority,
+            r.Type,
+            r.CreatedUtc,
+            r.AreaId != null && areas.TryGetValue(r.AreaId.Value, out var name) ? name : null
+        )).ToList();
+    }
 }

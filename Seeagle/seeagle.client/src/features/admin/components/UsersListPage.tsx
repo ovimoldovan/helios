@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { assignModerator, getUsers } from '@/features/admin/api/adminApi';
+import {assignModerator, getUsers, removeModerator} from '@/features/admin/api/adminApi';
 import type { UserListItem } from '@/shared/types/admin';
 import {
   Table,
@@ -16,7 +16,6 @@ import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon} from
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { Input } from '@base-ui/react';
-
 const PAGE_SIZE = 10;
 
 type SortColumn = 'email' | 'firstName' | 'lastName';
@@ -64,6 +63,18 @@ export function UsersListPage() {
       .catch(() => setError(t('unexpectedErrorAssigningModerator')))
       .finally(() => setAssigningModeratorId(null));
   }
+    function handleRemoveModerator(userId: string) {
+        setAssigningModeratorId(userId);
+
+        removeModerator(userId)
+            .then((updatedUser) => {
+                setUsers((prevUsers) =>
+                    prevUsers.map((user) => (user.id === updatedUser.id ? updatedUser : user))
+                );
+            })
+            .catch(() => setError(t('unexpectedErrorRemovingModerator')))
+            .finally(() => setAssigningModeratorId(null));
+    }
 
   function roleLabel(role: number): string {
     switch (role) {
@@ -151,17 +162,29 @@ export function UsersListPage() {
                   <TableCell className="py-2">{user.lastName}</TableCell>
                   <TableCell className="py-2">{roleLabel(user.role)}</TableCell>
                   <TableCell className="py-2">
-                    {user.role == 0 ? (
-                      <Button
-                        size="sm"
-                        disabled={assigningModeratorId === user.id}
-                        onClick={() => handleAssignModerator(user.id)}
-                        >
-                          {assigningModeratorId === user.id ? t('assigning') : t('makeModerator')}
-                        </Button>
-                    ) : (
-                      <span className='text-sm text-muted-foreground'>-</span>
-                    )}
+
+                      {user.role === 0 && (
+                          <Button
+                              size="sm"
+                              disabled={assigningModeratorId === user.id}
+                              onClick={() => handleAssignModerator(user.id)}
+                          >
+                              {assigningModeratorId === user.id ? t('assigning') : t('makeModerator')}
+                          </Button>
+                      )}
+                      {user.role == 2 && (
+                          <Button
+                              size="sm"
+                              disabled={assigningModeratorId === user.id}
+                              onClick={() => handleRemoveModerator(user.id)}
+                          >
+                              {assigningModeratorId === user.id ? t('assigning') : t('makeNormalUser')}
+                          </Button>
+                      )}
+                      {user.role === 1 && (
+                          <span className='text-sm text-muted-foreground'>-</span>
+                      )}
+                      
                     </TableCell>
                 </TableRow>
               ))}

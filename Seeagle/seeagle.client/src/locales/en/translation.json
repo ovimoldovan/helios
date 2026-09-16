@@ -167,7 +167,7 @@
   "cookiesIntro": "To make Seeagle work properly, we install small files called cookies on your device.",
   "loginToViewReports": "Please login to view your reports.",
   "noReports": "You haven't submitted any reports yet.",
-
+  
   "whatAreCookies": "What are cookies?",
   "cookieDefinition": "A cookie is a small text file that a website stores on your device when you visit said site.",
   "firstPartyCookies": "First party cookies are cookies set by the website and only it can read them. Moreover, a website might use external services, which use third-party cookies",
@@ -238,5 +238,19 @@
   "status_All": "All",
   "status_Approved": "Approved",
   "status_Rejected": "Rejected",
-  "status_Solved": "Solved"
+  "status_Solved": "Solved",
+  "noArea": "No Area",
+
+  "reportSummaryTitle": "Report Summary",
+  "byStatus": "By Status",
+  "byType": "By Type",
+  "byArea": "By Area",
+  "loadingSummary": "Loading summary...",
+  "unexpectedErrorLoadingSummary": "Unexpected error while loading summary.",
+
+  "makeNormalUser": "Make normal user",
+  "unexpectedErrorRemovingModerator": "Unexpected error while removing moderator role.",
+
+  "user": "User"
+  
 }

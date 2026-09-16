@@ -41,10 +41,11 @@ public sealed class ReportsController(
     [HttpGet("approved")]
     public async Task<ActionResult<IReadOnlyList<ReportDto>>> GetApprovedReports(
         [FromQuery] int days = 30,
+        [FromQuery] Guid? areaId = null,
         CancellationToken cancellationToken = default)
     {
         var fromDate = DateTime.UtcNow.AddDays(-days);
-        var reports = await reportQueryService.GetApprovedReportsAsync(fromDate, cancellationToken);
+        var reports = await reportQueryService.GetApprovedReportsAsync(fromDate, areaId, cancellationToken);
         return Ok(reports.Dto());
     }
 
@@ -334,5 +335,44 @@ public sealed class ReportsController(
             return NotFound();
         }
         return NoContent();
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpGet("summary")]
+    public async Task<ActionResult<ReportSummaryDto>> GetSummary(
+        CancellationToken cancellationToken = default)
+    {
+        var summary = await reportQueryService.GetSummaryAsync(cancellationToken);
+        return Ok(summary);
+    }
+
+    [Authorize(Roles = "Moderator, Admin")]
+    [HttpGet("export-csv")]
+    public async Task<IActionResult> ExportCsv(
+        [FromQuery] string? status = null,
+        [FromQuery] string? excludeStatus = null,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var reports = await reportService.GetByStatusForExportAsync(status, excludeStatus, cancellationToken);
+
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine("Id,Description,Status,Priority,Type,CreatedUtc,AreaName");
+
+            foreach (var r in reports)
+            {
+                var description = $"\"{r.Description?.Replace("\"", "\"\"") ?? ""}\"";
+                var areaName = $"\"{r.AreaName?.Replace("\"", "\"\"") ?? ""}\"";
+                sb.AppendLine($"{r.Id},{description},{r.Status},{r.Priority},{r.Type},{r.CreatedUtc:yyyy-MM-dd HH:mm:ss},{areaName}");
+            }
+
+            var bytes = System.Text.Encoding.UTF8.GetBytes(sb.ToString());
+            return File(bytes, "text/csv", "reports.csv");
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 }

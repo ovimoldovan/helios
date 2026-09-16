@@ -1,31 +1,63 @@
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
 using Seeagle.Application.Common;
 using Seeagle.Domain.Reports;
+using Seeagle.Domain.Areas;
 
 namespace Seeagle.Application.Reports;
 
 public sealed class ReportQueryService : IReportQueryService
 {
     private readonly IRepository<Report> _reportRepository;
+    private readonly IRepository<Area> _areaRepository;
 
-    public ReportQueryService(IRepository<Report> reportRepository)
+    public ReportQueryService(
+        IRepository<Report> reportRepository,
+        IRepository<Area> areaRepository)
     {
         _reportRepository = reportRepository;
+        _areaRepository = areaRepository;
     }
 
     public async Task<IReadOnlyList<Report>> GetApprovedReportsAsync(
         DateTime fromDate,
+        Guid? areaId,
         CancellationToken cancellationToken)
     {
-        var reports = await _reportRepository.GetAllQueryable()
+        var query = _reportRepository.GetAllQueryable()
             .Include(report => report.Type)
-            .Where(report => report.Status == ReportStatus.Approved && report.CreatedUtc >= fromDate && report.Status != ReportStatus.Solved)
+            .Where(report => report.Status == ReportStatus.Approved && report.CreatedUtc >= fromDate && report.Status != ReportStatus.Solved);
+
+        if (areaId.HasValue)
+        {
+            var areaGeometry = await GetAreaGeometryAsync(areaId.Value, cancellationToken);
+            
+            if (areaGeometry is null)
+                return new List<Report>();
+
+            query = ApplyAreaFilter(query, areaGeometry);
+        }
+
+        var reports = await query
             .OrderByDescending(report => report.CreatedUtc)
             .ToListAsync(cancellationToken);
 
         return reports;
     }
     
+    private async Task<Geometry?> GetAreaGeometryAsync(Guid areaId, CancellationToken cancellationToken)
+    {
+        return await _areaRepository.GetAllQueryable()
+            .Where(a => a.Id == areaId)
+            .Select(a => a.Geometry)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+    
+    private static IQueryable<Report> ApplyAreaFilter(IQueryable<Report> query, Geometry areaGeometry)
+    {
+        return query.Where(r => areaGeometry.Contains(r.Location));
+    }
+
     public async Task<PagedResult<Report>> GetPublicReportsAsync(
         int pageNumber,
         int pageSize,
@@ -50,7 +82,11 @@ public sealed class ReportQueryService : IReportQueryService
 
         if (areaId.HasValue)
         {
-            query = query.Where(report => report.AreaId == areaId.Value);
+            var areaGeometry = await GetAreaGeometryAsync(areaId.Value, cancellationToken);
+            if (areaGeometry is null)
+                return new PagedResult<Report>(new List<Report>(), 0, pageNumber, pageSize);
+
+            query = ApplyAreaFilter(query, areaGeometry);
         }
 
         query = (sortBy?.ToLower(), sortOrder?.ToLower()) switch
@@ -106,4 +142,47 @@ public sealed class ReportQueryService : IReportQueryService
 
         return new PagedResult<Report>(reports, totalCount, pageNumber, pageSize);
     }
+
+
+    public async Task<ReportSummaryDto> GetSummaryAsync(CancellationToken cancellationToken)
+	{
+    	var query = _reportRepository.GetAllQueryable()
+        	.Where(r => !r.IsDeleted);
+
+   	 	var totalCount = await query.CountAsync(cancellationToken);
+
+    	var byStatus = await query
+        	.GroupBy(r => r.Status)
+        	.Select(g => new StatusCountDto(g.Key.ToString(), g.Count()))
+        	.ToListAsync(cancellationToken);
+
+    	var byType = await query
+        	.GroupBy(r => r.Type.Name)
+        	.Select(g => new TypeCountDto(g.Key, g.Count()))
+        	.ToListAsync(cancellationToken);
+
+    	var byAreaRaw = await query
+        	.GroupBy(r => r.AreaId)
+        	.Select(g => new { AreaId = g.Key, Count = g.Count() })
+        	.ToListAsync(cancellationToken);
+
+    	var areaIds = byAreaRaw
+        	.Where(a => a.AreaId.HasValue)
+        	.Select(a => a.AreaId!.Value)
+        	.ToList();
+
+    	var areaNames = await _areaRepository.GetAllQueryable()
+        	.Where(a => areaIds.Contains(a.Id))
+        	.ToDictionaryAsync(a => a.Id, a => a.Name, cancellationToken);
+
+    	var byArea = byAreaRaw
+        	.Select(a => new AreaCountDto(
+            	a.AreaId,
+            	a.AreaId.HasValue && areaNames.TryGetValue(a.AreaId.Value, out var name) ? name : null,
+            	a.Count))
+        	.ToList();
+
+    	return new ReportSummaryDto(byStatus, byType, byArea, totalCount);
+	}
+
 }

@@ -158,7 +158,7 @@ export function LeftPanel({ sidebarExtra }: LeftPanelProps) {
                         to="/cookies"
                         className="text-[10px] text-muted-foreground hover:underline"
                     >
-                        Cookies Policy
+                        {t("cookiesPolicy")}
                     </Link>
                 </div>
             </Card>

@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import './AdminDashboard.css';
 import { useTranslation } from 'react-i18next';
 import { AssistantStatus } from '@/shared/types/admin';
+import { ReportSummaryBlock } from './ReportSummaryBlock';
 
 export function AdminDashboard() {
     const navigate = useNavigate();
@@ -70,6 +71,10 @@ export function AdminDashboard() {
                             ? t('assistantOffline')
                             : t('assistantChecking')}
                         </span>
+                    </div>
+                        
+                    <div className="mx-8 mb-8">
+                        <ReportSummaryBlock />
                     </div>
                 </Card>
             </main>

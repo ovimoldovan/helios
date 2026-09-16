@@ -22,4 +22,5 @@ public interface IReportService
     Task<PagedResult<Report>> GetByStatusAsync(string? status, string? excludeStatus, int pageNumber, int pageSize, CancellationToken cancellationToken);
     Task<bool>SoftDeleteAsync(Guid id, CancellationToken cancellationToken);
 	Task<Report?> UpdateAsync(Guid id, UpdateReportRequest request, CancellationToken cancellationToken);
+    Task <List<CsvReportDto>> GetByStatusForExportAsync(string? status, string? excludeStatus, CancellationToken cancellationToken);
 }

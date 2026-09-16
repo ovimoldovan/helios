@@ -5,7 +5,7 @@ namespace Seeagle.Application.Reports;
 
 public interface IReportQueryService
 {
-    Task<IReadOnlyList<Report>> GetApprovedReportsAsync(DateTime fromDate, CancellationToken cancellationToken);
+    Task<IReadOnlyList<Report>> GetApprovedReportsAsync(DateTime fromDate, Guid? areaId, CancellationToken cancellationToken);
     Task<PagedResult<Report>> GetPublicReportsAsync(
         int pageNumber,
         int pageSize,
@@ -21,4 +21,6 @@ public interface IReportQueryService
         string? sortBy,
         string? sortOrder,
         CancellationToken cancellationToken);
+    
+	  Task<ReportSummaryDto> GetSummaryAsync(CancellationToken cancellationToken);
 }
