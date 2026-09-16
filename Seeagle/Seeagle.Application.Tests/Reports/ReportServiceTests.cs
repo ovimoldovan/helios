@@ -37,6 +37,10 @@ public sealed class ReportServiceTests
             Description = "Pothole",
             ReportTypeId = reportType.Id
         };
+        
+        reportRepository
+            .GetAllQueryable()
+            .Returns(new List<Report>().BuildMock());
 
         // Act
         var result = await service.CreateAsync(
@@ -75,6 +79,10 @@ public sealed class ReportServiceTests
             ReportTypeId = reportType.Id
         };
 
+        reportRepository
+            .GetAllQueryable()
+            .Returns(new List<Report>().BuildMock());
+        
         // Act
         await service.CreateAsync(
             user.Id,
@@ -115,6 +123,10 @@ public sealed class ReportServiceTests
             Description = null,
             ReportTypeId = reportType.Id
         };
+        
+        reportRepository
+            .GetAllQueryable()
+            .Returns(new List<Report>().BuildMock());
 
         // Act
         var result = await service.CreateAsync(
