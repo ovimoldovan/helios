@@ -249,8 +249,8 @@
   "unexpectedErrorLoadingSummary": "Unexpected error while loading summary.",
 
   "makeNormalUser": "Make normal user",
-  "unexpectedErrorRemovingModerator": "Unexpected error while removing moderator role."
-  
-  
+  "unexpectedErrorRemovingModerator": "Unexpected error while removing moderator role.",
+
+  "user": "User"
   
 }

@@ -151,7 +151,7 @@
   "languageRo": "RO",
 
   "home": "Acasa",
-  "admin": "Admin",
+  "admin": "Administrator",
   "moderator": "Moderator",
 
   "loadingReports": "Se încarcă rapoartele...",
@@ -244,6 +244,8 @@
   "unexpectedErrorLoadingSummary": "Eroare neașteptată la încărcarea sumarului.",
   
   "makeNormalUser": "Fă utilizator normal",
-  "unexpectedErrorRemovingModerator": "Eroare neașteptată la retragerea rolului de moderator."
+  "unexpectedErrorRemovingModerator": "Eroare neașteptată la retragerea rolului de moderator.",
+  "user": "Utilizator"
+  
   
 }
