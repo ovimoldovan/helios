@@ -96,7 +96,7 @@
   "failedToSubmitReport": "Trimiterea raportului a eșuat.",
   "tapMapToPlacePin": "Atinge harta pentru a plasa un pin",
   "description": "Descriere",
-  "optional": "(opțional)",
+  "optional": "opțional",
   "descriptionPlaceholder": "Descrie ce ai observat...",
   "cancel": "Anulează",
   "submitting": "Se trimite...",
@@ -230,7 +230,6 @@
 
   "allReportsTitle": "Toate Rapoartele",
   "allReportsDescription": "Revizuiește toate rapoartele, cu excepția celor în așteptare.",
-  "moderatorMessage": "Mesaj moderator",
   "rejectReport": "Respinge raportul",
 
   "noArea": "Fără Arie",
@@ -244,7 +243,9 @@
   
   "makeNormalUser": "Fă utilizator normal",
   "unexpectedErrorRemovingModerator": "Eroare neașteptată la retragerea rolului de moderator.",
-  "user": "Utilizator"
+  "user": "Utilizator",
+
+  "moderatorMessage": "Mesaj de la Moderator"
   
   
 }

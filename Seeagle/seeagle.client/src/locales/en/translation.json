@@ -95,7 +95,7 @@
   "failedToSubmitReport": "Failed to submit report.",
   "tapMapToPlacePin": "Tap map to place a pin",
   "description": "Description",
-  "optional": "(optional)",
+  "optional": "optional",
   "descriptionPlaceholder": "Describe what you saw...",
   "cancel": "Cancel",
   "submitting": "Submitting...",
@@ -251,6 +251,7 @@
   "makeNormalUser": "Make normal user",
   "unexpectedErrorRemovingModerator": "Unexpected error while removing moderator role.",
 
-  "user": "User"
+  "user": "User",
+  "moderatorMessage": "Message from Moderator"
   
 }
