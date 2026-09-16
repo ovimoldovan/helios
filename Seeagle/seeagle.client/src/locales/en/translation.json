@@ -253,6 +253,7 @@
   "unexpectedErrorRemovingModerator": "Unexpected error while removing moderator role.",
 
   "user": "User",
-  "moderatorMessage": "Message from Moderator"
   
+  "moderatorMessage": "Message from Moderator",
+  "moderatorMessageTooShort": "Message must be at least 3 characters"
 }
