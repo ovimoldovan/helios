@@ -25,5 +25,24 @@ public sealed class ReportConfiguration : IEntityTypeConfiguration<Report>
             .WithMany()
             .IsRequired()
             .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.HasMany(r => r.DuplicateCandidates)
+            .WithMany()
+            .UsingEntity<Dictionary<string, object>>(
+                "ReportDuplicateCandidates",
+                right => right
+                    .HasOne<Report>()
+                    .WithMany()
+                    .HasForeignKey("DuplicateCandidateId")
+                    .OnDelete(DeleteBehavior.Restrict),
+                left => left
+                    .HasOne<Report>()
+                    .WithMany()
+                    .HasForeignKey("ReportId")
+                    .OnDelete(DeleteBehavior.Restrict),
+                join =>
+                {
+                    join.HasKey("ReportId", "DuplicateCandidateId");
+                });
     }
 }

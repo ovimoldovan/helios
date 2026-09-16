@@ -13,6 +13,19 @@ export interface ModerationReport {
     isSolved?: boolean;
     messageToReporter?: string | null;
     type: string;
+    duplicateCandidateIds?: string[];
+    duplicateCandidates?: DuplicateCandidate[];
+}
+
+export interface DuplicateCandidate {
+    id: string;
+    longitude: number;
+    latitude: number;
+    description: string | null;
+    createdUtc: string;
+    status: string;
+    priority: string;
+    type: string;
 }
 
 export async function getPendingReports(

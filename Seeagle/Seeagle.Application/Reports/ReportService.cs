@@ -38,6 +38,59 @@ public sealed class ReportService : IReportService
     {
         return report.Type?.Name ?? "General";
     }
+    
+    private static double CalculateDistanceInMeters(
+        double latitude1,
+        double longitude1,
+        double latitude2,
+        double longitude2)
+    {
+        const double earthRadiusMeters = 6371000;
+
+        var latitudeDifference = DegreesToRadians(latitude2 - latitude1);
+        var longitudeDifference = DegreesToRadians(longitude2 - longitude1);
+
+        var a =
+            Math.Sin(latitudeDifference / 2) * Math.Sin(latitudeDifference / 2) +
+            Math.Cos(DegreesToRadians(latitude1)) *
+            Math.Cos(DegreesToRadians(latitude2)) *
+            Math.Sin(longitudeDifference / 2) *
+            Math.Sin(longitudeDifference / 2);
+
+        var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+
+        return earthRadiusMeters * c;
+    }
+
+    private static double DegreesToRadians(double degrees)
+    {
+        return degrees * Math.PI / 180;
+    }
+
+    private static bool HasSimilarDescription(string? firstDescription, string? secondDescription)
+    {
+        if (string.IsNullOrWhiteSpace(firstDescription) ||
+            string.IsNullOrWhiteSpace(secondDescription))
+        {
+            return false;
+        }
+
+        var firstWords = firstDescription
+            .ToLowerInvariant()
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+            .Select(word => word.Trim('.', ',', '!', '?', ';', ':'))
+            .Where(word => word.Length > 2)
+            .ToHashSet();
+
+        var secondWords = secondDescription
+            .ToLowerInvariant()
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+            .Select(word => word.Trim('.', ',', '!', '?', ';', ':'))
+            .Where(word => word.Length > 2)
+            .ToHashSet();
+
+        return firstWords.Intersect(secondWords).Count() >= 3;
+    }
 
     public async Task<ReportDto> CreateAsync(Guid userId, CreateReportRequest request, CancellationToken cancellationToken)
     {
@@ -53,7 +106,33 @@ public sealed class ReportService : IReportService
 
         var point = GeometryFactory.CreatePoint(new Coordinate(request.Longitude, request.Latitude));
         var report = new Report(point, request.Description, user, reportType);
+        
+        var duplicateCandidateStartDate = DateTime.UtcNow.AddHours(-72);
 
+        var duplicateCandidates = await _reportRepository
+            .GetAllQueryable()
+            .Where(r =>
+                !r.IsDeleted &&
+                r.Type.Id == reportType.Id &&
+                r.CreatedUtc >= duplicateCandidateStartDate)
+            .ToListAsync(cancellationToken);
+
+        var possibleDuplicates = duplicateCandidates
+            .Where(candidate =>
+                CalculateDistanceInMeters(
+                    report.Location.Y,
+                    report.Location.X,
+                    candidate.Location.Y,
+                    candidate.Location.X) <= 50)
+            .Where(candidate =>
+                HasSimilarDescription(report.Description, candidate.Description))
+            .ToList();
+
+        foreach (var duplicateCandidate in possibleDuplicates)
+        {
+            report.AddDuplicateCandidate(duplicateCandidate);
+        }
+        
         var area = await _areaRepository.GetAllQueryable()
             .FirstOrDefaultAsync(
                 a => !a.IsDeleted && a.Geometry.Contains(point),
@@ -102,7 +181,25 @@ public sealed class ReportService : IReportService
                 report.Status.ToString(),
                 report.Priority.ToString(),
                 report.Type.Name,
-                report.MessageToReporter))
+                report.MessageToReporter)
+            {
+                DuplicateCandidateIds = report.DuplicateCandidates
+                    .Select(candidate => candidate.Id)
+                    .ToList(),
+
+                DuplicateCandidates = report.DuplicateCandidates
+                    .Select(candidate => new DuplicateCandidateDto(
+                        candidate.Id,
+                        candidate.Location.X,
+                        candidate.Location.Y,
+                        candidate.Description,
+                        candidate.CreatedUtc,
+                        candidate.Status.ToString(),
+                        candidate.Priority.ToString(),
+                        candidate.Type.Name
+                    ))
+                    .ToList()
+            })
             .ToListAsync(cancellationToken);
 
         return new PagedResult<ReportDto>(
