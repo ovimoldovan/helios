@@ -239,6 +239,7 @@
   "status_Approved": "Approved",
   "status_Rejected": "Rejected",
   "status_Solved": "Solved",
+  "status_Pending": "Pending",
   "noArea": "No Area",
 
   "reportSummaryTitle": "Report Summary",

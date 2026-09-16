@@ -232,6 +232,12 @@
   "allReportsDescription": "Revizuiește toate rapoartele, cu excepția celor în așteptare.",
   "rejectReport": "Respinge raportul",
 
+  "allRoles": "Toate Rolurile",
+  "status_All": "Toate",
+  "status_Approved": "Aprobate",
+  "status_Rejected": "Respinse",
+  "status_Solved": "Rezolvate",
+  "status_Pending": "În așteptare",
   "noArea": "Fără Arie",
 
   "reportSummaryTitle": "Sumar Rapoarte",
@@ -244,7 +250,7 @@
   "makeNormalUser": "Fă utilizator normal",
   "unexpectedErrorRemovingModerator": "Eroare neașteptată la retragerea rolului de moderator.",
   "user": "Utilizator",
-
+  
   "moderatorMessage": "Mesaj de la Moderator"
   
   
