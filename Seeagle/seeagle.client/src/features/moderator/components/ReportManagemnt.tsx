@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react';
 import {
     getAllReports,
     updateReport,
+    exportReportsCsv,
     type ModerationReport,
     type UpdateReportRequest,
 } from '@/features/moderator/api/moderationApi';
-import { getAuthToken } from '@/shared/auth/getAuthToken';
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from '@/components/ui/table';
 import { PaginationLink } from '@/components/ui/pagination';
-import { ChevronLeftIcon, ChevronRightIcon, Edit } from 'lucide-react';
+import { ChevronLeftIcon, ChevronRightIcon, Edit, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { EditReportModal } from './EditReportModal';
 import { useTranslation } from 'react-i18next';
@@ -56,8 +56,7 @@ export function ReportManagement() {
         setIsLoading(true);
         setError(null);
         try {
-            const token = getAuthToken();
-            const result = await getAllReports(page, PAGE_SIZE, sortBy, sortOrder, token ?? undefined);
+            const result = await getAllReports(page, PAGE_SIZE, sortBy, sortOrder);
             setReports(result.items);
             setTotalCount(result.totalCount);
         } catch {
@@ -82,8 +81,7 @@ export function ReportManagement() {
     const handleSave = async (id: string, data: UpdateReportRequest) => {
         setIsSaving(true);
         try {
-            const token = getAuthToken();
-            const updated = await updateReport(id, data, token ?? undefined);
+            const updated = await updateReport(id, data);
             setReports((prev) => prev.map((r) => (r.id === id ? updated : r)));
         } catch {
             throw new Error(t('unexpectedErrorUpdatingReport'));
@@ -123,6 +121,15 @@ export function ReportManagement() {
                 <div className="mx-auto w-full max-w-6xl">
                     <div className="flex items-center gap-4 mb-6">
                         <h1 className="text-xl font-semibold">{t('reportManagementTitle')}</h1>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="ml-auto flex items-center gap-2"
+                                onClick={() => exportReportsCsv()}
+                            >
+                            <Download className="h-4 w-4" />
+                            {t('exportCsv')}
+                        </Button>
                     </div>
 
                     {isLoading && <p>{t('loadingReports')}</p>}

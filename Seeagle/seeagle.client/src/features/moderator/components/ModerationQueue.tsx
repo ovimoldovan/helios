@@ -5,7 +5,6 @@ import {
     rejectReport,
     type ModerationReport,
 } from '@/features/moderator/api/moderationApi';
-import { getAuthToken } from '@/shared/auth/getAuthToken';
 import {
     Table,
     TableBody,
@@ -72,8 +71,7 @@ export function ModerationQueue() {
         setIsProcessing(true);
 
         try {
-            const token = getAuthToken();
-            await approveReport(selectedReportId, priority, token ?? undefined);
+            await approveReport(selectedReportId, priority);
 
             setReports((currentReports) =>
                 currentReports.filter((report) => report.id !== selectedReportId)
@@ -99,8 +97,7 @@ export function ModerationQueue() {
         setIsProcessing(true);
 
         try {
-            const token = getAuthToken();
-            await rejectReport(reportToReject.id, message, token ?? undefined);
+            await rejectReport(reportToReject.id, message);
 
             setReports((currentReports) =>
                 currentReports.filter((report) => report.id !== reportToReject.id)
@@ -256,6 +253,7 @@ export function ModerationQueue() {
                         </div>
                     </>
                 )}
+            
             <PriorityModal
                 isOpen={modalOpen}
                 onClose={handleModalClose}

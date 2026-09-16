@@ -3,10 +3,10 @@
     password: string;
 }
 
-export interface LoginResponse {
-    token?: string;
-    user?: {
-        id: string;
-        username: string;
-    };
+export interface AuthUser {
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    role: 'User' | 'Admin' | 'Moderator';
 }

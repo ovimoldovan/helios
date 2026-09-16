@@ -5,9 +5,9 @@ import {
     deleteReport,
     markAsSolved,
     sendMessageToReporter,
+    exportReportsCsv,
     type ModerationReport,
 } from '@/features/moderator/api/moderationApi';
-import { getAuthToken } from '@/shared/auth/getAuthToken';
 import {
     Table,
     TableBody,
@@ -17,7 +17,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { PaginationLink } from '@/components/ui/pagination';
-import { ChevronLeftIcon, ChevronRightIcon, TrashIcon } from 'lucide-react';
+import { ChevronLeftIcon, ChevronRightIcon, TrashIcon, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ActionModal } from './ActionModal';
 import { useTranslation } from 'react-i18next';
@@ -73,11 +73,10 @@ export function ApprovedReports() {
         setIsProcessing(true);
 
         try {
-            const token = getAuthToken();
             if (shouldMarkAsSolved) {
-                await markAsSolved(selectedReport.id, message, token ?? undefined);
+                await markAsSolved(selectedReport.id, message);
             } else {
-                await sendMessageToReporter(selectedReport.id, message, token ?? undefined);
+                await sendMessageToReporter(selectedReport.id, message);
             }
 
             if (shouldMarkAsSolved) {
@@ -97,8 +96,7 @@ export function ApprovedReports() {
     async function handleDelete(id: string) {
         setDeletingId(id);
         try {
-            const token = getAuthToken();
-            await deleteReport(id, token ?? undefined);
+            await deleteReport(id);
 
             setReports((current) => current.filter((report) => report.id !== id));
             setTotalCount((current) => Math.max(0, current - 1));
@@ -133,6 +131,21 @@ export function ApprovedReports() {
                         {t(`status_${status}`)}
                     </Button>
                 ))}
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        className="ml-auto flex items-center gap-2"
+                        onClick={() => {
+                            if (statusFilter === 'All') {
+                                exportReportsCsv(null, 'Pending');
+                            } else {
+                                exportReportsCsv(statusFilter);
+                            }
+                        }}
+                    >
+                        <Download className="h-4 w-4" />
+                        {t('exportCsv')}
+                    </Button>
             </div>
 
             {isLoading && <p>{t('loadingReports')}</p>}

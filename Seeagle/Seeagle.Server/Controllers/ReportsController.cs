@@ -21,8 +21,8 @@ public sealed class ReportsController(
         CancellationToken cancellationToken)
     {
         try
-        {
-            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        { 
+            var userIdClaim = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userIdClaim == null || !Guid.TryParse(userIdClaim, out var userId))
             {
                 return Unauthorized(new { message = "User ID claim is missing or invalid." });
@@ -153,7 +153,7 @@ public sealed class ReportsController(
             return BadRequest(new { message = "No file was provided." });
         if (!file.ContentType.StartsWith("image/"))
             return BadRequest(new { message = "File must be an image." });
-        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userIdClaim = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userIdClaim == null || !Guid.TryParse(userIdClaim, out var userId))
         {
             return Unauthorized(new { message = "User ID claim is missing or invalid." });
@@ -201,7 +201,7 @@ public sealed class ReportsController(
         [FromQuery] int pageSize = 10,
         CancellationToken cancellationToken = default)
     {
-        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userIdClaim = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userIdClaim == null || !Guid.TryParse(userIdClaim, out var userId))
         {
             return Unauthorized(new { message = "User ID claim is missing or invalid." });
@@ -304,5 +304,44 @@ public sealed class ReportsController(
             return NotFound();
         }
         return NoContent();
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpGet("summary")]
+    public async Task<ActionResult<ReportSummaryDto>> GetSummary(
+        CancellationToken cancellationToken = default)
+    {
+        var summary = await reportQueryService.GetSummaryAsync(cancellationToken);
+        return Ok(summary);
+    }
+
+    [Authorize(Roles = "Moderator, Admin")]
+    [HttpGet("export-csv")]
+    public async Task<IActionResult> ExportCsv(
+        [FromQuery] string? status = null,
+        [FromQuery] string? excludeStatus = null,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var reports = await reportService.GetByStatusForExportAsync(status, excludeStatus, cancellationToken);
+
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine("Id,Description,Status,Priority,Type,CreatedUtc,AreaName");
+
+            foreach (var r in reports)
+            {
+                var description = $"\"{r.Description?.Replace("\"", "\"\"") ?? ""}\"";
+                var areaName = $"\"{r.AreaName?.Replace("\"", "\"\"") ?? ""}\"";
+                sb.AppendLine($"{r.Id},{description},{r.Status},{r.Priority},{r.Type},{r.CreatedUtc:yyyy-MM-dd HH:mm:ss},{areaName}");
+            }
+
+            var bytes = System.Text.Encoding.UTF8.GetBytes(sb.ToString());
+            return File(bytes, "text/csv", "reports.csv");
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 }

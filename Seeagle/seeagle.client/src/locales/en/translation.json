@@ -240,5 +240,6 @@
   "status_Rejected": "Rejected",
   "status_Solved": "Solved",
 
-  "possibleDuplicate": "Possible duplicate"
+  "possibleDuplicate": "Possible duplicate",
+  "noArea": "No Area"
 }

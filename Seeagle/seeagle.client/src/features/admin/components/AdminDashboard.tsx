@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { getAssistantHealth } from '../api/adminApi';
-import { getCookie } from '@/shared/utils/cookies';
 import {
     Card,
     CardDescription,
@@ -12,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import './AdminDashboard.css';
 import { useTranslation } from 'react-i18next';
 import { AssistantStatus } from '@/shared/types/admin';
+import { ReportSummaryBlock } from './ReportSummaryBlock';
 
 export function AdminDashboard() {
     const navigate = useNavigate();
@@ -19,8 +19,7 @@ export function AdminDashboard() {
 
     const [assistantStatus, setAssistantStatus] = useState<AssistantStatus>(AssistantStatus.Checking);
     useEffect(() => {
-    const userJwt = getCookie('authToken')!;
-    getAssistantHealth(userJwt)
+    getAssistantHealth()
         .then((data) => setAssistantStatus(data.status as AssistantStatus))
         .catch(() => setAssistantStatus(AssistantStatus.Offline));
 }, []);
@@ -72,6 +71,10 @@ export function AdminDashboard() {
                             ? t('assistantOffline')
                             : t('assistantChecking')}
                         </span>
+                    </div>
+                        
+                    <div className="mx-8 mb-8">
+                        <ReportSummaryBlock />
                     </div>
                 </Card>
             </main>
