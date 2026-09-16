@@ -67,6 +67,32 @@ public class UserService : IUserService
             user.Role
         );
     }
+    
+    public async Task<UserListItemDto?> RemoveModeratorAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        var user = await _userRepository.GetAllQueryable()
+            .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
+
+        if (user is null)
+        {
+            throw new InvalidOperationException("User not found.");
+        }
+        
+        if (user.Role == Role.Admin)
+        {
+            throw new InvalidOperationException("Cannot remove moderator role from an admin.");
+        }
+        
+        user.RemoveModeratorRole();
+        await _userRepository.UpdateAsync(user, cancellationToken);
+        return new UserListItemDto(
+            user.Id,
+            user.Email,
+            user.FirstName,
+            user.LastName,
+            user.Role
+        );
+    }
 
     public async Task<User?> GetByIdAsync(Guid userId)
     {
