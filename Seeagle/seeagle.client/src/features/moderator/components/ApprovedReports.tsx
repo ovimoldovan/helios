@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import {
-    getAllReportsExceptPending,
     getReportsByStatus,
     deleteReport,
     markAsSolved,
@@ -23,7 +22,7 @@ import { ActionModal } from './ActionModal';
 import { useTranslation } from 'react-i18next';
 
 const PAGE_SIZE = 10;
-const STATUS_OPTIONS = ['All', 'Approved', 'Rejected', 'Solved'];
+const STATUS_OPTIONS = ['All', 'Pending', 'Approved', 'Rejected', 'Solved'];
 
 export function ApprovedReports() {
     const { t } = useTranslation();
@@ -43,16 +42,18 @@ export function ApprovedReports() {
         setIsLoading(true);
         setError(null);
 
-        const request = statusFilter === 'All'
-            ? getAllReportsExceptPending(page, PAGE_SIZE)
-            : getReportsByStatus(statusFilter, page, PAGE_SIZE);
-        request
+        const statusPam = statusFilter === 'All' ? null : statusFilter;
+        getReportsByStatus(statusPam, page, PAGE_SIZE)
             .then((result) => {
                 setReports(result.items);
                 setTotalCount(result.totalCount);
             })
-            .catch(() => setError(t('errorLoadingReports')))
-            .finally(() => setIsLoading(false));
+            .catch(() => {
+                setError(t('errorLoadingReports'));
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
     }, [page, statusFilter, t]);
 
     const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
