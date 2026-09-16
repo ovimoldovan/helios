@@ -1,4 +1,4 @@
-import {getJson, patchJson, postJson, putJsonWithBody} from '@/shared/api/httpClient';
+import {getJson, patchJson, postJson, putJsonWithBody,putJson} from '@/shared/api/httpClient';
 import type { UserListItem } from '@/shared/types/admin';
 import type { PagedResult } from '@/shared/types/pagedResult';
 import type { ReportType } from '@/shared/types/report';
@@ -25,6 +25,9 @@ export async function getUsers(
 
 export async function assignModerator(userId: string): Promise<UserListItem> {
   return getJson<UserListItem>(`/api/users/${userId}/assign-moderator`);
+}
+export async function removeModerator(userId: string): Promise<UserListItem> {
+  return putJson<UserListItem>(`/api/users/${userId}/remove-moderator`);
 }
 
 export async function getReportTypes(page: number, pageSize: number): Promise<PagedResult<ReportType>> {

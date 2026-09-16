@@ -31,4 +31,9 @@ public class User
     {
         Role = Role.Moderator;
     }
+    
+    public void RemoveModeratorRole()
+    {
+        Role = Role.User;
+    }
 }

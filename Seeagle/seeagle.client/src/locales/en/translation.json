@@ -239,5 +239,18 @@
   "status_Approved": "Approved",
   "status_Rejected": "Rejected",
   "status_Solved": "Solved",
-  "noArea": "No Area"
+  "noArea": "No Area",
+
+  "reportSummaryTitle": "Report Summary",
+  "byStatus": "By Status",
+  "byType": "By Type",
+  "byArea": "By Area",
+  "loadingSummary": "Loading summary...",
+  "unexpectedErrorLoadingSummary": "Unexpected error while loading summary.",
+
+  "makeNormalUser": "Make normal user",
+  "unexpectedErrorRemovingModerator": "Unexpected error while removing moderator role.",
+
+  "user": "User"
+  
 }
