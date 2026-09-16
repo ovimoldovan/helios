@@ -34,7 +34,7 @@ public sealed class ReportService : IReportService
         _photoProcessor = photoProcessor;
     }
 
-    public async Task<ReportDto> CreateAsync(Guid userId, CreateReportRequest request, CancellationToken cancellationToken)
+    public async Task<Report> CreateAsync(Guid userId, CreateReportRequest request, CancellationToken cancellationToken)
     {
         var user = await _userRepository.GetAllQueryable()
             .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
@@ -61,25 +61,17 @@ public sealed class ReportService : IReportService
 
         await _reportRepository.AddAsync(report, cancellationToken);
 
-        return new ReportDto(
-            report.Id,
-            report.Location.X,
-            report.Location.Y,
-            report.Description,
-            report.CreatedUtc,
-            report.Status.ToString(),
-            report.Priority.ToString(),
-            report.Type.Name,
-            report.MessageToReporter);
+        return report;
     }
 
-    public async Task<PagedResult<ReportDto>> GetPendingAsync(
+    public async Task<PagedResult<Report>> GetPendingAsync(
         int pageNumber,
         int pageSize,
         CancellationToken cancellationToken)
     {
         var query = _reportRepository
             .GetAllQueryable()
+            .Include(report => report.Type)
             .Where(report => report.Status == ReportStatus.Pending);
 
         var totalCount = await query.CountAsync(cancellationToken);
@@ -88,19 +80,9 @@ public sealed class ReportService : IReportService
             .OrderBy(report => report.CreatedUtc)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
-            .Select(report => new ReportDto(
-                report.Id,
-                report.Location.X,
-                report.Location.Y,
-                report.Description,
-                report.CreatedUtc,
-                report.Status.ToString(),
-                report.Priority.ToString(),
-                report.Type.Name,
-                report.MessageToReporter))
             .ToListAsync(cancellationToken);
 
-        return new PagedResult<ReportDto>(
+        return new PagedResult<Report>(
             reports,
             totalCount,
             pageNumber,
@@ -154,6 +136,25 @@ public sealed class ReportService : IReportService
 
         return report;
     }
+
+    public async Task<PagedResult<Report>> GetApprovedReportsAsync(int pageNumber, int pageSize, CancellationToken cancellationToken)
+    {
+        var query = _reportRepository
+            .GetAllQueryable()
+            .Include(report => report.Type)
+            .Where(report => report.Status == ReportStatus.Approved && !report.IsSolved);
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var reports = await query
+            .OrderByDescending(report => report.CreatedUtc)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        return new PagedResult<Report>(reports, totalCount, pageNumber, pageSize);
+    }
+
     public async Task<Report?> MarkAsSolvedAsync(Guid id, string? message, CancellationToken cancellationToken)
     {
         var report = await _reportRepository
@@ -169,33 +170,6 @@ public sealed class ReportService : IReportService
         await _reportRepository.UpdateAsync(report, cancellationToken);
 
         return report;
-    }
-
-    public async Task<PagedResult<ReportDto>> GetApprovedReportsAsync(int pageNumber, int pageSize, CancellationToken cancellationToken)
-    {
-        var query = _reportRepository
-            .GetAllQueryable()
-            .Where(report => report.Status == ReportStatus.Approved && !report.IsSolved);
-
-        var totalCount = await query.CountAsync(cancellationToken);
-
-        var reports = await query
-            .OrderByDescending(report => report.CreatedUtc)
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
-            .Select(report => new ReportDto(
-                report.Id,
-                report.Location.X,
-                report.Location.Y,
-                report.Description,
-                report.CreatedUtc,
-                report.Status.ToString(),
-                report.Priority.ToString(),
-                report.Type.Name,
-                report.MessageToReporter))
-            .ToListAsync(cancellationToken);
-
-        return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
     }
 
     public async Task<Report?> SendMessageToReporterAsync(Guid id, string? message, CancellationToken cancellationToken)
@@ -218,7 +192,7 @@ public sealed class ReportService : IReportService
         return report;
     }
 
-    public async Task<PagedResult<ReportDto>> GetUserReportsAsync(
+    public async Task<PagedResult<Report>> GetUserReportsAsync(
         Guid userId,
         int pageNumber,
         int pageSize,
@@ -226,6 +200,7 @@ public sealed class ReportService : IReportService
     {
         var query = _reportRepository
             .GetAllQueryable()
+            .Include(report => report.Type)
             .Where(report => report.User.Id == userId);
 
         var totalCount = await query.CountAsync(cancellationToken);
@@ -234,22 +209,12 @@ public sealed class ReportService : IReportService
             .OrderByDescending(report => report.CreatedUtc)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
-            .Select(report => new ReportDto(
-                report.Id,
-                report.Location.X,
-                report.Location.Y,
-                report.Description,
-                report.CreatedUtc,
-                report.Status.ToString(),
-                report.Priority.ToString(),
-                report.Type.Name,
-                report.MessageToReporter))
             .ToListAsync(cancellationToken);
 
-        return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
+        return new PagedResult<Report>(reports, totalCount, pageNumber, pageSize);
     }
 
-    public async Task<PagedResult<ReportDto>> GetByStatusAsync(string? status, string? excludeStatus, int pageNumber, int pageSize, CancellationToken cancellationToken)
+    public async Task<PagedResult<Report>> GetByStatusAsync(string? status, string? excludeStatus, int pageNumber, int pageSize, CancellationToken cancellationToken)
     {
         if (status != null && !ValidStatuses.Contains(status))
         {
@@ -263,6 +228,7 @@ public sealed class ReportService : IReportService
 
         var query = _reportRepository
             .GetAllQueryable()
+            .Include(report => report.Type)
             .Where(report => !report.IsDeleted);
 
         if (!string.IsNullOrWhiteSpace(status))
@@ -282,19 +248,9 @@ public sealed class ReportService : IReportService
             .OrderByDescending(report => report.CreatedUtc)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
-            .Select(report => new ReportDto(
-                report.Id,
-                report.Location.X,
-                report.Location.Y,
-                report.Description,
-                report.CreatedUtc,
-                report.Status.ToString(),
-                report.Priority.ToString(),
-                report.Type.Name,
-                report.MessageToReporter))
             .ToListAsync(cancellationToken);
 
-        return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
+        return new PagedResult<Report>(reports, totalCount, pageNumber, pageSize);
     }
 
     public async Task<bool> SoftDeleteAsync(Guid id, CancellationToken cancellationToken)
@@ -315,7 +271,7 @@ public sealed class ReportService : IReportService
         return true;
     }
 
-    public async Task<ReportDto?> UpdateAsync(Guid id, UpdateReportRequest request, CancellationToken cancellationToken)
+    public async Task<Report?> UpdateAsync(Guid id, UpdateReportRequest request, CancellationToken cancellationToken)
     {
         var report = await _reportRepository
             .GetAllQueryable()
@@ -345,19 +301,10 @@ public sealed class ReportService : IReportService
 
         await _reportRepository.UpdateAsync(report, cancellationToken);
 
-        return new ReportDto(
-            report.Id,
-            report.Location.X,
-            report.Location.Y,
-            report.Description,
-            report.CreatedUtc,
-            report.Status.ToString(),
-            report.Priority.ToString(),
-            report.Type.Name,
-            report.MessageToReporter);
+        return report;
     }
 
-    public async Task<ReportDto?> AttachPhotoAsync(Guid reportId, Guid userId, byte[] data, string contentType, CancellationToken cancellationToken)
+    public async Task<Report?> AttachPhotoAsync(Guid reportId, Guid userId, byte[] data, string contentType, CancellationToken cancellationToken)
     {
         var report = await _reportRepository
             .GetAllQueryable()
@@ -375,16 +322,7 @@ public sealed class ReportService : IReportService
 
         await _reportRepository.UpdateAsync(report, cancellationToken);
 
-        return new ReportDto(
-            report.Id,
-            report.Location.X,
-            report.Location.Y,
-            report.Description,
-            report.CreatedUtc,
-            report.Status.ToString(),
-            report.Priority.ToString(),
-            report.Type.Name,
-            report.MessageToReporter);
+        return report;
     }
 
     public async Task<ProcessedPhoto?> GetPhotoAsync(Guid reportId, bool isModerator, CancellationToken cancellationToken)

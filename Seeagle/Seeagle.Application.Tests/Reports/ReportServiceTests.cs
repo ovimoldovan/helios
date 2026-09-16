@@ -45,7 +45,7 @@ public sealed class ReportServiceTests
             CancellationToken.None);
 
         // Assert
-        Assert.Equal("Pending", result.Status);
+        Assert.Equal(ReportStatus.Pending, result.Status);
     }
 
     [Fact]
@@ -270,7 +270,7 @@ public sealed class ReportServiceTests
 
         // Assert
         Assert.Single(result.Items);
-        Assert.Equal("Pending", result.Items[0].Status);
+        Assert.Equal(ReportStatus.Pending, result.Items[0].Status);
         Assert.Equal(1, result.TotalCount);
         Assert.Equal(1, result.PageNumber);
         Assert.Equal(10, result.PageSize);
@@ -433,7 +433,7 @@ public sealed class ReportServiceTests
             CancellationToken.None);
 
         // Assert
-        Assert.Equal("Rejected", result.Status.ToString());
+        Assert.Equal("Rejected", result!.Status.ToString());
         Assert.Equal("Duplicate report", result.MessageToReporter);
 
         await reportRepository

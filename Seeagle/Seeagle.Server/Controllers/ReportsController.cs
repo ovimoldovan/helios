@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Seeagle.Application.Reports;
 using Seeagle.Application.Common;
-using Seeagle.Application.Users;
 using Seeagle.Domain.Reports;
 using Seeagle.Server.Utils.MailService;
 
@@ -31,7 +30,7 @@ public sealed class ReportsController(
                 return Unauthorized(new { message = "User ID claim is missing or invalid." });
             }
             var result = await reportService.CreateAsync(userId, request, cancellationToken);
-            return Ok(result);
+            return Ok(result.Dto());
         }
         catch (InvalidOperationException ex)
         {
@@ -46,7 +45,7 @@ public sealed class ReportsController(
     {
         var fromDate = DateTime.UtcNow.AddDays(-days);
         var reports = await reportQueryService.GetApprovedReportsAsync(fromDate, cancellationToken);
-        return Ok(reports);
+        return Ok(reports.Dto());
     }
 
     [Authorize(Roles = "Moderator, Admin")]
@@ -61,7 +60,7 @@ public sealed class ReportsController(
             pageSize,
             cancellationToken);
 
-        return Ok(reports);
+        return Ok(reports.Dto());
     }
 
     [Authorize(Roles = "Moderator, Admin")]
@@ -81,16 +80,7 @@ public sealed class ReportsController(
         await mailService.SendEmail(report.User.Email, report.User.FirstName + " " + report.User.LastName, report.Description ?? "-",
             report.Status);
 
-        return Ok(new ReportDto(
-            report.Id,
-            report.Location.X,
-            report.Location.Y,
-            report.Description,
-            report.CreatedUtc,
-            report.Status.ToString(),
-            report.Priority.ToString(),
-            report.Type.Name,
-            report.MessageToReporter));
+        return Ok(report.Dto());
     }
 
     [Authorize(Roles = "Moderator, Admin")]
@@ -117,16 +107,7 @@ public sealed class ReportsController(
                 report.Description ?? "-",
                 report.Status);
 
-        return Ok(new ReportDto(
-            report.Id,
-            report.Location.X,
-            report.Location.Y,
-            report.Description,
-            report.CreatedUtc,
-            report.Status.ToString(),
-            report.Priority.ToString(),
-            report.Type.Name,
-            report.MessageToReporter));
+        return Ok(report.Dto());
     }
     
     [Authorize(Roles = "Moderator, Admin")]
@@ -141,7 +122,7 @@ public sealed class ReportsController(
             pageSize,
             cancellationToken);
 
-        return Ok(reports);
+        return Ok(reports.Dto());
     }
 
     [Authorize(Roles = "Moderator, Admin")]
@@ -168,16 +149,7 @@ public sealed class ReportsController(
                 report.Description ?? "-",
                 report.Status);
 
-        return Ok(new ReportDto(
-            report.Id,
-            report.Location.X,
-            report.Location.Y,
-            report.Description,
-            report.CreatedUtc,
-            report.Status.ToString(),
-            report.Priority.ToString(),
-            report.Type.Name,
-            report.MessageToReporter));
+        return Ok(report.Dto());
     }
     
     [Authorize(Roles = "Moderator, Admin")]
@@ -199,16 +171,7 @@ public sealed class ReportsController(
                 report.Description ?? "-",
                 message);
         
-        return Ok(new ReportDto(
-            report.Id,
-            report.Location.X,
-            report.Location.Y,
-            report.Description,
-            report.CreatedUtc,
-            report.Status.ToString(),
-            report.Priority.ToString(),
-            report.Type.Name,
-            report.MessageToReporter));
+        return Ok(report.Dto());
     }
 
     [Authorize]
@@ -237,7 +200,7 @@ public sealed class ReportsController(
             if (result is null)
                 return NotFound();
 
-            return Ok(result);
+            return Ok(result.Dto());
         }
         catch (PhotoTooLargeException ex)
         {
@@ -280,7 +243,7 @@ public sealed class ReportsController(
             pageSize,
             cancellationToken);
 
-        return Ok(reports);
+        return Ok(reports.Dto());
     }
 
    
@@ -304,7 +267,7 @@ public sealed class ReportsController(
             sortOrder,
             cancellationToken);
     
-        return Ok(reports);
+        return Ok(reports.Dto());
     }
 
     [Authorize(Roles = "Moderator, Admin")]
@@ -323,7 +286,7 @@ public sealed class ReportsController(
             sortOrder,
             cancellationToken);
         
-        return Ok(reports);
+        return Ok(reports.Dto());
     }
     
     [Authorize(Roles = "Moderator, Admin")]
@@ -338,7 +301,7 @@ public sealed class ReportsController(
         {
             return NotFound();
         }
-        return Ok(report);
+        return Ok(report.Dto());
     }
 
     [Authorize(Roles = "Moderator, Admin")]
@@ -353,7 +316,7 @@ public sealed class ReportsController(
         try
         {
             var reports = await reportService.GetByStatusAsync(status, excludeStatus, pageNumber, pageSize, cancellationToken);
-            return Ok(reports);
+            return Ok(reports.Dto());
         }
         catch (ArgumentException ex)
         {
