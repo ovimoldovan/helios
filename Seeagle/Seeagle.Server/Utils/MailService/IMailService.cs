@@ -9,5 +9,5 @@ public interface IMailService
     Task SendEmail(string to, string recipientName, string reportDescription, ReportStatus newStatus);
 
     Task SendEmail(string to, string recipientName, string reportDescription, ReportStatus newStatus,
-        string moderatorMessage);
+        string? moderatorMessage);
 }

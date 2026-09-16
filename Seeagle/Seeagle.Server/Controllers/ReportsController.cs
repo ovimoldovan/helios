@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -78,8 +79,10 @@ public sealed class ReportsController(
             return NotFound();
         }
 
-        await mailService.SendEmail(report.User.Email, report.User.FirstName + " " + report.User.LastName, report.Description ?? "-",
-            report.Status);
+        _ = Task.Run(() => mailService.SendEmail(report.User.Email,
+            report.User.FirstName + " " + report.User.LastName,
+            report.Description ?? "-",
+            report.Status));
 
         return Ok(report.Dto());
     }
@@ -98,15 +101,15 @@ public sealed class ReportsController(
             return NotFound();
         }
 
-        if (message != null)
-            await mailService.SendEmail(report.User.Email, report.User.FirstName + " " + report.User.LastName,
+        _ = Task.Run(() =>
+        {
+            Thread.Sleep(2000);
+            return mailService.SendEmail(report.User.Email,
+                report.User.FirstName + " " + report.User.LastName,
                 report.Description ?? "-",
                 report.Status,
                 message);
-        else
-            await mailService.SendEmail(report.User.Email, report.User.FirstName + " " + report.User.LastName,
-                report.Description ?? "-",
-                report.Status);
+        });
 
         return Ok(report.Dto());
     }
@@ -130,7 +133,7 @@ public sealed class ReportsController(
     [HttpPut("{id:guid}/solved")]
     public async Task<ActionResult<ReportDto>> MarkAsSolved(
         Guid id,
-        [FromQuery] string? message = null,
+        [FromQuery] [MinLength(3)] string? message = null,
         CancellationToken cancellationToken = default)
     {
         var report = await reportService.MarkAsSolvedAsync(id, message, cancellationToken);
@@ -139,16 +142,12 @@ public sealed class ReportsController(
         {
             return NotFound();
         }
-        
-        if (message != null)
-            await mailService.SendEmail(report.User.Email, report.User.FirstName + " " + report.User.LastName,
-                report.Description ?? "-",
-                report.Status,
-                message);
-        else
-            await mailService.SendEmail(report.User.Email, report.User.FirstName + " " + report.User.LastName,
-                report.Description ?? "-",
-                report.Status);
+
+        _ = Task.Run(() => mailService.SendEmail(report.User.Email,
+            report.User.FirstName + " " + report.User.LastName,
+            report.Description ?? "-",
+            report.Status,
+            message));
 
         return Ok(report.Dto());
     }
@@ -157,7 +156,7 @@ public sealed class ReportsController(
     [HttpPut("{id:guid}/message")]
     public async Task<ActionResult<ReportDto>> SendMessage(
         Guid id,
-        [FromQuery] string? message = null,
+        [FromQuery] [MinLength(3, ErrorMessage = "Message is too short")] string message,
         CancellationToken cancellationToken = default)
     {
         var report = await reportService.SendMessageToReporterAsync(id, message, cancellationToken);
@@ -166,11 +165,10 @@ public sealed class ReportsController(
         {
             return NotFound();
         }
-
-        if (message != null)
-            await mailService.SendEmail(report.User.Email, report.User.FirstName + " " + report.User.LastName,
+        
+        _ = Task.Run(() => mailService.SendEmail(report.User.Email, report.User.FirstName + " " + report.User.LastName,
                 report.Description ?? "-",
-                message);
+                message));
         
         return Ok(report.Dto());
     }

@@ -172,7 +172,7 @@ public sealed class ReportService : IReportService
         return report;
     }
 
-    public async Task<Report?> SendMessageToReporterAsync(Guid id, string? message, CancellationToken cancellationToken)
+    public async Task<Report?> SendMessageToReporterAsync(Guid id, string message, CancellationToken cancellationToken)
     {
         var report = await _reportRepository
             .GetAllQueryable()
