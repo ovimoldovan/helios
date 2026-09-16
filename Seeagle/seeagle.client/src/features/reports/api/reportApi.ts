@@ -6,8 +6,12 @@ export async function createReport(data: CreateReportRequest): Promise<Report> {
     return postJson<Report>('/api/reports', data);
 }
 
-export async function getApprovedReports(days: number = 30): Promise<Report[]> {
-    return getJson<Report[]>(`/api/reports/approved?days=${days}`);
+export async function getApprovedReports(days: number = 30, areaId?: string): Promise<Report[]> {
+    const parameters = new URLSearchParams({ days: days.toString() });
+    if (areaId) {
+        parameters.set("areaId", areaId);
+    }
+    return getJson<Report[]>(`/api/reports/approved?${parameters.toString()}`);
 }
 
 export async function uploadReportPhoto(reportId: string, file: File): Promise<Report> {
