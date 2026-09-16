@@ -74,23 +74,18 @@ export function ApprovedReports() {
 
         try {
             if (shouldMarkAsSolved) {
-                await markAsSolved(selectedReport.id, message);
-            } else {
+                const response = await markAsSolved(selectedReport.id, message);
+                setReports(prevState => prevState.map(report => report.id === response.id ?
+                    {...report, ...response} : report
+                ));
+            } else if (message != null) {
                 await sendMessageToReporter(selectedReport.id, message);
             }
-
-            if (shouldMarkAsSolved) {
-                setReports((current) => current.filter((r) => r.id !== selectedReport.id));
-                setTotalCount((current) => Math.max(0, current - 1));
-            }
-
-            setModalOpen(false);
-            setSelectedReport(null);
-        } catch {
-            setError(t('unexpectedErrorProcessingAction'));
         } finally {
             setIsProcessing(false);
         }
+        setModalOpen(false);
+        setSelectedReport(null);
     };
 
     async function handleDelete(id: string) {

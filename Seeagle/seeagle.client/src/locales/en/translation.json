@@ -251,6 +251,6 @@
   "makeNormalUser": "Make normal user",
   "unexpectedErrorRemovingModerator": "Unexpected error while removing moderator role.",
 
-  "user": "User"
-  
+  "user": "User",
+  "moderatorMessageTooShort": "Message must be at least 3 characters"
 }
