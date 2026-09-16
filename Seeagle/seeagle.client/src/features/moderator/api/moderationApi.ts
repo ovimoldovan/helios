@@ -12,6 +12,8 @@ export interface ModerationReport {
     isSolved?: boolean;
     messageToReporter?: string | null;
     type: string;
+    hasPhoto : boolean;
+    isPhotoVisibleToPublic: boolean;
 }
 
 export async function getPendingReports(
@@ -35,6 +37,12 @@ export async function rejectReport(id: string, message?: string | null): Promise
         : `/api/reports/${id}/reject`;
 
     return putJson<ModerationReport>(url);
+}
+
+export async function setPhotoVisibility(id: string, isVisibleToPublic: boolean): Promise<ModerationReport> {
+    return putJson<ModerationReport>(
+        `api/reports/${id}/photo-visibility?isVisibleToPublic=${isVisibleToPublic}`
+    );
 }
 
 export async function getApprovedReports(

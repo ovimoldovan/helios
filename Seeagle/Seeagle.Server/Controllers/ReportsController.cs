@@ -186,13 +186,38 @@ public sealed class ReportsController(
     [HttpGet("{reportId}/photo")]
     public async Task<IActionResult> GetPhoto(Guid reportId, CancellationToken cancellationToken)
     {
-        var isModerator = User.IsInRole("Moderator");
-        var photo = await reportService.GetPhotoAsync(reportId, isModerator, cancellationToken);
+        var isModerator = User.IsInRole("Moderator") || User.IsInRole("Admin");
+
+        Guid? requestingUserId = null;
+        var userIdClaim = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userIdClaim != null && Guid.TryParse(userIdClaim, out var parsedUserId))
+        {
+            requestingUserId = parsedUserId;
+        }
+
+        var photo = await reportService.GetPhotoAsync(reportId, isModerator, requestingUserId, cancellationToken);
 
         if (photo is null)
             return NotFound();
 
         return File(photo.Data, photo.ContentType);
+    }
+    
+    [Authorize(Roles = "Moderator, Admin")]
+    [HttpPut("{id:guid}/photo-visibility")]
+    public async Task<ActionResult<ReportDto>> SetPhotoVisibility(
+        Guid id,
+        [FromQuery] bool isVisibleToPublic,
+        CancellationToken cancellationToken = default)
+    {
+        var report = await reportService.SetPhotoVisibilityAsync(id, isVisibleToPublic, cancellationToken);
+
+        if (report is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(report);
     }
 
     [Authorize]

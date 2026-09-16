@@ -15,7 +15,8 @@ public interface IReportService
     Task<PagedResult<ReportDto>> GetApprovedReportsAsync(int pageNumber, int pageSize, CancellationToken cancellationToken);
     Task<ReportDto?> SendMessageToReporterAsync(Guid id, string? message, CancellationToken cancellationToken);
     Task<ReportDto?> AttachPhotoAsync(Guid reportId, Guid userId, byte[] data, string contentType, CancellationToken ct);
-    Task<ProcessedPhoto?> GetPhotoAsync(Guid reportId, bool isModerator, CancellationToken ct);
+    Task<ProcessedPhoto?> GetPhotoAsync(Guid reportId, bool isModerator, Guid? requestingUserId, CancellationToken ct);
+    Task<ReportDto> SetPhotoVisibilityAsync(Guid reportId, bool isVisibleToPublic, CancellationToken ct);
     
     Task<PagedResult<ReportDto>> GetUserReportsAsync(Guid userId, int pageNumber, int pageSize, CancellationToken cancellationToken);
     Task<PagedResult<ReportDto>> GetByStatusAsync(string? status, string? excludeStatus, int pageNumber, int pageSize, CancellationToken cancellationToken);

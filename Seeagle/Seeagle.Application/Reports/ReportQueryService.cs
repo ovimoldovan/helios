@@ -48,7 +48,9 @@ public sealed class ReportQueryService : IReportQueryService
                 report.Status.ToString(),
                 report.Priority.ToString(),
                 report.Type.Name,
-                report.MessageToReporter))
+                report.MessageToReporter,
+                report.Photo != null,
+                report.Photo != null && report.Photo.IsVisibleToPublic))
             .ToListAsync(cancellationToken);
 
         return reports;
@@ -122,7 +124,9 @@ public sealed class ReportQueryService : IReportQueryService
                 r.Status.ToString(),
                 r.Priority.ToString(),
                 r.Type.Name,
-                r.MessageToReporter))
+                r.MessageToReporter,
+                r.Photo != null,
+                r.Photo != null && r.Photo.IsVisibleToPublic))
             .ToListAsync(cancellationToken);
 
         return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
@@ -163,7 +167,9 @@ public sealed class ReportQueryService : IReportQueryService
                 report.Status.ToString(),
                 report.Priority.ToString(),
                 report.Type.Name,
-                report.MessageToReporter))
+                report.MessageToReporter,
+                report.Photo != null,
+                report.Photo != null && report.Photo.IsVisibleToPublic))
             .ToListAsync(cancellationToken);
 
         return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);

@@ -14,6 +14,7 @@ public sealed class ReportService : IReportService
     private readonly IRepository<User> _userRepository;
     private readonly IRepository<ReportType> _reportTypeRepository;
     private readonly IRepository<Area> _areaRepository;
+    private readonly IRepository<Photo> _photoRepository;
     
     private static readonly int StandardGpsFormat = 4326;
     private static readonly GeometryFactory GeometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: StandardGpsFormat);
@@ -25,12 +26,14 @@ public sealed class ReportService : IReportService
         IRepository<User> userRepository,
         IRepository<Area> areaRepository,
         IRepository<ReportType> reportTypeRepository,
+        IRepository<Photo> photoRepository,
         IPhotoProcessor photoProcessor)
     {
         _reportRepository = reportRepository;
         _userRepository = userRepository;
         _areaRepository = areaRepository;
         _reportTypeRepository = reportTypeRepository;
+        _photoRepository = photoRepository;
         _photoProcessor = photoProcessor;
     }
 
@@ -75,7 +78,9 @@ public sealed class ReportService : IReportService
             report.Status.ToString(),
             report.Priority.ToString(),
             GetTypeName(report),
-            report.MessageToReporter);
+            report.MessageToReporter, 
+            report.Photo != null,
+            report.Photo?.IsVisibleToPublic ?? false);
     }
 
     public async Task<PagedResult<ReportDto>> GetPendingAsync(
@@ -102,7 +107,9 @@ public sealed class ReportService : IReportService
                 report.Status.ToString(),
                 report.Priority.ToString(),
                 report.Type.Name,
-                report.MessageToReporter))
+                report.MessageToReporter,
+                report.Photo != null,
+                report.Photo != null && report.Photo.IsVisibleToPublic))
             .ToListAsync(cancellationToken);
 
         return new PagedResult<ReportDto>(
@@ -144,7 +151,9 @@ public sealed class ReportService : IReportService
             report.Status.ToString(),
             report.Priority.ToString(),
             GetTypeName(report),
-            report.MessageToReporter);
+            report.MessageToReporter,
+        report.Photo != null,
+        report.Photo?.IsVisibleToPublic ?? false);;
     }
 
     public async Task<ReportDto?> RejectAsync(Guid id, string? message, CancellationToken cancellationToken)
@@ -173,7 +182,9 @@ public sealed class ReportService : IReportService
         	report.Status.ToString(),
         	report.Priority.ToString(),
         	GetTypeName(report),
-        	report.MessageToReporter);
+        	report.MessageToReporter,
+            report.Photo != null,
+            report.Photo?.IsVisibleToPublic ?? false);
 	}
     public async Task<ReportDto?> MarkAsSolvedAsync(Guid id, string? message, CancellationToken cancellationToken)
     {
@@ -197,7 +208,9 @@ public sealed class ReportService : IReportService
             report.Status.ToString(),
             report.Priority.ToString(),
             GetTypeName(report),
-            report.MessageToReporter);
+            report.MessageToReporter,
+            report.Photo != null,
+            report.Photo?.IsVisibleToPublic ?? false);
     }
 
     public async Task<PagedResult<ReportDto>> GetApprovedReportsAsync(int pageNumber, int pageSize, CancellationToken cancellationToken)
@@ -221,7 +234,9 @@ public sealed class ReportService : IReportService
                 report.Status.ToString(),
                 report.Priority.ToString(),
                 report.Type.Name,
-                report.MessageToReporter))
+                report.MessageToReporter,
+                report.Photo != null,
+                report.Photo != null && report.Photo.IsVisibleToPublic))
             .ToListAsync(cancellationToken);
 
         return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
@@ -252,7 +267,9 @@ public sealed class ReportService : IReportService
             report.Status.ToString(),
             report.Priority.ToString(),
             GetTypeName(report),
-            report.MessageToReporter);
+            report.MessageToReporter,
+            report.Photo != null,
+            report.Photo?.IsVisibleToPublic ?? false);
     }
 
     public async Task<PagedResult<ReportDto>> GetUserReportsAsync(
@@ -280,7 +297,9 @@ public sealed class ReportService : IReportService
                 report.Status.ToString(),
                 report.Priority.ToString(),
                 report.Type.Name,
-                report.MessageToReporter))
+                report.MessageToReporter,
+                report.Photo != null,
+                report.Photo != null && report.Photo.IsVisibleToPublic))
             .ToListAsync(cancellationToken);
 
         return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
@@ -328,7 +347,9 @@ public sealed class ReportService : IReportService
                 report.Status.ToString(),
                 report.Priority.ToString(),
                 report.Type.Name,
-                report.MessageToReporter))
+                report.MessageToReporter,
+                report.Photo != null,
+                report.Photo != null && report.Photo.IsVisibleToPublic))
             .ToListAsync(cancellationToken);
 
         return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
@@ -391,7 +412,9 @@ public sealed class ReportService : IReportService
             report.Status.ToString(),
             report.Priority.ToString(),
             GetTypeName(report),
-            report.MessageToReporter);
+            report.MessageToReporter,
+            report.Photo != null,
+            report.Photo?.IsVisibleToPublic ?? false);
     }
 
     public async Task<ReportDto?> AttachPhotoAsync(Guid reportId, Guid userId, byte[] data, string contentType, CancellationToken cancellationToken)
@@ -399,6 +422,7 @@ public sealed class ReportService : IReportService
         var report = await _reportRepository
             .GetAllQueryable()
             .Include(report => report.Type)
+            .Include(report => report.User)
             .FirstOrDefaultAsync(report => report.Id == reportId, cancellationToken);
         
         if (report is null)
@@ -410,7 +434,7 @@ public sealed class ReportService : IReportService
         var photo = new Photo(processed.Data, processed.ContentType, report);
         report.AttachPhoto(photo);
 
-        await _reportRepository.UpdateAsync(report, cancellationToken);
+        await _photoRepository.AddAsync(photo, cancellationToken);
 
         return new ReportDto(
             report.Id,
@@ -421,10 +445,12 @@ public sealed class ReportService : IReportService
             report.Status.ToString(),
             report.Priority.ToString(),
             GetTypeName(report),
-            report.MessageToReporter);
+            report.MessageToReporter,
+            report.Photo != null,
+            report.Photo?.IsVisibleToPublic ?? false);
     }
 
-    public async Task<ProcessedPhoto?> GetPhotoAsync(Guid reportId, bool isModerator, CancellationToken cancellationToken)
+    public async Task<ProcessedPhoto?> GetPhotoAsync(Guid reportId, bool isModerator, Guid? requestingUserId, CancellationToken cancellationToken)
     {
         var report = await _reportRepository
             .GetAllQueryable()
@@ -433,12 +459,44 @@ public sealed class ReportService : IReportService
         if (report?.Photo is null)
             return null;
 
-        if (report.Status != ReportStatus.Approved && !isModerator)
+        var isOwner = requestingUserId.HasValue && report.User.Id == requestingUserId.Value;
+
+        if ((report.Status != ReportStatus.Approved || !report.Photo.IsVisibleToPublic) && !isModerator && !isOwner)
             return null;
 
         return new ProcessedPhoto(report.Photo.ImageData, report.Photo.ContentType);
     }
 
+    public async Task<ReportDto?> SetPhotoVisibilityAsync(Guid reportId, bool isVisibleToPublic,
+        CancellationToken cancellationToken)
+    {
+        var report = await _reportRepository
+            .GetAllQueryable()
+            .Include(report => report.Type)
+            .FirstOrDefaultAsync(report => report.Id == reportId, cancellationToken);
+
+        if (report?.Photo is null)
+        {
+            return null;
+        }
+        
+        report.Photo.SetPublicVisibility(isVisibleToPublic);
+        
+        await _reportRepository.UpdateAsync(report, cancellationToken);
+        
+        return new ReportDto(
+            report.Id,
+            report.Location.X,
+            report.Location.Y,
+            report.Description,
+            report.CreatedUtc,
+            report.Status.ToString(),
+            report.Priority.ToString(),
+            GetTypeName(report),
+            report.MessageToReporter,
+            report.Photo != null,
+            report.Photo?.IsVisibleToPublic ?? false);
+    }
         public async Task<List<CsvReportDto>> GetByStatusForExportAsync(string? status, string? excludeStatus, CancellationToken cancellationToken)
     {
         if (status != null && !ValidStatuses.Contains(status))

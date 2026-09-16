@@ -89,6 +89,7 @@ export function MyReports() {
                                             <TableHead>{t('status')}</TableHead>
                                             <TableHead>{t('created')}</TableHead>
                                             <TableHead>{t('priority')}</TableHead>
+                                            <TableHead>{t('photo')}</TableHead>
                                         </TableRow>
                                     </TableHeader>
 
@@ -127,6 +128,19 @@ export function MyReports() {
 
                                                 <TableCell className="py-2">
                                                     {report.priority || '-'}
+                                                </TableCell>
+
+                                                <TableCell className="py-2">
+                                                    {report.hasPhoto ? (
+                                                        <img
+                                                            src={`/api/reports/${report.id}/photo`}
+                                                            alt={t('reportPhotoAlt')}
+                                                            className="w-16 h-16 object-cover rounded-md border"
+                                                            onClick={(e) => e.stopPropagation()}
+                                                        />
+                                                    ) : (
+                                                        <span className="text-xs text-muted-foreground">-</span>
+                                                    )}
                                                 </TableCell>
                                             </TableRow>
                                         ))}

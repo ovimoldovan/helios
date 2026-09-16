@@ -35,7 +35,13 @@ public class Photo
     public int SizeBytes { get; private set; }
     public string ContentType { get; private set; }
     public DateTime CreatedUtc { get; private set; }
+    public bool IsVisibleToPublic { get; private set; }
 
     public Guid ReportId { get; private set; }
     public Report Report { get; private set; }
+
+    public void SetPublicVisibility(bool isVisible)
+    {
+        IsVisibleToPublic = isVisible;
+    }
 }

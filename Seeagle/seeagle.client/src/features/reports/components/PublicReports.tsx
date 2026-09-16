@@ -176,6 +176,7 @@ export function PublicReports() {
                                             <TableHead>{t('description')}</TableHead>
                                             <TableHead>{t('status')}</TableHead>
                                             <TableHead>{t('priority')}</TableHead>
+                                            <TableHead>{t('photo')}</TableHead>
                                             <TableHead>
                                                 <button
                                                     className="flex items-center gap-1 hover:text-foreground"
@@ -202,6 +203,17 @@ export function PublicReports() {
                                                 </TableCell>
                                                 <TableCell className="py-2">
                                                     {report.priority || '-'}
+                                                </TableCell>
+                                                <TableCell className="py-2">
+                                                    {report.hasPhoto && report.isPhotoVisibleToPublic ? (
+                                                        <img
+                                                            src={`/api/reports/${report.id}/photo`}
+                                                            alt={t('reportPhotoAlt')}
+                                                            className="w-16 h-16 object-cover rounded-md border"
+                                                        />
+                                                    ) : (
+                                                        <span className="text-xs text-muted-foreground">-</span>
+                                                    )}
                                                 </TableCell>
                                                 <TableCell className="py-2">
                                                     {new Date(report.createdUtc).toLocaleString()}

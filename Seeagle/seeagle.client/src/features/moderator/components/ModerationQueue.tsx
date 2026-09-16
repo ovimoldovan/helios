@@ -3,6 +3,7 @@ import {
     approveReport,
     getPendingReports,
     rejectReport,
+    setPhotoVisibility,
     type ModerationReport,
 } from '@/features/moderator/api/moderationApi';
 import {
@@ -109,6 +110,17 @@ export function ModerationQueue() {
             setIsProcessing(false);
         }
     };
+    
+    const handleTogglePhotoVisibility = async (report: ModerationReport, checked: boolean) => {
+        try {
+            const updated = await setPhotoVisibility(report.id, checked);
+            setReports((currentReports) =>
+            currentReports.map((r) => (r.id == report.id ? {...r, ...updated} : r))
+            );
+        } catch {
+            setError(t('errorWhileUpdatingPhotoVisibility'));
+        }
+    }
 
     return (
         <div className="p-6">
@@ -155,6 +167,27 @@ export function ModerationQueue() {
                                             </TableCell>
                                             <TableCell className="py-2">
                                                 {new Date(report.createdUtc).toLocaleString()}
+                                            </TableCell>
+                                            <TableCell className="py-2">
+                                                {report.hasPhoto ? (
+                                                    <div className="flex items-center gap-2">
+                                                        <img
+                                                            src={`/api/reports/${report.id}/photo`}
+                                                            alt={t('reportPhotoAlt')}
+                                                            className="w-16 h-16 object-cover rounded-md border"
+                                                        />
+                                                        <Button
+                                                            size="sm"
+                                                            variant={report.isPhotoVisibleToPublic ? "default" : "outline"}
+                                                            onClick={() => void handleTogglePhotoVisibility(report, !report.isPhotoVisibleToPublic)}
+                                                        >
+                                                            {report.isPhotoVisibleToPublic ? t('hideFromPublic') : t('showPhotoToPublic')}
+                                                        </Button>
+                                                    </div>
+                                                ) : ( <span className="text-xs text-muted-foreground">
+                                                        {t('noPhoto')}
+                                                    </span>
+                                                )}
                                             </TableCell>
                                             <TableCell className="py-2">
                                                 <div className="flex gap-2">
