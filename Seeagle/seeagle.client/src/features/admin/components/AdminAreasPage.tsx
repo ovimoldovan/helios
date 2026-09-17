@@ -4,12 +4,14 @@ import { DrawableMap } from './DrawableMap';
 import { AreasSidePanel } from './AreasSidePanel';
 import { getJson, postJson, putJsonWithBody, deleteJson } from '@/shared/api/httpClient';
 import type { Area, CreateAreaRequest, CreateAreaResponse } from '../types';
+import { useTranslation } from 'react-i18next';
 
 export function AdminAreasPage() {
     const [areas, setAreas] = useState<Area[]>([]);
     const [nextId, setNextId] = useState(1);
     const [drawMode, setDrawMode] = useState<'rectangle' | 'polygon' | null>(null);
-
+    const { t } = useTranslation();
+    
     useEffect(() => {
         const loadAreas = async () => {
             try {
@@ -73,7 +75,7 @@ export function AdminAreasPage() {
                     to="/"
                     className="bg-white px-3 py-1.5 rounded-full text-sm text-gray-700 shadow hover:bg-gray-100 transition"
                 >
-                    ← Back to Home
+                    ← {t('backToHome')}
                 </Link>
             </div>
 

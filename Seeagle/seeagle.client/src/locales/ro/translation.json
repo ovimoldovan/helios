@@ -254,6 +254,18 @@
   "makeNormalUser": "Fă utilizator normal",
   "unexpectedErrorRemovingModerator": "Eroare neașteptată la retragerea rolului de moderator.",
   "user": "Utilizator",
+  
+  "moderatorMessage": "Mesaj de la Moderator",
 
-  "moderatorMessage": "Mesaj de la Moderator"
+  "areaManagementTitle": "Gestionare Zone",
+  "areaManagementDescription": "Desenează forme pe hartă pentru a defini zone.",
+  "rectangle": "Dreptunghi",
+  "polygon": "Poligon",
+  "noAreasYet": "Nicio zonă încă. Folosește butoanele de mai sus.",
+  "rename": "Redenumește",
+  "delete": "Șterge",
+  "backToHome": "Înapoi acasă",
+  
+  "exportCsv": "Exportă CSV"
+  
 }
