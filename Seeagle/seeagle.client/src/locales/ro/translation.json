@@ -203,6 +203,7 @@
   "reject": "Respinge",
   "edit": "Editează",
   "Photo": "Imagine",
+  "photo": "Imagine",
   "photoPreview": "Previzualizare imagine",
   "remove": "Șterge",
   "disable": "Dezactivează",
@@ -233,5 +234,9 @@
   "moderatorMessage": "Mesaj moderator",
   "rejectReport": "Respinge raportul",
 
-  "noArea": "Fără Arie"
+  "noArea": "Fără Arie",
+  
+  "showPhotoToPublic": "Arată imaginea public",
+  "hideFromPublic": "Ascunde de la public"
+  
 }

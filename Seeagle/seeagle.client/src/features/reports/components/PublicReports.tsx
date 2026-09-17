@@ -20,6 +20,7 @@ import {
     SelectTrigger,
 } from '@/components/ui/select';
 import type { Area } from "@/features/admin/types.ts";
+import { PhotoLightbox } from '@/components/photoLightbox.tsx';
 
 const PAGE_SIZE = 10;
 
@@ -34,6 +35,7 @@ export function PublicReports() {
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
     const [areas, setAreas] = useState<Area[]>([]);
     const [areaFilter, setAreaFilter] = useState<string>('all');
+    const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 
     useEffect(() => {
         const loadAreas = async () => {
@@ -210,6 +212,7 @@ export function PublicReports() {
                                                             src={`/api/reports/${report.id}/photo`}
                                                             alt={t('reportPhotoAlt')}
                                                             className="w-16 h-16 object-cover rounded-md border"
+                                                            onClick={() => setLightboxSrc(`/api/reports/${report.id}/photo`)}
                                                         />
                                                     ) : (
                                                         <span className="text-xs text-muted-foreground">-</span>
@@ -259,6 +262,11 @@ export function PublicReports() {
                     )}
                 </div>
             </main>
+            <PhotoLightbox
+                src={lightboxSrc}
+                alt={t('reportPhotoAlt')}
+                onClose={() => setLightboxSrc(null)}
+            />
         </div>
     );
 }

@@ -204,7 +204,8 @@
   "errorWhileRejectingReport": "Error while rejecting report.",
   "approve": "Approve",
   "reject": "Reject",
-"Photo": "Photo",
+  "Photo": "Photo",
+  "photo": "Photo",
   "photoPreview": "Photo Preview",
   "remove": "Remove",
   "disable": "Disable",
@@ -239,5 +240,8 @@
   "status_Approved": "Approved",
   "status_Rejected": "Rejected",
   "status_Solved": "Solved",
-  "noArea": "No Area"
+  "noArea": "No Area",
+
+  "showPhotoToPublic": "Show photo to public",
+  "hideFromPublic": "Hide from public"
 }

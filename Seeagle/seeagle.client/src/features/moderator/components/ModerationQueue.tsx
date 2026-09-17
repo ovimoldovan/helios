@@ -20,6 +20,8 @@ import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { PriorityModal } from './PriorityModal';
 import { RejectModal } from './RejectModal';
+import { PhotoLightbox } from '@/components/photoLightbox.tsx';
+
 const PAGE_SIZE = 10;
 
 export function ModerationQueue() {
@@ -35,6 +37,7 @@ export function ModerationQueue() {
     const [selectedReport, setSelectedReport] = useState<ModerationReport | null>(null);
     const [rejectModalOpen, setRejectModalOpen] = useState(false);
     const [reportToReject, setReportToReject] = useState<ModerationReport | null>(null);
+    const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
     
     useEffect(() => {
         setIsLoading(true);
@@ -175,6 +178,7 @@ export function ModerationQueue() {
                                                             src={`/api/reports/${report.id}/photo`}
                                                             alt={t('reportPhotoAlt')}
                                                             className="w-16 h-16 object-cover rounded-md border"
+                                                            onClick={() => setLightboxSrc(`/api/reports/${report.id}/photo`)}
                                                         />
                                                         <Button
                                                             size="sm"
@@ -275,6 +279,12 @@ export function ModerationQueue() {
                 onConfirm={handleConfirmReject}
                 report={reportToReject}
                 isLoading={isProcessing}
+            />
+
+            <PhotoLightbox
+                src={lightboxSrc}
+                alt={t('reportPhotoAlt')}
+                onClose={() => setLightboxSrc(null)}
             />
         </div>
     );
