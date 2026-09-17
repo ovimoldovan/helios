@@ -95,7 +95,7 @@
   "failedToSubmitReport": "Failed to submit report.",
   "tapMapToPlacePin": "Tap map to place a pin",
   "description": "Description",
-  "optional": "(optional)",
+  "optional": "optional",
   "descriptionPlaceholder": "Describe what you saw...",
   "cancel": "Cancel",
   "submitting": "Submitting...",
@@ -167,7 +167,7 @@
   "cookiesIntro": "To make Seeagle work properly, we install small files called cookies on your device.",
   "loginToViewReports": "Please login to view your reports.",
   "noReports": "You haven't submitted any reports yet.",
-  
+
   "whatAreCookies": "What are cookies?",
   "cookieDefinition": "A cookie is a small text file that a website stores on your device when you visit said site.",
   "firstPartyCookies": "First party cookies are cookies set by the website and only it can read them. Moreover, a website might use external services, which use third-party cookies",
@@ -244,4 +244,18 @@
 
   "showPhotoToPublic": "Show photo to public",
   "hideFromPublic": "Hide from public"
+  "status_Pending": "Pending",
+  "possibleDuplicate": "Possible duplicate",
+  "reportSummaryTitle": "Report Summary",
+  "byStatus": "By Status",
+  "byType": "By Type",
+  "byArea": "By Area",
+  "loadingSummary": "Loading summary...",
+  "unexpectedErrorLoadingSummary": "Unexpected error while loading summary.",
+
+  "makeNormalUser": "Make normal user",
+  "unexpectedErrorRemovingModerator": "Unexpected error while removing moderator role.",
+
+  "user": "User",
+  "moderatorMessage": "Message from Moderator"
 }

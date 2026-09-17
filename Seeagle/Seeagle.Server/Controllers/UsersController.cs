@@ -9,7 +9,7 @@ namespace Seeagle.Server.Controllers;
 [ApiController]
 [Route("api/users")]
 [Authorize(Roles = "Admin")]
-public sealed class UsersController(IUserQueryService userQueryService) : ControllerBase
+public sealed class UsersController(IUserQueryService userQueryService, IUserService userService) : ControllerBase
 {
     [HttpGet]
     public async Task<ActionResult<PagedResult<UserListItemDto>>> GetUsersAsync(
@@ -36,6 +36,29 @@ public sealed class UsersController(IUserQueryService userQueryService) : Contro
         catch (InvalidOperationException ex)
         {
             return NotFound(new { message = ex.Message });
+        }
+    }
+    
+    [Authorize(Roles = "Admin")]
+    [HttpPut("{id:guid}/remove-moderator")]
+    public async Task<ActionResult<UserListItemDto>> RemoveModerator(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var user = await userService.RemoveModeratorAsync(id, cancellationToken);
+        
+            if (user is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(user);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
         }
     }
 }

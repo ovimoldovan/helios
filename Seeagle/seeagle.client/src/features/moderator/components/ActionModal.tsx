@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next';
 interface ActionModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onConfirm: (message: string | null, markAsSolved: boolean) => void;
+    onConfirm: (message: string | null, markAsSolved: boolean) => Promise<void>;
     report: ModerationReport | null;
     isLoading: boolean;
 }
@@ -30,6 +30,7 @@ export function ActionModal({
     const { t } = useTranslation();
     const [message, setMessage] = useState('');
     const [markAsSolved, setMarkAsSolved] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         if (isOpen) {
@@ -37,9 +38,14 @@ export function ActionModal({
             setMarkAsSolved(false);
         }
     }, [isOpen]);
+    
+    useEffect(() => {
+        setError(null);
+    }, [message])
 
-    const handleConfirm = () => {
-        onConfirm(message.trim() || null, markAsSolved);
+    const handleConfirm = async () => {
+        setError(null);
+        await onConfirm(message.trim() || null, markAsSolved);
     };
 
     return (
@@ -71,11 +77,15 @@ export function ActionModal({
                             className="min-h-[100px]"
                             maxLength={500}
                         />
-                        <p className="text-xs text-muted-foreground text-right">
+                        <p
+                            className={`text-xs text-right ${
+                                !(markAsSolved ? (message.length == 0 || message.length >= 3) : message.length >= 3) ? 'text-destructive' : 'text-muted-foreground'
+                            }`}
+                        >
                             {message.length}/500
                         </p>
                     </div>
-
+                    {error && <p className="text-sm text-destructive">{error}</p>}
                     <div className="flex items-center gap-2">
                         <input
                             type="checkbox"
@@ -94,7 +104,7 @@ export function ActionModal({
                     <Button variant="outline" onClick={onClose} disabled={isLoading}>
                         {t('cancel')}
                     </Button>
-                    <Button onClick={handleConfirm} disabled={isLoading}>
+                    <Button onClick={handleConfirm} disabled={isLoading || !(markAsSolved ? (message.length == 0 || message.length >= 3) : message.length >= 3)}>
                         {isLoading ? t('processing') : t('applyAction')}
                     </Button>
                 </DialogFooter>

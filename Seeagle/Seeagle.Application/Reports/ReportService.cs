@@ -37,12 +37,60 @@ public sealed class ReportService : IReportService
         _photoProcessor = photoProcessor;
     }
 
-    private static string GetTypeName(Report report)
+    private static double CalculateDistanceInMeters(
+        double latitude1,
+        double longitude1,
+        double latitude2,
+        double longitude2)
     {
-        return report.Type?.Name ?? "General";
+        const double earthRadiusMeters = 6371000;
+
+        var latitudeDifference = DegreesToRadians(latitude2 - latitude1);
+        var longitudeDifference = DegreesToRadians(longitude2 - longitude1);
+
+        var a =
+            Math.Sin(latitudeDifference / 2) * Math.Sin(latitudeDifference / 2) +
+            Math.Cos(DegreesToRadians(latitude1)) *
+            Math.Cos(DegreesToRadians(latitude2)) *
+            Math.Sin(longitudeDifference / 2) *
+            Math.Sin(longitudeDifference / 2);
+
+        var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+
+        return earthRadiusMeters * c;
     }
 
-    public async Task<ReportDto> CreateAsync(Guid userId, CreateReportRequest request, CancellationToken cancellationToken)
+    private static double DegreesToRadians(double degrees)
+    {
+        return degrees * Math.PI / 180;
+    }
+
+    private static bool HasSimilarDescription(string? firstDescription, string? secondDescription)
+    {
+        if (string.IsNullOrWhiteSpace(firstDescription) ||
+            string.IsNullOrWhiteSpace(secondDescription))
+        {
+            return false;
+        }
+
+        var firstWords = firstDescription
+            .ToLowerInvariant()
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+            .Select(word => word.Trim('.', ',', '!', '?', ';', ':'))
+            .Where(word => word.Length > 2)
+            .ToHashSet();
+
+        var secondWords = secondDescription
+            .ToLowerInvariant()
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+            .Select(word => word.Trim('.', ',', '!', '?', ';', ':'))
+            .Where(word => word.Length > 2)
+            .ToHashSet();
+
+        return firstWords.Intersect(secondWords).Count() >= 3;
+    }
+
+    public async Task<Report> CreateAsync(Guid userId, CreateReportRequest request, CancellationToken cancellationToken)
     {
         var user = await _userRepository.GetAllQueryable()
             .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
@@ -56,6 +104,37 @@ public sealed class ReportService : IReportService
 
         var point = GeometryFactory.CreatePoint(new Coordinate(request.Longitude, request.Latitude));
         var report = new Report(point, request.Description, user, reportType);
+
+        var duplicateCandidateStartDate = DateTime.UtcNow.AddHours(-72);
+
+        var possibleDuplicates = new List<Report>();
+
+        await foreach (var candidate in _reportRepository
+            .GetAllQueryable()
+            .Where(r =>
+                !r.IsDeleted &&
+                r.Type.Id == reportType.Id &&
+                r.CreatedUtc >= duplicateCandidateStartDate)
+            .AsAsyncEnumerable()
+            .WithCancellation(cancellationToken))
+        {
+            if (CalculateDistanceInMeters(
+                    report.Location.Y,
+                    report.Location.X,
+                    candidate.Location.Y,
+                    candidate.Location.X) <= 50 &&
+                HasSimilarDescription(
+                    report.Description,
+                    candidate.Description))
+            {
+                possibleDuplicates.Add(candidate);
+            }
+        }
+
+        foreach (var duplicateCandidate in possibleDuplicates)
+        {
+            report.AddDuplicateCandidate(duplicateCandidate);
+        }
 
         var area = await _areaRepository.GetAllQueryable()
             .FirstOrDefaultAsync(
@@ -83,13 +162,16 @@ public sealed class ReportService : IReportService
             report.Photo?.IsVisibleToPublic ?? false);
     }
 
-    public async Task<PagedResult<ReportDto>> GetPendingAsync(
+    public async Task<PagedResult<Report>> GetPendingAsync(
         int pageNumber,
         int pageSize,
         CancellationToken cancellationToken)
     {
         var query = _reportRepository
             .GetAllQueryable()
+            .Include(report => report.Type)
+            .Include(report => report.DuplicateCandidates)
+                .ThenInclude(candidate => candidate.Type)
             .Where(report => report.Status == ReportStatus.Pending);
 
         var totalCount = await query.CountAsync(cancellationToken);
@@ -112,18 +194,19 @@ public sealed class ReportService : IReportService
                 report.Photo != null && report.Photo.IsVisibleToPublic))
             .ToListAsync(cancellationToken);
 
-        return new PagedResult<ReportDto>(
+        return new PagedResult<Report>(
             reports,
             totalCount,
             pageNumber,
             pageSize);
     }
 
-    public async Task<ReportDto?> ApproveAsync(Guid id, string priority, CancellationToken cancellationToken)
+    public async Task<Report?> ApproveAsync(Guid id, string priority, CancellationToken cancellationToken)
     {
         var report = await _reportRepository
             .GetAllQueryable()
             .Include(report => report.Type)
+            .Include(report => report.User)
             .FirstOrDefaultAsync(report => report.Id == id, cancellationToken);
 
         if (report is null)
@@ -156,11 +239,12 @@ public sealed class ReportService : IReportService
         report.Photo?.IsVisibleToPublic ?? false);;
     }
 
-    public async Task<ReportDto?> RejectAsync(Guid id, string? message, CancellationToken cancellationToken)
+    public async Task<Report?> RejectAsync(Guid id, string? message, CancellationToken cancellationToken)
     {
         var report = await _reportRepository
             .GetAllQueryable()
             .Include(report => report.Type)
+            .Include(report => report.User)
             .FirstOrDefaultAsync(report => report.Id == id);
 
     	if (report is null)
@@ -196,7 +280,10 @@ public sealed class ReportService : IReportService
         {
             return null;
         }
-        report.MarkAsSolved(message);
+
+        report.Reject();
+        report.UpdateMessageToReporter(message);
+
         await _reportRepository.UpdateAsync(report, cancellationToken);
         
         return new ReportDto(
@@ -213,10 +300,11 @@ public sealed class ReportService : IReportService
             report.Photo?.IsVisibleToPublic ?? false);
     }
 
-    public async Task<PagedResult<ReportDto>> GetApprovedReportsAsync(int pageNumber, int pageSize, CancellationToken cancellationToken)
+    public async Task<PagedResult<Report>> GetApprovedReportsAsync(int pageNumber, int pageSize, CancellationToken cancellationToken)
     {
         var query = _reportRepository
             .GetAllQueryable()
+            .Include(report => report.Type)
             .Where(report => report.Status == ReportStatus.Approved && !report.IsSolved);
 
         var totalCount = await query.CountAsync(cancellationToken);
@@ -239,14 +327,32 @@ public sealed class ReportService : IReportService
                 report.Photo != null && report.Photo.IsVisibleToPublic))
             .ToListAsync(cancellationToken);
 
-        return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
+        return new PagedResult<Report>(reports, totalCount, pageNumber, pageSize);
     }
 
-    public async Task<ReportDto?> SendMessageToReporterAsync(Guid id, string? message, CancellationToken cancellationToken)
+    public async Task<Report?> MarkAsSolvedAsync(Guid id, string? message, CancellationToken cancellationToken)
     {
         var report = await _reportRepository
             .GetAllQueryable()
             .Include(report => report.Type)
+            .Include(report => report.User)
+            .FirstOrDefaultAsync(report => report.Id == id);
+        if (report is null)
+        {
+            return null;
+        }
+        report.MarkAsSolved(message);
+        await _reportRepository.UpdateAsync(report, cancellationToken);
+
+        return report;
+    }
+
+    public async Task<Report?> SendMessageToReporterAsync(Guid id, string message, CancellationToken cancellationToken)
+    {
+        var report = await _reportRepository
+            .GetAllQueryable()
+            .Include(report => report.Type)
+            .Include(report => report.User)
             .FirstOrDefaultAsync(report => report.Id == id, cancellationToken);
 
         if (report is null)
@@ -272,7 +378,7 @@ public sealed class ReportService : IReportService
             report.Photo?.IsVisibleToPublic ?? false);
     }
 
-    public async Task<PagedResult<ReportDto>> GetUserReportsAsync(
+    public async Task<PagedResult<Report>> GetUserReportsAsync(
         Guid userId,
         int pageNumber,
         int pageSize,
@@ -280,6 +386,7 @@ public sealed class ReportService : IReportService
     {
         var query = _reportRepository
             .GetAllQueryable()
+            .Include(report => report.Type)
             .Where(report => report.User.Id == userId);
 
         var totalCount = await query.CountAsync(cancellationToken);
@@ -302,10 +409,10 @@ public sealed class ReportService : IReportService
                 report.Photo != null && report.Photo.IsVisibleToPublic))
             .ToListAsync(cancellationToken);
 
-        return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
+        return new PagedResult<Report>(reports, totalCount, pageNumber, pageSize);
     }
 
-    public async Task<PagedResult<ReportDto>> GetByStatusAsync(string? status, string? excludeStatus, int pageNumber, int pageSize, CancellationToken cancellationToken)
+    public async Task<PagedResult<Report>> GetByStatusAsync(string? status, string? excludeStatus, int pageNumber, int pageSize, CancellationToken cancellationToken)
     {
         if (status != null && !ValidStatuses.Contains(status))
         {
@@ -319,6 +426,7 @@ public sealed class ReportService : IReportService
 
         var query = _reportRepository
             .GetAllQueryable()
+            .Include(report => report.Type)
             .Where(report => !report.IsDeleted);
 
         if (!string.IsNullOrWhiteSpace(status))
@@ -352,7 +460,7 @@ public sealed class ReportService : IReportService
                 report.Photo != null && report.Photo.IsVisibleToPublic))
             .ToListAsync(cancellationToken);
 
-        return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
+        return new PagedResult<Report>(reports, totalCount, pageNumber, pageSize);
     }
 
     public async Task<bool> SoftDeleteAsync(Guid id, CancellationToken cancellationToken)
@@ -373,7 +481,7 @@ public sealed class ReportService : IReportService
         return true;
     }
 
-    public async Task<ReportDto?> UpdateAsync(Guid id, UpdateReportRequest request, CancellationToken cancellationToken)
+    public async Task<Report?> UpdateAsync(Guid id, UpdateReportRequest request, CancellationToken cancellationToken)
     {
         var report = await _reportRepository
             .GetAllQueryable()
@@ -417,7 +525,7 @@ public sealed class ReportService : IReportService
             report.Photo?.IsVisibleToPublic ?? false);
     }
 
-    public async Task<ReportDto?> AttachPhotoAsync(Guid reportId, Guid userId, byte[] data, string contentType, CancellationToken cancellationToken)
+    public async Task<Report?> AttachPhotoAsync(Guid reportId, Guid userId, byte[] data, string contentType, CancellationToken cancellationToken)
     {
         var report = await _reportRepository
             .GetAllQueryable()
