@@ -97,7 +97,7 @@
   "failedToSubmitReport": "Trimiterea raportului a eșuat.",
   "tapMapToPlacePin": "Atinge harta pentru a plasa un pin",
   "description": "Descriere",
-  "optional": "(opțional)",
+  "optional": "opțional",
   "descriptionPlaceholder": "Descrie ce ai observat...",
   "cancel": "Anulează",
   "submitting": "Se trimite...",
@@ -234,6 +234,26 @@
   "moderatorMessage": "Mesaj moderator",
   "rejectReport": "Respinge raportul",
 
+  "noArea": "Fără Arie",
   "possibleDuplicate": "Posibil duplicat",
-  "noArea": "Fără Arie"
+  "allRoles": "Toate Rolurile",
+  "status_All": "Toate",
+  "status_Approved": "Aprobate",
+  "status_Rejected": "Respinse",
+  "status_Solved": "Rezolvate",
+  "status_Pending": "În așteptare",
+  "noArea": "Fără Arie",
+
+  "reportSummaryTitle": "Sumar Rapoarte",
+  "byStatus": "După Status",
+  "byType": "După Tip",
+  "byArea": "După Zonă",
+  "loadingSummary": "Se încarcă sumarul...",
+  "unexpectedErrorLoadingSummary": "Eroare neașteptată la încărcarea sumarului.",
+
+  "makeNormalUser": "Fă utilizator normal",
+  "unexpectedErrorRemovingModerator": "Eroare neașteptată la retragerea rolului de moderator.",
+  "user": "Utilizator",
+
+  "moderatorMessage": "Mesaj de la Moderator"
 }

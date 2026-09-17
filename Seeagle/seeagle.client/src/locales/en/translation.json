@@ -95,7 +95,7 @@
   "failedToSubmitReport": "Failed to submit report.",
   "tapMapToPlacePin": "Tap map to place a pin",
   "description": "Description",
-  "optional": "(optional)",
+  "optional": "optional",
   "descriptionPlaceholder": "Describe what you saw...",
   "cancel": "Cancel",
   "submitting": "Submitting...",
@@ -239,7 +239,19 @@
   "status_Approved": "Approved",
   "status_Rejected": "Rejected",
   "status_Solved": "Solved",
-
+  "status_Pending": "Pending",
+  "noArea": "No Area",
   "possibleDuplicate": "Possible duplicate",
-  "noArea": "No Area"
+  "reportSummaryTitle": "Report Summary",
+  "byStatus": "By Status",
+  "byType": "By Type",
+  "byArea": "By Area",
+  "loadingSummary": "Loading summary...",
+  "unexpectedErrorLoadingSummary": "Unexpected error while loading summary.",
+
+  "makeNormalUser": "Make normal user",
+  "unexpectedErrorRemovingModerator": "Unexpected error while removing moderator role.",
+
+  "user": "User",
+  "moderatorMessage": "Message from Moderator"
 }

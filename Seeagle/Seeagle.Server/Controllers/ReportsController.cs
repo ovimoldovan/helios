@@ -1,9 +1,11 @@
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Seeagle.Application.Reports;
 using Seeagle.Application.Common;
 using Seeagle.Domain.Reports;
+using Seeagle.Server.Utils.MailService;
 
 namespace Seeagle.Server.Controllers;
 
@@ -12,7 +14,8 @@ namespace Seeagle.Server.Controllers;
 public sealed class ReportsController(
     IReportService reportService, 
     IReportQueryService reportQueryService, 
-    IPhotoProcessor photoProcessor) : ControllerBase
+    IPhotoProcessor photoProcessor,
+    IMailService mailService) : ControllerBase
 {
     [Authorize]
     [HttpPost]
@@ -28,7 +31,7 @@ public sealed class ReportsController(
                 return Unauthorized(new { message = "User ID claim is missing or invalid." });
             }
             var result = await reportService.CreateAsync(userId, request, cancellationToken);
-            return Ok(result);
+            return Ok(result.Dto());
         }
         catch (InvalidOperationException ex)
         {
@@ -39,11 +42,12 @@ public sealed class ReportsController(
     [HttpGet("approved")]
     public async Task<ActionResult<IReadOnlyList<ReportDto>>> GetApprovedReports(
         [FromQuery] int days = 30,
+        [FromQuery] Guid? areaId = null,
         CancellationToken cancellationToken = default)
     {
         var fromDate = DateTime.UtcNow.AddDays(-days);
-        var reports = await reportQueryService.GetApprovedReportsAsync(fromDate, cancellationToken);
-        return Ok(reports);
+        var reports = await reportQueryService.GetApprovedReportsAsync(fromDate, areaId, cancellationToken);
+        return Ok(reports.Dto());
     }
 
     [Authorize(Roles = "Moderator, Admin")]
@@ -58,7 +62,7 @@ public sealed class ReportsController(
             pageSize,
             cancellationToken);
 
-        return Ok(reports);
+        return Ok(reports.Dto());
     }
 
     [Authorize(Roles = "Moderator, Admin")]
@@ -75,7 +79,12 @@ public sealed class ReportsController(
             return NotFound();
         }
 
-        return Ok(report);
+        _ = Task.Run(() => mailService.SendEmail(report.User.Email,
+            report.User.FirstName + " " + report.User.LastName,
+            report.Description ?? "-",
+            report.Status));
+
+        return Ok(report.Dto());
     }
 
     [Authorize(Roles = "Moderator, Admin")]
@@ -92,7 +101,17 @@ public sealed class ReportsController(
             return NotFound();
         }
 
-        return Ok(report);
+        _ = Task.Run(() =>
+        {
+            Thread.Sleep(2000);
+            return mailService.SendEmail(report.User.Email,
+                report.User.FirstName + " " + report.User.LastName,
+                report.Description ?? "-",
+                report.Status,
+                message);
+        });
+
+        return Ok(report.Dto());
     }
     
     [Authorize(Roles = "Moderator, Admin")]
@@ -107,14 +126,14 @@ public sealed class ReportsController(
             pageSize,
             cancellationToken);
 
-        return Ok(reports);
+        return Ok(reports.Dto());
     }
 
     [Authorize(Roles = "Moderator, Admin")]
     [HttpPut("{id:guid}/solved")]
     public async Task<ActionResult<ReportDto>> MarkAsSolved(
         Guid id,
-        [FromQuery] string? message = null,
+        [FromQuery] [MinLength(3)] string? message = null,
         CancellationToken cancellationToken = default)
     {
         var report = await reportService.MarkAsSolvedAsync(id, message, cancellationToken);
@@ -124,14 +143,20 @@ public sealed class ReportsController(
             return NotFound();
         }
 
-        return Ok(report);
+        _ = Task.Run(() => mailService.SendEmail(report.User.Email,
+            report.User.FirstName + " " + report.User.LastName,
+            report.Description ?? "-",
+            report.Status,
+            message));
+
+        return Ok(report.Dto());
     }
     
     [Authorize(Roles = "Moderator, Admin")]
     [HttpPut("{id:guid}/message")]
     public async Task<ActionResult<ReportDto>> SendMessage(
         Guid id,
-        [FromQuery] string? message = null,
+        [FromQuery] [MinLength(3, ErrorMessage = "Message is too short")] string message,
         CancellationToken cancellationToken = default)
     {
         var report = await reportService.SendMessageToReporterAsync(id, message, cancellationToken);
@@ -140,8 +165,12 @@ public sealed class ReportsController(
         {
             return NotFound();
         }
-
-        return Ok(report);
+        
+        _ = Task.Run(() => mailService.SendEmail(report.User.Email, report.User.FirstName + " " + report.User.LastName,
+                report.Description ?? "-",
+                message));
+        
+        return Ok(report.Dto());
     }
 
     [Authorize]
@@ -170,7 +199,7 @@ public sealed class ReportsController(
             if (result is null)
                 return NotFound();
 
-            return Ok(result);
+            return Ok(result.Dto());
         }
         catch (PhotoTooLargeException ex)
         {
@@ -213,7 +242,7 @@ public sealed class ReportsController(
             pageSize,
             cancellationToken);
 
-        return Ok(reports);
+        return Ok(reports.Dto());
     }
 
    
@@ -237,7 +266,7 @@ public sealed class ReportsController(
             sortOrder,
             cancellationToken);
     
-        return Ok(reports);
+        return Ok(reports.Dto());
     }
 
     [Authorize(Roles = "Moderator, Admin")]
@@ -256,7 +285,7 @@ public sealed class ReportsController(
             sortOrder,
             cancellationToken);
         
-        return Ok(reports);
+        return Ok(reports.Dto());
     }
     
     [Authorize(Roles = "Moderator, Admin")]
@@ -271,7 +300,7 @@ public sealed class ReportsController(
         {
             return NotFound();
         }
-        return Ok(report);
+        return Ok(report.Dto());
     }
 
     [Authorize(Roles = "Moderator, Admin")]
@@ -286,7 +315,7 @@ public sealed class ReportsController(
         try
         {
             var reports = await reportService.GetByStatusAsync(status, excludeStatus, pageNumber, pageSize, cancellationToken);
-            return Ok(reports);
+            return Ok(reports.Dto());
         }
         catch (ArgumentException ex)
         {

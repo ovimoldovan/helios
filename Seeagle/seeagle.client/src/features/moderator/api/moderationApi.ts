@@ -66,11 +66,9 @@ export async function markAsSolved(id: string, message?: string | null): Promise
 }
 export async function sendMessageToReporter(
     id: string,
-    message?: string | null
+    message: string
 ): Promise<ModerationReport> {
-    const url = message
-        ? `/api/reports/${id}/message?message=${encodeURIComponent(message)}`
-        : `/api/reports/${id}/message`;
+    const url = `/api/reports/${id}/message?message=${encodeURIComponent(message)}`
     return putJson<ModerationReport>(url);
 }
 

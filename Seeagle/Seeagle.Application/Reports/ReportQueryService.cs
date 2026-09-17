@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
 using Seeagle.Application.Common;
 using Seeagle.Domain.Reports;
 using Seeagle.Domain.Areas;
@@ -18,29 +19,46 @@ public sealed class ReportQueryService : IReportQueryService
         _areaRepository = areaRepository;
     }
 
-    public async Task<IReadOnlyList<ReportDto>> GetApprovedReportsAsync(
+    public async Task<IReadOnlyList<Report>> GetApprovedReportsAsync(
         DateTime fromDate,
+        Guid? areaId,
         CancellationToken cancellationToken)
     {
-        var reports = await _reportRepository.GetAllQueryable()
-            .Where(report => report.Status == ReportStatus.Approved && report.CreatedUtc >= fromDate && report.Status != ReportStatus.Solved)
+        var query = _reportRepository.GetAllQueryable()
+            .Include(report => report.Type)
+            .Where(report => report.Status == ReportStatus.Approved && report.CreatedUtc >= fromDate && report.Status != ReportStatus.Solved);
+
+        if (areaId.HasValue)
+        {
+            var areaGeometry = await GetAreaGeometryAsync(areaId.Value, cancellationToken);
+            
+            if (areaGeometry is null)
+                return new List<Report>();
+
+            query = ApplyAreaFilter(query, areaGeometry);
+        }
+
+        var reports = await query
             .OrderByDescending(report => report.CreatedUtc)
-            .Select(report => new ReportDto(
-                report.Id,
-                report.Location.X,
-                report.Location.Y,
-                report.Description,
-                report.CreatedUtc,
-                report.Status.ToString(),
-                report.Priority.ToString(),
-                report.Type.Name,
-                report.MessageToReporter))
             .ToListAsync(cancellationToken);
 
         return reports;
     }
     
-    public async Task<PagedResult<ReportDto>> GetPublicReportsAsync(
+    private async Task<Geometry?> GetAreaGeometryAsync(Guid areaId, CancellationToken cancellationToken)
+    {
+        return await _areaRepository.GetAllQueryable()
+            .Where(a => a.Id == areaId)
+            .Select(a => a.Geometry)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+    
+    private static IQueryable<Report> ApplyAreaFilter(IQueryable<Report> query, Geometry areaGeometry)
+    {
+        return query.Where(r => areaGeometry.Contains(r.Location));
+    }
+
+    public async Task<PagedResult<Report>> GetPublicReportsAsync(
         int pageNumber,
         int pageSize,
         string? status,
@@ -50,20 +68,25 @@ public sealed class ReportQueryService : IReportQueryService
         CancellationToken cancellationToken)
     {
         var query = _reportRepository.GetAllQueryable()
-            .Where(r => !r.IsDeleted)
-            .Where(r => r.Status == ReportStatus.Approved || r.Status == ReportStatus.Solved);
+            .Include(report => report.Type)
+            .Where(report => !report.IsDeleted)
+            .Where(report => report.Status == ReportStatus.Approved || report.Status == ReportStatus.Solved);
         
         if (!string.IsNullOrEmpty(status))
         {
             if (Enum.TryParse<ReportStatus>(status, true, out var statusEnum))
             {
-                query = query.Where(r => r.Status == statusEnum);
+                query = query.Where(report => report.Status == statusEnum);
             }
         }
 
         if (areaId.HasValue)
         {
-            query = query.Where(r => r.AreaId == areaId.Value);
+            var areaGeometry = await GetAreaGeometryAsync(areaId.Value, cancellationToken);
+            if (areaGeometry is null)
+                return new PagedResult<Report>(new List<Report>(), 0, pageNumber, pageSize);
+
+            query = ApplyAreaFilter(query, areaGeometry);
         }
 
         query = (sortBy?.ToLower(), sortOrder?.ToLower()) switch
@@ -82,22 +105,12 @@ public sealed class ReportQueryService : IReportQueryService
         var reports = await query
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
-            .Select(r => new ReportDto(
-                r.Id,
-                r.Location.X,
-                r.Location.Y,
-                r.Description,
-                r.CreatedUtc,
-                r.Status.ToString(),
-                r.Priority.ToString(),
-                r.Type.Name,
-                r.MessageToReporter))
             .ToListAsync(cancellationToken);
 
-        return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
+        return new PagedResult<Report>(reports, totalCount, pageNumber, pageSize);
     }
 
-    public async Task<PagedResult<ReportDto>> GetAllReportsAsync(
+    public async Task<PagedResult<Report>> GetAllReportsAsync(
         int pageNumber,
         int pageSize,
         string? sortBy,
@@ -118,24 +131,16 @@ public sealed class ReportQueryService : IReportQueryService
                 : query.OrderByDescending(r => r.CreatedUtc)
         };
 
+        query = query.Include(report => report.Type);
+
         var totalCount = await query.CountAsync(cancellationToken);
 
         var reports = await query
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
-            .Select(report => new ReportDto(
-                report.Id,
-                report.Location.X,
-                report.Location.Y,
-                report.Description,
-                report.CreatedUtc,
-                report.Status.ToString(),
-                report.Priority.ToString(),
-                report.Type.Name,
-                report.MessageToReporter))
             .ToListAsync(cancellationToken);
 
-        return new PagedResult<ReportDto>(reports, totalCount, pageNumber, pageSize);
+        return new PagedResult<Report>(reports, totalCount, pageNumber, pageSize);
     }
 
 
