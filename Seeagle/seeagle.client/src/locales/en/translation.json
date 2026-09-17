@@ -95,7 +95,7 @@
   "failedToSubmitReport": "Failed to submit report.",
   "tapMapToPlacePin": "Tap map to place a pin",
   "description": "Description",
-  "optional": "(optional)",
+  "optional": "optional",
   "descriptionPlaceholder": "Describe what you saw...",
   "cancel": "Cancel",
   "submitting": "Submitting...",
@@ -239,6 +239,7 @@
   "status_Approved": "Approved",
   "status_Rejected": "Rejected",
   "status_Solved": "Solved",
+  "status_Pending": "Pending",
   "noArea": "No Area",
 
   "reportSummaryTitle": "Report Summary",
@@ -252,5 +253,6 @@
   "unexpectedErrorRemovingModerator": "Unexpected error while removing moderator role.",
 
   "user": "User",
-  "moderatorMessageTooShort": "Message must be at least 3 characters"
+  "moderatorMessage": "Message from Moderator"
+  
 }
