@@ -43,7 +43,11 @@ export function MapSidebarExtra({
                         onValueChange={(value) => onAreaChange?.(value === 'all' ? null : value)}
                     >
                         <SelectTrigger className="w-full rounded-full border-2">
-                            <SelectValue placeholder={t('allAreas')} />
+                            <span className="flex-1 text-left truncate">
+                                {!selectedAreaId
+                                ? t('allAreas')
+                                : areas.find((area) => area.id === selectedAreaId)?.name ?? t('allAreas')}
+                            </span>
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="all">{t('allAreas')}</SelectItem>
