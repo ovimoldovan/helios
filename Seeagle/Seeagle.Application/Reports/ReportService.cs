@@ -109,24 +109,29 @@ public sealed class ReportService : IReportService
         
         var duplicateCandidateStartDate = DateTime.UtcNow.AddHours(-72);
 
-        var duplicateCandidates = await _reportRepository
-            .GetAllQueryable()
-            .Where(r =>
-                !r.IsDeleted &&
-                r.Type.Id == reportType.Id &&
-                r.CreatedUtc >= duplicateCandidateStartDate)
-            .ToListAsync(cancellationToken);
+        var possibleDuplicates = new List<Report>();
 
-        var possibleDuplicates = duplicateCandidates
-            .Where(candidate =>
-                CalculateDistanceInMeters(
+        await foreach (var candidate in _reportRepository
+                           .GetAllQueryable()
+                           .Where(r =>
+                               !r.IsDeleted &&
+                               r.Type.Id == reportType.Id &&
+                               r.CreatedUtc >= duplicateCandidateStartDate)
+                           .AsAsyncEnumerable()
+                           .WithCancellation(cancellationToken))
+        {
+            if (CalculateDistanceInMeters(
                     report.Location.Y,
                     report.Location.X,
                     candidate.Location.Y,
-                    candidate.Location.X) <= 50)
-            .Where(candidate =>
-                HasSimilarDescription(report.Description, candidate.Description))
-            .ToList();
+                    candidate.Location.X) <= 50 &&
+                HasSimilarDescription(
+                    report.Description,
+                    candidate.Description))
+            {
+                possibleDuplicates.Add(candidate);
+            }
+        }
 
         foreach (var duplicateCandidate in possibleDuplicates)
         {
