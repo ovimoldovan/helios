@@ -4,7 +4,6 @@ import {
     SelectContent,
     SelectItem,
     SelectTrigger,
-    SelectValue,
 } from "@/components/ui/select";
 import {Plus, X} from "lucide-react";
 import { useTranslation } from "react-i18next";
