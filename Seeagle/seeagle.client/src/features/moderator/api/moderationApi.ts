@@ -41,7 +41,7 @@ export async function rejectReport(id: string, message?: string | null): Promise
 
 export async function setPhotoVisibility(id: string, isVisibleToPublic: boolean): Promise<ModerationReport> {
     return putJson<ModerationReport>(
-        `api/reports/${id}/photo-visibility?isVisibleToPublic=${isVisibleToPublic}`
+        `/api/reports/${id}/photo-visibility?isVisibleToPublic=${isVisibleToPublic}`
     );
 }
 

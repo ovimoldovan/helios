@@ -19,6 +19,7 @@ public sealed class ReportServiceTests
         var userRepository = Substitute.For<IRepository<User>>();
         var areaRepository = Substitute.For<IRepository<Area>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
+        var photoRepository = Substitute.For<IRepository<Photo>>();
         var photoProcessor = Substitute.For<IPhotoProcessor>();
 
         var user = new User("test@test.com", "password", "firstname", "lastname");
@@ -29,7 +30,7 @@ public sealed class ReportServiceTests
 
         areaRepository.GetAllQueryable().Returns(new List<Area>().BuildMock());
 
-        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoProcessor);
+        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoRepository, photoProcessor);
         var request = new CreateReportRequest
         {
             Latitude = 44.4268,
@@ -56,6 +57,7 @@ public sealed class ReportServiceTests
         var userRepository = Substitute.For<IRepository<User>>();
         var areaRepository = Substitute.For<IRepository<Area>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
+        var photoRepository = Substitute.For<IRepository<Photo>>();
         var photoProcessor = Substitute.For<IPhotoProcessor>();
 
         var user = new User("test@test.com", "password", "firstname", "lastname");
@@ -66,7 +68,7 @@ public sealed class ReportServiceTests
 
         areaRepository.GetAllQueryable().Returns(new List<Area>().BuildMock());
 
-        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoProcessor);
+        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoRepository, photoProcessor);
         var request = new CreateReportRequest
         {
             Latitude = 44.4268,
@@ -97,6 +99,7 @@ public sealed class ReportServiceTests
         var userRepository = Substitute.For<IRepository<User>>();
         var areaRepository = Substitute.For<IRepository<Area>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
+        var photoRepository = Substitute.For<IRepository<Photo>>();
         var photoProcessor = Substitute.For<IPhotoProcessor>();
 
         var user = new User("test@test.com", "password", "firstname", "lastname");
@@ -107,7 +110,7 @@ public sealed class ReportServiceTests
 
         areaRepository.GetAllQueryable().Returns(new List<Area>().BuildMock());
 
-        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoProcessor);
+        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoRepository, photoProcessor);
         var request = new CreateReportRequest
         {
             Latitude = 44.4268,
@@ -134,6 +137,7 @@ public sealed class ReportServiceTests
         var userRepository = Substitute.For<IRepository<User>>();
         var areaRepository = Substitute.For<IRepository<Area>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
+        var photoRepository = Substitute.For<IRepository<Photo>>();
         var photoProcessor = Substitute.For<IPhotoProcessor>();
 
         var user = new User("test@test.com", "password", "firstname", "lastname");
@@ -142,7 +146,7 @@ public sealed class ReportServiceTests
         var reportType = new ReportType("ReportType");
         reportTypeRepository.GetAllQueryable().Returns(new List<ReportType> { reportType }.BuildMock());
 
-        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoProcessor);
+        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoRepository, photoProcessor);
         var request = new CreateReportRequest
         {
             Latitude = 999,
@@ -165,6 +169,7 @@ public sealed class ReportServiceTests
         var userRepository = Substitute.For<IRepository<User>>();
         var areaRepository = Substitute.For<IRepository<Area>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
+        var photoRepository = Substitute.For<IRepository<Photo>>();
         var photoProcessor = Substitute.For<IPhotoProcessor>();
 
         userRepository.GetAllQueryable().Returns(new List<User>().BuildMock());
@@ -172,7 +177,7 @@ public sealed class ReportServiceTests
         var reportType = new ReportType("ReportType");
         reportTypeRepository.GetAllQueryable().Returns(new List<ReportType> { reportType }.BuildMock());
 
-        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoProcessor);
+        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoRepository, photoProcessor);
         var request = new CreateReportRequest
         {
             Latitude = 44.4268,
@@ -196,6 +201,7 @@ public sealed class ReportServiceTests
         var userRepository = Substitute.For<IRepository<User>>();
         var areaRepository = Substitute.For<IRepository<Area>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
+        var photoRepository = Substitute.For<IRepository<Photo>>();
         var photoProcessor = Substitute.For<IPhotoProcessor>();
 
         var user = new User("test@test.com", "password", "firstname", "lastname");
@@ -204,7 +210,7 @@ public sealed class ReportServiceTests
         var reportType = new ReportType("ReportType");
         reportTypeRepository.GetAllQueryable().Returns(new List<ReportType> { reportType }.BuildMock());
 
-        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoProcessor);
+        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoRepository, photoProcessor);
         var request = new CreateReportRequest
         {
             Latitude = 999,
@@ -228,6 +234,7 @@ public sealed class ReportServiceTests
         var userRepository = Substitute.For<IRepository<User>>();
         var areaRepository = Substitute.For<IRepository<Area>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
+        var photoRepository = Substitute.For<IRepository<Photo>>();
         var photoProcessor = Substitute.For<IPhotoProcessor>();
         
         var user = new User(
@@ -260,7 +267,7 @@ public sealed class ReportServiceTests
             .GetAllQueryable()
             .Returns(reports.BuildMock());
         
-        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoProcessor);
+        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoRepository, photoProcessor);
 
         // Act
         var result = await service.GetPendingAsync(
@@ -284,6 +291,7 @@ public sealed class ReportServiceTests
         var userRepository = Substitute.For<IRepository<User>>();
         var areaRepository = Substitute.For<IRepository<Area>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
+        var photoRepository = Substitute.For<IRepository<Photo>>();
         var photoProcessor = Substitute.For<IPhotoProcessor>();
         
         var user = new User(
@@ -305,7 +313,7 @@ public sealed class ReportServiceTests
             .GetAllQueryable()
             .Returns(reports.BuildMock());
         
-        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoProcessor);
+        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoRepository, photoProcessor);
         
         // Act
         var result = await service.GetPendingAsync(
@@ -328,6 +336,7 @@ public sealed class ReportServiceTests
         var userRepository = Substitute.For<IRepository<User>>();
         var areaRepository = Substitute.For<IRepository<Area>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
+        var photoRepository = Substitute.For<IRepository<Photo>>();
         var photoProcessor = Substitute.For<IPhotoProcessor>();
         
         var user = new User(
@@ -346,7 +355,7 @@ public sealed class ReportServiceTests
             .GetAllQueryable()
             .Returns(new List<Report> { report }.BuildMock());
 
-        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoProcessor);
+        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoRepository, photoProcessor);
 
         // Act
         var result = await service.ApproveAsync(report.Id, "medium", CancellationToken.None);
@@ -370,6 +379,7 @@ public sealed class ReportServiceTests
         var userRepository = Substitute.For<IRepository<User>>();
         var areaRepository = Substitute.For<IRepository<Area>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
+        var photoRepository = Substitute.For<IRepository<Photo>>();
         var photoProcessor = Substitute.For<IPhotoProcessor>();
 
         var user = new User(
@@ -388,7 +398,7 @@ public sealed class ReportServiceTests
             .GetAllQueryable()
             .Returns(new List<Report> { report }.BuildMock());
         
-        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoProcessor);
+        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoRepository, photoProcessor);
 
         // Act
         var result = await service.ApproveAsync(report.Id, "unknown", CancellationToken.None);
@@ -406,6 +416,7 @@ public sealed class ReportServiceTests
         var userRepository = Substitute.For<IRepository<User>>();
         var areaRepository = Substitute.For<IRepository<Area>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
+        var photoRepository = Substitute.For<IRepository<Photo>>();
         var photoProcessor = Substitute.For<IPhotoProcessor>();
         
         var user = new User(
@@ -424,7 +435,7 @@ public sealed class ReportServiceTests
             .GetAllQueryable()
             .Returns(new List<Report> { report }.BuildMock());
         
-        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoProcessor);
+        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoRepository, photoProcessor);
 
         // Act
         var result = await service.RejectAsync(
@@ -451,6 +462,7 @@ public sealed class ReportServiceTests
         var userRepository = Substitute.For<IRepository<User>>();
         var areaRepository = Substitute.For<IRepository<Area>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
+        var photoRepository = Substitute.For<IRepository<Photo>>();
         var photoProcessor = Substitute.For<IPhotoProcessor>();
 
         var user = new User(
@@ -469,7 +481,7 @@ public sealed class ReportServiceTests
             .GetAllQueryable()
             .Returns(new List<Report> { report }.BuildMock());
         
-        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoProcessor);
+        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoRepository, photoProcessor);
         
         // Act
         var result = await service.MarkAsSolvedAsync(report.Id, "Fixed", CancellationToken.None);
@@ -493,13 +505,14 @@ public sealed class ReportServiceTests
         var userRepository = Substitute.For<IRepository<User>>();
         var areaRepository = Substitute.For<IRepository<Area>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
+        var photoRepository = Substitute.For<IRepository<Photo>>();
         var photoProcessor = Substitute.For<IPhotoProcessor>();
         
         reportRepository
             .GetAllQueryable()
             .Returns(new List<Report>().BuildMock());
 
-        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoProcessor);
+        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoRepository, photoProcessor);
         
         // Act
         var result = await service.MarkAsSolvedAsync(Guid.NewGuid(), "Fixed", CancellationToken.None);
@@ -516,6 +529,7 @@ public sealed class ReportServiceTests
         var userRepository = Substitute.For<IRepository<User>>();
         var areaRepository = Substitute.For<IRepository<Area>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
+        var photoRepository = Substitute.For<IRepository<Photo>>();
         var photoProcessor = Substitute.For<IPhotoProcessor>();
         
         var user = new User(
@@ -558,7 +572,7 @@ public sealed class ReportServiceTests
             .GetAllQueryable()
             .Returns(reports.BuildMock());
         
-        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoProcessor);
+        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoRepository, photoProcessor);
 
         // Act
         var result = await service.GetApprovedReportsAsync(1, 10, CancellationToken.None);
@@ -577,6 +591,7 @@ public sealed class ReportServiceTests
         var userRepository = Substitute.For<IRepository<User>>();
         var areaRepository = Substitute.For<IRepository<Area>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
+        var photoRepository = Substitute.For<IRepository<Photo>>();
         var photoProcessor = Substitute.For<IPhotoProcessor>();
 
         var user = new User(
@@ -609,7 +624,7 @@ public sealed class ReportServiceTests
             .GetAllQueryable()
             .Returns(reports.BuildMock());
         
-        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoProcessor);
+        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoRepository, photoProcessor);
         
         // Act
         var result = await service.GetApprovedReportsAsync(1, 10, CancellationToken.None);
@@ -627,6 +642,7 @@ public sealed class ReportServiceTests
         var userRepository = Substitute.For<IRepository<User>>();
         var areaRepository = Substitute.For<IRepository<Area>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
+        var photoRepository = Substitute.For<IRepository<Photo>>();
         var photoProcessor = Substitute.For<IPhotoProcessor>();
         
         var user = new User(
@@ -661,7 +677,7 @@ public sealed class ReportServiceTests
             .GetAllQueryable()
             .Returns(reports.BuildMock());
 
-        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoProcessor);
+        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoRepository, photoProcessor);
         
         // Act
         var result = await service.GetPendingAsync(
@@ -684,13 +700,14 @@ public sealed class ReportServiceTests
         var userRepository = Substitute.For<IRepository<User>>();
         var areaRepository = Substitute.For<IRepository<Area>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
+        var photoRepository = Substitute.For<IRepository<Photo>>();
         var photoProcessor = Substitute.For<IPhotoProcessor>();
 
         reportRepository
             .GetAllQueryable()
             .Returns(new List<Report>().BuildMock());
         
-        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoProcessor);
+        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoRepository, photoProcessor);
 
         // Act
         var result = await service.ApproveAsync(Guid.NewGuid(), "medium", CancellationToken.None);
@@ -707,13 +724,14 @@ public sealed class ReportServiceTests
         var userRepository = Substitute.For<IRepository<User>>();
         var areaRepository = Substitute.For<IRepository<Area>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
+        var photoRepository = Substitute.For<IRepository<Photo>>();
         var photoProcessor = Substitute.For<IPhotoProcessor>();
         
         reportRepository
             .GetAllQueryable()
             .Returns(new List<Report>().BuildMock());
 
-        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoProcessor);
+        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoRepository, photoProcessor);
         
         // Act
         var result = await service.RejectAsync(
@@ -733,6 +751,7 @@ public sealed class ReportServiceTests
         var userRepository = Substitute.For<IRepository<User>>();
         var areaRepository = Substitute.For<IRepository<Area>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
+        var photoRepository = Substitute.For<IRepository<Photo>>();
         var photoProcessor = Substitute.For<IPhotoProcessor>();
 
         var user = new User(
@@ -751,7 +770,7 @@ public sealed class ReportServiceTests
             .GetAllQueryable()
             .Returns(new List<Report> { report }.BuildMock());
         
-        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoProcessor);
+        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoRepository, photoProcessor);
         
         // Act
         var result = await service.SendMessageToReporterAsync(report.Id, "We are looking into it", CancellationToken.None);
@@ -774,13 +793,14 @@ public sealed class ReportServiceTests
         var userRepository = Substitute.For<IRepository<User>>();
         var areaRepository = Substitute.For<IRepository<Area>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
+        var photoRepository = Substitute.For<IRepository<Photo>>();
         var photoProcessor = Substitute.For<IPhotoProcessor>();
 
         reportRepository
             .GetAllQueryable()
             .Returns(new List<Report>().BuildMock());
 
-        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoProcessor);
+        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoRepository, photoProcessor);
 
         // Act
         var result = await service.SendMessageToReporterAsync(Guid.NewGuid(), "message", CancellationToken.None);
@@ -797,6 +817,7 @@ public sealed class ReportServiceTests
         var userRepository = Substitute.For<IRepository<User>>();
         var areaRepository = Substitute.For<IRepository<Area>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
+        var photoRepository = Substitute.For<IRepository<Photo>>();
         var photoProcessor = Substitute.For<IPhotoProcessor>();
         
         var user = new User(
@@ -833,7 +854,7 @@ public sealed class ReportServiceTests
             .GetAllQueryable()
             .Returns(reports.BuildMock());
         
-        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoProcessor);
+        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoRepository, photoProcessor);
         
         // Act
         var result = await service.GetUserReportsAsync(user.Id, 1, 10, CancellationToken.None);
@@ -852,6 +873,7 @@ public sealed class ReportServiceTests
         var userRepository = Substitute.For<IRepository<User>>();
         var areaRepository = Substitute.For<IRepository<Area>>();
         var reportTypeRepository = Substitute.For<IRepository<ReportType>>();
+        var photoRepository = Substitute.For<IRepository<Photo>>();
         var photoProcessor = Substitute.For<IPhotoProcessor>();
 
         var user = new User(
@@ -872,7 +894,7 @@ public sealed class ReportServiceTests
             .GetAllQueryable()
             .Returns(reports.BuildMock());
         
-        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoProcessor);
+        var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, photoRepository, photoProcessor);
         
         // Act
         var result = await service.GetUserReportsAsync(Guid.NewGuid(), 1, 10, CancellationToken.None);

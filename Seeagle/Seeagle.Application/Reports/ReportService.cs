@@ -454,6 +454,7 @@ public sealed class ReportService : IReportService
     {
         var report = await _reportRepository
             .GetAllQueryable()
+            .Include(r => r.User)
             .FirstOrDefaultAsync(report => report.Id == reportId, cancellationToken);
 
         if (report?.Photo is null)
