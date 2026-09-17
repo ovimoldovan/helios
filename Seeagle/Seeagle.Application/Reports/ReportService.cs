@@ -455,6 +455,7 @@ public sealed class ReportService : IReportService
         var report = await _reportRepository
             .GetAllQueryable()
             .Include(r => r.User)
+            .Include(r=> r.Photo)
             .FirstOrDefaultAsync(report => report.Id == reportId, cancellationToken);
 
         if (report?.Photo is null)
@@ -474,6 +475,7 @@ public sealed class ReportService : IReportService
         var report = await _reportRepository
             .GetAllQueryable()
             .Include(report => report.Type)
+            .Include(report=> report.Photo)
             .FirstOrDefaultAsync(report => report.Id == reportId, cancellationToken);
 
         if (report?.Photo is null)
