@@ -34,6 +34,59 @@ public sealed class ReportService : IReportService
         _photoProcessor = photoProcessor;
     }
 
+    private static double CalculateDistanceInMeters(
+        double latitude1,
+        double longitude1,
+        double latitude2,
+        double longitude2)
+    {
+        const double earthRadiusMeters = 6371000;
+
+        var latitudeDifference = DegreesToRadians(latitude2 - latitude1);
+        var longitudeDifference = DegreesToRadians(longitude2 - longitude1);
+
+        var a =
+            Math.Sin(latitudeDifference / 2) * Math.Sin(latitudeDifference / 2) +
+            Math.Cos(DegreesToRadians(latitude1)) *
+            Math.Cos(DegreesToRadians(latitude2)) *
+            Math.Sin(longitudeDifference / 2) *
+            Math.Sin(longitudeDifference / 2);
+
+        var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+
+        return earthRadiusMeters * c;
+    }
+
+    private static double DegreesToRadians(double degrees)
+    {
+        return degrees * Math.PI / 180;
+    }
+
+    private static bool HasSimilarDescription(string? firstDescription, string? secondDescription)
+    {
+        if (string.IsNullOrWhiteSpace(firstDescription) ||
+            string.IsNullOrWhiteSpace(secondDescription))
+        {
+            return false;
+        }
+
+        var firstWords = firstDescription
+            .ToLowerInvariant()
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+            .Select(word => word.Trim('.', ',', '!', '?', ';', ':'))
+            .Where(word => word.Length > 2)
+            .ToHashSet();
+
+        var secondWords = secondDescription
+            .ToLowerInvariant()
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+            .Select(word => word.Trim('.', ',', '!', '?', ';', ':'))
+            .Where(word => word.Length > 2)
+            .ToHashSet();
+
+        return firstWords.Intersect(secondWords).Count() >= 3;
+    }
+
     public async Task<Report> CreateAsync(Guid userId, CreateReportRequest request, CancellationToken cancellationToken)
     {
         var user = await _userRepository.GetAllQueryable()
@@ -48,6 +101,37 @@ public sealed class ReportService : IReportService
 
         var point = GeometryFactory.CreatePoint(new Coordinate(request.Longitude, request.Latitude));
         var report = new Report(point, request.Description, user, reportType);
+
+        var duplicateCandidateStartDate = DateTime.UtcNow.AddHours(-72);
+
+        var possibleDuplicates = new List<Report>();
+
+        await foreach (var candidate in _reportRepository
+            .GetAllQueryable()
+            .Where(r =>
+                !r.IsDeleted &&
+                r.Type.Id == reportType.Id &&
+                r.CreatedUtc >= duplicateCandidateStartDate)
+            .AsAsyncEnumerable()
+            .WithCancellation(cancellationToken))
+        {
+            if (CalculateDistanceInMeters(
+                    report.Location.Y,
+                    report.Location.X,
+                    candidate.Location.Y,
+                    candidate.Location.X) <= 50 &&
+                HasSimilarDescription(
+                    report.Description,
+                    candidate.Description))
+            {
+                possibleDuplicates.Add(candidate);
+            }
+        }
+
+        foreach (var duplicateCandidate in possibleDuplicates)
+        {
+            report.AddDuplicateCandidate(duplicateCandidate);
+        }
 
         var area = await _areaRepository.GetAllQueryable()
             .FirstOrDefaultAsync(
@@ -72,6 +156,8 @@ public sealed class ReportService : IReportService
         var query = _reportRepository
             .GetAllQueryable()
             .Include(report => report.Type)
+            .Include(report => report.DuplicateCandidates)
+                .ThenInclude(candidate => candidate.Type)
             .Where(report => report.Status == ReportStatus.Pending);
 
         var totalCount = await query.CountAsync(cancellationToken);
@@ -124,13 +210,13 @@ public sealed class ReportService : IReportService
             .Include(report => report.User)
             .FirstOrDefaultAsync(report => report.Id == id);
 
-    	if (report is null)
-    	{
-        	return null;
-    	}
+        if (report is null)
+        {
+            return null;
+        }
 
-    	report.Reject();
-    	report.UpdateMessageToReporter(message);
+        report.Reject();
+        report.UpdateMessageToReporter(message);
 
         await _reportRepository.UpdateAsync(report, cancellationToken);
 
