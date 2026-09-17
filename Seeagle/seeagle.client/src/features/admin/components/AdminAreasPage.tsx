@@ -1,14 +1,27 @@
 import {useState, useCallback, useEffect} from 'react';
-import { Link } from 'react-router-dom';
 import { DrawableMap } from './DrawableMap';
 import { AreasSidePanel } from './AreasSidePanel';
 import { getJson, postJson, putJsonWithBody, deleteJson } from '@/shared/api/httpClient';
 import type { Area, CreateAreaRequest, CreateAreaResponse } from '../types';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
 
 export function AdminAreasPage() {
     const [areas, setAreas] = useState<Area[]>([]);
-    const [nextId, setNextId] = useState(1);
     const [drawMode, setDrawMode] = useState<'rectangle' | 'polygon' | null>(null);
+    const [pendingCoordinates, setPendingCoordinates] = useState<number[][] | null>(null);
+    const [areaName, setAreaName] = useState('');
+    const [isNameModalOpen, setIsNameModalOpen] = useState(false);
+    const [createError, setCreateError] = useState<string | null>(null);
+    const [drawError, setDrawError] = useState<string | null>(null);
 
     useEffect(() => {
         const loadAreas = async () => {
@@ -21,30 +34,58 @@ export function AdminAreasPage() {
         };
         loadAreas();
     }, []);
-    const handleAreaCreated = useCallback(async(coordinates: number[][]) => {
+    
+    const handleAreaCreated = useCallback((coordinates: number[][]) => {
+        setPendingCoordinates(coordinates);
+        setAreaName('');
+        setCreateError(null);
+        setIsNameModalOpen(true);
+    }, []);
+
+    const handleDrawComplete = useCallback(() => {
+        setDrawMode(null);
+    }, []);
+
+    const handleCreateArea = async () => {
+        const trimmedName = areaName.trim();
+
+        if (!pendingCoordinates || trimmedName.length === 0 || trimmedName.length > 30) {
+            return;
+        }
+
         const request: CreateAreaRequest = {
-            name: `Area ${nextId}`,
-            coordinates
+            name: trimmedName,
+            coordinates: pendingCoordinates
         };
+
         try {
             const response = await postJson<CreateAreaResponse>('/api/areas', request);
+
             const newArea: Area = {
                 id: response.id,
                 name: request.name,
-                coordinates,
+                coordinates: pendingCoordinates,
             };
+
             setAreas((prev) => [...prev, newArea]);
-            setNextId((prev) => prev + 1);
-        } catch (error) {   
-            const newArea: Area = {
-            id: String(nextId),
-            name: `Area ${nextId}`,
-            coordinates,
-        };
-        setAreas((prev) => [...prev, newArea]);
-        setNextId((prev) => prev + 1);
+            setPendingCoordinates(null);
+            setAreaName('');
+            setCreateError(null);
+            setIsNameModalOpen(false);
+        }  catch (error) {
+        console.error('Failed to create area:', error);
+
+        if (
+            typeof error === 'object' &&
+            error !== null &&
+            'message' in error
+        ) {
+            setCreateError(String(error.message));
+        } else {
+            setCreateError('Failed to create area.');
         }
-    }, [nextId]);
+    }
+    };
 
     function handleDeleteArea(id: string) {
         deleteJson(`/api/areas/${id}`)
@@ -56,26 +97,32 @@ export function AdminAreasPage() {
             });
     }
 
-    function handleRenameArea(id: string, newName: string) {
-        putJsonWithBody<Area>(`/api/areas/${id}`, { name: newName })
-            .then((updated) => {
-                setAreas(areas.map((a) => a.id === id ? updated : a));
-            })
-            .catch((error) => {
-                console.error('Failed to rename area:', error);
-            });
+    async function handleRenameArea(id: string, newName: string): Promise<string | null> {
+        try {
+            const updated = await putJsonWithBody<Area>(`/api/areas/${id}`, { name: newName });
+
+            setAreas((prev) =>
+                prev.map((a) => a.id === id ? updated : a)
+            );
+
+            return null;
+        } catch (error) {
+            console.error('Failed to rename area:', error);
+
+            if (
+                typeof error === 'object' &&
+                error !== null &&
+                'message' in error
+            ) {
+                return String(error.message);
+            }
+
+            return 'Failed to rename area.';
+        }
     }
 
     return (
         <div className="relative h-screen w-screen overflow-hidden">
-            <div className="fixed top-4 left-84 z-9999">
-                <Link
-                    to="/"
-                    className="bg-white px-3 py-1.5 rounded-full text-sm text-gray-700 shadow hover:bg-gray-100 transition"
-                >
-                    ← Back to Home
-                </Link>
-            </div>
 
             <AreasSidePanel
                 areas={areas}
@@ -88,8 +135,82 @@ export function AdminAreasPage() {
                 areas={areas}
                 onAreaCreated={handleAreaCreated}
                 drawMode={drawMode}
-                onDrawComplete={() => setDrawMode(null)}
+                onDrawComplete={handleDrawComplete}
+                pendingCoordinates={pendingCoordinates}
+                onDrawError={(message) => {
+                    setDrawError(message);
+
+                    setTimeout(() => {
+                        setDrawError(null);
+                    }, 3000);
+                }}
             />
+
+            {drawError && (
+                <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[10000] rounded-lg border border-destructive/30 bg-background px-4 py-3 shadow-lg">
+                    <p className="text-sm font-medium text-destructive">
+                        {drawError}
+                    </p>
+                </div>
+            )}
+            
+            <Dialog
+                open={isNameModalOpen}
+                onOpenChange={(open) => {
+                    setIsNameModalOpen(open);
+
+                    if (!open) {
+                        setPendingCoordinates(null);
+                        setAreaName('');
+                        setCreateError(null);
+                    }
+                }}
+            >
+                <DialogContent className="z-[10000]">
+                    <DialogHeader>
+                        <DialogTitle>Add area</DialogTitle>
+                        <DialogDescription>
+                            Enter a unique name for the new area.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <Input
+                        value={areaName}
+                        onChange={(event) => {
+                            setAreaName(event.target.value);
+                            setCreateError(null);
+                        }}
+                        placeholder="Area name"
+                        maxLength={30}
+                        autoFocus
+                    />
+
+                    {createError && (
+                        <p className="text-sm text-destructive">
+                            {createError}
+                        </p>
+                    )}
+
+                    <DialogFooter>
+                        <Button
+                            variant="outline"
+                            onClick={() => {setIsNameModalOpen(false);setPendingCoordinates(null);setAreaName('');setCreateError(null);}}
+                        >
+                            Cancel
+                        </Button>
+
+                        <Button
+                            onClick={handleCreateArea}
+                            disabled={
+                                areaName.trim().length === 0 ||
+                                areaName.trim().length > 30
+                            }
+                        >
+                            Save
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
