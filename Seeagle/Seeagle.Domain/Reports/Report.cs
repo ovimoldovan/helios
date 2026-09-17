@@ -37,6 +37,7 @@ public class Report
     public Priority Priority { get; private set; } = Priority.Low;
     public string? MessageToReporter { get; private set; }
     public bool IsSolved { get; private set; }
+    public ICollection<Report> DuplicateCandidates { get; private set; } = new List<Report>();
     
 	public Guid? AreaId { get; private set; }
 	public void SetAreaId(Guid? areaId)
@@ -87,5 +88,10 @@ public class Report
     public void UpdatePriority(Priority priority)
     {
         Priority = priority;
+    }
+    
+    public void AddDuplicateCandidate(Report candidate)
+    {
+        DuplicateCandidates.Add(candidate);
     }
 }
