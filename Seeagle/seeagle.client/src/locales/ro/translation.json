@@ -251,6 +251,6 @@
   "unexpectedErrorRemovingModerator": "Eroare neașteptată la retragerea rolului de moderator.",
   "user": "Utilizator",
   
-  "moderatorMessage": "Mesaj de la Moderator",
-  "moderatorMessageTooShort": "Mesajul trebuie să aibă cel puțin 3 caractere"
+  "moderatorMessage": "Mesaj de la Moderator"
+  
 }
