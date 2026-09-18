@@ -40,8 +40,35 @@ public sealed class AreaService(IRepository<Area> repository) : IAreaService
 
             geometry = GeometryFactory.CreatePolygon(coords.ToArray());
         }
+        
+        var nameExists = await repository
+            .GetAllQueryable()
+            .AnyAsync(
+                area =>
+                    !area.IsDeleted &&
+                    area.Name.ToLower() == request.Name.Trim().ToLower(),
+                cancellationToken);
 
-        var area = new Area(request.Name, geometry);
+        if (nameExists)
+        {
+            throw new InvalidOperationException("An area with this name already exists.");
+        }
+
+        var overlapsExistingArea = await repository
+            .GetAllQueryable()
+            .AnyAsync(
+                area =>
+                    !area.IsDeleted &&
+                    area.Geometry.Intersects(geometry) &&
+                    !area.Geometry.Touches(geometry),
+                cancellationToken);
+
+        if (overlapsExistingArea)
+        {
+            throw new InvalidOperationException("Area overlaps with an existing area.");
+        }
+
+        var area = new Area(request.Name.Trim(), geometry);
         await repository.AddAsync(area, cancellationToken);
 
         return ToDto(area);
@@ -76,7 +103,21 @@ public sealed class AreaService(IRepository<Area> repository) : IAreaService
             return null;
         }
 
-        area.UpdateName(request.Name);
+        var nameExists = await repository
+            .GetAllQueryable()
+            .AnyAsync(
+                existingArea =>
+                    !existingArea.IsDeleted &&
+                    existingArea.Id != id &&
+                    existingArea.Name.ToLower() == request.Name.Trim().ToLower(),
+                cancellationToken);
+
+        if (nameExists)
+        {
+            throw new InvalidOperationException("An area with this name already exists.");
+        }
+        
+        area.UpdateName(request.Name.Trim());
 
         await repository.UpdateAsync(area, cancellationToken);
 
