@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
+using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Seeagle.Application.Reports;
@@ -15,7 +16,9 @@ public sealed class ReportsController(
     IReportService reportService, 
     IReportQueryService reportQueryService, 
     IPhotoProcessor photoProcessor,
-    IMailService mailService) : ControllerBase
+    IMailService mailService,
+    IHttpClientFactory httpClientFactory,
+    IConfiguration configuration) : ControllerBase
 {
     [Authorize]
     [HttpPost]
@@ -190,16 +193,41 @@ public sealed class ReportsController(
         
         try
         {
-            await using var stream = file.OpenReadStream();
-            var processed = await photoProcessor.ProcessAsync(stream, cancellationToken);
+            using var memoryStream = new MemoryStream();
+            await file.CopyToAsync(memoryStream, cancellationToken);
+            var originalBytes = memoryStream.ToArray();
+            
+            double? aiScore = null;
+            try
+            {
+                var client = httpClientFactory.CreateClient("SeeagleAssistant");
+                var token = configuration["SeeagleAssistant:ServiceToken"] ?? "";
+                client.DefaultRequestHeaders.Add("X-Service-Token", token);
 
-            var result = await reportService.AttachPhotoAsync(
-                reportId, userId, processed.Data, processed.ContentType, cancellationToken);
+                using var content = new MultipartFormDataContent();
+                var imageContent = new ByteArrayContent(originalBytes);
+                imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse(file.ContentType);
+                content.Add(imageContent, "file", file.FileName);
 
-            if (result is null)
+                var response = await client.PostAsync("/detect-ai", content, cancellationToken);
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadFromJsonAsync<System.Text.Json.JsonElement>(cancellationToken: cancellationToken);
+                    aiScore = result.GetProperty("aiProbability").GetDouble();
+                }
+            }
+            catch (Exception)
+            {
+                // Silently swallow AI detection errors to avoid blocking the upload
+            }
+            
+            var resultReport = await reportService.AttachPhotoAsync(
+                reportId, userId, originalBytes, file.ContentType, aiScore, cancellationToken);
+
+            if (resultReport is null)
                 return NotFound();
 
-            return Ok(result.Dto());
+            return Ok(resultReport.Dto());
         }
         catch (PhotoTooLargeException ex)
         {
@@ -209,7 +237,12 @@ public sealed class ReportsController(
         {
             return BadRequest(new { message = ex.Message });
         }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "An error occurred while uploading the photo." });
+        }
     }
+        
     
     [HttpGet("{reportId}/photo")]
     public async Task<IActionResult> GetPhoto(Guid reportId, CancellationToken cancellationToken)

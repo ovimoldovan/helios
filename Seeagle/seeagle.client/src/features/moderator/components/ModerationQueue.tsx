@@ -136,6 +136,7 @@ export function ModerationQueue() {
                                     <TableRow>
                                         <TableHead>{t('description')}</TableHead>
                                         <TableHead>{t('reportType')}</TableHead>
+                                        <TableHead>{t('aiScore')}</TableHead>
                                         <TableHead>{t('status')}</TableHead>
                                         <TableHead>{t('created')}</TableHead>
                                         <TableHead>{t('action')}</TableHead>
@@ -149,6 +150,17 @@ export function ModerationQueue() {
                                             </TableCell>
                                             <TableCell className="py-2">
                                                 {report.type}
+                                            </TableCell>
+                                            <TableCell className="py-2 font-medium">
+                                                {report.aiProbabilityScore === null ? (
+                                                    <span className="text-gray-400">N/A</span>
+                                                ) : report.aiProbabilityScore < 0.3 ? (
+                                                    <span className="text-green-600">{t('likelyReal')}</span>
+                                                ) : report.aiProbabilityScore > 0.7 ? (
+                                                    <span className="text-red-600">{t('likelyAi')}</span>
+                                                ) : (
+                                                    <span className="text-yellow-600">{t('uncertain')}</span>
+                                                )}
                                             </TableCell>
                                             <TableCell className="py-2">
                                                 {report.status}

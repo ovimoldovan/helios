@@ -18,7 +18,10 @@ public sealed class EfRepository<T>(SeeagleDbContext dbContext) : IRepository<T>
 
     public async Task UpdateAsync(T entity, CancellationToken cancellationToken)
     {
-        dbContext.Set<T>().Update(entity);
+        if (dbContext.Entry(entity).State == EntityState.Detached)
+        {
+            dbContext.Set<T>().Update(entity);
+        }
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 

@@ -37,6 +37,12 @@ public class Report
     public Priority Priority { get; private set; } = Priority.Low;
     public string? MessageToReporter { get; private set; }
     public bool IsSolved { get; private set; }
+    public double? AiProbabilityScore { get; private set; }
+
+    public void SetAiProbabilityScore(double? score)
+    {
+        AiProbabilityScore = score;
+    }
     
 	public Guid? AreaId { get; private set; }
 	public void SetAreaId(Guid? areaId)
