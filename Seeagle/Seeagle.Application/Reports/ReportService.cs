@@ -14,6 +14,7 @@ public sealed class ReportService : IReportService
     private readonly IRepository<User> _userRepository;
     private readonly IRepository<ReportType> _reportTypeRepository;
     private readonly IRepository<Area> _areaRepository;
+    private readonly IRepository<Photo> _photoRepository;
     
     private static readonly int StandardGpsFormat = 4326;
     private static readonly GeometryFactory GeometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: StandardGpsFormat);
@@ -25,12 +26,14 @@ public sealed class ReportService : IReportService
         IRepository<User> userRepository,
         IRepository<Area> areaRepository,
         IRepository<ReportType> reportTypeRepository,
+        IRepository<Photo> photoRepository,
         IPhotoProcessor photoProcessor)
     {
         _reportRepository = reportRepository;
         _userRepository = userRepository;
         _areaRepository = areaRepository;
         _reportTypeRepository = reportTypeRepository;
+        _photoRepository = photoRepository;
         _photoProcessor = photoProcessor;
     }
 
@@ -390,11 +393,12 @@ public sealed class ReportService : IReportService
         return report;
     }
 
-    public async Task<Report?> AttachPhotoAsync(Guid reportId, Guid userId, byte[] data, string contentType, CancellationToken cancellationToken)
+    public async Task<Report?> AttachPhotoAsync(Guid reportId, Guid userId, byte[] data, string contentType, double? aiProbabilityScore, CancellationToken cancellationToken)
     {
         var report = await _reportRepository
             .GetAllQueryable()
             .Include(report => report.Type)
+            .Include(report => report.User)
             .FirstOrDefaultAsync(report => report.Id == reportId, cancellationToken);
         
         if (report is null)
@@ -405,8 +409,9 @@ public sealed class ReportService : IReportService
         var processed = await _photoProcessor.ProcessAsync(new MemoryStream(data), cancellationToken);
         var photo = new Photo(processed.Data, processed.ContentType, report);
         report.AttachPhoto(photo);
+        report.SetAiProbabilityScore(aiProbabilityScore);
 
-        await _reportRepository.UpdateAsync(report, cancellationToken);
+        await _photoRepository.AddAsync(photo, cancellationToken);
 
         return report;
     }

@@ -45,7 +45,7 @@ builder.Services.AddScoped<IPhotoProcessor, PhotoProcessor>();
 builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 builder.Services.AddScoped<IMailFactory, MailFactory>();
 builder.Services.AddScoped<IMailService, MailService>();
-
+builder.Services.AddScoped<Seeagle.Server.Utils.AiDetection.IAiDetectionService, Seeagle.Server.Utils.AiDetection.AiDetectionService>();
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
 builder.Services.Configure<CookieSettings>(builder.Configuration.GetSection("CookieSettings"));
 builder.Services.Configure<ResendSettings>(builder.Configuration.GetSection("ResendSettings"));

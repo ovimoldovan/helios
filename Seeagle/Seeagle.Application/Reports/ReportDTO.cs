@@ -9,7 +9,8 @@ public sealed record ReportDto(
     string Status,
     string Priority,
     string Type,
-    string? MessageToReporter
+    string? MessageToReporter,
+    double? AiProbabilityScore
 )
 {
     public IReadOnlyList<Guid> DuplicateCandidateIds { get; init; } = [];

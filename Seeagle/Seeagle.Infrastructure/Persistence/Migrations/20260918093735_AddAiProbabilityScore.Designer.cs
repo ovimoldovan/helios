@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -12,9 +13,11 @@ using Seeagle.Infrastructure.Persistence;
 namespace Seeagle.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(SeeagleDbContext))]
-    partial class SeeagleDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260918093735_AddAiProbabilityScore")]
+    partial class AddAiProbabilityScore
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -23,21 +26,6 @@ namespace Seeagle.Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "postgis");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("ReportDuplicateCandidates", b =>
-                {
-                    b.Property<Guid>("ReportId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("DuplicateCandidateId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("ReportId", "DuplicateCandidateId");
-
-                    b.HasIndex("DuplicateCandidateId");
-
-                    b.ToTable("ReportDuplicateCandidates");
-                });
 
             modelBuilder.Entity("Seeagle.Domain.Areas.Area", b =>
                 {
@@ -255,21 +243,6 @@ namespace Seeagle.Infrastructure.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("Users", (string)null);
-                });
-
-            modelBuilder.Entity("ReportDuplicateCandidates", b =>
-                {
-                    b.HasOne("Seeagle.Domain.Reports.Report", null)
-                        .WithMany()
-                        .HasForeignKey("DuplicateCandidateId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Seeagle.Domain.Reports.Report", null)
-                        .WithMany()
-                        .HasForeignKey("ReportId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Seeagle.Domain.Reports.Photo", b =>
