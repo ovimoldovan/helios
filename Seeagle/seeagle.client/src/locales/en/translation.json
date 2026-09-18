@@ -253,5 +253,17 @@
   "unexpectedErrorRemovingModerator": "Unexpected error while removing moderator role.",
 
   "user": "User",
-  "moderatorMessage": "Message from Moderator"
+  "moderatorMessage": "Message from Moderator",
+
+  "areaManagementTitle": "Area Management",
+  "areaManagementDescription": "Draw shapes on the map to define areas.",
+  "rectangle": "Rectangle",
+  "polygon": "Polygon",
+  "noAreasYet": "No areas yet. Use the buttons above to draw one.",
+  "rename": "Rename",
+  "delete": "Delete",
+  "backToHome": "Back to Home",
+  
+  "exportCsv": "Export CSV"
+  
 }
