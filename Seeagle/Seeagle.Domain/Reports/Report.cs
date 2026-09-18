@@ -37,6 +37,7 @@ public class Report
     public Priority Priority { get; private set; } = Priority.Low;
     public string? MessageToReporter { get; private set; }
     public bool IsSolved { get; private set; }
+    public ICollection<Report> DuplicateCandidates { get; private set; } = new List<Report>();
     public double? AiProbabilityScore { get; private set; }
 
     public void SetAiProbabilityScore(double? score)
@@ -93,5 +94,10 @@ public class Report
     public void UpdatePriority(Priority priority)
     {
         Priority = priority;
+    }
+    
+    public void AddDuplicateCandidate(Report candidate)
+    {
+        DuplicateCandidates.Add(candidate);
     }
 }

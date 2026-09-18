@@ -19,6 +19,8 @@ import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { PriorityModal } from './PriorityModal';
 import { RejectModal } from './RejectModal';
+import { useNavigate } from 'react-router-dom';
+import { Badge } from '@/components/ui/badge';
 const PAGE_SIZE = 10;
 
 export function ModerationQueue() {
@@ -28,6 +30,7 @@ export function ModerationQueue() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
     const [isProcessing, setIsProcessing] = useState(false);
@@ -146,7 +149,33 @@ export function ModerationQueue() {
                                     {reports.map((report) => (
                                         <TableRow key={report.id}>
                                             <TableCell className="py-2">
-                                                {report.description ?? t('noDescription')}
+                                                <div className="flex flex-col gap-1">
+                                                    <span>{report.description ?? t('noDescription')}</span>
+                                                    {report.duplicateCandidates &&
+                                                        report.duplicateCandidates.length > 0 && (
+                                                            <div className="flex flex-col gap-1">
+                                                                <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">
+                                                                    {t('possibleDuplicate')}
+                                                                </Badge>
+                                                                {report.duplicateCandidates.map((candidate) => (
+                                                                    <button
+                                                                        key={candidate.id}
+                                                                        type="button"
+                                                                        className="text-left text-xs text-primary underline underline-offset-2 hover:opacity-80"
+                                                                        onClick={() =>
+                                                                            navigate('/', {
+                                                                                state: {
+                                                                                    selectedReport: candidate,
+                                                                                },
+                                                                            })
+                                                                        }
+                                                                    >
+                                                                        {candidate.description ?? candidate.id}
+                                                                    </button>
+                                                                ))}
+                                                            </div>
+                                                        )}
+                                                </div>
                                             </TableCell>
                                             <TableCell className="py-2">
                                                 {report.type}

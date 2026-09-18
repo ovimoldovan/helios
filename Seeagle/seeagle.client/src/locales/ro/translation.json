@@ -5,6 +5,7 @@
   "addReport": "Plasează un pin",
   "newReport": "Raport nou",
   "loginToAddReport": "Autentifică-te pentru a adăuga un raport",
+
   "cookiesPolicy": "Politica de cookie-uri",
 
   "loginTitle": "Autentifică-te în cont",
@@ -150,7 +151,7 @@
   "languageRo": "RO",
 
   "home": "Acasa",
-  "admin": "Administrator",
+  "admin": "Admin",
   "moderator": "Moderator",
 
   "loadingReports": "Se încarcă rapoartele...",
@@ -234,8 +235,11 @@
 
   "allReportsTitle": "Toate Rapoartele",
   "allReportsDescription": "Revizuiește toate rapoartele, cu excepția celor în așteptare.",
+  "moderatorMessage": "Mesaj moderator",
   "rejectReport": "Respinge raportul",
 
+  "noArea": "Fără Arie",
+  "possibleDuplicate": "Posibil duplicat",
   "allRoles": "Toate Rolurile",
   "status_All": "Toate",
   "status_Approved": "Aprobate",
@@ -250,11 +254,22 @@
   "byArea": "După Zonă",
   "loadingSummary": "Se încarcă sumarul...",
   "unexpectedErrorLoadingSummary": "Eroare neașteptată la încărcarea sumarului.",
-  
+
   "makeNormalUser": "Fă utilizator normal",
   "unexpectedErrorRemovingModerator": "Eroare neașteptată la retragerea rolului de moderator.",
   "user": "Utilizator",
   
-  "moderatorMessage": "Mesaj de la Moderator"
+  "moderatorMessage": "Mesaj de la Moderator",
+
+  "areaManagementTitle": "Gestionare Zone",
+  "areaManagementDescription": "Desenează forme pe hartă pentru a defini zone.",
+  "rectangle": "Dreptunghi",
+  "polygon": "Poligon",
+  "noAreasYet": "Nicio zonă încă. Folosește butoanele de mai sus.",
+  "rename": "Redenumește",
+  "delete": "Șterge",
+  "backToHome": "Înapoi acasă",
+  
+  "exportCsv": "Exportă CSV"
   
 }

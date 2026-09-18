@@ -48,45 +48,42 @@ async def detect_ai(
             tmp.write(contents)
             tmp_path = tmp.name
 
-        reader = c2pa.Reader.from_file(tmp_path)
-        manifest = reader.get_active_manifest()
-
-        if manifest is None:
+        reader = c2pa.Reader.try_create(tmp_path)
+    
+        if reader is None:
             return {
                 "aiProbability": 0.0,
                 "detectionMethod": "none",
                 "details": "No C2PA manifest found",
             }
 
-        claim_generator = manifest.get("claim_generator", "").lower()
-        title = manifest.get("title", "").lower()
-        combined = f"{claim_generator} {title}"
+        manifest = reader.get_active_manifest()
 
-        is_ai = any(gen in combined for gen in AI_GENERATORS)
+        if manifest is None:
+            return {
+                "aiProbability": 0.0,
+                "detectionMethod": "none",
+                "details": "No active manifest found",
+            }
+        
+        manifest_str = str(manifest).lower()
+
+        has_ai_flag = "trainedalgorithmicmedia" in manifest_str
+        has_ai_generator = any(gen in manifest_str for gen in AI_GENERATORS)
+
+        is_ai = has_ai_flag or has_ai_generator
 
         return {
             "aiProbability": 0.95 if is_ai else 0.05,
             "detectionMethod": "c2pa",
-            "details": f"C2PA claim generator: {claim_generator}" if claim_generator else "C2PA manifest found (no generator info)",
+            "details": "C2PA manifest found (AI signature detected)" if is_ai else "C2PA manifest found (No AI signature)",
         }
 
     except Exception as e:
-        error_msg = str(e)
-        
-        # If it crashed trying to parse CBOR metadata, it means the image DOES have 
-        # C2PA metadata embedded (which almost exclusively comes from AI generators right now).
-        # We can treat this as a positive detection even if the parser couldn't read the exact generator name.
-        if "CBOR" in error_msg or "cbor" in error_msg:
-            return {
-                "aiProbability": 0.95,
-                "detectionMethod": "c2pa_cbor_fallback",
-                "details": "AI metadata found but could not be fully parsed (CBOR format)"
-            }
-            
         return {
             "aiProbability": 0.0,
             "detectionMethod": "none",
-            "details": f"Error or no manifest: {error_msg}",
+            "details": f"Error: {str(e)}",
         }
     finally:
         try:

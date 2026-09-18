@@ -7,6 +7,7 @@ using Seeagle.Application.Reports;
 using Seeagle.Application.Common;
 using Seeagle.Domain.Reports;
 using Seeagle.Server.Utils.MailService;
+using Seeagle.Server.Utils.AiDetection;
 
 namespace Seeagle.Server.Controllers;
 
@@ -17,8 +18,7 @@ public sealed class ReportsController(
     IReportQueryService reportQueryService, 
     IPhotoProcessor photoProcessor,
     IMailService mailService,
-    IHttpClientFactory httpClientFactory,
-    IConfiguration configuration) : ControllerBase
+   IAiDetectionService aiDetectionService) : ControllerBase
 {
     [Authorize]
     [HttpPost]
@@ -197,29 +197,8 @@ public sealed class ReportsController(
             await file.CopyToAsync(memoryStream, cancellationToken);
             var originalBytes = memoryStream.ToArray();
             
-            double? aiScore = null;
-            try
-            {
-                var client = httpClientFactory.CreateClient("SeeagleAssistant");
-                var token = configuration["SeeagleAssistant:ServiceToken"] ?? "";
-                client.DefaultRequestHeaders.Add("X-Service-Token", token);
-
-                using var content = new MultipartFormDataContent();
-                var imageContent = new ByteArrayContent(originalBytes);
-                imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse(file.ContentType);
-                content.Add(imageContent, "file", file.FileName);
-
-                var response = await client.PostAsync("/detect-ai", content, cancellationToken);
-                if (response.IsSuccessStatusCode)
-                {
-                    var result = await response.Content.ReadFromJsonAsync<System.Text.Json.JsonElement>(cancellationToken: cancellationToken);
-                    aiScore = result.GetProperty("aiProbability").GetDouble();
-                }
-            }
-            catch (Exception)
-            {
-                // Silently swallow AI detection errors to avoid blocking the upload
-            }
+            var aiScore = await aiDetectionService.GetAiProbabilityScoreAsync(
+                originalBytes, file.ContentType, file.FileName, cancellationToken);
             
             var resultReport = await reportService.AttachPhotoAsync(
                 reportId, userId, originalBytes, file.ContentType, aiScore, cancellationToken);
@@ -229,6 +208,7 @@ public sealed class ReportsController(
 
             return Ok(resultReport.Dto());
         }
+        
         catch (PhotoTooLargeException ex)
         {
             return BadRequest(new { message = ex.Message });

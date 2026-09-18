@@ -18,7 +18,25 @@ public static class ReportMapper
             report.Type.Name,
             report.MessageToReporter,
             report.AiProbabilityScore
-        );
+        )
+        {
+            DuplicateCandidateIds = report.DuplicateCandidates
+                .Select(candidate => candidate.Id)
+                .ToList(),
+
+            DuplicateCandidates = report.DuplicateCandidates
+                .Select(candidate => new DuplicateCandidateDto(
+                    candidate.Id,
+                    candidate.Location.X,
+                    candidate.Location.Y,
+                    candidate.Description,
+                    candidate.CreatedUtc,
+                    candidate.Status.ToString(),
+                    candidate.Priority.ToString(),
+                    candidate.Type.Name
+                ))
+                .ToList()
+        };
     }
 
     extension(PagedResult<Report> reports)
