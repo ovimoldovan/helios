@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using RabbitMQ.Client;
 using Resend;
 using Seeagle.Application.Common;
 using Seeagle.Application.SampleNames;
@@ -49,6 +50,7 @@ builder.Services.AddScoped<IMailService, MailService>();
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
 builder.Services.Configure<CookieSettings>(builder.Configuration.GetSection("CookieSettings"));
 builder.Services.Configure<ResendSettings>(builder.Configuration.GetSection("ResendSettings"));
+builder.Services.Configure<RabbitMqSettings>(builder.Configuration.GetSection("RabbitMqSettings"));
 builder.Services.AddScoped<IJwtUtil, JwtUtil>();
 
 builder.Services.AddResend(o =>
@@ -58,6 +60,18 @@ builder.Services.AddResend(o =>
 });
 
 builder.Services.AddMemoryCache();
+
+builder.Services.AddSingleton<IConnection>(_ =>
+{
+    var rabbitMqSettings = builder.Configuration.GetSection("RabbitMQSettings").Get<RabbitMqSettings>()
+                           ?? throw new InvalidOperationException("Rabbit MQ settings are missing.");
+    var factory = new ConnectionFactory
+    {
+        Uri = new Uri(rabbitMqSettings.Url)
+    };
+
+    return factory.CreateConnectionAsync().GetAwaiter().GetResult();
+});
 
 var jwtOptions = builder.Configuration.GetSection("Jwt").Get<JwtOptions>()
                  ?? throw new InvalidOperationException("Jwt configuration is missing.");
