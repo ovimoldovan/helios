@@ -264,6 +264,8 @@
   "delete": "Delete",
   "backToHome": "Back to Home",
   
-  "exportCsv": "Export CSV"
+  "exportCsv": "Export CSV",
+  "confirmDeleteMessage": "Are you really sure you want to delete?",
+  "thisReport": "this report"
   
 }
