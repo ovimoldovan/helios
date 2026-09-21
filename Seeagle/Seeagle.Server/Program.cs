@@ -6,7 +6,6 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using RabbitMQ.Client;
-using Resend;
 using Seeagle.Application.Common;
 using Seeagle.Application.SampleNames;
 using Seeagle.Infrastructure.Persistence;
@@ -44,20 +43,12 @@ builder.Services.AddScoped<IUserQueryService, UserQueryService>();
 builder.Services.AddScoped<IReportQueryService, ReportQueryService>();
 builder.Services.AddScoped<IPhotoProcessor, PhotoProcessor>();
 builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
-builder.Services.AddScoped<IMailFactory, MailFactory>();
 builder.Services.AddScoped<IMailService, MailService>();
 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
 builder.Services.Configure<CookieSettings>(builder.Configuration.GetSection("CookieSettings"));
-builder.Services.Configure<ResendSettings>(builder.Configuration.GetSection("ResendSettings"));
 builder.Services.Configure<RabbitMqSettings>(builder.Configuration.GetSection("RabbitMqSettings"));
 builder.Services.AddScoped<IJwtUtil, JwtUtil>();
-
-builder.Services.AddResend(o =>
-{
-    o.ApiToken = builder.Configuration.GetSection("ResendSettings").Get<ResendSettings>()?.ApiKey
-        ?? throw new InvalidOperationException("Resend configuration is missing");
-});
 
 builder.Services.AddMemoryCache();
 

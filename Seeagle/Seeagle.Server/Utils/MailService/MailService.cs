@@ -1,20 +1,25 @@
 using System.Text.Json;
 using RabbitMQ.Client;
-using Resend;
 using Seeagle.Domain.Reports;
 
 namespace Seeagle.Server.Utils.MailService;
 
-public class MailService(IMailFactory mailFactory, IConnection connection) : IMailService
+public class MailService(IConnection connection) : IMailService
 {
     public async Task SendEmailAsync(string to, string recipientName, string reportDescription, string moderatorMessage)
     {
         await using var channel = await connection.CreateChannelAsync();
         await DeclareExchangeAsync(channel);
         await DeclareQueueAsync(channel);
-        var mail = mailFactory.CreateEmail(to, recipientName, reportDescription, moderatorMessage);
+        var variables = new Dictionary<string, object>
+        {
+            {"RecipientName", recipientName},
+            {"ReportDescription", reportDescription},
+            {"ModeratorMessage", moderatorMessage}
+        };
+        var mail = new EmailMessage(to, variables);
         var body = JsonSerializer.SerializeToUtf8Bytes(mail);
-        await PublishAsync(channel, body);
+        await PublishAsync(channel, body, messageKind: "ReportMessage");
     }
 
     public async Task SendEmailAsync(string to, string recipientName, string reportDescription, ReportStatus newStatus)
@@ -22,9 +27,16 @@ public class MailService(IMailFactory mailFactory, IConnection connection) : IMa
         await using var channel = await connection.CreateChannelAsync();
         await DeclareExchangeAsync(channel);
         await DeclareQueueAsync(channel);
-        var mail = mailFactory.CreateEmail(to, recipientName, reportDescription, newStatus);
+        
+        var variables = new Dictionary<string, object>
+        {
+            {"RecipientName", recipientName},
+            {"ReportDescription", reportDescription},
+            {"StatusLabel", newStatus.ToString()}
+        };
+        var mail = new EmailMessage(to, variables);
         var body = JsonSerializer.SerializeToUtf8Bytes(mail);
-        await PublishAsync(channel, body);
+        await PublishAsync(channel, body, messageKind: "ReportUpdate");
     }
 
     public async Task SendEmailAsync(string to, string recipientName, string reportDescription, ReportStatus newStatus,
@@ -33,14 +45,28 @@ public class MailService(IMailFactory mailFactory, IConnection connection) : IMa
         await using var channel = await connection.CreateChannelAsync();
         await DeclareExchangeAsync(channel);    
         await DeclareQueueAsync(channel);
-        EmailMessage mail;
 
-        mail = moderatorMessage != null 
-            ? mailFactory.CreateEmail(to, recipientName, reportDescription, newStatus, moderatorMessage)
-            : mailFactory.CreateEmail(to, recipientName, reportDescription, newStatus);
+        Dictionary<string, object> variables;
+        if (moderatorMessage != null)
+            variables = new Dictionary<string, object>
+            {
+                {"RecipientName", recipientName},
+                {"ReportDescription", reportDescription},
+                {"StatusLabel", newStatus.ToString()},
+                {"ModeratorMessage", moderatorMessage}
+            };
+        else
+            variables = new Dictionary<string, object>
+            {
+                {"RecipientName", recipientName},
+                {"ReportDescription", reportDescription},
+                {"StatusLabel", newStatus.ToString()}
+            };
         
+        var mail = new EmailMessage(to, variables);
         var body = JsonSerializer.SerializeToUtf8Bytes(mail);
-        await PublishAsync(channel, body);
+        var kind = moderatorMessage != null ? "ReportUpdateWithModeratorMessage" : "ReportUpdate";
+        await PublishAsync(channel, body, messageKind: kind);
     }
     
     private async Task DeclareExchangeAsync(IChannel channel)
@@ -65,12 +91,13 @@ public class MailService(IMailFactory mailFactory, IConnection connection) : IMa
         );
     }
 
-    private async Task PublishAsync(IChannel channel, byte[] body)
+    private async Task PublishAsync(IChannel channel, byte[] body, string messageKind)
     {
         var props = new BasicProperties
         {
             ContentType = "application/json",
-            Persistent = true
+            Persistent = true,
+            Type = messageKind
         };
         await channel.BasicPublishAsync(
             exchange: "seeagle",

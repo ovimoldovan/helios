@@ -1,7 +1,9 @@
 using System.Text.Json;
+using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Resend;
+using Seeagle.MailService.Server.Utils.MailService;
 
 namespace Seeagle.MailService.Server.Consumers;
 
@@ -20,18 +22,49 @@ public class EmailMessageConsumer(IServiceScopeFactory serviceScopeFactory, ICon
         {
             try
             {
-                var emailMessage = JsonSerializer.Deserialize<EmailMessage>(ea.Body.Span);
-                if (emailMessage != null)
+                using var scope = serviceScopeFactory.CreateScope();
+                var resend = scope.ServiceProvider.GetRequiredService<IResend>();
+                var resendSettings = scope.ServiceProvider.GetRequiredService<IOptions<ResendSettings>>().Value;
+
+                using var doc = JsonDocument.Parse(ea.Body);
+                var root = doc.RootElement;
+
+                var to = root.GetProperty("To").GetString()!;
+                var variables = root.GetProperty("Variables")
+                    .EnumerateObject()
+                    .ToDictionary(p => p.Name, p => (object)p.Value.ToString());
+
+                var templateId = ea.BasicProperties.Type switch
                 {
-                    using var scope = serviceScopeFactory.CreateScope();
-                    var resend = scope.ServiceProvider.GetRequiredService<IResend>();
-                    await resend.EmailSendAsync(emailMessage, ea.CancellationToken);
-                } 
-                await channel.BasicAckAsync(ea.DeliveryTag, multiple: false, ea.CancellationToken);
+                    "ReportMessage" => resendSettings.ReportMessageTemplateId,
+                    "ReportUpdate" => resendSettings.ReportUpdateTemplateId,
+                    "ReportUpdateWithModeratorMessage" => resendSettings.ReportUpdateWithModeratorMessageTemplateId,
+                    _ => null
+                };
+
+                if (templateId == null)
+                {
+                    await channel.BasicNackAsync(ea.DeliveryTag, multiple: false, requeue: false, CancellationToken.None);
+                    return;
+                }
+
+                var emailMessage = new EmailMessage
+                {
+                    From = resendSettings.From,
+                    To = to,
+                    Template = new EmailMessageTemplate
+                    {
+                        TemplateId = templateId,
+                        Variables = variables
+                    }
+                };
+
+                await resend.EmailSendAsync(emailMessage, CancellationToken.None);
+                await channel.BasicAckAsync(ea.DeliveryTag, multiple: false, CancellationToken.None);
             }
             catch (JsonException)
             {
-                await channel.BasicNackAsync(ea.DeliveryTag, multiple: false, requeue: false, stoppingToken);
+                await channel.BasicNackAsync(ea.DeliveryTag, multiple: false, requeue: false, CancellationToken.None);
             }
         };
 
