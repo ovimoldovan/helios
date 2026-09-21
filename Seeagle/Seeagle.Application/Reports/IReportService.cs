@@ -15,7 +15,7 @@ public interface IReportService
     Task<Report?> MarkAsSolvedAsync(Guid id, string? message, CancellationToken cancellationToken);
     Task<PagedResult<Report>> GetApprovedReportsAsync(int pageNumber, int pageSize, CancellationToken cancellationToken);
     Task<Report?> SendMessageToReporterAsync(Guid id, string message, CancellationToken cancellationToken);
-    Task<Report?> AttachPhotoAsync(Guid reportId, Guid userId, byte[] data, string contentType, CancellationToken ct);
+    Task<Report?> AttachPhotoAsync(Guid reportId, Guid userId, byte[] data, string contentType, double? aiProbabilityScore, CancellationToken ct);
     Task<ProcessedPhoto?> GetPhotoAsync(Guid reportId, bool isModerator, CancellationToken ct);
     
     Task<PagedResult<Report>> GetUserReportsAsync(Guid userId, int pageNumber, int pageSize, CancellationToken cancellationToken);

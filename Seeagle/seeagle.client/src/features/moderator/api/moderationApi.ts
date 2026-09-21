@@ -12,6 +12,7 @@ export interface ModerationReport {
     isSolved?: boolean;
     messageToReporter?: string | null;
     type: string;
+    aiProbabilityScore: number | null;
     duplicateCandidateIds?: string[];
     duplicateCandidates?: DuplicateCandidate[];
 }

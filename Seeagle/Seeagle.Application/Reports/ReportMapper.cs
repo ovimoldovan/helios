@@ -16,7 +16,8 @@ public static class ReportMapper
             report.Status.ToString(),
             report.Priority.ToString(),
             report.Type.Name,
-            report.MessageToReporter
+            report.MessageToReporter,
+            report.AiProbabilityScore
         )
         {
             DuplicateCandidateIds = report.DuplicateCandidates

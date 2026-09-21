@@ -1,11 +1,13 @@
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
+using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Seeagle.Application.Reports;
 using Seeagle.Application.Common;
 using Seeagle.Domain.Reports;
 using Seeagle.Server.Utils.MailService;
+using Seeagle.Server.Utils.AiDetection;
 
 namespace Seeagle.Server.Controllers;
 
@@ -15,7 +17,8 @@ public sealed class ReportsController(
     IReportService reportService, 
     IReportQueryService reportQueryService, 
     IPhotoProcessor photoProcessor,
-    IMailService mailService) : ControllerBase
+    IMailService mailService,
+   IAiDetectionService aiDetectionService) : ControllerBase
 {
     [Authorize]
     [HttpPost]
@@ -190,17 +193,22 @@ public sealed class ReportsController(
         
         try
         {
-            await using var stream = file.OpenReadStream();
-            var processed = await photoProcessor.ProcessAsync(stream, cancellationToken);
+            using var memoryStream = new MemoryStream();
+            await file.CopyToAsync(memoryStream, cancellationToken);
+            var originalBytes = memoryStream.ToArray();
+            
+            var aiScore = await aiDetectionService.GetAiProbabilityScoreAsync(
+                originalBytes, file.ContentType, file.FileName, cancellationToken);
+            
+            var resultReport = await reportService.AttachPhotoAsync(
+                reportId, userId, originalBytes, file.ContentType, aiScore, cancellationToken);
 
-            var result = await reportService.AttachPhotoAsync(
-                reportId, userId, processed.Data, processed.ContentType, cancellationToken);
-
-            if (result is null)
+            if (resultReport is null)
                 return NotFound();
 
-            return Ok(result.Dto());
+            return Ok(resultReport.Dto());
         }
+        
         catch (PhotoTooLargeException ex)
         {
             return BadRequest(new { message = ex.Message });
@@ -209,7 +217,12 @@ public sealed class ReportsController(
         {
             return BadRequest(new { message = ex.Message });
         }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "An error occurred while uploading the photo." });
+        }
     }
+        
     
     [HttpGet("{reportId}/photo")]
     public async Task<IActionResult> GetPhoto(Guid reportId, CancellationToken cancellationToken)
