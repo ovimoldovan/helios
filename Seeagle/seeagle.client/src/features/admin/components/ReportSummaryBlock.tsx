@@ -63,7 +63,6 @@ export function ReportSummaryBlock() {
 
                     <TabsContent value="table">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            {/* By Status */}
                             <div>
                                 <h4 className="font-semibold text-sm mb-2">
                                     {t('byStatus')}
