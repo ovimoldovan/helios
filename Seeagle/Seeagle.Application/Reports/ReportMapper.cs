@@ -17,7 +17,9 @@ public static class ReportMapper
             report.Priority.ToString(),
             report.Type.Name,
             report.MessageToReporter,
-            report.AiProbabilityScore
+            report.AiProbabilityScore,
+            report.HasPhoto,
+            report.ShowPhotoToPublic
         )
         {
             DuplicateCandidateIds = report.DuplicateCandidates
