@@ -1,16 +1,5 @@
-// src/features/admin/components/ReportSummaryCharts.tsx
-
 import { useTranslation } from 'react-i18next';
-import {
-    Bar,
-    BarChart,
-    CartesianGrid,
-    Cell,
-    Pie,
-    PieChart,
-    XAxis,
-    YAxis,
-} from 'recharts';
+import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, XAxis, YAxis} from 'recharts';
 import {
     ChartContainer,
     ChartTooltip,
@@ -36,9 +25,6 @@ export function ReportSummaryCharts({ summary }: ReportSummaryChartsProps) {
         );
     }
 
-    // ─────────────────────────────────────────────────────────
-    // Status - Pie Chart
-    // ─────────────────────────────────────────────────────────
     const statusData = summary.byStatus.map((item) => ({
         status: item.status,
         count: item.count,
@@ -52,9 +38,6 @@ export function ReportSummaryCharts({ summary }: ReportSummaryChartsProps) {
         ])
     );
 
-    // ─────────────────────────────────────────────────────────
-    // Type - Bar Chart
-    // ─────────────────────────────────────────────────────────
     const typeData = summary.byType.map((item) => ({
         type: item.type,
         count: item.count,
@@ -65,10 +48,7 @@ export function ReportSummaryCharts({ summary }: ReportSummaryChartsProps) {
         count: { label: t('reportCount'), color: '#3b82f6' },
     };
 
-    // ─────────────────────────────────────────────────────────
-    // Area - Bar Chart
-    // ─────────────────────────────────────────────────────────
-    const areaData = summary.byArea.map((item) => ({
+   const areaData = summary.byArea.map((item) => ({
         area: item.areaId === null ? t('noArea') : item.areaName ?? t('noArea'),
         count: item.count,
     }));
@@ -79,7 +59,6 @@ export function ReportSummaryCharts({ summary }: ReportSummaryChartsProps) {
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* ── By Status - Pie Chart ─────────────────────── */}
             <div>
                 <h4 className="font-semibold text-sm mb-4 text-center">
                     {t('byStatus')}
@@ -109,7 +88,6 @@ export function ReportSummaryCharts({ summary }: ReportSummaryChartsProps) {
                 </ChartContainer>
             </div>
 
-            {/* ── By Type - Bar Chart ───────────────────────── */}
             <div>
                 <h4 className="font-semibold text-sm mb-4 text-center">
                     {t('byType')}
@@ -133,7 +111,6 @@ export function ReportSummaryCharts({ summary }: ReportSummaryChartsProps) {
                 </ChartContainer>
             </div>
 
-            {/* ── By Area - Bar Chart ───────────────────────── */}
             <div>
                 <h4 className="font-semibold text-sm mb-4 text-center">
                     {t('byArea')}
@@ -159,19 +136,17 @@ export function ReportSummaryCharts({ summary }: ReportSummaryChartsProps) {
         </div>
     );
 }
-
-// Culori pentru status (consistente cu badge-urile existente)
 function getStatusColor(status: string): string {
     switch (status) {
         case 'Pending':
-            return '#eab308'; // galben
+            return '#eab308'; 
         case 'Approved':
-            return '#22c55e'; // verde
+            return '#22c55e'; 
         case 'Rejected':
-            return '#ef4444'; // roșu
+            return '#ef4444'; 
         case 'Solved':
-            return '#3b82f6'; // albastru
+            return '#3b82f6'; 
         default:
-            return '#94a3b8'; // gri
+            return '#94a3b8'; 
     }
 }

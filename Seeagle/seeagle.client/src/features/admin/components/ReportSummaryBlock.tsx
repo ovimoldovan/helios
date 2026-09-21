@@ -1,20 +1,8 @@
-// src/features/admin/components/ReportSummaryBlock.tsx
-
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getReportSummary, type ReportSummary } from '../api/adminApi';
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
-import {
-    Tabs,
-    TabsContent,
-    TabsList,
-    TabsTrigger,
-} from '@/components/ui/tabs';
+import { Card, CardContent, CardHeader, CardTitle,} from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger,} from '@/components/ui/tabs';
 import { ReportSummaryCharts } from './ReportSummaryCharts';
 
 export function ReportSummaryBlock() {
@@ -69,12 +57,10 @@ export function ReportSummaryBlock() {
                         </TabsTrigger>
                     </TabsList>
 
-                    {/* ─── Tab: Graphs (default) ─────────────── */}
                     <TabsContent value="graphs">
                         <ReportSummaryCharts summary={summary} />
                     </TabsContent>
 
-                    {/* ─── Tab: Table data ───────────────────── */}
                     <TabsContent value="table">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             {/* By Status */}
@@ -97,7 +83,6 @@ export function ReportSummaryBlock() {
                                 </ul>
                             </div>
 
-                            {/* By Type */}
                             <div>
                                 <h4 className="font-semibold text-sm mb-2">
                                     {t('byType')}
@@ -117,7 +102,6 @@ export function ReportSummaryBlock() {
                                 </ul>
                             </div>
 
-                            {/* By Area */}
                             <div>
                                 <h4 className="font-semibold text-sm mb-2">
                                     {t('byArea')}
