@@ -229,11 +229,6 @@
 
   "unexpectedErrorLoadingReports": "Unexpected error while loading reports.",
 
-
-  "assistantOnline": "Online",
-  "assistantOffline": "Offline",
-  "assistantChecking": "Checking...",
-
   "allReportsTitle": "All Reports",
   "allReportsDescription": "Review all reports, except pending ones.",
   "noReportsFound": "No reports found.",
@@ -258,6 +253,8 @@
 
   "user": "User",
   "moderatorMessage": "Message from Moderator",
+  
+  "checking": "Checking...",
 
   "areaManagementTitle": "Area Management",
   "areaManagementDescription": "Draw shapes on the map to define areas.",

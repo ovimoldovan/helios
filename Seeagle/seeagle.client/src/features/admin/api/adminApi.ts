@@ -87,6 +87,10 @@ export async function getAssistantHealth(): Promise<{ status: string }> {
   return getJson<{ status: string }>('/api/admin/health/assistant');
 }
 
+export async function getMailServiceHealth(): Promise<{ status: string }> {
+  return getJson<{ status: string }>('/api/admin/health/mailservice');
+}
+
 export interface ReportSummary {
   byStatus: { status: string; count: number }[];
   byType: { type: string; count: number }[];

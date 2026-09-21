@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
-using Resend;
+using RabbitMQ.Client;
 using Seeagle.Application.Common;
 using Seeagle.Application.SampleNames;
 using Seeagle.Infrastructure.Persistence;
@@ -43,21 +43,26 @@ builder.Services.AddScoped<IUserQueryService, UserQueryService>();
 builder.Services.AddScoped<IReportQueryService, ReportQueryService>();
 builder.Services.AddScoped<IPhotoProcessor, PhotoProcessor>();
 builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
-builder.Services.AddScoped<IMailFactory, MailFactory>();
 builder.Services.AddScoped<IMailService, MailService>();
 builder.Services.AddScoped<Seeagle.Server.Utils.AiDetection.IAiDetectionService, Seeagle.Server.Utils.AiDetection.AiDetectionService>();
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
 builder.Services.Configure<CookieSettings>(builder.Configuration.GetSection("CookieSettings"));
-builder.Services.Configure<ResendSettings>(builder.Configuration.GetSection("ResendSettings"));
+builder.Services.Configure<RabbitMqSettings>(builder.Configuration.GetSection("RabbitMqSettings"));
 builder.Services.AddScoped<IJwtUtil, JwtUtil>();
 
-builder.Services.AddResend(o =>
-{
-    o.ApiToken = builder.Configuration.GetSection("ResendSettings").Get<ResendSettings>()?.ApiKey
-        ?? throw new InvalidOperationException("Resend configuration is missing");
-});
-
 builder.Services.AddMemoryCache();
+
+builder.Services.AddSingleton<IConnection>(_ =>
+{
+    var rabbitMqSettings = builder.Configuration.GetSection("RabbitMQSettings").Get<RabbitMqSettings>()
+                           ?? throw new InvalidOperationException("Rabbit MQ settings are missing.");
+    var factory = new ConnectionFactory
+    {
+        Uri = new Uri(rabbitMqSettings.Url)
+    };
+
+    return factory.CreateConnectionAsync().GetAwaiter().GetResult();
+});
 
 var jwtOptions = builder.Configuration.GetSection("Jwt").Get<JwtOptions>()
                  ?? throw new InvalidOperationException("Jwt configuration is missing.");
@@ -159,5 +164,9 @@ static void SetupDatabase(WebApplicationBuilder builder)
     builder.Services.AddHttpClient("SeeagleAssistant", client =>
     {
         client.BaseAddress = new Uri(builder.Configuration["SeeagleAssistant:BaseUrl"] ?? "http://localhost:8000");
+    });
+    builder.Services.AddHttpClient("MailService", client =>
+    {
+        client.BaseAddress = new Uri(builder.Configuration["MailService:BaseUrl"]?? "http://localhost:7041");
     });
 }

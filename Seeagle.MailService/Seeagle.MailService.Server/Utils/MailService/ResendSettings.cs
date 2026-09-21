@@ -1,4 +1,4 @@
-namespace Seeagle.Server.Utils.MailService;
+namespace Seeagle.MailService.Server.Utils.MailService;
 
 public class ResendSettings
 {

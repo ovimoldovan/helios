@@ -228,10 +228,6 @@
   "rejected": "Respins",
 
   "unexpectedErrorLoadingReports": "Eroare neașteptată la încărcarea rapoartelor.",
-  
-  "assistantOnline": "Online",
-  "assistantOffline": "Offline",
-  "assistantChecking": "Se verifică...",
 
   "allReportsTitle": "Toate Rapoartele",
   "allReportsDescription": "Revizuiește toate rapoartele, cu excepția celor în așteptare.",
@@ -246,7 +242,6 @@
   "status_Rejected": "Respinse",
   "status_Solved": "Rezolvate",
   "status_Pending": "În așteptare",
-  "noArea": "Fără Arie",
 
   "reportSummaryTitle": "Sumar Rapoarte",
   "byStatus": "După Status",
@@ -259,8 +254,7 @@
   "unexpectedErrorRemovingModerator": "Eroare neașteptată la retragerea rolului de moderator.",
   "user": "Utilizator",
   
-  "moderatorMessage": "Mesaj de la Moderator",
-
+  "checking": "Se verifică...",
   "areaManagementTitle": "Gestionare Zone",
   "areaManagementDescription": "Desenează forme pe hartă pentru a defini zone.",
   "rectangle": "Dreptunghi",
