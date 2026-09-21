@@ -103,6 +103,15 @@ export function ApprovedReports() {
         }
     }
 
+    function requestDelete(report: ModerationReport) {
+        const itemName = report.description ?? t('thisReport');
+        const confirmed = window.confirm(t('confirmDeleteMessage', { item: itemName }));
+
+        if (confirmed) {
+            void handleDelete(report.id);
+        }
+    }
+    
     const priorityBadge = (priority: string) => {
         const config = {
             Urgent: 'bg-red-100 text-red-700',
@@ -195,7 +204,7 @@ export function ApprovedReports() {
                                                     size="sm"
                                                     variant="ghost"
                                                     disabled={deletingId === report.id}
-                                                    onClick={() => void handleDelete(report.id)}
+                                                    onClick={() => requestDelete(report)}
                                                     aria-label={t('deleteReport')}
                                                 >
                                                     <TrashIcon className="w-4 h-4 text-red-500" />

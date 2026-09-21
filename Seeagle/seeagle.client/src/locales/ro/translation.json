@@ -260,5 +260,8 @@
   "delete": "Șterge",
   "backToHome": "Înapoi acasă",
   
-  "exportCsv": "Exportă CSV"
+  "exportCsv": "Exportă CSV",
+  "confirmDeleteMessage": "Ești sigur că vrei să ștergi?",
+  "thisReport": "acest raport"
+  
 }
