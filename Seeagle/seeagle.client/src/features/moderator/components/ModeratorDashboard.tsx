@@ -32,7 +32,7 @@ export function ModeratorDashboard() {
 
                         <Button
                             className="admin-dashboard-button"
-                            onClick={() => navigate('/moderator/approved')}
+                            onClick={() => navigate('/moderator/all-reports')}
                         >
                             <span className="text-base font-semibold">{t('allReportsTitle')}</span>
                             <span className="font-normal">{t('allReportsDescription')}</span>

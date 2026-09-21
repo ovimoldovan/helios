@@ -14,7 +14,7 @@ import { Toaster } from "@/components/ui/toast.tsx";
 import { CookiesPolicy } from "@/pages/CookiesPolicy.tsx";
 import { ReportTypesPage } from '@/features/admin/components/ReportTypesPage';
 import { ModerationQueue } from '@/features/moderator/components/ModerationQueue';
-import { ApprovedReports } from "@/features/moderator/components/ApprovedReports.tsx";
+import { AllReports } from "@/features/moderator/components/AllReports";
 import { MyReports } from '@/features/reports/components/MyReports';
 import { PublicReports } from '@/features/reports/components/PublicReports'; 
 import { AdminAreasPage } from './features/admin/components/AdminAreasPage';
@@ -100,8 +100,8 @@ function App() {
                         />
 
                         <Route
-                            path="/moderator/approved"
-                            element={<ApprovedReports />}
+                            path="/moderator/all-reports"
+                            element={<AllReports />}
                         />
 
                         <Route
