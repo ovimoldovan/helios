@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getAssistantHealth } from '../api/adminApi';
+import {getAssistantHealth, getMailServiceHealth} from '../api/adminApi';
 import {
     Card,
     CardDescription,
@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import './AdminDashboard.css';
 import { useTranslation } from 'react-i18next';
-import { AssistantStatus } from '@/shared/types/admin';
+import {AssistantStatus, MailServiceStatus} from '@/shared/types/admin';
 import { ReportSummaryBlock } from './ReportSummaryBlock';
 
 export function AdminDashboard() {
@@ -18,11 +18,15 @@ export function AdminDashboard() {
     const { t } = useTranslation();
 
     const [assistantStatus, setAssistantStatus] = useState<AssistantStatus>(AssistantStatus.Checking);
+    const [mailServiceStatus, setMailServiceStatus] = useState<MailServiceStatus>(MailServiceStatus.Checking);
     useEffect(() => {
     getAssistantHealth()
         .then((data) => setAssistantStatus(data.status as AssistantStatus))
         .catch(() => setAssistantStatus(AssistantStatus.Offline));
-}, []);
+    getMailServiceHealth()
+        .then((data) => setMailServiceStatus(data.status as MailServiceStatus))
+        .catch(() => setMailServiceStatus(MailServiceStatus.Offline));
+    }, []);
     return (
                 <main className="relative min-h-screen overflow-y-auto p-8 bg-muted">
                     <Card className="relative z-10 mx-auto max-w-6xl overflow-visible w-full">
@@ -66,10 +70,25 @@ export function AdminDashboard() {
                         <span className="font-medium">SeeagleAssistant</span>
                         <span className="text-muted-foreground text-sm">
                             {assistantStatus === AssistantStatus.Online
-                            ? t('assistantOnline')
+                            ? 'Online'
                             : assistantStatus === AssistantStatus.Offline
-                            ? t('assistantOffline')
-                            : t('assistantChecking')}
+                            ? 'Offline'
+                            : t('checking')}
+                        </span>
+                    </div>
+                    <div className="mx-8 mb-8 flex items-center gap-3 rounded-lg border p-4">
+                        <span
+                            className={`inline-block h-3 w-3 rounded-full ${
+                            mailServiceStatus === MailServiceStatus.Online ? 'bg-green-500' : mailServiceStatus === MailServiceStatus.Offline ? 'bg-red-500' : 'bg-gray-400'
+                            }`}
+                        />
+                        <span className="font-medium">Mail Service</span>
+                        <span className="text-muted-foreground text-sm">
+                            {mailServiceStatus === MailServiceStatus.Online
+                            ? 'Online'
+                            : mailServiceStatus === MailServiceStatus.Offline
+                            ? 'Offline'
+                            : t('checking')}
                         </span>
                     </div>
                         

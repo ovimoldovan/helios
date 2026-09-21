@@ -9,6 +9,12 @@ public enum AssistantStatus
     Offline
 }
 
+public enum MailServiceStatus
+{
+    Online,
+    Offline
+}
+
 [ApiController]
 [Route("api/admin/health")]
 [Authorize(Roles = "Admin")]
@@ -44,6 +50,30 @@ public class HealthController : ControllerBase
         catch
         {
             return Ok(new { status = AssistantStatus.Offline.ToString().ToLower() });
+        }
+    }
+
+    [HttpGet("mailservice")]
+    public async Task<IActionResult> GetMailServiceHealth()
+    {
+        try
+        {
+            var client = _httpClientFactory.CreateClient("MailService");
+            var token = _configuration["MailService:ServiceToken"] ?? "";
+            client.DefaultRequestHeaders.Add("X-Service-Token", token);
+
+            var response = await client.GetAsync("/health");
+
+            if (response.IsSuccessStatusCode)
+            {
+                return Ok(new { status = MailServiceStatus.Online.ToString().ToLower() });
+            }
+
+            return Ok(new { status = MailServiceStatus.Offline.ToString().ToLower() });
+        }
+        catch
+        {
+            return Ok(new { status = MailServiceStatus.Offline.ToString().ToLower() });
         }
     }
 }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.HttpOverrides;
 using RabbitMQ.Client;
 using Resend;
+using Seeagle.MailService.Server.Auth;
 using Seeagle.MailService.Server.Consumers;
 using Seeagle.MailService.Server.Utils.MailService;
 
@@ -12,6 +13,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.Configure<ResendSettings>(builder.Configuration.GetSection("ResendSettings"));
 builder.Services.Configure<RabbitMqSettings>(builder.Configuration.GetSection("RabbitMqSettings"));
+
+builder.Services.AddScoped<ApiKeyAuthFilter>();
 
 builder.Services.AddResend(o =>
 {

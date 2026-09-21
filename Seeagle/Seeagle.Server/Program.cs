@@ -165,4 +165,8 @@ static void SetupDatabase(WebApplicationBuilder builder)
     {
         client.BaseAddress = new Uri(builder.Configuration["SeeagleAssistant:BaseUrl"] ?? "http://localhost:8000");
     });
+    builder.Services.AddHttpClient("MailService", client =>
+    {
+        client.BaseAddress = new Uri(builder.Configuration["MailService:BaseUrl"]?? "http://localhost:7041");
+    });
 }

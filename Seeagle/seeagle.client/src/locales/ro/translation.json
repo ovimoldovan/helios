@@ -224,10 +224,6 @@
   "rejected": "Respins",
 
   "unexpectedErrorLoadingReports": "Eroare neașteptată la încărcarea rapoartelor.",
-  
-  "assistantOnline": "Online",
-  "assistantOffline": "Offline",
-  "assistantChecking": "Se verifică...",
 
   "allReportsTitle": "Toate Rapoartele",
   "allReportsDescription": "Revizuiește toate rapoartele, cu excepția celor în așteptare.",
@@ -255,5 +251,6 @@
   "unexpectedErrorRemovingModerator": "Eroare neașteptată la retragerea rolului de moderator.",
   "user": "Utilizator",
 
-  "moderatorMessage": "Mesaj de la Moderator"
+  "moderatorMessage": "Mesaj de la Moderator",
+  "checking": "Se verifică..."
 }
