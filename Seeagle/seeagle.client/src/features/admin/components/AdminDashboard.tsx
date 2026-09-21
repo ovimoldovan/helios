@@ -56,7 +56,8 @@ export function AdminDashboard() {
                             <span className="font-normal">{t('reportTypesDescription')}</span>
                         </Button>
 
-                        <Button className="admin-dashboard-button h-full" disabled>
+                        <Button className="admin-dashboard-button h-full" 
+                                onClick={() => navigate('/moderator/all-reports')}>
                             <span className="text-base font-semibold">{t('reportsTitle')}</span>
                             <span className="font-normal">{t('reportsDescription')}</span>
                         </Button>
