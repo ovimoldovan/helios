@@ -104,7 +104,9 @@ public sealed class AreaService(IRepository<Area> repository, IRepository<Report
             await reportRepository.UpdateAsync(report, cancellationToken);
         }
 
-        await repository.DeleteAsync(area, cancellationToken);
+        area.Delete();
+        await repository.UpdateAsync(area, cancellationToken);
+
         return true;
     }
     
