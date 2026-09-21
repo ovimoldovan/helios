@@ -24,7 +24,7 @@ import { useTranslation } from 'react-i18next';
 const PAGE_SIZE = 10;
 const STATUS_OPTIONS = ['All', 'Pending', 'Approved', 'Rejected', 'Solved'];
 
-export function ApprovedReports() {
+export function AllReports() {
     const { t } = useTranslation();
     const [reports, setReports] = useState<ModerationReport[]>([]);
     const [page, setPage] = useState(1);
