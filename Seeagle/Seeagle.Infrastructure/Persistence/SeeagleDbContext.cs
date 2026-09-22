@@ -30,4 +30,6 @@ public sealed class SeeagleDbContext(DbContextOptions<SeeagleDbContext> options)
     }
     
     public DbSet<Photo> Photos => Set<Photo>();
+    
+    public DbSet<Domain.Settings.SystemSettings> SystemSettings => Set<Domain.Settings.SystemSettings>();
 }
