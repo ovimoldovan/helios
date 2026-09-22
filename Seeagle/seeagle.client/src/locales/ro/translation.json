@@ -208,7 +208,6 @@
   "reject": "Respinge",
   "edit": "Editează",
   "Photo": "Imagine",
-  "photo": "Imagine",
   "photoPreview": "Previzualizare imagine",
   "remove": "Șterge",
   "disable": "Dezactivează",
@@ -229,6 +228,10 @@
   "rejected": "Respins",
 
   "unexpectedErrorLoadingReports": "Eroare neașteptată la încărcarea rapoartelor.",
+  
+  "assistantOnline": "Online",
+  "assistantOffline": "Offline",
+  "assistantChecking": "Se verifică...",
 
   "allReportsTitle": "Toate Rapoartele",
   "allReportsDescription": "Revizuiește toate rapoartele, cu excepția celor în așteptare.",
@@ -243,6 +246,7 @@
   "status_Rejected": "Respinse",
   "status_Solved": "Rezolvate",
   "status_Pending": "În așteptare",
+  "noArea": "Fără Arie",
 
   "reportSummaryTitle": "Sumar Rapoarte",
   "byStatus": "După Status",
@@ -255,7 +259,9 @@
   "unexpectedErrorRemovingModerator": "Eroare neașteptată la retragerea rolului de moderator.",
   "user": "Utilizator",
   
+  "moderatorMessage": "Mesaj de la Moderator",
   "checking": "Se verifică...",
+
   "areaManagementTitle": "Gestionare Zone",
   "areaManagementDescription": "Desenează forme pe hartă pentru a defini zone.",
   "rectangle": "Dreptunghi",
@@ -271,6 +277,15 @@
   
   "reportPhoto": "Imagine raport",
   "showPhotoToPublic": "Arată imaginea public",
-  "showPhotoToPublicDescription": "Cei care pot vedea raportul pot vedea și imaginea"
+  "showPhotoToPublicDescription": "Cei care pot vedea raportul pot vedea și imaginea",
   
+  "addArea": "Adaugă zonă",
+  "enterUniqueAreaName": "Introdu un nume unic pentru noua zonă.",
+  "areaName": "Numele zonei",
+  "areaOverlapError": "Zona se suprapune cu o zonă existentă.",
+
+  "openService": "Deschide serviciul"
+
+
+
 }

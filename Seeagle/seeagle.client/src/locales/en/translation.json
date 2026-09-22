@@ -208,8 +208,7 @@
   "errorWhileRejectingReport": "Error while rejecting report.",
   "approve": "Approve",
   "reject": "Reject",
-  "Photo": "Photo",
-  "photo": "Photo",
+"Photo": "Photo",
   "photoPreview": "Photo Preview",
   "remove": "Remove",
   "disable": "Disable",
@@ -229,6 +228,11 @@
   "rejected": "Rejected",
 
   "unexpectedErrorLoadingReports": "Unexpected error while loading reports.",
+
+
+  "assistantOnline": "Online",
+  "assistantOffline": "Offline",
+  "assistantChecking": "Checking...",
 
   "allReportsTitle": "All Reports",
   "allReportsDescription": "Review all reports, except pending ones.",
@@ -254,7 +258,7 @@
 
   "user": "User",
   "moderatorMessage": "Message from Moderator",
-  
+
   "checking": "Checking...",
 
   "areaManagementTitle": "Area Management",
@@ -267,10 +271,17 @@
   "backToHome": "Back to Home",
   
   "exportCsv": "Export CSV",
+
   "confirmDeleteMessage": "Are you really sure you want to delete?",
   "thisReport": "this report",
-  
+
   "reportPhoto": "Report photo",
   "showPhotoToPublic": "Show photo to public",
-  "showPhotoToPublicDescription": "Everyone viewing this report can see the image"
+  "showPhotoToPublicDescription": "Everyone viewing this report can see the image",
+  "addArea": "Add area",
+  "enterUniqueAreaName": "Enter a unique name for the new area.",
+  "areaName": "Area name",
+  "areaOverlapError": "Area overlaps with an existing area.",
+  "openService": "Open service"
+
 }
