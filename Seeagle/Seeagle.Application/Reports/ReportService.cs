@@ -3,6 +3,7 @@ using NetTopologySuite.Geometries;
 using Seeagle.Application.Common;
 using Seeagle.Domain.Reports;
 using Seeagle.Domain.User;
+using Seeagle.Domain.Settings;
 using Microsoft.EntityFrameworkCore;
 using Seeagle.Domain.Areas;
 
@@ -15,6 +16,7 @@ public sealed class ReportService : IReportService
     private readonly IRepository<ReportType> _reportTypeRepository;
     private readonly IRepository<Area> _areaRepository;
     private readonly IRepository<Photo> _photoRepository;
+    private readonly IRepository<SystemSettings> _systemSettingsRepository;
     
     private static readonly int StandardGpsFormat = 4326;
     private static readonly GeometryFactory GeometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: StandardGpsFormat);
@@ -27,6 +29,7 @@ public sealed class ReportService : IReportService
         IRepository<Area> areaRepository,
         IRepository<ReportType> reportTypeRepository,
         IRepository<Photo> photoRepository,
+        IRepository<SystemSettings> systemSettingsRepository,
         IPhotoProcessor photoProcessor)
     {
         _reportRepository = reportRepository;
@@ -34,6 +37,7 @@ public sealed class ReportService : IReportService
         _areaRepository = areaRepository;
         _reportTypeRepository = reportTypeRepository;
         _photoRepository = photoRepository;
+        _systemSettingsRepository = systemSettingsRepository;
         _photoProcessor = photoProcessor;
     }
 
@@ -105,24 +109,26 @@ public sealed class ReportService : IReportService
         var point = GeometryFactory.CreatePoint(new Coordinate(request.Longitude, request.Latitude));
         var report = new Report(point, request.Description, user, reportType);
 
-        var duplicateCandidateStartDate = DateTime.UtcNow.AddHours(-72);
+        var settings = await _systemSettingsRepository.GetAllQueryable().FirstAsync(cancellationToken);
+
+        var duplicateCandidateStartDate = DateTime.UtcNow - settings.DuplicateTimeWindow;
 
         var possibleDuplicates = new List<Report>();
 
         await foreach (var candidate in _reportRepository
-            .GetAllQueryable()
-            .Where(r =>
-                !r.IsDeleted &&
-                r.Type.Id == reportType.Id &&
-                r.CreatedUtc >= duplicateCandidateStartDate)
-            .AsAsyncEnumerable()
-            .WithCancellation(cancellationToken))
+                           .GetAllQueryable()
+                           .Where(r =>
+                               !r.IsDeleted &&
+                               r.Type.Id == reportType.Id &&
+                               r.CreatedUtc >= duplicateCandidateStartDate)
+                           .AsAsyncEnumerable()
+                           .WithCancellation(cancellationToken))
         {
             if (CalculateDistanceInMeters(
                     report.Location.Y,
                     report.Location.X,
                     candidate.Location.Y,
-                    candidate.Location.X) <= 50 &&
+                    candidate.Location.X) <= settings.DuplicateDistanceMeters &&
                 HasSimilarDescription(
                     report.Description,
                     candidate.Description))
