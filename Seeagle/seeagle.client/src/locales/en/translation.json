@@ -208,7 +208,8 @@
   "errorWhileRejectingReport": "Error while rejecting report.",
   "approve": "Approve",
   "reject": "Reject",
-"Photo": "Photo",
+  "Photo": "Photo",
+  "photo": "Photo",
   "photoPreview": "Photo Preview",
   "remove": "Remove",
   "disable": "Disable",
@@ -270,6 +271,9 @@
   
   "exportCsv": "Export CSV",
   "confirmDeleteMessage": "Are you really sure you want to delete?",
-  "thisReport": "this report"
+  "thisReport": "this report",
   
+  "reportPhoto": "Report photo",
+  "showPhotoToPublic": "Show photo to public",
+  "showPhotoToPublicDescription": "Everyone viewing this report can see the image"
 }

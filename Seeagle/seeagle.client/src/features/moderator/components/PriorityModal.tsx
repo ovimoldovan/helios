@@ -116,7 +116,7 @@ export function PriorityModal({isOpen, onClose, onConfirm, report, isLoading,}: 
                         <div className="space-y-3 rounded-xl border p-4">
                             <img
                                 src={`/api/reports/${report.id}/photo`}
-                                alt={t('reportPhoto', 'Report photo')}
+                                alt={t('reportPhoto')}
                                 className="max-h-48 w-full rounded-lg bg-muted/30 object-contain"
                             />
                             <label className="flex cursor-pointer items-start gap-3">
@@ -128,10 +128,10 @@ export function PriorityModal({isOpen, onClose, onConfirm, report, isLoading,}: 
                                 />
                                 <span>
                 <span className="block text-sm font-semibold">
-                    {t('showPhotoToPublic', 'Show photo to public')}
+                    {t('showPhotoToPublic')}
                 </span>
                 <span className="block text-xs text-muted-foreground">
-                    {t('showPhotoToPublicDescription', 'Everyone viewing this report on the map will see the photo.')}
+                    {t('showPhotoToPublicDescription')}
                 </span>
             </span>
                             </label>
