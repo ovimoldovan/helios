@@ -83,10 +83,10 @@ public sealed class ReportsController(
             return NotFound();
         }
 
-        _ = Task.Run(() => mailService.SendEmail(report.User.Email,
+        await mailService.SendEmailAsync(report.User.Email,
             report.User.FirstName + " " + report.User.LastName,
             report.Description ?? "-",
-            report.Status));
+            report.Status);
 
         return Ok(report.Dto());
     }
@@ -105,15 +105,11 @@ public sealed class ReportsController(
             return NotFound();
         }
 
-        _ = Task.Run(() =>
-        {
-            Thread.Sleep(2000);
-            return mailService.SendEmail(report.User.Email,
-                report.User.FirstName + " " + report.User.LastName,
-                report.Description ?? "-",
-                report.Status,
-                message);
-        });
+        await mailService.SendEmailAsync(report.User.Email,
+            report.User.FirstName + " " + report.User.LastName,
+            report.Description ?? "-",
+            report.Status,
+            message);
 
         return Ok(report.Dto());
     }
@@ -147,11 +143,11 @@ public sealed class ReportsController(
             return NotFound();
         }
 
-        _ = Task.Run(() => mailService.SendEmail(report.User.Email,
+        await mailService.SendEmailAsync(report.User.Email,
             report.User.FirstName + " " + report.User.LastName,
             report.Description ?? "-",
             report.Status,
-            message));
+            message);
 
         return Ok(report.Dto());
     }
@@ -169,10 +165,10 @@ public sealed class ReportsController(
         {
             return NotFound();
         }
-        
-        _ = Task.Run(() => mailService.SendEmail(report.User.Email, report.User.FirstName + " " + report.User.LastName,
-                report.Description ?? "-",
-                message));
+
+        await mailService.SendEmailAsync(report.User.Email, report.User.FirstName + " " + report.User.LastName,
+            report.Description ?? "-",
+            message);
         
         return Ok(report.Dto());
     }

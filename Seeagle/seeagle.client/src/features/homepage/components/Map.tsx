@@ -28,6 +28,22 @@ function createColoredIcon(color: string) {
     });
 }
 
+function createRejectedIcon() {
+    return L.divIcon({
+        className: 'custom-marker-rejected',
+        html: `
+            <svg width="28" height="28" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="14" cy="14" r="12" fill="#6b7280" stroke="white" stroke-width="2"/>
+                <line x1="9" y1="9" x2="19" y2="19" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+                <line x1="19" y1="9" x2="9" y2="19" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+        `,
+        iconSize: [28, 28],
+        iconAnchor: [14, 14],
+        popupAnchor: [0, -14],
+    });
+}
+
 interface MapProps {
     onPinPlaced?: (position: [number, number] | null) => void;
     reports?: Report[];
@@ -76,27 +92,38 @@ function SelectedReportFocus({ reports, selectedReportId }: { reports?: Report[]
     return null;
 }
 
+function getMarkerIcon(report: Report) {
+    if (report.status === 'Pending') {
+        return createColoredIcon(getStatusColor('Pending'));
+    }
+    if (report.status === 'Rejected') {
+        return createRejectedIcon();
+    }
+    return createColoredIcon(getPriorityColor(report.priority));
+}
+
 function ReportMarkers({ reports }: { reports?: Report[] }) {
     if (!reports) return null;
 
     return reports.map((report) => {
-        const isPending = report.status === 'Pending';
-        const markerColor = isPending
-            ? getStatusColor('Pending')
-            : getPriorityColor(report.priority);
+        const icon = getMarkerIcon(report);
+        const badgeColor = report.status === 'Rejected'
+            ? '#6b7280'
+            : (report.status === 'Pending' ? getStatusColor('Pending') : getPriorityColor(report.priority));
+
 
         return (
             <Marker
                 key={report.id}
                 position={[report.latitude, report.longitude]}
-                icon={createColoredIcon(markerColor)}
+                icon={icon}
             >
                 <Popup>
                     <div className="space-y-1">
                         <div className="flex items-center gap-2">
                             <span
                                 className="w-3 h-3 rounded-full inline-block"
-                                style={{ backgroundColor: markerColor }}
+                                style={{ backgroundColor: badgeColor }}
                             />
                             <strong>{report.status}</strong>
                         </div>
