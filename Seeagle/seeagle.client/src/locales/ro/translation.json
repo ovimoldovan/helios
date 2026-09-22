@@ -271,6 +271,17 @@
   
   "reportPhoto": "Imagine raport",
   "showPhotoToPublic": "Arată imaginea public",
-  "showPhotoToPublicDescription": "Cei care pot vedea raportul pot vedea și imaginea"
+  "showPhotoToPublicDescription": "Cei care pot vedea raportul pot vedea și imaginea",
+
+  "systemSettingsTitle": "Setări de sistem",
+  "systemSettingsDescription": "Modifică parametrii de detectare dublură",
+  "errorLoadingSettings": "Eroare încărcare setări",
+  "errorSavingSettings": "Eroare salvare setări",
+  "fieldRequired": "Acest câmp este obligatoriu",
+  "distanceRangeError": "Trebuie sa fie între 0 și 1000",
+  "timeWindowRangeError": "Trebuie să fie între 0 și un an (8760 ore)",
+  "settingsSaved": "Setările au fost salvate",
+  "duplicateDistanceLabel": "Rază distanță pentru detectare dubluri",
+  "duplicateTimeWindowLabel": "Interval de timp pentru detectare dubluri"
   
 }

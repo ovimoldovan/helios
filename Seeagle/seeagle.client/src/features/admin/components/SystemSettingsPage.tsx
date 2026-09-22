@@ -35,7 +35,7 @@ export function SystemSettingsPage() {
                 setDistance(String(settings.duplicateDistanceMeters));
                 setTimeWindowHours(String(settings.duplicateTimeWindowHours));
             })
-            .catch(() => setError(t('errorLoadingSettings', 'Could not load system settings.')))
+            .catch(() => setError(t('errorLoadingSettings')))
             .finally(() => setIsLoading(false));
     }, [t]);
 
@@ -44,16 +44,16 @@ export function SystemSettingsPage() {
 
     const distanceError =
         distance === '' || Number.isNaN(distanceValue)
-            ? t('fieldRequired', 'This field is required.')
+            ? t('fieldRequired')
             : distanceValue <= 0 || distanceValue > MAX_DISTANCE_METERS
-                ? t('distanceRangeError', `Must be between 0 and ${MAX_DISTANCE_METERS} meters.`)
+                ? t('distanceRangeError')
                 : null;
 
     const timeWindowError =
         timeWindowHours === '' || Number.isNaN(timeWindowValue)
-            ? t('fieldRequired', 'This field is required.')
+            ? t('fieldRequired')
             : timeWindowValue <= 0 || timeWindowValue > MAX_TIME_WINDOW_HOURS
-                ? t('timeWindowRangeError', `Must be between 0 and ${MAX_TIME_WINDOW_HOURS} hours (1 year).`)
+                ? t('timeWindowRangeError')
                 : null;
 
     const isValid = !distanceError && !timeWindowError;
@@ -72,7 +72,7 @@ export function SystemSettingsPage() {
             });
             setDistance(String(updated.duplicateDistanceMeters));
             setTimeWindowHours(String(updated.duplicateTimeWindowHours));
-            setSuccessMessage(t('settingsSaved', 'Settings saved.'));
+            setSuccessMessage(t('settingsSaved'));
         } catch (err) {
             setError(extractErrorMessage(err, t));
         } finally {
@@ -85,13 +85,10 @@ export function SystemSettingsPage() {
             <Card className="relative z-10 mx-auto max-w-2xl w-full">
                 <CardHeader>
                     <CardTitle className="text-3xl font-bold">
-                        {t('systemSettingsTitle', 'System Settings')}
+                        {t('systemSettingsTitle')}
                     </CardTitle>
                     <CardDescription>
-                        {t(
-                            'systemSettingsDescription',
-                            'Tune the thresholds used to detect duplicate reports.'
-                        )}
+                        {t('systemSettingsDescription')}
                     </CardDescription>
                 </CardHeader>
 
@@ -102,7 +99,7 @@ export function SystemSettingsPage() {
                         <div className="space-y-6">
                             <div className="space-y-2">
                                 <Label htmlFor="distance">
-                                    {t('duplicateDistanceLabel', 'Duplicate distance (meters)')}
+                                    {t('duplicateDistanceLabel')}
                                 </Label>
                                 <Input
                                     id="distance"
@@ -120,7 +117,7 @@ export function SystemSettingsPage() {
 
                             <div className="space-y-2">
                                 <Label htmlFor="timeWindow">
-                                    {t('duplicateTimeWindowLabel', 'Duplicate time window (hours)')}
+                                    {t('duplicateTimeWindowLabel')}
                                 </Label>
                                 <Input
                                     id="timeWindow"
@@ -142,7 +139,7 @@ export function SystemSettingsPage() {
                             )}
 
                             <Button onClick={handleSave} disabled={!isValid || isSaving}>
-                                {isSaving ? t('saving', 'Saving...') : t('save', 'Save')}
+                                {isSaving ? t('saving') : t('save')}
                             </Button>
                         </div>
                     )}
@@ -166,5 +163,5 @@ function extractErrorMessage(err: unknown, t: TFunction): string {
             }
         }
     }
-    return t('errorSavingSettings', 'Could not save settings.');
+    return t('errorSavingSettings');
 }

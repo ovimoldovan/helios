@@ -64,8 +64,8 @@ export function AdminDashboard() {
 
                         <Button className="admin-dashboard-button h-full"
                                 onClick={() => navigate('/admin/system-settings')}>
-                            <span className="text-base font-semibold">{t('systemSettingsTitle', 'System Settings')}</span>
-                            <span className="font-normal">{t('systemSettingsDescription', 'Tune duplicate-detection thresholds')}</span>
+                            <span className="text-base font-semibold">{t('systemSettingsTitle')}</span>
+                            <span className="font-normal">{t('systemSettingsDescription')}</span>
                         </Button>
                     </div>
                     <div className="mx-8 mb-8 flex items-center gap-3 rounded-lg border p-4">

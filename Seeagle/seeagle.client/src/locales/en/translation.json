@@ -31,7 +31,7 @@
   "firstNameTooLong": "First name must be at most {{max}} characters.",
   "lastNameRequired": "Last name is required.",
   "lastNameTooLong": "Last name must be at most {{max}} characters.",
-  
+
   "cookiesPolicyTitle": "Cookies Policy",
   "registeredUsers": "Registered users",
   "loadingUsers": "Loading...",
@@ -108,9 +108,9 @@
   "goHome": "Go to homepage",
   "unexpectedErrorLoadingUsers": "Unexpected error while loading users.",
   "unexpectedErrorAssigningModerator": "Unexpected error while assigning moderator.",
-  
+
   "moderatorDashboard": "Moderator Dashboard",
- 
+
   "moderationQueue": "Moderation Queue",
   "unexpectedError": "Unexpected error while loading reports.",
   "unexpectedErrorApprove": "Unexpected error while approving report.",
@@ -145,7 +145,7 @@
   "noApprovedReports": "No approved reports.",
   "unexpectedErrorLoadingApproved": "Unexpected error while loading approved reports.",
   "unexpectedErrorProcessingAction": "Unexpected error while processing action.",
-  
+
   "languageEn": "EN",
   "languageRo": "RO",
 
@@ -254,7 +254,7 @@
 
   "user": "User",
   "moderatorMessage": "Message from Moderator",
-  
+
   "checking": "Checking...",
 
   "areaManagementTitle": "Area Management",
@@ -265,12 +265,23 @@
   "rename": "Rename",
   "delete": "Delete",
   "backToHome": "Back to Home",
-  
+
   "exportCsv": "Export CSV",
   "confirmDeleteMessage": "Are you really sure you want to delete?",
   "thisReport": "this report",
-  
+
   "reportPhoto": "Report photo",
   "showPhotoToPublic": "Show photo to public",
-  "showPhotoToPublicDescription": "Everyone viewing this report can see the image"
+  "showPhotoToPublicDescription": "Everyone viewing this report can see the image",
+
+  "systemSettingsTitle": "System settings",
+  "systemSettingsDescription": "Tune duplicate detection thresholds",
+  "errorLoadingSettings": "Error while loading settings",
+  "errorSavingSettings": "Error saving settings",
+  "fieldRequired": "This field is required",
+  "distanceRangeError": "Must be between 0 and 1000 meters",
+  "timeWindowRangeError": "Must be between 0 and 1 year (8760 hours)",
+  "settingsSaved": "Settings saved",
+  "duplicateDistanceLabel": "Duplicate distance range",
+  "duplicateTimeWindowLabel": "Duplicate time window"
 }
