@@ -293,7 +293,7 @@
   "timeWindowRangeError": "Trebuie să fie între 0 și un an (8760 ore)",
   "settingsSaved": "Setările au fost salvate",
   "duplicateDistanceLabel": "Rază distanță pentru detectare dubluri",
-  "duplicateTimeWindowLabel": "Interval de timp pentru detectare dubluri"
+  "duplicateTimeWindowLabel": "Interval de timp pentru detectare dubluri",
   
   "addArea": "Adaugă zonă",
   "enterUniqueAreaName": "Introdu un nume unic pentru noua zonă.",
