@@ -5,6 +5,7 @@ import { getJson, postJson, putJsonWithBody, deleteJson } from '@/shared/api/htt
 import type { Area, CreateAreaRequest, CreateAreaResponse } from '../types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useTranslation } from 'react-i18next';
 import {
     Dialog,
     DialogContent,
@@ -22,6 +23,7 @@ export function AdminAreasPage() {
     const [isNameModalOpen, setIsNameModalOpen] = useState(false);
     const [createError, setCreateError] = useState<string | null>(null);
     const [drawError, setDrawError] = useState<string | null>(null);
+    const { t } = useTranslation();
 
     useEffect(() => {
         const loadAreas = async () => {
@@ -168,9 +170,9 @@ export function AdminAreasPage() {
             >
                 <DialogContent className="z-[10000]">
                     <DialogHeader>
-                        <DialogTitle>Add area</DialogTitle>
+                        <DialogTitle>{t('addArea')}</DialogTitle>
                         <DialogDescription>
-                            Enter a unique name for the new area.
+                            {t('enterUniqueAreaName')}
                         </DialogDescription>
                     </DialogHeader>
 
@@ -180,7 +182,7 @@ export function AdminAreasPage() {
                             setAreaName(event.target.value);
                             setCreateError(null);
                         }}
-                        placeholder="Area name"
+                        placeholder={t('areaName')}
                         maxLength={30}
                         autoFocus
                     />
@@ -196,7 +198,7 @@ export function AdminAreasPage() {
                             variant="outline"
                             onClick={() => {setIsNameModalOpen(false);setPendingCoordinates(null);setAreaName('');setCreateError(null);}}
                         >
-                            Cancel
+                            {t('cancel')}
                         </Button>
 
                         <Button
@@ -206,7 +208,7 @@ export function AdminAreasPage() {
                                 areaName.trim().length > 30
                             }
                         >
-                            Save
+                            {t('save')}
                         </Button>
                     </DialogFooter>
                 </DialogContent>

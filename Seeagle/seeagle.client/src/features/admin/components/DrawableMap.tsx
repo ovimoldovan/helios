@@ -4,6 +4,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
 import 'leaflet-draw';
+import { useTranslation } from 'react-i18next';
 import type { Area } from '../types';
 
 const FILL_OPACITY = 0.15;
@@ -52,6 +53,7 @@ function DrawControls({ areas, onAreaCreated, drawMode, onDrawComplete, onDrawEr
     const drawControlRef = useRef<L.Control.Draw | null>(null);
     const areasRef = useRef(areas);
     const onDrawErrorRef = useRef(onDrawError);
+    const { t } = useTranslation();
 
     useEffect(() => {
         areasRef.current = areas;
@@ -133,7 +135,7 @@ function DrawControls({ areas, onAreaCreated, drawMode, onDrawComplete, onDrawEr
             });
 
             if (overlapsExistingArea) {
-                onDrawErrorRef.current?.('Area overlaps with an existing area.');
+                onDrawErrorRef.current?.(t('areaOverlapError'));
                 onDrawComplete();
                 return;
             }
@@ -152,7 +154,7 @@ function DrawControls({ areas, onAreaCreated, drawMode, onDrawComplete, onDrawEr
             map.removeLayer(featureGroup);
             drawControlRef.current = null;
         };
-    }, [map, onAreaCreated, onDrawComplete]);
+    }, [map, onAreaCreated, onDrawComplete, t]);
 
     useEffect(() => {
         const control = drawControlRef.current;

@@ -266,6 +266,11 @@
   "delete": "Șterge",
   "backToHome": "Înapoi acasă",
   
-  "exportCsv": "Exportă CSV"
+  "exportCsv": "Exportă CSV",
+
+  "addArea": "Adaugă zonă",
+  "enterUniqueAreaName": "Introdu un nume unic pentru noua zonă.",
+  "areaName": "Numele zonei",
+  "areaOverlapError": "Zona se suprapune cu o zonă existentă."
   
 }
