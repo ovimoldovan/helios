@@ -208,6 +208,7 @@
   "reject": "Respinge",
   "edit": "Editează",
   "Photo": "Imagine",
+  "photo": "Imagine",
   "photoPreview": "Previzualizare imagine",
   "remove": "Șterge",
   "disable": "Dezactivează",
@@ -266,6 +267,10 @@
   
   "exportCsv": "Exportă CSV",
   "confirmDeleteMessage": "Ești sigur că vrei să ștergi?",
-  "thisReport": "acest raport"
+  "thisReport": "acest raport",
+  
+  "reportPhoto": "Imagine raport",
+  "showPhotoToPublic": "Arată imaginea public",
+  "showPhotoToPublicDescription": "Cei care pot vedea raportul pot vedea și imaginea"
   
 }
