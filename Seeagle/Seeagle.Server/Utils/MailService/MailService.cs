@@ -6,7 +6,7 @@ namespace Seeagle.Server.Utils.MailService;
 
 public class MailService(IConnection connection) : IMailService
 {
-    public async Task SendEmailAsync(string to, string recipientName, string reportDescription, string moderatorMessage)
+    public async Task SendEmailReportUpdateAsync(string to, string recipientName, string reportDescription, string moderatorMessage)
     {
         await using var channel = await connection.CreateChannelAsync();
         await DeclareExchangeAsync(channel);
@@ -22,7 +22,7 @@ public class MailService(IConnection connection) : IMailService
         await PublishAsync(channel, body, messageKind: "ReportMessage");
     }
 
-    public async Task SendEmailAsync(string to, string recipientName, string reportDescription, ReportStatus newStatus)
+    public async Task SendEmailReportUpdateAsync(string to, string recipientName, string reportDescription, ReportStatus newStatus)
     {
         await using var channel = await connection.CreateChannelAsync();
         await DeclareExchangeAsync(channel);
@@ -39,7 +39,7 @@ public class MailService(IConnection connection) : IMailService
         await PublishAsync(channel, body, messageKind: "ReportUpdate");
     }
 
-    public async Task SendEmailAsync(string to, string recipientName, string reportDescription, ReportStatus newStatus,
+    public async Task SendEmailReportUpdateAsync(string to, string recipientName, string reportDescription, ReportStatus newStatus,
         string? moderatorMessage)
     {
         await using var channel = await connection.CreateChannelAsync();
@@ -68,7 +68,22 @@ public class MailService(IConnection connection) : IMailService
         var kind = moderatorMessage != null ? "ReportUpdateWithModeratorMessage" : "ReportUpdate";
         await PublishAsync(channel, body, messageKind: kind);
     }
-    
+
+    public async Task SendEmailConfirmationAsync(string to, string url)
+    {
+        await using var channel = await connection.CreateChannelAsync();
+        await DeclareExchangeAsync(channel);
+        await DeclareQueueAsync(channel);
+
+        var variables = new Dictionary<string, object>
+        {
+            { "ConfirmationUrl", url }
+        };
+        var mail = new EmailMessage(to, variables);
+        var body = JsonSerializer.SerializeToUtf8Bytes(mail);
+        await PublishAsync(channel, body, messageKind: "EmailConfirmation");
+    }
+
     private async Task DeclareExchangeAsync(IChannel channel)
     {
         await channel.ExchangeDeclareAsync(

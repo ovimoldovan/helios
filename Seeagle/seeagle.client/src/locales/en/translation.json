@@ -274,6 +274,12 @@
 
   "confirmDeleteMessage": "Are you really sure you want to delete?",
   "thisReport": "this report",
+  "unauthenticatedToastTitle": "Unauthenticated",
+  "unauthenticatedToastDescription": "Log in to access this page",
+  "emailConfirmationNeededToastTitle" : "E-Mail confirmation needed",
+  "emailConfirmationNeededToastDescription": "Check your inbox",
+  "emailNotConfirmed": "E-Mail not confirmed",
+  
 
   "reportPhoto": "Report photo",
   "showPhotoToPublic": "Show photo to public",
@@ -282,6 +288,7 @@
   "enterUniqueAreaName": "Enter a unique name for the new area.",
   "areaName": "Area name",
   "areaOverlapError": "Area overlaps with an existing area.",
-  "openService": "Open service"
-
+  "openService": "Open service",
+  "emailConfirmationFailedToastTitle": "E-Mail confirmation failed",
+  "emailConfirmationFailedToastDescription": "Invalid E-mail confirmation link"
 }

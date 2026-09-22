@@ -274,6 +274,11 @@
   "exportCsv": "Exportă CSV",
   "confirmDeleteMessage": "Ești sigur că vrei să ștergi?",
   "thisReport": "acest raport",
+  "unauthenticatedToastTitle": "Neautentificat",
+  "unauthenticatedToastDescription": "Autentifică-te pentru a accesa această pagină",
+  "emailConfirmationNeededToastTitle" : "Confirmare pe E-Mail necesară",
+  "emailConfirmationNeededToastDescription": "Verifică-ți căsuța",
+  "emailNotConfirmed": "E-Mail neconfirmat",
   
   "reportPhoto": "Imagine raport",
   "showPhotoToPublic": "Arată imaginea public",
@@ -284,8 +289,7 @@
   "areaName": "Numele zonei",
   "areaOverlapError": "Zona se suprapune cu o zonă existentă.",
 
-  "openService": "Deschide serviciul"
-
-
-
+  "openService": "Deschide serviciul",
+  "emailConfirmationFailedToastTitle": "Confrimarea E-Mail-ului a eșuat",
+  "emailConfirmationFailedToastDescription": "Link-ul de confrimare a E-Mail-ului nu este valid"
 }
