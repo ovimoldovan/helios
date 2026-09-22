@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 
 const MAX_DISTANCE_METERS = 1000;
 const MAX_TIME_WINDOW_HOURS = 365 * 24;
@@ -151,7 +152,7 @@ export function SystemSettingsPage() {
     );
 }
 
-function extractErrorMessage(err: unknown, t: (key: string, fallback?: string) => string): string {
+function extractErrorMessage(err: unknown, t: TFunction): string {
     if (err && typeof err === 'object') {
         const asAny = err as any;
         if (typeof asAny.message === 'string') {
