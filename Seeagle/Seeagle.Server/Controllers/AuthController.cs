@@ -7,6 +7,7 @@ using System.Security.Claims;
 using Seeagle.Application.Users;
 using Seeagle.Server.Utils.JWT;
 using Seeagle.Server.Utils.Cookies;
+using Seeagle.Server.Utils.EmailConfirmationToken;
 using Seeagle.Server.Utils.MailService;
 
 namespace Seeagle.Server.Controllers;
@@ -20,8 +21,10 @@ public sealed class AuthController : ControllerBase
     private readonly CookieSettings _cookieSettings;
     private readonly IMemoryCache _tokenBlacklist;
     private readonly IRefreshTokenService _refreshTokenService;
+    private readonly EmailConfirmationTokenOptions _emailConfirmationTokenOptions;
     private readonly IEmailConfirmationTokenService _emailConfirmationTokenService;
     private readonly IMailService _mailService;
+    private string _frontendUrl;
 
     public AuthController(
         IUserService userService, 
@@ -29,17 +32,20 @@ public sealed class AuthController : ControllerBase
         IOptions<CookieSettings> cookieSettings, 
         IMemoryCache tokenBlacklist, 
         IRefreshTokenService refreshTokenService,
+        IOptions<EmailConfirmationTokenOptions> emailConfirmationTokenOptions,
         IEmailConfirmationTokenService emailConfirmationTokenService,
-        IMailService mailService
-        )
+        IMailService mailService, 
+        IConfiguration configuration)
     {
         _userService = userService;
         _jwtUtil = jwtUtil;
         _cookieSettings = cookieSettings.Value;
         _tokenBlacklist = tokenBlacklist;
         _refreshTokenService = refreshTokenService;
+        _emailConfirmationTokenOptions = emailConfirmationTokenOptions.Value;
         _emailConfirmationTokenService = emailConfirmationTokenService;
         _mailService = mailService;
+        _frontendUrl = configuration["FrontendBaseUrl"] ?? "";
     }
 
     [HttpPost("register")]
@@ -48,6 +54,11 @@ public sealed class AuthController : ControllerBase
         try
         {
             var created = await _userService.RegisterUserAsync(request, cancellationToken);
+            var emailConfirmationToken = await _emailConfirmationTokenService.CreateAsync(created,
+                    _emailConfirmationTokenOptions.ExpiryInDays,
+                    cancellationToken);
+            var url = $"{_frontendUrl}/confirm-email?user={created.Id}&token={emailConfirmationToken.Token}";
+            await _mailService.SendEmailConfirmationAsync(created.Email, url);
             return Created($"/api/users/{created.Id}", created.Dto());
         }
         catch (InvalidOperationException ex)
@@ -63,6 +74,10 @@ public sealed class AuthController : ControllerBase
         
         if (user is null)
             return Unauthorized(new { message = "Invalid email or password" });
+
+        var emailConfirmationToken = await _emailConfirmationTokenService.FindByUserIdAsync(user);
+        if (emailConfirmationToken == null || !emailConfirmationToken.Used)
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = "Please confirm your email before logging in." });        
         
         var authToken = _jwtUtil.GenerateToken(user);
         var refreshToken = await _refreshTokenService.CreateAsync(user, _cookieSettings.RefreshTokenExpiryTimeSpanInDays, cancellationToken);
@@ -224,4 +239,19 @@ public sealed class AuthController : ControllerBase
         return Ok();
     }
     
+    [HttpPost("confirm-email")]
+    public async Task<IActionResult> ConfirmEmailAsync(ConfirmEmailDto confirmEmailDto, CancellationToken cancellationToken)
+    {
+        var user = await _userService.GetByIdAsync(confirmEmailDto.UserId);
+
+        if (user == null)
+            return NotFound(new { message = "Invalid confirmation link" });
+        
+        bool success = await _emailConfirmationTokenService.ConfirmAsync(user, confirmEmailDto.Token, cancellationToken);
+
+        if (!success)
+            return BadRequest(new { message = "Email confirmation failed" });
+
+        return Ok();
+    }
 }

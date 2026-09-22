@@ -19,12 +19,15 @@ import { MyReports } from '@/features/reports/components/MyReports';
 import { PublicReports } from '@/features/reports/components/PublicReports'; 
 import { AdminAreasPage } from './features/admin/components/AdminAreasPage';
 import { AppLayout } from '@/shared/layout/AppLayout';
-import { ReportManagement } from "@/features/moderator/components/ReportManagemnt.tsx"; 
+import { ReportManagement } from "@/features/moderator/components/ReportManagemnt.tsx";
+import {ConfirmEmailPage} from "@/features/registration/components/ConfirmEmailPage.tsx"; 
 
 function App() {
     return (
         <AuthProvider>
             <Routes>
+                <Route path="/confirm-email" element={<ConfirmEmailPage />}/>
+                
                 <Route path="/" element={<Homepage />} />
 
                 <Route element={<AppLayout />}>

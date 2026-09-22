@@ -14,10 +14,11 @@ import {
     FieldLabel,
 } from "@/components/ui/field"
 import {Input} from "@/components/ui/input"
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {registerUser} from "@/features/registration/api/registrationApi.ts";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import { useTranslation } from 'react-i18next';
+import {toast} from "@/components/ui/toast.tsx";
 
 interface RegisterFormErrors {
     email?: string;
@@ -43,6 +44,25 @@ export function RegisterForm({
 
     const navigate = useNavigate();
     const { t } = useTranslation();
+    
+    const location = useLocation();
+
+    const state = location.state as {
+        from?: string;
+        title?: string;
+        description?: string;
+    } | null;
+
+    useEffect(() => {
+        if (state?.title && state?.description) {
+            toast.add({
+                id: 'email-confirm-failed',
+                title: state.title,
+                description: state.description,
+                type: "error"
+            });
+        }
+    }, [state]);
 
     function validateForm(): RegisterFormErrors {
         const validationErrors: RegisterFormErrors = {};

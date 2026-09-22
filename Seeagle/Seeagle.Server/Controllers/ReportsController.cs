@@ -82,7 +82,7 @@ public sealed class ReportsController(
             return NotFound();
         }
 
-        await mailService.SendEmailAsync(report.User.Email,
+        await mailService.SendEmailReportUpdateAsync(report.User.Email,
             report.User.FirstName + " " + report.User.LastName,
             report.Description ?? "-",
             report.Status);
@@ -104,7 +104,7 @@ public sealed class ReportsController(
             return NotFound();
         }
 
-        await mailService.SendEmailAsync(report.User.Email,
+        await mailService.SendEmailReportUpdateAsync(report.User.Email,
             report.User.FirstName + " " + report.User.LastName,
             report.Description ?? "-",
             report.Status,
@@ -142,7 +142,7 @@ public sealed class ReportsController(
             return NotFound();
         }
 
-        await mailService.SendEmailAsync(report.User.Email,
+        await mailService.SendEmailReportUpdateAsync(report.User.Email,
             report.User.FirstName + " " + report.User.LastName,
             report.Description ?? "-",
             report.Status,
@@ -165,7 +165,7 @@ public sealed class ReportsController(
             return NotFound();
         }
 
-        await mailService.SendEmailAsync(report.User.Email, report.User.FirstName + " " + report.User.LastName,
+        await mailService.SendEmailReportUpdateAsync(report.User.Email, report.User.FirstName + " " + report.User.LastName,
             report.Description ?? "-",
             message);
         
