@@ -42,6 +42,7 @@ public class EmailMessageConsumer(IServiceScopeFactory serviceScopeFactory, ICon
                     "ReportMessage" => resendSettings.ReportMessageTemplateId,
                     "ReportUpdate" => resendSettings.ReportUpdateTemplateId,
                     "ReportUpdateWithModeratorMessage" => resendSettings.ReportUpdateWithModeratorMessageTemplateId,
+                    "EmailConfirmation" => resendSettings.EmailConfirmationTemplateId,
                     _ => null
                 };
 

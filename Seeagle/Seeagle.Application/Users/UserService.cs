@@ -14,7 +14,7 @@ public class UserService : IUserService
         _userRepository = userRepository;
     }
 
-    public async Task<UserDto> RegisterUserAsync(RegisterUserRequest request, CancellationToken cancellationToken)
+    public async Task<User> RegisterUserAsync(RegisterUserRequest request, CancellationToken cancellationToken)
     {
         var normalizedEmail = request.Email.ToLowerInvariant().Trim();
         var emailExists = await _userRepository.GetAllQueryable()
@@ -30,7 +30,7 @@ public class UserService : IUserService
 
         var user = new User(normalizedEmail, hashedPassword, request.FirstName.Trim(), request.LastName.Trim());
         await _userRepository.AddAsync(user, cancellationToken);
-        return ConvertToDto(user);
+        return user;
     }
 
     public async Task<User?> ValidateCredentialsAsync(LoginUserRequest request, CancellationToken cancellationToken)

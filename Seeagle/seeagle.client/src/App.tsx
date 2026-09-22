@@ -21,11 +21,14 @@ import { AdminAreasPage } from './features/admin/components/AdminAreasPage';
 import { AppLayout } from '@/shared/layout/AppLayout';
 import { ReportManagement } from "@/features/moderator/components/ReportManagemnt.tsx";
 import { SystemSettingsPage } from '@/features/admin/components/SystemSettingsPage.tsx';
+import {ConfirmEmailPage} from "@/features/registration/components/ConfirmEmailPage.tsx"; 
 
 function App() {
     return (
         <AuthProvider>
             <Routes>
+                <Route path="/confirm-email" element={<ConfirmEmailPage />}/>
+                
                 <Route path="/" element={<Homepage />} />
 
                 <Route element={<AppLayout />}>

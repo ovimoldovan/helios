@@ -208,8 +208,7 @@
   "errorWhileRejectingReport": "Error while rejecting report.",
   "approve": "Approve",
   "reject": "Reject",
-  "Photo": "Photo",
-  "photo": "Photo",
+"Photo": "Photo",
   "photoPreview": "Photo Preview",
   "remove": "Remove",
   "disable": "Disable",
@@ -229,6 +228,11 @@
   "rejected": "Rejected",
 
   "unexpectedErrorLoadingReports": "Unexpected error while loading reports.",
+
+
+  "assistantOnline": "Online",
+  "assistantOffline": "Offline",
+  "assistantChecking": "Checking...",
 
   "allReportsTitle": "All Reports",
   "allReportsDescription": "Review all reports, except pending ones.",
@@ -267,8 +271,15 @@
   "backToHome": "Back to Home",
 
   "exportCsv": "Export CSV",
+
   "confirmDeleteMessage": "Are you really sure you want to delete?",
   "thisReport": "this report",
+  "unauthenticatedToastTitle": "Unauthenticated",
+  "unauthenticatedToastDescription": "Log in to access this page",
+  "emailConfirmationNeededToastTitle" : "E-Mail confirmation needed",
+  "emailConfirmationNeededToastDescription": "Check your inbox",
+  "emailNotConfirmed": "E-Mail not confirmed",
+  
 
   "reportPhoto": "Report photo",
   "showPhotoToPublic": "Show photo to public",
@@ -284,4 +295,11 @@
   "settingsSaved": "Settings saved",
   "duplicateDistanceLabel": "Duplicate distance range",
   "duplicateTimeWindowLabel": "Duplicate time window"
+  "addArea": "Add area",
+  "enterUniqueAreaName": "Enter a unique name for the new area.",
+  "areaName": "Area name",
+  "areaOverlapError": "Area overlaps with an existing area.",
+  "openService": "Open service",
+  "emailConfirmationFailedToastTitle": "E-Mail confirmation failed",
+  "emailConfirmationFailedToastDescription": "Invalid E-mail confirmation link"
 }
