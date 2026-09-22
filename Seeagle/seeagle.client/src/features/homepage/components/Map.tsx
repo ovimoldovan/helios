@@ -141,6 +141,14 @@ function ReportMarkers({ reports }: { reports?: Report[] }) {
                         <small className="block text-xs text-gray-500">
                             {new Date(report.createdUtc).toLocaleString()}
                         </small>
+                        {report.hasPhoto && report.showPhotoToPublic && (
+                            <img
+                                src={`/api/reports/${report.id}/photo`}
+                                alt=""
+                                loading="lazy"
+                                className="mt-2 h-32 w-48 rounded object-cover"
+                            />
+                        )}
                     </div>
                 </Popup>
             </Marker>

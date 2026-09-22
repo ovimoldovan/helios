@@ -73,9 +73,10 @@ public sealed class ReportsController(
     public async Task<ActionResult<ReportDto>> Approve(
         Guid id,
         [FromQuery] string priority = "low",
+        [FromQuery] bool showPhotoToPublic = false,
         CancellationToken cancellationToken = default)
     {
-        var report = await reportService.ApproveAsync(id, priority, cancellationToken);
+        var report = await reportService.ApproveAsync(id, priority, showPhotoToPublic, cancellationToken);
 
         if (report is null)
         {
@@ -223,12 +224,12 @@ public sealed class ReportsController(
     [HttpGet("{reportId}/photo")]
     public async Task<IActionResult> GetPhoto(Guid reportId, CancellationToken cancellationToken)
     {
-        var isModerator = User.IsInRole("Moderator");
+        var isModerator = User.IsInRole("Moderator") || User.IsInRole("Admin");
         var photo = await reportService.GetPhotoAsync(reportId, isModerator, cancellationToken);
 
         if (photo is null)
             return NotFound();
-
+        
         return File(photo.Data, photo.ContentType);
     }
 

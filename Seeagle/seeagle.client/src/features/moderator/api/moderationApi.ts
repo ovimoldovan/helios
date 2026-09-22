@@ -15,6 +15,8 @@ export interface ModerationReport {
     aiProbabilityScore: number | null;
     duplicateCandidateIds?: string[];
     duplicateCandidates?: DuplicateCandidate[];
+    hasPhoto: boolean;
+    showPhotoToPublic: boolean;
 }
 
 export interface DuplicateCandidate {
@@ -37,9 +39,13 @@ export async function getPendingReports(
     );
 }
 
-export async function approveReport( id: string, priority: string): Promise<ModerationReport> {
+export async function approveReport(
+    id: string,
+    priority: string,
+    showPhotoToPublic = false
+): Promise<ModerationReport> {
     return putJson<ModerationReport>(
-        `/api/reports/${id}/approve?priority=${priority}`
+        `/api/reports/${id}/approve?priority=${priority}&showPhotoToPublic=${showPhotoToPublic}`
     );
 }
 
@@ -92,6 +98,7 @@ export async function deleteReport(id: string): Promise<void> {
 export interface UpdateReportRequest {
     description?: string | null;
     priority?: string;
+    showPhotoToPublic?: boolean;
 }
 export async function getAllReports(
     pageNumber: number,

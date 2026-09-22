@@ -361,7 +361,7 @@ public sealed class ReportServiceTests
         var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, Substitute.For<IRepository<Photo>>(), photoProcessor);
 
         // Act
-        var result = await service.ApproveAsync(report.Id, "medium", CancellationToken.None);
+        var result = await service.ApproveAsync(report.Id, "medium", false, CancellationToken.None);
 
         // Assert
         Assert.NotNull(result);
@@ -403,7 +403,7 @@ public sealed class ReportServiceTests
         var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, Substitute.For<IRepository<Photo>>(), photoProcessor);
 
         // Act
-        var result = await service.ApproveAsync(report.Id, "unknown", CancellationToken.None);
+        var result = await service.ApproveAsync(report.Id, "unknown", false, CancellationToken.None);
 
         // Assert
         Assert.NotNull(result);
@@ -705,7 +705,7 @@ public sealed class ReportServiceTests
         var service = new ReportService(reportRepository, userRepository, areaRepository, reportTypeRepository, Substitute.For<IRepository<Photo>>(), photoProcessor);
 
         // Act
-        var result = await service.ApproveAsync(Guid.NewGuid(), "medium", CancellationToken.None);
+        var result = await service.ApproveAsync(Guid.NewGuid(), "medium", false, CancellationToken.None);
 
         // Assert
         Assert.Null(result);
