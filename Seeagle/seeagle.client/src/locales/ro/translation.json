@@ -277,7 +277,7 @@
   "addArea": "Adaugă zonă",
   "enterUniqueAreaName": "Introdu un nume unic pentru noua zonă.",
   "areaName": "Numele zonei",
-  "areaOverlapError": "Zona se suprapune cu o zonă existentă."
+  "areaOverlapError": "Zona se suprapune cu o zonă existentă.",
 
-
+  "openService": "Deschide serviciul"
 }

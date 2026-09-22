@@ -277,6 +277,7 @@
   "addArea": "Add area",
   "enterUniqueAreaName": "Enter a unique name for the new area.",
   "areaName": "Area name",
-  "areaOverlapError": "Area overlaps with an existing area."
+  "areaOverlapError": "Area overlaps with an existing area.",
 
+  "openService": "Open service"
 }
