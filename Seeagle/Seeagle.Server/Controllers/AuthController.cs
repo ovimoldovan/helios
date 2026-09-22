@@ -7,6 +7,7 @@ using System.Security.Claims;
 using Seeagle.Application.Users;
 using Seeagle.Server.Utils.JWT;
 using Seeagle.Server.Utils.Cookies;
+using Seeagle.Server.Utils.MailService;
 
 namespace Seeagle.Server.Controllers;
 
@@ -19,19 +20,26 @@ public sealed class AuthController : ControllerBase
     private readonly CookieSettings _cookieSettings;
     private readonly IMemoryCache _tokenBlacklist;
     private readonly IRefreshTokenService _refreshTokenService;
+    private readonly IEmailConfirmationTokenService _emailConfirmationTokenService;
+    private readonly IMailService _mailService;
 
     public AuthController(
         IUserService userService, 
         IJwtUtil jwtUtil,
         IOptions<CookieSettings> cookieSettings, 
         IMemoryCache tokenBlacklist, 
-        IRefreshTokenService refreshTokenService)
+        IRefreshTokenService refreshTokenService,
+        IEmailConfirmationTokenService emailConfirmationTokenService,
+        IMailService mailService
+        )
     {
         _userService = userService;
         _jwtUtil = jwtUtil;
         _cookieSettings = cookieSettings.Value;
         _tokenBlacklist = tokenBlacklist;
         _refreshTokenService = refreshTokenService;
+        _emailConfirmationTokenService = emailConfirmationTokenService;
+        _mailService = mailService;
     }
 
     [HttpPost("register")]
@@ -40,7 +48,7 @@ public sealed class AuthController : ControllerBase
         try
         {
             var created = await _userService.RegisterUserAsync(request, cancellationToken);
-            return Created($"/api/users/{created.Id}", created);
+            return Created($"/api/users/{created.Id}", created.Dto());
         }
         catch (InvalidOperationException ex)
         {
