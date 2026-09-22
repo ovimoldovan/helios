@@ -229,8 +229,7 @@ public sealed class ReportsController(
 
         if (photo is null)
             return NotFound();
-
-        Response.Headers.CacheControl = "private, no-store";
+        
         return File(photo.Data, photo.ContentType);
     }
 
