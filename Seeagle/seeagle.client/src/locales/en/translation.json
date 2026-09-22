@@ -271,5 +271,6 @@
   "unauthenticatedToastTitle": "Unauthenticated",
   "unauthenticatedToastDescription": "Log in to access this page",
   "emailConfirmationNeededToastTitle" : "E-Mail confirmation needed",
-  "emailConfirmationNeededToastDescription": "Check your inbox"
+  "emailConfirmationNeededToastDescription": "Check your inbox",
+  "emailNotConfirmed": "E-Mail not confirmed"
 }

@@ -270,5 +270,6 @@
   "unauthenticatedToastTitle": "Neautentificat",
   "unauthenticatedToastDescription": "Autentifică-te pentru a accesa această pagină",
   "emailConfirmationNeededToastTitle" : "Confirmare pe E-Mail necesară",
-  "emailConfirmationNeededToastDescription": "Verifică-ți căsuța"
+  "emailConfirmationNeededToastDescription": "Verifică-ți căsuța",
+  "emailNotConfirmed": "E-Mail neconfirmat"
 }
