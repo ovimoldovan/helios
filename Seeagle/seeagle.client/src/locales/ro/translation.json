@@ -289,8 +289,7 @@
   "areaName": "Numele zonei",
   "areaOverlapError": "Zona se suprapune cu o zonă existentă.",
 
-  "openService": "Deschide serviciul"
-
-
-
+  "openService": "Deschide serviciul",
+  "emailConfirmationFailedToastTitle": "Confrimarea E-Mail-ului a eșuat",
+  "emailConfirmationFailedToastDescription": "Link-ul de confrimare a E-Mail-ului nu este valid"
 }

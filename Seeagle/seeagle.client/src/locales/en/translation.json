@@ -288,6 +288,7 @@
   "enterUniqueAreaName": "Enter a unique name for the new area.",
   "areaName": "Area name",
   "areaOverlapError": "Area overlaps with an existing area.",
-  "openService": "Open service"
-
+  "openService": "Open service",
+  "emailConfirmationFailedToastTitle": "E-Mail confirmation failed",
+  "emailConfirmationFailedToastDescription": "Invalid E-mail confirmation link"
 }
