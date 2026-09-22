@@ -39,7 +39,7 @@ public sealed class AuthController : ControllerBase
         IEmailConfirmationTokenService emailConfirmationTokenService,
         IMailService mailService, 
         IConfiguration configuration, 
-        ResetPasswordTokenOptions resetPasswordTokenOptions,
+        IOptions<ResetPasswordTokenOptions> resetPasswordTokenOptions,
         IResetPasswordTokenService resetPasswordTokenService)
     {
         _userService = userService;
@@ -51,7 +51,7 @@ public sealed class AuthController : ControllerBase
         _emailConfirmationTokenService = emailConfirmationTokenService;
         _mailService = mailService;
         _frontendUrl = configuration["FrontendBaseUrl"] ?? "";
-        _resetPasswordTokenOptions = resetPasswordTokenOptions;
+        _resetPasswordTokenOptions = resetPasswordTokenOptions.Value;
         _resetPasswordTokenService = resetPasswordTokenService;
     }
 
