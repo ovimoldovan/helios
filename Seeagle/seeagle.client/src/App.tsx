@@ -19,7 +19,8 @@ import { MyReports } from '@/features/reports/components/MyReports';
 import { PublicReports } from '@/features/reports/components/PublicReports'; 
 import { AdminAreasPage } from './features/admin/components/AdminAreasPage';
 import { AppLayout } from '@/shared/layout/AppLayout';
-import { ReportManagement } from "@/features/moderator/components/ReportManagemnt.tsx"; 
+import { ReportManagement } from "@/features/moderator/components/ReportManagemnt.tsx";
+import { SystemSettingsPage } from '@/features/admin/components/SystemSettingsPage.tsx';
 
 function App() {
     return (
@@ -82,6 +83,13 @@ function App() {
                             path="/admin/areas"
                             element={
                                 <AdminAreasPage />
+                            }
+                        />
+
+                        <Route
+                            path="/admin/system-settings"
+                            element={
+                                <SystemSettingsPage />
                             }
                         />
                     </Route>
