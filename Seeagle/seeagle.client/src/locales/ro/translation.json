@@ -271,11 +271,18 @@
   "unauthenticatedToastTitle": "Neautentificat",
   "unauthenticatedToastDescription": "Autentifică-te pentru a accesa această pagină",
   "emailConfirmationNeededToastTitle" : "Confirmare pe E-Mail necesară",
-  "emailConfirmationNeededToastDescription": "Verifică-ți căsuța",
+  "emailConfirmationNeededToastDescription": "Verifică căsuța",
   "emailNotConfirmed": "E-Mail neconfirmat",
   
   "reportPhoto": "Imagine raport",
   "showPhotoToPublic": "Arată imaginea public",
-  "showPhotoToPublicDescription": "Cei care pot vedea raportul pot vedea și imaginea"
-  
+  "showPhotoToPublicDescription": "Cei care pot vedea raportul pot vedea și imaginea",
+  "reset": "Resetează",
+  "forgotYourPassword": "Ți-ai uitat parola?",
+  "resetPasswordTitle": "Resetează parola",
+  "resetPasswordDescription": "Introdu adresa de E-Mail",
+  "resetPasswordSentDescription": "Dacă există un cont înregistrat pentru adresa introdusă, un link pentru resetare s-a trimis",
+  "resetFailed": "Ceva nu a mers bine, vă rugăm să reîncercați",
+  "backToLogin": "Înapoi la autentificare",
+  "sending": "Se trimite..."
 }

@@ -277,5 +277,13 @@
   
   "reportPhoto": "Report photo",
   "showPhotoToPublic": "Show photo to public",
-  "showPhotoToPublicDescription": "Everyone viewing this report can see the image"
+  "showPhotoToPublicDescription": "Everyone viewing this report can see the image",
+  "reset": "Reset",
+  "forgotYourPassword": "Forgot your password?",
+  "resetPasswordTitle": "Reset password",
+  "resetPasswordDescription": "Enter your E-Mail",
+  "resetPasswordSentDescription": "If an account exists for that E-Mail, a reset link has been sent.",
+  "resetFailed": "Something went wrong. Please try again.",
+  "backToLogin": "Back to login",
+  "sending": "Sending..."
 }
