@@ -63,11 +63,11 @@ export function AdminDashboard() {
                         </Button>
                     </div>
                         <div className="mx-8 mb-8 flex items-center gap-3 rounded-lg border p-4">
-    <span
-        className={`inline-block h-3 w-3 rounded-full ${
-            assistantStatus === AssistantStatus.Online ? 'bg-green-500' : assistantStatus === AssistantStatus.Offline ? 'bg-red-500' : 'bg-gray-400'
-        }`}
-    />
+                            <span
+                                className={`inline-block h-3 w-3 rounded-full ${
+                                    assistantStatus === AssistantStatus.Online ? 'bg-green-500' : assistantStatus === AssistantStatus.Offline ? 'bg-red-500' : 'bg-gray-400'
+                                }`}
+                            />
 
                             <span className="font-medium">SeeagleAssistant</span>
 
