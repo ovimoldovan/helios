@@ -16,6 +16,7 @@ using Seeagle.Application.Areas;
 using Seeagle.Server.Utils.Cookies;
 using Seeagle.Server.Utils.EmailConfirmationToken;
 using Seeagle.Server.Utils.MailService;
+using Seeagle.Server.Utils.PasswordResetToken;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,10 +48,12 @@ builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 builder.Services.AddScoped<IMailService, MailService>();
 builder.Services.AddScoped<Seeagle.Server.Utils.AiDetection.IAiDetectionService, Seeagle.Server.Utils.AiDetection.AiDetectionService>();
 builder.Services.AddScoped<IEmailConfirmationTokenService, EmailConfirmationTokenService>();
+builder.Services.AddScoped<IResetPasswordTokenService, ResetPasswordTokenService>();
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
 builder.Services.Configure<CookieSettings>(builder.Configuration.GetSection("CookieSettings"));
 builder.Services.Configure<RabbitMqSettings>(builder.Configuration.GetSection("RabbitMqSettings"));
 builder.Services.Configure<EmailConfirmationTokenOptions>(builder.Configuration.GetSection("EmailConfirmationTokenSettings"));
+builder.Services.Configure<ResetPasswordTokenOptions>(builder.Configuration.GetSection("PasswordResetTokenSettings"));
 builder.Services.AddScoped<IJwtUtil, JwtUtil>();
 
 builder.Services.AddMemoryCache();
