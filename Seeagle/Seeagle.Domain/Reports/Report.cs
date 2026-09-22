@@ -39,6 +39,8 @@ public class Report
     public bool IsSolved { get; private set; }
     public ICollection<Report> DuplicateCandidates { get; private set; } = new List<Report>();
     public double? AiProbabilityScore { get; private set; }
+    public bool HasPhoto { get; private set; }
+    public bool ShowPhotoToPublic { get; private set; }
 
     public void SetAiProbabilityScore(double? score)
     {
@@ -75,9 +77,11 @@ public class Report
     
     public void AttachPhoto(Photo photo)
     {
-        if (Photo is not null)
+        if (Photo is not null || HasPhoto)
             throw new InvalidOperationException("Photo already attached to report.");
         Photo = photo;
+        HasPhoto = true;
+        ShowPhotoToPublic = false;
     }
 
     public bool IsDeleted { get; private set; }
@@ -99,5 +103,10 @@ public class Report
     public void AddDuplicateCandidate(Report candidate)
     {
         DuplicateCandidates.Add(candidate);
+    }
+    
+    public void SetPhotoVisibility(bool showToPublic)
+    {
+        ShowPhotoToPublic = showToPublic;
     }
 }

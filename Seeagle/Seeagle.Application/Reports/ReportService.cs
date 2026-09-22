@@ -178,7 +178,7 @@ public sealed class ReportService : IReportService
             pageSize);
     }
 
-    public async Task<Report?> ApproveAsync(Guid id, string priority, CancellationToken cancellationToken)
+    public async Task<Report?> ApproveAsync(Guid id, string priority, bool showPhotoToPublic, CancellationToken cancellationToken)
     {
         var report = await _reportRepository
             .GetAllQueryable()
@@ -199,9 +199,11 @@ public sealed class ReportService : IReportService
         };
 
         report.Approve(priorityEnum);
+        
+        report.SetPhotoVisibility(showPhotoToPublic);
 
         await _reportRepository.UpdateAsync(report, cancellationToken);
-
+        
         return report;
     }
 
@@ -387,6 +389,11 @@ public sealed class ReportService : IReportService
             };
             report.UpdatePriority(priorityEnum);
         }
+        
+        if (request.ShowPhotoToPublic is not null)
+        {
+            report.SetPhotoVisibility(request.ShowPhotoToPublic.Value);
+        }
 
         await _reportRepository.UpdateAsync(report, cancellationToken);
 
@@ -420,13 +427,22 @@ public sealed class ReportService : IReportService
     {
         var report = await _reportRepository
             .GetAllQueryable()
+            .Include(report => report.Photo)
             .FirstOrDefaultAsync(report => report.Id == reportId, cancellationToken);
 
         if (report?.Photo is null)
             return null;
 
-        if (report.Status != ReportStatus.Approved && !isModerator)
-            return null;
+        if (!isModerator)
+        {
+            var isPubliclyVisible =
+                !report.IsDeleted &&
+                report.ShowPhotoToPublic &&
+                (report.Status == ReportStatus.Approved || report.Status == ReportStatus.Solved);
+
+            if (!isPubliclyVisible)
+                return null;
+        }
 
         return new ProcessedPhoto(report.Photo.ImageData, report.Photo.ContentType);
     }
