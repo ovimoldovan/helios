@@ -12,4 +12,11 @@ export const AssistantStatus = {
     Checking: 'checking'
 } as const;
 
+export const MailServiceStatus = {
+    Online: 'online',
+    Offline: 'offline',
+    Checking: 'checking'
+} as const;
+
 export type AssistantStatus = typeof AssistantStatus[keyof typeof AssistantStatus];
+export type MailServiceStatus = typeof MailServiceStatus[keyof typeof MailServiceStatus];

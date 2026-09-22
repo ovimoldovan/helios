@@ -159,6 +159,10 @@
   "errorRejectingReport": "Unexpected error while rejecting report.",
   "noPendingReports": "No pending reports.",
   "descriptionColumn": "Description",
+  "aiScore": "AI Score",
+  "likelyReal": "Likely Real",
+  "uncertain": "Uncertain",
+  "likelyAi": "Likely AI",
   "createdColumn": "Created",
   "statusColumn": "Status",
   "myReports": "My Reports",
@@ -255,6 +259,8 @@
   "user": "User",
   "moderatorMessage": "Message from Moderator",
 
+  "checking": "Checking...",
+
   "areaManagementTitle": "Area Management",
   "areaManagementDescription": "Draw shapes on the map to define areas.",
   "rectangle": "Rectangle",
@@ -266,9 +272,11 @@
   
   "exportCsv": "Export CSV",
 
+  "confirmDeleteMessage": "Are you really sure you want to delete?",
+  "thisReport": "this report",
   "addArea": "Add area",
   "enterUniqueAreaName": "Enter a unique name for the new area.",
   "areaName": "Area name",
   "areaOverlapError": "Area overlaps with an existing area."
-  
+
 }

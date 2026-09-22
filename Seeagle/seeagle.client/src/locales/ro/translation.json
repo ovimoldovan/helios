@@ -160,6 +160,10 @@
   "errorRejectingReport": "Eroare neașteptată la respingerea raportului.",
   "noPendingReports": "Niciun raport în așteptare.",
   "descriptionColumn": "Descriere",
+  "aiScore": "Scor AI",
+  "likelyReal": "Probabil Real",
+  "uncertain": "Incert",
+  "likelyAi": "Probabil AI",
   "createdColumn": "Data creării",
   "statusColumn": "Stare",
   "myReports": "Rapoartele Mele",
@@ -256,6 +260,7 @@
   "user": "Utilizator",
   
   "moderatorMessage": "Mesaj de la Moderator",
+  "checking": "Se verifică...",
 
   "areaManagementTitle": "Gestionare Zone",
   "areaManagementDescription": "Desenează forme pe hartă pentru a defini zone.",
@@ -267,10 +272,12 @@
   "backToHome": "Înapoi acasă",
   
   "exportCsv": "Exportă CSV",
-
+  "confirmDeleteMessage": "Ești sigur că vrei să ștergi?",
+  "thisReport": "acest raport",
   "addArea": "Adaugă zonă",
   "enterUniqueAreaName": "Introdu un nume unic pentru noua zonă.",
   "areaName": "Numele zonei",
   "areaOverlapError": "Zona se suprapune cu o zonă existentă."
-  
+
+
 }

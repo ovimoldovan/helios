@@ -38,6 +38,12 @@ public class Report
     public string? MessageToReporter { get; private set; }
     public bool IsSolved { get; private set; }
     public ICollection<Report> DuplicateCandidates { get; private set; } = new List<Report>();
+    public double? AiProbabilityScore { get; private set; }
+
+    public void SetAiProbabilityScore(double? score)
+    {
+        AiProbabilityScore = score;
+    }
     
 	public Guid? AreaId { get; private set; }
 	public void SetAreaId(Guid? areaId)

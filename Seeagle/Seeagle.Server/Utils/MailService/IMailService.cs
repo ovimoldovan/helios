@@ -4,10 +4,10 @@ namespace Seeagle.Server.Utils.MailService;
 
 public interface IMailService
 {
-    Task SendEmail(string to, string recipientName, string reportDescription, string moderatorMessage);
+    Task SendEmailAsync(string to, string recipientName, string reportDescription, string moderatorMessage);
     
-    Task SendEmail(string to, string recipientName, string reportDescription, ReportStatus newStatus);
+    Task SendEmailAsync(string to, string recipientName, string reportDescription, ReportStatus newStatus);
 
-    Task SendEmail(string to, string recipientName, string reportDescription, ReportStatus newStatus,
+    Task SendEmailAsync(string to, string recipientName, string reportDescription, ReportStatus newStatus,
         string? moderatorMessage);
 }
