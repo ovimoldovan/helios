@@ -137,7 +137,12 @@ export function RegisterForm({
             });
 
             setErrors({});
-            navigate('/login');
+            navigate('/login', {
+                state : {
+                    title: t('emailConfirmationNeededToastTitle'),
+                    description: t('emailConfirmationNeededToastDescription')
+                }
+            });
         } catch {
             setErrors({
                 form: t('registrationFailed'),

@@ -267,6 +267,9 @@
   
   "exportCsv": "Export CSV",
   "confirmDeleteMessage": "Are you really sure you want to delete?",
-  "thisReport": "this report"
-  
+  "thisReport": "this report",
+  "unauthenticatedToastTitle": "Unauthenticated",
+  "unauthenticatedToastDescription": "Log in to access this page",
+  "emailConfirmationNeededToastTitle" : "E-Mail confirmation needed",
+  "emailConfirmationNeededToastDescription": "Check your inbox"
 }

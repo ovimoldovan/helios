@@ -48,12 +48,24 @@ export function LoginForm({
 
     useEffect(() => {
         if (state?.title && state?.description) {
-            toast.add({
-                id: 'auth-required',
-                title: state.title,
-                description: state.description,
-                type: "error"
-            });
+            switch (state.title) {
+                case t('emailConfirmationNeededToastTitle'):
+                    toast.add({
+                        id: 'email-confirmation-required',
+                        title: state.title,
+                        description: state.description,
+                        type: "info"
+                    })
+                    break;
+                case t('unauthenticatedToastTitle'):
+                    toast.add({
+                        id: 'auth-required',
+                        title: state.title,
+                        description: state.description,
+                        type: "error"
+                    });
+                    break;
+            }
         }
     }, [state]);
 

@@ -266,6 +266,9 @@
   
   "exportCsv": "Exportă CSV",
   "confirmDeleteMessage": "Ești sigur că vrei să ștergi?",
-  "thisReport": "acest raport"
-  
+  "thisReport": "acest raport",
+  "unauthenticatedToastTitle": "Neautentificat",
+  "unauthenticatedToastDescription": "Autentifică-te pentru a accesa această pagină",
+  "emailConfirmationNeededToastTitle" : "Confirmare pe E-Mail necesară",
+  "emailConfirmationNeededToastDescription": "Verifică-ți căsuța"
 }
