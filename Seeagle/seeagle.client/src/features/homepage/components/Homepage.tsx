@@ -9,7 +9,7 @@ import { getApprovedReports, getMyReports } from "@/features/reports/api/reportA
 import { getAreas } from "@/features/areas/api/areaApi.ts";
 import type { Area } from '@/features/admin/types';
 import { useAuth } from '@/shared/context/AuthContext';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 export function Homepage() {
     const { isAuthenticated, isLoading } = useAuth();
@@ -23,6 +23,8 @@ export function Homepage() {
     const [myPendingReports, setMyPendingReports] = useState<Report[]>([]);
     const [areas, setAreas] = useState<Area[]>([]);
     const [selectedAreaId, setSelectedAreaId] = useState<string | null>(null);
+    const navigate = useNavigate();
+    const { areaSlug } = useParams<{ areaSlug?: string }>();
 
     useEffect(() => {
         const loadAreas = async () => {
@@ -35,6 +37,18 @@ export function Homepage() {
         };
         loadAreas();
     }, []);
+
+    useEffect(() => {
+        if (areas.length === 0) return;
+
+        if (!areaSlug) {
+            setSelectedAreaId(null);
+            return;
+        }
+
+        const matchedArea = areas.find(a => a.slug === areaSlug);
+        setSelectedAreaId(matchedArea ? matchedArea.id : null);
+    }, [areas, areaSlug]);
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -67,13 +81,27 @@ export function Homepage() {
 
         return combinedReports;
     }, [reports, myPendingReports, selectedReport]);
-    
+
     if (isLoading) {
         return null;
     }
-  
+
+    const handleAreaChange = (areaId: string | null) => {
+        setSelectedAreaId(areaId);
+
+        if (!areaId) {
+            navigate('/', { replace: true });
+            return;
+        }
+
+        const area = areas.find(a => a.id === areaId);
+        if (area) {
+            navigate(`/${area.slug}`, { replace: true });
+        }
+    };
+
     const selectedArea = areas.find(a => a.id === selectedAreaId) ?? null;
-  
+
     const handlePinPlaced = (position: [number, number] | null) => {
         setPinPosition(position);
         if (position) {
@@ -109,7 +137,7 @@ export function Homepage() {
                         }}
                         areas={areas}
                         selectedAreaId={selectedAreaId}
-                        onAreaChange={setSelectedAreaId}
+                        onAreaChange={handleAreaChange}
                     />
                 }
             />

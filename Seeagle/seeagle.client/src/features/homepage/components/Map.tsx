@@ -92,6 +92,25 @@ function SelectedReportFocus({ reports, selectedReportId }: { reports?: Report[]
     return null;
 }
 
+function AreaFocus({ areas }: { areas?: Area[] }) {
+    const map = useMap();
+
+    useEffect(() => {
+        if (!areas || areas.length === 0) return;
+
+        const allPositions: [number, number][] = areas.flatMap(area =>
+            area.coordinates.map(c => [c[0], c[1]] as [number, number])
+        );
+
+        if (allPositions.length === 0) return;
+
+        const bounds = L.latLngBounds(allPositions);
+        map.flyToBounds(bounds, { padding: [50, 50], maxZoom: 16 });
+    }, [map, areas]);
+
+    return null;
+}
+
 function getMarkerIcon(report: Report) {
     if (report.status === 'Pending') {
         return createColoredIcon(getStatusColor('Pending'));
@@ -195,6 +214,7 @@ export function Map({onPinPlaced, reports = [], isPlacingPin = false, pinPositio
             <SelectedReportFocus reports={reports} selectedReportId={selectedReportId} />
             <PinManager onPinPlaced={onPinPlaced} isPlacingPin={isPlacingPin} pinPosition={pinPosition}/>
             <AreaLayers areas={areas} />
+            <AreaFocus areas={areas} />
             <ReportMarkers reports={reports} />
         </MapContainer>
     );

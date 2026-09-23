@@ -36,7 +36,7 @@ export function AdminAreasPage() {
         };
         loadAreas();
     }, []);
-    
+
     const handleAreaCreated = useCallback((coordinates: number[][]) => {
         setPendingCoordinates(coordinates);
         setAreaName('');
@@ -65,7 +65,8 @@ export function AdminAreasPage() {
 
             const newArea: Area = {
                 id: response.id,
-                name: request.name,
+                name: response.name,
+                slug: response.slug,
                 coordinates: pendingCoordinates,
             };
 
@@ -74,19 +75,19 @@ export function AdminAreasPage() {
             setAreaName('');
             setCreateError(null);
             setIsNameModalOpen(false);
-        }  catch (error) {
-        console.error('Failed to create area:', error);
+        } catch (error) {
+            console.error('Failed to create area:', error);
 
-        if (
-            typeof error === 'object' &&
-            error !== null &&
-            'message' in error
-        ) {
-            setCreateError(String(error.message));
-        } else {
-            setCreateError('Failed to create area.');
+            if (
+                typeof error === 'object' &&
+                error !== null &&
+                'message' in error
+            ) {
+                setCreateError(String(error.message));
+            } else {
+                setCreateError('Failed to create area.');
+            }
         }
-    }
     };
 
     function handleDeleteArea(id: string) {
@@ -155,7 +156,7 @@ export function AdminAreasPage() {
                     </p>
                 </div>
             )}
-            
+
             <Dialog
                 open={isNameModalOpen}
                 onOpenChange={(open) => {

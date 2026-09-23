@@ -33,6 +33,8 @@ function App() {
                 
                 <Route path="/" element={<Homepage />} />
 
+                <Route path="/:areaSlug" element={<Homepage />} />
+
                 <Route element={<AppLayout />}>
                     <Route
                         path="/login"
@@ -165,9 +167,9 @@ function App() {
                             <CookiesPolicy/>
                         }
                     />
+                    
                 </Route>
             </Routes>
-
             <Toaster />
         </AuthProvider>
     );

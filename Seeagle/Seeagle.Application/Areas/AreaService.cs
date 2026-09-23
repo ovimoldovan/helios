@@ -3,6 +3,7 @@ using NetTopologySuite.Geometries;
 using Seeagle.Application.Common;
 using Seeagle.Domain.Areas;
 using Seeagle.Domain.Reports;
+using System.Text.RegularExpressions;
 
 namespace Seeagle.Application.Areas;
 
@@ -10,6 +11,34 @@ public sealed class AreaService(IRepository<Area> repository, IRepository<Report
 {
     private static readonly GeometryFactory GeometryFactory =
         new(new PrecisionModel(), 4326);
+    
+    private static string GenerateSlug(string name)
+    {
+        var slug = name.Trim().ToLowerInvariant();
+        slug = Regex.Replace(slug, @"[^a-z0-9\s-]", "");
+        slug = Regex.Replace(slug, @"\s+", "-");
+        slug = Regex.Replace(slug, @"-+", "-");
+        return slug.Trim('-');
+    }
+
+    private async Task<string> GenerateUniqueSlugAsync(string name, CancellationToken cancellationToken, Guid? excludeId = null)
+    {
+        var baseSlug = GenerateSlug(name);
+        if (string.IsNullOrEmpty(baseSlug))
+            baseSlug = "area";
+
+        var slug = baseSlug;
+        var suffix = 2;
+
+        while (await repository.GetAllQueryable()
+                   .AnyAsync(a => !a.IsDeleted && a.Slug == slug && a.Id != excludeId, cancellationToken))
+        {
+            slug = $"{baseSlug}-{suffix}";
+            suffix++;
+        }
+
+        return slug;
+    }
 
     public async Task<AreaDto> CreateAsync(CreateAreaRequest request, CancellationToken cancellationToken)
     {
@@ -64,12 +93,15 @@ public sealed class AreaService(IRepository<Area> repository, IRepository<Report
                     !area.Geometry.Touches(geometry),
                 cancellationToken);
 
+        var slug = await GenerateUniqueSlugAsync(request.Name, cancellationToken);
+        
         if (overlapsExistingArea)
         {
             throw new InvalidOperationException("Area overlaps with an existing area.");
         }
 
-        var area = new Area(request.Name.Trim(), geometry);
+        var area = new Area(request.Name.Trim(), geometry, slug);
+        
         await repository.AddAsync(area, cancellationToken);
 
         return ToDto(area);
@@ -81,7 +113,7 @@ public sealed class AreaService(IRepository<Area> repository, IRepository<Report
             .Select(c => new double[] { c.Y, c.X })
             .ToArray();
 
-        return new AreaDto(area.Id, area.Name, coords, area.CreatedUtc);
+        return new AreaDto(area.Id, area.Name, area.Slug, coords, area.CreatedUtc);
     }
     
     public async Task<IReadOnlyList<AreaDto>> GetAllAsync(CancellationToken cancellationToken)
@@ -103,7 +135,7 @@ public sealed class AreaService(IRepository<Area> repository, IRepository<Report
         {
             return null;
         }
-
+      
         var nameExists = await repository
             .GetAllQueryable()
             .AnyAsync(
@@ -118,7 +150,11 @@ public sealed class AreaService(IRepository<Area> repository, IRepository<Report
             throw new InvalidOperationException("An area with this name already exists.");
         }
         
-        area.UpdateName(request.Name.Trim());
+        if (area.Name != request.Name)
+        {
+            var slug = await GenerateUniqueSlugAsync(request.Name, cancellationToken, excludeId: area.Id);
+            area.UpdateName(request.Name, slug);
+        }
 
         await repository.UpdateAsync(area, cancellationToken);
 
