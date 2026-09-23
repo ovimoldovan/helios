@@ -6,7 +6,7 @@ import {
     DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { ModerationReport } from '@/features/moderator/api/moderationApi';
 import { Check, AlertTriangle, CircleAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -15,7 +15,7 @@ import { Priority } from "./models/Priority";
 interface PriorityModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onConfirm: (priority: Priority) => void;
+    onConfirm: (priority: Priority, showPhotoToPublic: boolean) => void;
     report: ModerationReport | null;
     isLoading: boolean;
 }
@@ -23,6 +23,11 @@ interface PriorityModalProps {
 export function PriorityModal({isOpen, onClose, onConfirm, report, isLoading,}: PriorityModalProps) {
     const { t } = useTranslation();
     const [priority, setPriority] = useState<Priority>(Priority.Low);
+    const [showPhotoToPublic, setShowPhotoToPublic] = useState(false);
+
+    useEffect(() => {
+        setShowPhotoToPublic(false);
+    }, [isOpen, report?.id]);
 
     const priorities = [
         {
@@ -106,13 +111,39 @@ export function PriorityModal({isOpen, onClose, onConfirm, report, isLoading,}: 
                             );
                         })}
                     </div>
+
+                    {report?.hasPhoto && (
+                        <div className="space-y-3 rounded-xl border p-4">
+                            <img
+                                src={`/api/reports/${report.id}/photo`}
+                                alt={t('reportPhoto')}
+                                className="max-h-48 w-full rounded-lg bg-muted/30 object-contain"
+                            />
+                            <label className="flex cursor-pointer items-start gap-3">
+                                <input
+                                    type="checkbox"
+                                    className="mt-1 h-4 w-4"
+                                    checked={showPhotoToPublic}
+                                    onChange={(e) => setShowPhotoToPublic(e.target.checked)}
+                                />
+                                <span>
+                <span className="block text-sm font-semibold">
+                    {t('showPhotoToPublic')}
+                </span>
+                <span className="block text-xs text-muted-foreground">
+                    {t('showPhotoToPublicDescription')}
+                </span>
+            </span>
+                            </label>
+                        </div>
+                    )}
                 </div>
 
                 <DialogFooter className="pt-3">
                     <Button variant="outline" onClick={onClose} disabled={isLoading}>
                         {t('cancel')}
                     </Button>
-                    <Button onClick={() => onConfirm(priority)} disabled={isLoading}>
+                    <Button onClick={() => onConfirm(priority, showPhotoToPublic)} disabled={isLoading}>
                         {isLoading ? t('processing') : t('approveReportButton')}
                     </Button>
                 </DialogFooter>

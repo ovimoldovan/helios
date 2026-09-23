@@ -18,6 +18,8 @@ public sealed class SeeagleDbContext(DbContextOptions<SeeagleDbContext> options)
     public DbSet<Area> Areas => Set<Area>();
 
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+
+    public DbSet<EmailConfirmationToken> EmailConfirmationTokens => Set<EmailConfirmationToken>();
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -30,4 +32,6 @@ public sealed class SeeagleDbContext(DbContextOptions<SeeagleDbContext> options)
     }
     
     public DbSet<Photo> Photos => Set<Photo>();
+    
+    public DbSet<Domain.Settings.SystemSettings> SystemSettings => Set<Domain.Settings.SystemSettings>();
 }

@@ -1,5 +1,6 @@
 import {Navigate, Outlet, useLocation} from 'react-router-dom';
 import {useAuth} from '@/shared/context/AuthContext';
+import {useTranslation} from "react-i18next";
 
 interface PrivateRoutesProps {
     allowedRoles?: string[];
@@ -8,6 +9,7 @@ interface PrivateRoutesProps {
 export function PrivateRoutes({ allowedRoles }: PrivateRoutesProps = {}) {
     const { isAuthenticated, isLoading, user } = useAuth();
     const location = useLocation();
+    const { t } = useTranslation(); 
 
     if (isLoading) {
         return null;
@@ -19,8 +21,8 @@ export function PrivateRoutes({ allowedRoles }: PrivateRoutesProps = {}) {
                 to="/login"
                 state={{
                     from: location.pathname,
-                    title: 'Error',
-                    description: 'Log in to access this page',
+                    title: t('unauthenticatedToastTitle'),
+                    description: t('unauthenticatedToastDescription'),
                 }}
                 replace
             />

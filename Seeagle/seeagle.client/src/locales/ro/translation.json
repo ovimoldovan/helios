@@ -160,6 +160,10 @@
   "errorRejectingReport": "Eroare neașteptată la respingerea raportului.",
   "noPendingReports": "Niciun raport în așteptare.",
   "descriptionColumn": "Descriere",
+  "aiScore": "Scor AI",
+  "likelyReal": "Probabil Real",
+  "uncertain": "Incert",
+  "likelyAi": "Probabil AI",
   "createdColumn": "Data creării",
   "statusColumn": "Stare",
   "myReports": "Rapoartele Mele",
@@ -256,6 +260,7 @@
   "user": "Utilizator",
   
   "moderatorMessage": "Mesaj de la Moderator",
+  "checking": "Se verifică...",
 
   "areaManagementTitle": "Gestionare Zone",
   "areaManagementDescription": "Desenează forme pe hartă pentru a defini zone.",
@@ -273,6 +278,35 @@
   "graphsTab": "Grafice",
   "tableTab": "Tabel",
   "noSummaryData": "Nu există date disponibile.",
-  "reportCount": "Rapoarte"
+  "reportCount": "Rapoarte",
   
+  "unauthenticatedToastTitle": "Neautentificat",
+  "unauthenticatedToastDescription": "Autentifică-te pentru a accesa această pagină",
+  "emailConfirmationNeededToastTitle" : "Confirmare pe E-Mail necesară",
+  "emailConfirmationNeededToastDescription": "Verifică-ți căsuța",
+  "emailNotConfirmed": "E-Mail neconfirmat",
+  
+  "reportPhoto": "Imagine raport",
+  "showPhotoToPublic": "Arată imaginea public",
+  "showPhotoToPublicDescription": "Cei care pot vedea raportul pot vedea și imaginea",
+
+  "systemSettingsTitle": "Setări de sistem",
+  "systemSettingsDescription": "Modifică parametrii de detectare dublură",
+  "errorLoadingSettings": "Eroare încărcare setări",
+  "errorSavingSettings": "Eroare salvare setări",
+  "fieldRequired": "Acest câmp este obligatoriu",
+  "distanceRangeError": "Trebuie sa fie între 0 și 1000",
+  "timeWindowRangeError": "Trebuie să fie între 0 și un an (8760 ore)",
+  "settingsSaved": "Setările au fost salvate",
+  "duplicateDistanceLabel": "Rază distanță pentru detectare dubluri",
+  "duplicateTimeWindowLabel": "Interval de timp pentru detectare dubluri",
+  
+  "addArea": "Adaugă zonă",
+  "enterUniqueAreaName": "Introdu un nume unic pentru noua zonă.",
+  "areaName": "Numele zonei",
+  "areaOverlapError": "Zona se suprapune cu o zonă existentă.",
+
+  "openService": "Deschide serviciul",
+  "emailConfirmationFailedToastTitle": "Confrimarea E-Mail-ului a eșuat",
+  "emailConfirmationFailedToastDescription": "Link-ul de confrimare a E-Mail-ului nu este valid"
 }

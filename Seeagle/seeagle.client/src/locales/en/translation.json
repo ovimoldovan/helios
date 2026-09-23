@@ -31,7 +31,7 @@
   "firstNameTooLong": "First name must be at most {{max}} characters.",
   "lastNameRequired": "Last name is required.",
   "lastNameTooLong": "Last name must be at most {{max}} characters.",
-  
+
   "cookiesPolicyTitle": "Cookies Policy",
   "registeredUsers": "Registered users",
   "loadingUsers": "Loading...",
@@ -108,9 +108,9 @@
   "goHome": "Go to homepage",
   "unexpectedErrorLoadingUsers": "Unexpected error while loading users.",
   "unexpectedErrorAssigningModerator": "Unexpected error while assigning moderator.",
-  
+
   "moderatorDashboard": "Moderator Dashboard",
- 
+
   "moderationQueue": "Moderation Queue",
   "unexpectedError": "Unexpected error while loading reports.",
   "unexpectedErrorApprove": "Unexpected error while approving report.",
@@ -145,7 +145,7 @@
   "noApprovedReports": "No approved reports.",
   "unexpectedErrorLoadingApproved": "Unexpected error while loading approved reports.",
   "unexpectedErrorProcessingAction": "Unexpected error while processing action.",
-  
+
   "languageEn": "EN",
   "languageRo": "RO",
 
@@ -159,6 +159,10 @@
   "errorRejectingReport": "Unexpected error while rejecting report.",
   "noPendingReports": "No pending reports.",
   "descriptionColumn": "Description",
+  "aiScore": "AI Score",
+  "likelyReal": "Likely Real",
+  "uncertain": "Uncertain",
+  "likelyAi": "Likely AI",
   "createdColumn": "Created",
   "statusColumn": "Status",
   "myReports": "My Reports",
@@ -255,6 +259,8 @@
   "user": "User",
   "moderatorMessage": "Message from Moderator",
 
+  "checking": "Checking...",
+
   "areaManagementTitle": "Area Management",
   "areaManagementDescription": "Draw shapes on the map to define areas.",
   "rectangle": "Rectangle",
@@ -263,14 +269,42 @@
   "rename": "Rename",
   "delete": "Delete",
   "backToHome": "Back to Home",
-  
+
   "exportCsv": "Export CSV",
+
   "confirmDeleteMessage": "Are you really sure you want to delete?",
   "thisReport": "this report",
 
   "graphsTab": "Graphs",
   "tableTab": "Table data",
   "noSummaryData": "No data available.",
-  "reportCount": "Reports"
+  "reportCount": "Reports",
   
+  "unauthenticatedToastTitle": "Unauthenticated",
+  "unauthenticatedToastDescription": "Log in to access this page",
+  "emailConfirmationNeededToastTitle" : "E-Mail confirmation needed",
+  "emailConfirmationNeededToastDescription": "Check your inbox",
+  "emailNotConfirmed": "E-Mail not confirmed",
+
+  "reportPhoto": "Report photo",
+  "showPhotoToPublic": "Show photo to public",
+  "showPhotoToPublicDescription": "Everyone viewing this report can see the image",
+
+  "systemSettingsTitle": "System settings",
+  "systemSettingsDescription": "Tune duplicate detection thresholds",
+  "errorLoadingSettings": "Error while loading settings",
+  "errorSavingSettings": "Error saving settings",
+  "fieldRequired": "This field is required",
+  "distanceRangeError": "Must be between 0 and 1000 meters",
+  "timeWindowRangeError": "Must be between 0 and 1 year (8760 hours)",
+  "settingsSaved": "Settings saved",
+  "duplicateDistanceLabel": "Duplicate distance range",
+  "duplicateTimeWindowLabel": "Duplicate time window",
+  "addArea": "Add area",
+  "enterUniqueAreaName": "Enter a unique name for the new area.",
+  "areaName": "Area name",
+  "areaOverlapError": "Area overlaps with an existing area.",
+  "openService": "Open service",
+  "emailConfirmationFailedToastTitle": "E-Mail confirmation failed",
+  "emailConfirmationFailedToastDescription": "Invalid E-mail confirmation link"
 }
