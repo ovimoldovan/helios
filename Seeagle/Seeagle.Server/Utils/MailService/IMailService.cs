@@ -12,4 +12,6 @@ public interface IMailService
         string? moderatorMessage);
 
     Task SendEmailConfirmationAsync(string to, string url);
+
+    Task SendPasswordResetEmailAsync(string to, string url);
 }
