@@ -20,6 +20,7 @@ import {useLocation, useNavigate} from "react-router-dom";
 import {toast} from "@/components/ui/toast.tsx";
 import {loginUser} from "@/shared/context/api/loginApi.ts";
 import { useTranslation } from 'react-i18next';
+import type {LoginErrorResponse} from "@/shared/types/authentication.ts";
 
 interface LoginFormErrors {
     email?: string;
@@ -33,8 +34,8 @@ export function LoginForm({
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState<LoginFormErrors>({});
-    const [loginSuccessful, setLoginSuccessful] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
+    const [loginError, setLoginError] = useState<'invalid-credentials' | 'email-not-confirmed' | null>(null);
     const {login} = useAuth();
     const location = useLocation();
     const navigate = useNavigate();
@@ -48,12 +49,24 @@ export function LoginForm({
 
     useEffect(() => {
         if (state?.title && state?.description) {
-            toast.add({
-                id: 'auth-required',
-                title: state.title,
-                description: state.description,
-                type: "error"
-            });
+            switch (state.title) {
+                case t('emailConfirmationNeededToastTitle'):
+                    toast.add({
+                        id: 'email-confirmation-required',
+                        title: state.title,
+                        description: state.description,
+                        type: "info"
+                    })
+                    break;
+                case t('unauthenticatedToastTitle'):
+                    toast.add({
+                        id: 'auth-required',
+                        title: state.title,
+                        description: state.description,
+                        type: "error"
+                    });
+                    break;
+            }
         }
     }, [state]);
 
@@ -81,13 +94,15 @@ export function LoginForm({
         }
 
         setIsLoading(true);
+        setLoginError(null);
 
         try {
             const response = await loginUser({email, password});
             login(response);
             navigate('/');
         } catch (apiError) {
-            setLoginSuccessful(false);
+            const error = apiError as LoginErrorResponse;
+            setLoginError(error.status === 403 ? 'email-not-confirmed' : 'invalid-credentials');
         } finally {
             setIsLoading(false);
         }
@@ -125,7 +140,15 @@ export function LoginForm({
                                 <FieldError>{errors.email}</FieldError>
                             </Field>
                             <Field>
-                                <FieldLabel id="password-label" htmlFor="password">{t('password')}</FieldLabel>
+                                <div className="flex items-center">
+                                    <FieldLabel id="password-label" htmlFor="password">{t('password')}</FieldLabel>
+                                    <a
+                                        onClick={() => navigate('/forgot-password')}
+                                        className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                                    >
+                                        {t('forgotYourPassword')}
+                                    </a>
+                                </div>
                                 <Input id="password"
                                        name="password"
                                        aria-labelledby="password-label"
@@ -147,8 +170,10 @@ export function LoginForm({
                                 <FieldDescription className="text-center">
                                     {t('missingAccount')} <a className="cursor-pointer" onClick={() => navigate('/register')}>{t('register')}</a>
                                 </FieldDescription>
-                                {!loginSuccessful &&
+                                {loginError === 'invalid-credentials' &&
                                     <FieldError>{t('incorrectCredentials')}</FieldError>}
+                                {loginError === 'email-not-confirmed' &&
+                                    <FieldError>{t('emailNotConfirmed')}</FieldError>}
                             </Field>
                         </FieldGroup>
                     </form>

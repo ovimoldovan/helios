@@ -21,6 +21,8 @@ import { PriorityModal } from './PriorityModal';
 import { RejectModal } from './RejectModal';
 import { useNavigate } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+
 const PAGE_SIZE = 10;
 
 export function ModerationQueue() {
@@ -37,6 +39,7 @@ export function ModerationQueue() {
     const [selectedReport, setSelectedReport] = useState<ModerationReport | null>(null);
     const [rejectModalOpen, setRejectModalOpen] = useState(false);
     const [reportToReject, setReportToReject] = useState<ModerationReport | null>(null);
+    const [photoPreviewReport, setPhotoPreviewReport] = useState<ModerationReport | null>(null);
     
     useEffect(() => {
         setIsLoading(true);
@@ -65,13 +68,13 @@ export function ModerationQueue() {
         setSelectedReport(null);
     };
 
-    const handleConfirmApprove = async (priority: string) => {
+    const handleConfirmApprove = async (priority: string, showPhotoToPublic: boolean) => {
         if (!selectedReportId) return;
 
         setIsProcessing(true);
 
         try {
-            await approveReport(selectedReportId, priority);
+            await approveReport(selectedReportId, priority, showPhotoToPublic);
 
             setReports((currentReports) =>
                 currentReports.filter((report) => report.id !== selectedReportId)
@@ -139,9 +142,11 @@ export function ModerationQueue() {
                                     <TableRow>
                                         <TableHead>{t('description')}</TableHead>
                                         <TableHead>{t('reportType')}</TableHead>
+                                        <TableHead>{t('aiScore')}</TableHead>
                                         <TableHead>{t('status')}</TableHead>
                                         <TableHead>{t('created')}</TableHead>
                                         <TableHead>{t('action')}</TableHead>
+                                        <TableHead>{t('photo')}</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -179,6 +184,17 @@ export function ModerationQueue() {
                                             <TableCell className="py-2">
                                                 {report.type}
                                             </TableCell>
+                                            <TableCell className="py-2 font-medium">
+                                                {report.aiProbabilityScore === null ? (
+                                                    <span className="text-gray-400">N/A</span>
+                                                ) : report.aiProbabilityScore < 0.3 ? (
+                                                    <span className="text-green-600">{t('likelyReal')}</span>
+                                                ) : report.aiProbabilityScore > 0.7 ? (
+                                                    <span className="text-red-600">{t('likelyAi')}</span>
+                                                ) : (
+                                                    <span className="text-yellow-600">{t('uncertain')}</span>
+                                                )}
+                                            </TableCell>
                                             <TableCell className="py-2">
                                                 {report.status}
                                             </TableCell>
@@ -201,6 +217,24 @@ export function ModerationQueue() {
                                                         {t('reject')}
                                                     </Button>
                                                 </div>
+                                            </TableCell>
+                                            <TableCell className="py-2">
+                                                {report.hasPhoto ? (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setPhotoPreviewReport(report)}
+                                                        className="block h-12 w-12 overflow-hidden rounded transition-opacity hover:opacity-80"
+                                                    >
+                                                        <img
+                                                            src={`/api/reports/${report.id}/photo`}
+                                                            alt={t('reportPhoto')}
+                                                            loading="lazy"
+                                                            className="h-12 w-12 object-cover"
+                                                        />
+                                                    </button>
+                                                ) : (
+                                                    <span className="text-gray-400">—</span>
+                                                )}
                                             </TableCell>
                                         </TableRow>
                                     ))}
@@ -272,6 +306,21 @@ export function ModerationQueue() {
                 report={reportToReject}
                 isLoading={isProcessing}
             />
+
+            <Dialog open={!!photoPreviewReport} onOpenChange={(open) => !open && setPhotoPreviewReport(null)}>
+                <DialogContent className="sm:max-w-2xl">
+                    <DialogHeader>
+                        <DialogTitle>{t('reportPhoto')}</DialogTitle>
+                    </DialogHeader>
+                    {photoPreviewReport && (
+                        <img
+                            src={`/api/reports/${photoPreviewReport.id}/photo`}
+                            alt={t('reportPhoto')}
+                            className="max-h-[75vh] w-full rounded-lg object-contain"
+                        />
+                    )}
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

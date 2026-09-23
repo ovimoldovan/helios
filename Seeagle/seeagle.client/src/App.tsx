@@ -14,17 +14,23 @@ import { Toaster } from "@/components/ui/toast.tsx";
 import { CookiesPolicy } from "@/pages/CookiesPolicy.tsx";
 import { ReportTypesPage } from '@/features/admin/components/ReportTypesPage';
 import { ModerationQueue } from '@/features/moderator/components/ModerationQueue';
-import { ApprovedReports } from "@/features/moderator/components/ApprovedReports.tsx";
+import { AllReports } from "@/features/moderator/components/AllReports";
 import { MyReports } from '@/features/reports/components/MyReports';
 import { PublicReports } from '@/features/reports/components/PublicReports'; 
 import { AdminAreasPage } from './features/admin/components/AdminAreasPage';
 import { AppLayout } from '@/shared/layout/AppLayout';
-import { ReportManagement } from "@/features/moderator/components/ReportManagemnt.tsx"; 
+import { ReportManagement } from "@/features/moderator/components/ReportManagemnt.tsx";
+import { ConfirmEmailPage } from "@/features/registration/components/ConfirmEmailPage.tsx";
+import { ForgotPasswordPage } from "@/features/reset_password/ForgotPasswordPage.tsx";
+import { ResetPasswordPage } from "@/features/reset_password/ResetPasswordPage.tsx"; 
+import { SystemSettingsPage } from '@/features/admin/components/SystemSettingsPage.tsx';
 
 function App() {
     return (
         <AuthProvider>
             <Routes>
+                <Route path="/confirm-email" element={<ConfirmEmailPage />}/>
+                
                 <Route path="/" element={<Homepage />} />
 
                 <Route element={<AppLayout />}>
@@ -53,6 +59,20 @@ function App() {
                         path="/reports"
                         element={
                             <PublicReports />
+                        }
+                    />
+                    
+                    <Route
+                        path="/forgot-password"
+                        element={
+                            <ForgotPasswordPage />
+                        }
+                    />
+                    
+                    <Route
+                        path="/reset-password"
+                        element={
+                            <ResetPasswordPage />
                         }
                     />
 
@@ -84,6 +104,13 @@ function App() {
                                 <AdminAreasPage />
                             }
                         />
+
+                        <Route
+                            path="/admin/system-settings"
+                            element={
+                                <SystemSettingsPage />
+                            }
+                        />
                     </Route>
 
                     <Route element={<PrivateRoutes allowedRoles={['Moderator', 'Admin']}/>}>
@@ -100,8 +127,8 @@ function App() {
                         />
 
                         <Route
-                            path="/moderator/approved"
-                            element={<ApprovedReports />}
+                            path="/moderator/all-reports"
+                            element={<AllReports />}
                         />
 
                         <Route

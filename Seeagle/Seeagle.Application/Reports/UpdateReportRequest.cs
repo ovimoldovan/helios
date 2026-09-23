@@ -5,5 +5,6 @@ namespace Seeagle.Application.Reports;
 public sealed record UpdateReportRequest(
     [MaxLength(255)]
     string? Description,
-    string? Priority
+    string? Priority,
+    bool? ShowPhotoToPublic = null
 );
