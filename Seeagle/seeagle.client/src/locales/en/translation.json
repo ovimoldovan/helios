@@ -274,12 +274,17 @@
 
   "confirmDeleteMessage": "Are you really sure you want to delete?",
   "thisReport": "this report",
+
+  "graphsTab": "Graphs",
+  "tableTab": "Table data",
+  "noSummaryData": "No data available.",
+  "reportCount": "Reports",
+  
   "unauthenticatedToastTitle": "Unauthenticated",
   "unauthenticatedToastDescription": "Log in to access this page",
   "emailConfirmationNeededToastTitle" : "E-Mail confirmation needed",
   "emailConfirmationNeededToastDescription": "Check your inbox",
   "emailNotConfirmed": "E-Mail not confirmed",
-  
 
   "reportPhoto": "Report photo",
   "showPhotoToPublic": "Show photo to public",

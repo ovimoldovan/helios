@@ -149,7 +149,7 @@ public sealed class ReportQueryService : IReportQueryService
     	var query = _reportRepository.GetAllQueryable()
         	.Where(r => !r.IsDeleted);
 
-   	 	var totalCount = await query.CountAsync(cancellationToken);
+    	var totalCount = await query.CountAsync(cancellationToken);
 
     	var byStatus = await query
         	.GroupBy(r => r.Status)
@@ -161,25 +161,36 @@ public sealed class ReportQueryService : IReportQueryService
         	.Select(g => new TypeCountDto(g.Key, g.Count()))
         	.ToListAsync(cancellationToken);
 
+    	var validAreas = await _areaRepository.GetAllQueryable()
+        	.Where(a => !a.IsDeleted)  
+        	.ToDictionaryAsync(a => a.Id, a => a.Name, cancellationToken);
+
     	var byAreaRaw = await query
         	.GroupBy(r => r.AreaId)
         	.Select(g => new { AreaId = g.Key, Count = g.Count() })
         	.ToListAsync(cancellationToken);
 
-    	var areaIds = byAreaRaw
-        	.Where(a => a.AreaId.HasValue)
-        	.Select(a => a.AreaId!.Value)
-        	.ToList();
-
-    	var areaNames = await _areaRepository.GetAllQueryable()
-        	.Where(a => areaIds.Contains(a.Id))
-        	.ToDictionaryAsync(a => a.Id, a => a.Name, cancellationToken);
-
     	var byArea = byAreaRaw
-        	.Select(a => new AreaCountDto(
-            	a.AreaId,
-            	a.AreaId.HasValue && areaNames.TryGetValue(a.AreaId.Value, out var name) ? name : null,
-            	a.Count))
+        	.Select(a =>
+        	{
+           	if (!a.AreaId.HasValue || !validAreas.ContainsKey(a.AreaId.Value))
+            	{
+                	return new { AreaId = (Guid?)null, AreaName = (string?)null, Count = a.Count };
+            	}
+
+            	return new
+            	{
+                	AreaId = a.AreaId,
+                	AreaName = validAreas[a.AreaId.Value],
+                	Count = a.Count
+            	};
+        	})
+        	.GroupBy(a => new { a.AreaId, a.AreaName })
+        	.Select(g => new AreaCountDto(
+            	g.Key.AreaId,
+            	g.Key.AreaName,
+            	g.Sum(x => x.Count)))
+        	.OrderByDescending(a => a.Count)
         	.ToList();
 
     	return new ReportSummaryDto(byStatus, byType, byArea, totalCount);
