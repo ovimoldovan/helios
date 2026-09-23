@@ -18,9 +18,23 @@ namespace Seeagle.Infrastructure.Persistence.Migrations
 
             migrationBuilder.Sql(
                 """
-                UPDATE "Areas"
-                SET "Slug" = lower(regexp_replace(regexp_replace(trim("Name"), '[^a-zA-Z0-9\s-]', '', 'g'), '\s+', '-', 'g'))
-                WHERE "Slug" = '';
+                WITH RankedAreas AS (
+                    SELECT 
+                        "Id",
+                        lower(regexp_replace(regexp_replace(trim("Name"), '[^a-zA-Z0-9\s-]', '', 'g'), '\s+', '-', 'g')) AS base_slug,
+                        ROW_NUMBER() OVER (
+                            PARTITION BY lower(regexp_replace(regexp_replace(trim("Name"), '[^a-zA-Z0-9\s-]', '', 'g'), '\s+', '-', 'g'))
+                            ORDER BY "Id"
+                        ) AS rn
+                    FROM "Areas"
+                )
+                UPDATE "Areas" a
+                SET "Slug" = CASE 
+                    WHEN r.rn = 1 THEN r.base_slug
+                    ELSE r.base_slug || '-' || (r.rn - 1)
+                END
+                FROM RankedAreas r
+                WHERE a."Id" = r."Id";
                 """);
 
             migrationBuilder.CreateIndex(
