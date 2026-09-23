@@ -285,5 +285,13 @@
   "resetPasswordSentDescription": "If an account exists for that E-Mail, a reset link has been sent.",
   "resetFailed": "Something went wrong. Please try again.",
   "backToLogin": "Back to login",
-  "sending": "Sending..."
+  "sending": "Sending...",
+  "passwordResetSuccessToastTitle": "Password reset successful",
+  "passwordResetSuccessToastDescription": "You may use the new password",
+  "passwordResetFailed": "Password reset failed",
+  "setNewPasswordTitle": "Set a new password",
+  "invalidResetLinkDescription": "Reset password link is invalid",
+  "requestNewResetLink": "Request new link",
+  "setNewPasswordButton": "Change password",
+  "newPassword": "New password"
 }

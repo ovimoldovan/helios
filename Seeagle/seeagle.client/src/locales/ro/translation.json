@@ -284,5 +284,13 @@
   "resetPasswordSentDescription": "Dacă există un cont înregistrat pentru adresa introdusă, un link pentru resetare s-a trimis",
   "resetFailed": "Ceva nu a mers bine, vă rugăm să reîncercați",
   "backToLogin": "Înapoi la autentificare",
-  "sending": "Se trimite..."
+  "sending": "Se trimite...",
+  "passwordResetSuccessToastTitle": "Parolă resetată cu succes",
+  "passwordResetSuccessToastDescription": "Puteți utiliza noua parolă",
+  "passwordResetFailed": "Resetarea parolei a eșuat",
+  "setNewPasswordTitle": "Setați o parolă nouă",
+  "invalidResetLinkDescription": "Link-ul de resetare a parolei nu este valid",
+  "requestNewResetLink": "Obține un link nou de resetare",
+  "setNewPasswordButton": "Schimbă parola",
+  "newPassword": "Parolă nouă"
 }

@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input"
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
-import { resetPassword } from "@/features/reset_password/api/resetPasswordApi.ts";
+import { forgotPassword } from "@/features/reset_password/api/resetPasswordApi.ts";
 
 interface ResetPasswordFormErrors {
     email?: string;
@@ -57,7 +57,7 @@ export function ForgotPasswordForm({
         setIsLoading(true);
 
         try {
-            await resetPassword(email.trim());
+            await forgotPassword(email.trim());
             setIsSent(true);
         } catch {
             setErrors({ email: t('resetFailed') });

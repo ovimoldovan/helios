@@ -21,7 +21,8 @@ import { AdminAreasPage } from './features/admin/components/AdminAreasPage';
 import { AppLayout } from '@/shared/layout/AppLayout';
 import { ReportManagement } from "@/features/moderator/components/ReportManagemnt.tsx";
 import {ConfirmEmailPage} from "@/features/registration/components/ConfirmEmailPage.tsx";
-import {ForgotPasswordPage} from "@/features/reset_password/ForgotPasswordPage.tsx"; 
+import {ForgotPasswordPage} from "@/features/reset_password/ForgotPasswordPage.tsx";
+import {ResetPasswordPage} from "@/features/reset_password/ResetPasswordPage.tsx"; 
 
 function App() {
     return (
@@ -64,6 +65,13 @@ function App() {
                         path="/forgot-password"
                         element={
                             <ForgotPasswordPage />
+                        }
+                    />
+                    
+                    <Route
+                        path="/reset-password"
+                        element={
+                            <ResetPasswordPage />
                         }
                     />
 
