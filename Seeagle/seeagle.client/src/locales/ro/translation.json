@@ -246,7 +246,6 @@
   "status_Rejected": "Respinse",
   "status_Solved": "Rezolvate",
   "status_Pending": "În așteptare",
-  "noArea": "Fără Arie",
 
   "reportSummaryTitle": "Sumar Rapoarte",
   "byStatus": "După Status",
@@ -259,9 +258,7 @@
   "unexpectedErrorRemovingModerator": "Eroare neașteptată la retragerea rolului de moderator.",
   "user": "Utilizator",
   
-  "moderatorMessage": "Mesaj de la Moderator",
   "checking": "Se verifică...",
-
   "areaManagementTitle": "Gestionare Zone",
   "areaManagementDescription": "Desenează forme pe hartă pentru a defini zone.",
   "rectangle": "Dreptunghi",
@@ -272,24 +269,43 @@
   "backToHome": "Înapoi acasă",
   
   "exportCsv": "Exportă CSV",
+
+  "uniqueAreaPrompt": "Introduceți un nume unic pentru arie.",
+  "areaOverlapPrompt": "Această arie se suprapune cu o arie care deja există",
+  
   "confirmDeleteMessage": "Ești sigur că vrei să ștergi?",
   "thisReport": "acest raport",
+  "unauthenticatedToastTitle": "Neautentificat",
+  "unauthenticatedToastDescription": "Autentifică-te pentru a accesa această pagină",
+  "emailConfirmationNeededToastTitle" : "Confirmare pe E-Mail necesară",
+  "emailConfirmationNeededToastDescription": "Verifică căsuța",
+  "emailNotConfirmed": "E-Mail neconfirmat",
 
   "graphsTab": "Grafice",
   "tableTab": "Tabel",
   "noSummaryData": "Nu există date disponibile.",
   "reportCount": "Rapoarte",
   
-  "unauthenticatedToastTitle": "Neautentificat",
-  "unauthenticatedToastDescription": "Autentifică-te pentru a accesa această pagină",
-  "emailConfirmationNeededToastTitle" : "Confirmare pe E-Mail necesară",
-  "emailConfirmationNeededToastDescription": "Verifică-ți căsuța",
-  "emailNotConfirmed": "E-Mail neconfirmat",
-  
   "reportPhoto": "Imagine raport",
   "showPhotoToPublic": "Arată imaginea public",
   "showPhotoToPublicDescription": "Cei care pot vedea raportul pot vedea și imaginea",
-
+  "reset": "Resetează",
+  "forgotYourPassword": "Ți-ai uitat parola?",
+  "resetPasswordTitle": "Resetează parola",
+  "resetPasswordDescription": "Introdu adresa de E-Mail",
+  "resetPasswordSentDescription": "Dacă există un cont înregistrat pentru adresa introdusă, un link pentru resetare s-a trimis",
+  "resetFailed": "Ceva nu a mers bine, vă rugăm să reîncercați",
+  "backToLogin": "Înapoi la autentificare",
+  "sending": "Se trimite...",
+  "passwordResetSuccessToastTitle": "Parolă resetată cu succes",
+  "passwordResetSuccessToastDescription": "Puteți utiliza noua parolă",
+  "passwordResetFailed": "Resetarea parolei a eșuat",
+  "setNewPasswordTitle": "Setați o parolă nouă",
+  "invalidResetLinkDescription": "Link-ul de resetare a parolei nu este valid",
+  "requestNewResetLink": "Obține un link nou de resetare",
+  "setNewPasswordButton": "Schimbă parola",
+  "newPassword": "Parolă nouă",
+  
   "systemSettingsTitle": "Setări de sistem",
   "systemSettingsDescription": "Modifică parametrii de detectare dublură",
   "errorLoadingSettings": "Eroare încărcare setări",

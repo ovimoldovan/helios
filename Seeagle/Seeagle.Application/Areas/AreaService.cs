@@ -70,9 +70,38 @@ public sealed class AreaService(IRepository<Area> repository, IRepository<Report
 
             geometry = GeometryFactory.CreatePolygon(coords.ToArray());
         }
+        
+        var nameExists = await repository
+            .GetAllQueryable()
+            .AnyAsync(
+                area =>
+                    !area.IsDeleted &&
+                    area.Name.ToLower() == request.Name.Trim().ToLower(),
+                cancellationToken);
+
+        if (nameExists)
+        {
+            throw new InvalidOperationException("An area with this name already exists.");
+        }
+
+        var overlapsExistingArea = await repository
+            .GetAllQueryable()
+            .AnyAsync(
+                area =>
+                    !area.IsDeleted &&
+                    area.Geometry.Intersects(geometry) &&
+                    !area.Geometry.Touches(geometry),
+                cancellationToken);
 
         var slug = await GenerateUniqueSlugAsync(request.Name, cancellationToken);
-        var area = new Area(request.Name, geometry, slug);
+        
+        if (overlapsExistingArea)
+        {
+            throw new InvalidOperationException("Area overlaps with an existing area.");
+        }
+
+        var area = new Area(request.Name.Trim(), geometry, slug);
+        
         await repository.AddAsync(area, cancellationToken);
 
         return ToDto(area);
@@ -106,7 +135,21 @@ public sealed class AreaService(IRepository<Area> repository, IRepository<Report
         {
             return null;
         }
+      
+        var nameExists = await repository
+            .GetAllQueryable()
+            .AnyAsync(
+                existingArea =>
+                    !existingArea.IsDeleted &&
+                    existingArea.Id != id &&
+                    existingArea.Name.ToLower() == request.Name.Trim().ToLower(),
+                cancellationToken);
 
+        if (nameExists)
+        {
+            throw new InvalidOperationException("An area with this name already exists.");
+        }
+        
         if (area.Name != request.Name)
         {
             var slug = await GenerateUniqueSlugAsync(request.Name, cancellationToken, excludeId: area.Id);
