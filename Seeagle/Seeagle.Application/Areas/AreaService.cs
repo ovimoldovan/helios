@@ -150,8 +150,6 @@ public sealed class AreaService(IRepository<Area> repository, IRepository<Report
             throw new InvalidOperationException("An area with this name already exists.");
         }
         
-        area.UpdateName(request.Name.Trim());
-        
         if (area.Name != request.Name)
         {
             var slug = await GenerateUniqueSlugAsync(request.Name, cancellationToken, excludeId: area.Id);
