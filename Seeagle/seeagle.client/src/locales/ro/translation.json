@@ -274,6 +274,12 @@
   "exportCsv": "Exportă CSV",
   "confirmDeleteMessage": "Ești sigur că vrei să ștergi?",
   "thisReport": "acest raport",
+
+  "graphsTab": "Grafice",
+  "tableTab": "Tabel",
+  "noSummaryData": "Nu există date disponibile.",
+  "reportCount": "Rapoarte",
+  
   "unauthenticatedToastTitle": "Neautentificat",
   "unauthenticatedToastDescription": "Autentifică-te pentru a accesa această pagină",
   "emailConfirmationNeededToastTitle" : "Confirmare pe E-Mail necesară",

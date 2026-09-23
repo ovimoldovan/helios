@@ -2,10 +2,11 @@ using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Geometries;
 using Seeagle.Application.Common;
 using Seeagle.Domain.Areas;
+using Seeagle.Domain.Reports;
 
 namespace Seeagle.Application.Areas;
 
-public sealed class AreaService(IRepository<Area> repository) : IAreaService
+public sealed class AreaService(IRepository<Area> repository, IRepository<Report> reportRepository) : IAreaService
 {
     private static readonly GeometryFactory GeometryFactory =
         new(new PrecisionModel(), 4326);
@@ -93,8 +94,17 @@ public sealed class AreaService(IRepository<Area> repository) : IAreaService
             return false;
         }
 
-        area.Delete();
+        var reports = await reportRepository.GetAllQueryable()
+            .Where(r => r.AreaId == id)
+            .ToListAsync(cancellationToken);
 
+        foreach (var report in reports)
+        {
+            report.SetAreaId(null);
+            await reportRepository.UpdateAsync(report, cancellationToken);
+        }
+
+        area.Delete();
         await repository.UpdateAsync(area, cancellationToken);
 
         return true;
