@@ -140,7 +140,15 @@ export function LoginForm({
                                 <FieldError>{errors.email}</FieldError>
                             </Field>
                             <Field>
-                                <FieldLabel id="password-label" htmlFor="password">{t('password')}</FieldLabel>
+                                <div className="flex items-center">
+                                    <FieldLabel id="password-label" htmlFor="password">{t('password')}</FieldLabel>
+                                    <a
+                                        onClick={() => navigate('/forgot-password')}
+                                        className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                                    >
+                                        {t('forgotYourPassword')}
+                                    </a>
+                                </div>
                                 <Input id="password"
                                        name="password"
                                        aria-labelledby="password-label"

@@ -84,6 +84,21 @@ public class MailService(IConnection connection) : IMailService
         await PublishAsync(channel, body, messageKind: "EmailConfirmation");
     }
 
+    public async Task SendPasswordResetEmailAsync(string to, string url)
+    {
+        await using var channel = await connection.CreateChannelAsync();
+        await DeclareExchangeAsync(channel);
+        await DeclareQueueAsync(channel);
+
+        var variables = new Dictionary<string, object>
+        {
+            { "ResetPasswordUrl", url }
+        };
+        var mail = new EmailMessage(to, variables);
+        var body = JsonSerializer.SerializeToUtf8Bytes(mail);
+        await PublishAsync(channel, body, messageKind: "ResetPassword");
+    }
+
     private async Task DeclareExchangeAsync(IChannel channel)
     {
         await channel.ExchangeDeclareAsync(
