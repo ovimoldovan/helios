@@ -19,9 +19,9 @@ export function ConfirmEmailPage() {
         if (!userId || !token) {
             navigate('/register', {
                 state: {
-                    title: 'E-Mail confirmation failed',
-                    description: 'Invalid E-mail confirmation link',
-                },
+                    title: t('emailConfirmationFailedToastTitle'),
+                    description: t('emailConfirmationFailedToastDescription')
+                }
             });
             return;
         }

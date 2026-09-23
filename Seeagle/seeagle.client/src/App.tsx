@@ -20,9 +20,10 @@ import { PublicReports } from '@/features/reports/components/PublicReports';
 import { AdminAreasPage } from './features/admin/components/AdminAreasPage';
 import { AppLayout } from '@/shared/layout/AppLayout';
 import { ReportManagement } from "@/features/moderator/components/ReportManagemnt.tsx";
-import {ConfirmEmailPage} from "@/features/registration/components/ConfirmEmailPage.tsx";
-import {ForgotPasswordPage} from "@/features/reset_password/ForgotPasswordPage.tsx";
-import {ResetPasswordPage} from "@/features/reset_password/ResetPasswordPage.tsx"; 
+import { ConfirmEmailPage } from "@/features/registration/components/ConfirmEmailPage.tsx";
+import { ForgotPasswordPage } from "@/features/reset_password/ForgotPasswordPage.tsx";
+import { ResetPasswordPage } from "@/features/reset_password/ResetPasswordPage.tsx"; 
+import { SystemSettingsPage } from '@/features/admin/components/SystemSettingsPage.tsx';
 
 function App() {
     return (
@@ -101,6 +102,13 @@ function App() {
                             path="/admin/areas"
                             element={
                                 <AdminAreasPage />
+                            }
+                        />
+
+                        <Route
+                            path="/admin/system-settings"
+                            element={
+                                <SystemSettingsPage />
                             }
                         />
                     </Route>

@@ -208,7 +208,6 @@
   "reject": "Respinge",
   "edit": "Editează",
   "Photo": "Imagine",
-  "photo": "Imagine",
   "photoPreview": "Previzualizare imagine",
   "remove": "Șterge",
   "disable": "Dezactivează",
@@ -229,6 +228,10 @@
   "rejected": "Respins",
 
   "unexpectedErrorLoadingReports": "Eroare neașteptată la încărcarea rapoartelor.",
+  
+  "assistantOnline": "Online",
+  "assistantOffline": "Offline",
+  "assistantChecking": "Se verifică...",
 
   "allReportsTitle": "Toate Rapoartele",
   "allReportsDescription": "Revizuiește toate rapoartele, cu excepția celor în așteptare.",
@@ -273,6 +276,11 @@
   "emailConfirmationNeededToastTitle" : "Confirmare pe E-Mail necesară",
   "emailConfirmationNeededToastDescription": "Verifică căsuța",
   "emailNotConfirmed": "E-Mail neconfirmat",
+
+  "graphsTab": "Grafice",
+  "tableTab": "Tabel",
+  "noSummaryData": "Nu există date disponibile.",
+  "reportCount": "Rapoarte",
   
   "reportPhoto": "Imagine raport",
   "showPhotoToPublic": "Arată imaginea public",
@@ -292,5 +300,25 @@
   "invalidResetLinkDescription": "Link-ul de resetare a parolei nu este valid",
   "requestNewResetLink": "Obține un link nou de resetare",
   "setNewPasswordButton": "Schimbă parola",
-  "newPassword": "Parolă nouă"
+  "newPassword": "Parolă nouă",
+  
+  "systemSettingsTitle": "Setări de sistem",
+  "systemSettingsDescription": "Modifică parametrii de detectare dublură",
+  "errorLoadingSettings": "Eroare încărcare setări",
+  "errorSavingSettings": "Eroare salvare setări",
+  "fieldRequired": "Acest câmp este obligatoriu",
+  "distanceRangeError": "Trebuie sa fie între 0 și 1000",
+  "timeWindowRangeError": "Trebuie să fie între 0 și un an (8760 ore)",
+  "settingsSaved": "Setările au fost salvate",
+  "duplicateDistanceLabel": "Rază distanță pentru detectare dubluri",
+  "duplicateTimeWindowLabel": "Interval de timp pentru detectare dubluri",
+  
+  "addArea": "Adaugă zonă",
+  "enterUniqueAreaName": "Introdu un nume unic pentru noua zonă.",
+  "areaName": "Numele zonei",
+  "areaOverlapError": "Zona se suprapune cu o zonă existentă.",
+
+  "openService": "Deschide serviciul",
+  "emailConfirmationFailedToastTitle": "Confrimarea E-Mail-ului a eșuat",
+  "emailConfirmationFailedToastDescription": "Link-ul de confrimare a E-Mail-ului nu este valid"
 }

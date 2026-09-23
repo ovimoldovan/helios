@@ -61,37 +61,65 @@ export function AdminDashboard() {
                             <span className="text-base font-semibold">{t('reportsTitle')}</span>
                             <span className="font-normal">{t('reportsDescription')}</span>
                         </Button>
+
+                        <Button className="admin-dashboard-button h-full"
+                                onClick={() => navigate('/admin/system-settings')}>
+                            <span className="text-base font-semibold">{t('systemSettingsTitle')}</span>
+                            <span className="font-normal">{t('systemSettingsDescription')}</span>
+                        </Button>
                     </div>
-                    <div className="mx-8 mb-8 flex items-center gap-3 rounded-lg border p-4">
-                        <span
-                            className={`inline-block h-3 w-3 rounded-full ${
-                            assistantStatus === AssistantStatus.Online ? 'bg-green-500' : assistantStatus === AssistantStatus.Offline ? 'bg-red-500' : 'bg-gray-400'
-                            }`}
-                        />
-                        <span className="font-medium">SeeagleAssistant</span>
-                        <span className="text-muted-foreground text-sm">
-                            {assistantStatus === AssistantStatus.Online
-                            ? 'Online'
-                            : assistantStatus === AssistantStatus.Offline
-                            ? 'Offline'
-                            : t('checking')}
-                        </span>
-                    </div>
-                    <div className="mx-8 mb-8 flex items-center gap-3 rounded-lg border p-4">
-                        <span
-                            className={`inline-block h-3 w-3 rounded-full ${
-                            mailServiceStatus === MailServiceStatus.Online ? 'bg-green-500' : mailServiceStatus === MailServiceStatus.Offline ? 'bg-red-500' : 'bg-gray-400'
-                            }`}
-                        />
-                        <span className="font-medium">Mail Service</span>
-                        <span className="text-muted-foreground text-sm">
-                            {mailServiceStatus === MailServiceStatus.Online
-                            ? 'Online'
-                            : mailServiceStatus === MailServiceStatus.Offline
-                            ? 'Offline'
-                            : t('checking')}
-                        </span>
-                    </div>
+                        <div className="mx-8 mb-8 flex items-center gap-3 rounded-lg border p-4">
+                            <span
+                                className={`inline-block h-3 w-3 rounded-full ${
+                                    assistantStatus === AssistantStatus.Online ? 'bg-green-500' : assistantStatus === AssistantStatus.Offline ? 'bg-red-500' : 'bg-gray-400'
+                                }`}
+                            />
+
+                            <span className="font-medium">SeeagleAssistant</span>
+
+                            <span className="text-muted-foreground text-sm">
+                                {assistantStatus === AssistantStatus.Online
+                                    ? 'Online'
+                                    : assistantStatus === AssistantStatus.Offline
+                                        ? 'Offline'
+                                        : t('checking')}
+                            </span>
+
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="ml-auto"
+                                onClick={() => window.open('https://seeagleassistant.onrender.com/', '_blank', 'noopener,noreferrer')}
+                            >
+                                {t('openService')}
+                            </Button>
+                        </div>
+                        <div className="mx-8 mb-8 flex items-center gap-3 rounded-lg border p-4">
+                            <span
+                                className={`inline-block h-3 w-3 rounded-full ${
+                                    mailServiceStatus === MailServiceStatus.Online ? 'bg-green-500' : mailServiceStatus === MailServiceStatus.Offline ? 'bg-red-500' : 'bg-gray-400'
+                                }`}
+                            />
+
+                            <span className="font-medium">Mail Service</span>
+
+                            <span className="text-muted-foreground text-sm">
+                                {mailServiceStatus === MailServiceStatus.Online
+                                    ? 'Online'
+                                    : mailServiceStatus === MailServiceStatus.Offline
+                                        ? 'Offline'
+                                        : t('checking')}
+                            </span>
+
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="ml-auto"
+                                onClick={() => window.open('https://helios-7mcb.onrender.com/health', '_blank', 'noopener,noreferrer')}
+                            >
+                                {t('openService')}
+                            </Button>
+                        </div>
                         
                     <div className="mx-8 mb-8">
                         <ReportSummaryBlock />
