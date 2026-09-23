@@ -293,4 +293,15 @@ public sealed class AuthController : ControllerBase
 
         return NoContent();
     }
+    
+    [HttpGet("reset-password/validate")]
+    public async Task<IActionResult> ValidateResetPasswordTokenAsync([FromQuery] string token, CancellationToken cancellationToken)
+    {
+        var resetToken = await _resetPasswordTokenService.FindUnusedByTokenAsync(token);
+
+        if (resetToken is null || resetToken.Used || resetToken.Expires < DateTime.UtcNow)
+            return BadRequest();
+
+        return NoContent();
+    }
 }
