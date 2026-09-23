@@ -196,6 +196,26 @@ namespace Seeagle.Infrastructure.Persistence.Migrations
 
                     b.ToTable("sample_names", (string)null);
                 });
+            
+            modelBuilder.Entity("Seeagle.Domain.Settings.SystemSettings", b =>
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("uuid");
+
+                b.Property<double>("DuplicateDistanceMeters")
+                    .HasColumnType("double precision");
+
+                b.Property<TimeSpan>("DuplicateTimeWindow")
+                    .HasColumnType("interval");
+
+                b.Property<DateTime>("UpdatedUtc")
+                    .HasColumnType("timestamp with time zone");
+
+                b.HasKey("Id");
+
+                b.ToTable("SystemSettings");
+            });
 
             modelBuilder.Entity("Seeagle.Domain.User.EmailConfirmationToken", b =>
                 {
