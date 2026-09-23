@@ -266,6 +266,10 @@
   "delete": "Șterge",
   "backToHome": "Înapoi acasă",
   
-  "exportCsv": "Exportă CSV"
+  "exportCsv": "Exportă CSV",
+
+  "uniqueAreaPrompt": "Introduceți un nume unic pentru arie.",
+  "areaName": "Numele ariei",
+  "areaOverlapPrompt": "Această arie se suprapune cu o arie care deja există"
   
 }

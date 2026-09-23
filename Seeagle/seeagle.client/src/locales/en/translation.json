@@ -264,6 +264,10 @@
   "delete": "Delete",
   "backToHome": "Back to Home",
   
-  "exportCsv": "Export CSV"
+  "exportCsv": "Export CSV",
+  
+  "uniqueAreaPrompt": "Enter a unique name for the new area.",
+  "areaName": "Area name",
+  "areaOverlapPrompt": "Area overlaps with an existing area"
   
 }

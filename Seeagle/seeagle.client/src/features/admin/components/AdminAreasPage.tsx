@@ -13,6 +13,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
+import { useTranslation } from 'react-i18next';
 
 export function AdminAreasPage() {
     const [areas, setAreas] = useState<Area[]>([]);
@@ -22,6 +23,7 @@ export function AdminAreasPage() {
     const [isNameModalOpen, setIsNameModalOpen] = useState(false);
     const [createError, setCreateError] = useState<string | null>(null);
     const [drawError, setDrawError] = useState<string | null>(null);
+    const { t } = useTranslation();
 
     useEffect(() => {
         const loadAreas = async () => {
@@ -170,7 +172,7 @@ export function AdminAreasPage() {
                     <DialogHeader>
                         <DialogTitle>Add area</DialogTitle>
                         <DialogDescription>
-                            Enter a unique name for the new area.
+                            {t('uniqueAreaPrompt')}
                         </DialogDescription>
                     </DialogHeader>
 
@@ -180,7 +182,7 @@ export function AdminAreasPage() {
                             setAreaName(event.target.value);
                             setCreateError(null);
                         }}
-                        placeholder="Area name"
+                        placeholder={t("areaName")}
                         maxLength={30}
                         autoFocus
                     />
