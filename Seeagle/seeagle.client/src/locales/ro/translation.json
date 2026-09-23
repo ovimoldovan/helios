@@ -271,7 +271,8 @@
   "exportCsv": "Exportă CSV",
 
   "uniqueAreaPrompt": "Introduceți un nume unic pentru arie.",
-  "areaOverlapPrompt": "Această arie se suprapune cu o arie care deja există"
+  "areaOverlapPrompt": "Această arie se suprapune cu o arie care deja există",
+  
   "confirmDeleteMessage": "Ești sigur că vrei să ștergi?",
   "thisReport": "acest raport",
   "unauthenticatedToastTitle": "Neautentificat",
