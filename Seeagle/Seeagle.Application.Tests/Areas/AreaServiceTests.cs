@@ -26,7 +26,7 @@ public sealed class AreaServiceTests
             new Coordinate(26.0, 44.5)
         ]);
 
-        var area = new Area("Test area", geometry);
+        var area = new Area("Test area", geometry, "test-area");
 
         repository
             .GetAllQueryable()

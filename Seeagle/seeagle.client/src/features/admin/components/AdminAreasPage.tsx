@@ -23,7 +23,8 @@ export function AdminAreasPage() {
         };
         loadAreas();
     }, []);
-    const handleAreaCreated = useCallback(async(coordinates: number[][]) => {
+
+    const handleAreaCreated = useCallback(async (coordinates: number[][]) => {
         const request: CreateAreaRequest = {
             name: `Area ${nextId}`,
             coordinates
@@ -32,19 +33,14 @@ export function AdminAreasPage() {
             const response = await postJson<CreateAreaResponse>('/api/areas', request);
             const newArea: Area = {
                 id: response.id,
-                name: request.name,
+                name: response.name,
+                slug: response.slug,
                 coordinates,
             };
             setAreas((prev) => [...prev, newArea]);
             setNextId((prev) => prev + 1);
-        } catch (error) {   
-            const newArea: Area = {
-            id: String(nextId),
-            name: `Area ${nextId}`,
-            coordinates,
-        };
-        setAreas((prev) => [...prev, newArea]);
-        setNextId((prev) => prev + 1);
+        } catch (error) {
+            console.error('Failed to create area:', error);
         }
     }, [nextId]);
 
