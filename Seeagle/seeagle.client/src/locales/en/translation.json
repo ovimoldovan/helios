@@ -274,7 +274,7 @@
   "exportCsv": "Export CSV",
   
   "uniqueAreaPrompt": "Enter a unique name for the new area.",
-  "areaOverlapPrompt": "Area overlaps with an existing area"
+  "areaOverlapPrompt": "Area overlaps with an existing area",
   
   "confirmDeleteMessage": "Are you really sure you want to delete?",
   "thisReport": "this report",
