@@ -14,9 +14,9 @@ public class RefreshTokenService : IRefreshTokenService
     }
 
 
-    public async Task<RefreshToken> CreateAsync(User user, int expiryInDays, CancellationToken cancellationToken)
+    public async Task<RefreshToken> CreateAsync(User user, int expiryInDays, bool keepMeLoggedIn, CancellationToken cancellationToken)
     {
-        var token = new RefreshToken(user, expiryInDays);
+        var token = new RefreshToken(user, expiryInDays, keepMeLoggedIn);
         await _refreshTokenRepository.AddAsync(token, cancellationToken);
         return token;
     }

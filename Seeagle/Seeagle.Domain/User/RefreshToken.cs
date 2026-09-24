@@ -10,12 +10,13 @@ public class RefreshToken
         User = null!;
     }
 
-    public RefreshToken(User user, int expiryInDays)
+    public RefreshToken(User user, int expiryInDays, bool keepMeLoggedIn)
     {
         Id = Guid.NewGuid();
         User = user;
         Expires = DateTime.UtcNow.AddDays(expiryInDays);
         Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
+        KeepMeLoggedIn = keepMeLoggedIn;
     }
     
     public Guid Id { get; private set; }
@@ -24,5 +25,6 @@ public class RefreshToken
     public DateTime CreatedUtc { get; private set; } = DateTime.UtcNow;
     public DateTime Expires { get; private set; }
     public DateTime? Revoked { get; set; }
+    public bool KeepMeLoggedIn { get; private set; }
     public bool IsActive => Revoked is null && DateTime.UtcNow < Expires;
 }

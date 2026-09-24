@@ -17,11 +17,12 @@ public sealed class RefreshTokenServiceTests
         var service = new RefreshTokenService(repository);
 
         // Act
-        var result = await service.CreateAsync(user, 7, CancellationToken.None);
+        var result = await service.CreateAsync(user, 7, true, CancellationToken.None);
 
         // Assert
         Assert.NotNull(result);
         Assert.Equal(user.Id, result.User.Id);
+        Assert.True(result.KeepMeLoggedIn);
     }
 
     [Fact]
@@ -33,11 +34,11 @@ public sealed class RefreshTokenServiceTests
         var service = new RefreshTokenService(repository);
 
         // Act
-        await service.CreateAsync(user, 7, CancellationToken.None);
+        await service.CreateAsync(user, 7, false, CancellationToken.None);
 
         // Assert
         await repository.Received(1)
-            .AddAsync(Arg.Is<RefreshToken>(token => token!.User.Id == user.Id), CancellationToken.None);
+            .AddAsync(Arg.Is<RefreshToken>(token => token!.User.Id == user.Id && !token.KeepMeLoggedIn), CancellationToken.None);
     }
 
     [Fact]
@@ -46,7 +47,7 @@ public sealed class RefreshTokenServiceTests
         // Arrange
         var repository = Substitute.For<IRepository<RefreshToken>>();
         var user = new User("test@test.com", "placeholder", "Ana", "Popescu");
-        var refreshToken = new RefreshToken(user, 7);
+        var refreshToken = new RefreshToken(user, 7, false);
         repository.GetAllQueryable().Returns(new List<RefreshToken> { refreshToken }.BuildMock());
         var service = new RefreshTokenService(repository);
 
@@ -64,7 +65,7 @@ public sealed class RefreshTokenServiceTests
         // Arrange
         var repository = Substitute.For<IRepository<RefreshToken>>();
         var user = new User("test@test.com", "placeholder", "Ana", "Popescu");
-        var refreshToken = new RefreshToken(user, 7);
+        var refreshToken = new RefreshToken(user, 7, false);
         repository.GetAllQueryable().Returns(new List<RefreshToken> { refreshToken }.BuildMock());
         var service = new RefreshTokenService(repository);
 
@@ -81,7 +82,7 @@ public sealed class RefreshTokenServiceTests
         // Arrange
         var repository = Substitute.For<IRepository<RefreshToken>>();
         var user = new User("test@test.com", "placeholder", "Ana", "Popescu");
-        var refreshToken = new RefreshToken(user, 7);
+        var refreshToken = new RefreshToken(user, 7, false);
         repository.GetAllQueryable().Returns(new List<RefreshToken> { refreshToken }.BuildMock());
         var service = new RefreshTokenService(repository);
 
@@ -98,7 +99,7 @@ public sealed class RefreshTokenServiceTests
         // Arrange
         var repository = Substitute.For<IRepository<RefreshToken>>();
         var user = new User("test@test.com", "placeholder", "Ana", "Popescu");
-        var refreshToken = new RefreshToken(user, 7);
+        var refreshToken = new RefreshToken(user, 7, false);
         repository.GetAllQueryable().Returns(new List<RefreshToken> { refreshToken }.BuildMock());
         var service = new RefreshTokenService(repository);
 
@@ -131,8 +132,8 @@ public sealed class RefreshTokenServiceTests
         // Arrange
         var repository = Substitute.For<IRepository<RefreshToken>>();
         var user = new User("test@test.com", "placeholder", "Ana", "Popescu");
-        var tokenOne = new RefreshToken(user, 7);
-        var tokenTwo = new RefreshToken(user, 7);
+        var tokenOne = new RefreshToken(user, 7, false);
+        var tokenTwo = new RefreshToken(user, 7, false);
         repository.GetAllQueryable().Returns(new List<RefreshToken> { tokenOne, tokenTwo }.BuildMock());
         var service = new RefreshTokenService(repository);
 
@@ -151,8 +152,8 @@ public sealed class RefreshTokenServiceTests
         var repository = Substitute.For<IRepository<RefreshToken>>();
         var targetUser = new User("test@test.com", "placeholder", "Ana", "Popescu");
         var otherUser = new User("other@test.com", "placeholder", "Maria", "Ionescu");
-        var targetToken = new RefreshToken(targetUser, 7);
-        var otherToken = new RefreshToken(otherUser, 7);
+        var targetToken = new RefreshToken(targetUser, 7, false);
+        var otherToken = new RefreshToken(otherUser, 7, false);
         repository.GetAllQueryable().Returns(new List<RefreshToken> { targetToken, otherToken }.BuildMock());
         var service = new RefreshTokenService(repository);
 
@@ -170,8 +171,8 @@ public sealed class RefreshTokenServiceTests
         // Arrange
         var repository = Substitute.For<IRepository<RefreshToken>>();
         var user = new User("test@test.com", "placeholder", "Ana", "Popescu");
-        var tokenOne = new RefreshToken(user, 7);
-        var tokenTwo = new RefreshToken(user, 7);
+        var tokenOne = new RefreshToken(user, 7, false);
+        var tokenTwo = new RefreshToken(user, 7, false);
         repository.GetAllQueryable().Returns(new List<RefreshToken> { tokenOne, tokenTwo }.BuildMock());
         var service = new RefreshTokenService(repository);
 

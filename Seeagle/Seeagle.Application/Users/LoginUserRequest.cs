@@ -10,4 +10,6 @@ public class LoginUserRequest
     
     [Required]
     public string Password { get; set; } = string.Empty;
+
+    public bool KeepMeLoggedIn { get; set; }
 }
