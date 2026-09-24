@@ -10,6 +10,8 @@ import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import type { ReactNode } from 'react';
 import { UserRole } from '@/shared/types/UserRole'
+import { MyProfileModal } from '@/features/users/components/MyProfileModal';
+
 interface LeftPanelProps {
     sidebarExtra?: ReactNode;
 }
@@ -38,6 +40,7 @@ export function LeftPanel({ sidebarExtra }: LeftPanelProps) {
 
     const isAdmin = user?.role === UserRole.Admin;
     const isModerator = user?.role === UserRole.Moderator || isAdmin;
+    const [profileModalOpen, setProfileModalOpen] = useState(false);
 
     return (
         <>
@@ -150,6 +153,13 @@ export function LeftPanel({ sidebarExtra }: LeftPanelProps) {
                                     </p>
                                 </div>
                             </div>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setProfileModalOpen(true)}
+                            >
+                                {t('myProfile')}
+                            </Button>
                         </div>
                     )}
                 </CardContent>
@@ -167,6 +177,14 @@ export function LeftPanel({ sidebarExtra }: LeftPanelProps) {
                 <div
                     className="sm:hidden fixed inset-0 z-40 bg-black/30"
                     onClick={() => setIsOpen(false)}
+                />
+            )}
+
+            {user && (
+                <MyProfileModal
+                    isOpen={profileModalOpen}
+                    onClose={() => setProfileModalOpen(false)}
+                    user={user}
                 />
             )}
         </>

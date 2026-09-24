@@ -14,6 +14,8 @@ public interface IUserService
     
     Task<UserListItemDto?> RemoveModeratorAsync(Guid userId, CancellationToken cancellationToken);
 
+    Task<UserDto> UpdateProfileAsync(Guid userId, UpdateProfileRequest request, CancellationToken cancellationToken);
+    Task<bool> ChangePasswordAsync(Guid userId, ChangePasswordRequest request, CancellationToken cancellationToken);
     Task<User?> GetByEmailAsync(string email);
 
     Task UpdatePasswordAsync(User user, string newPassword, CancellationToken cancellationToken);
