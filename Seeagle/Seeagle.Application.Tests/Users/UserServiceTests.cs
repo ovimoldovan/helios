@@ -254,7 +254,7 @@ public sealed class UserServiceTests
         var result = await service.RegisterUserAsync(request, CancellationToken.None);
 
         // Assert
-        Assert.Equal("User", result.Role); 
+        Assert.Equal(Role.User, result.Role); 
     }
 
     [Fact]

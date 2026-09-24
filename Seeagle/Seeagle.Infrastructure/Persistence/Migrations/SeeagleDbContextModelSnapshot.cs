@@ -60,6 +60,10 @@ namespace Seeagle.Infrastructure.Persistence.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.ToTable("Areas", (string)null);
@@ -196,6 +200,56 @@ namespace Seeagle.Infrastructure.Persistence.Migrations
 
                     b.ToTable("sample_names", (string)null);
                 });
+            
+            modelBuilder.Entity("Seeagle.Domain.Settings.SystemSettings", b =>
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("uuid");
+
+                b.Property<double>("DuplicateDistanceMeters")
+                    .HasColumnType("double precision");
+
+                b.Property<TimeSpan>("DuplicateTimeWindow")
+                    .HasColumnType("interval");
+
+                b.Property<DateTime>("UpdatedUtc")
+                    .HasColumnType("timestamp with time zone");
+
+                b.HasKey("Id");
+
+                b.ToTable("SystemSettings");
+            });
+
+            modelBuilder.Entity("Seeagle.Domain.User.EmailConfirmationToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("Expires")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Used")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("EmailConfirmationTokens");
+                });
 
             modelBuilder.Entity("Seeagle.Domain.User.RefreshToken", b =>
                 {
@@ -208,6 +262,9 @@ namespace Seeagle.Infrastructure.Persistence.Migrations
 
                     b.Property<DateTime>("Expires")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("KeepMeLoggedIn")
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("Revoked")
                         .HasColumnType("timestamp with time zone");
@@ -224,6 +281,35 @@ namespace Seeagle.Infrastructure.Persistence.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("RefreshTokens");
+                });
+
+            modelBuilder.Entity("Seeagle.Domain.User.ResetPasswordToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("Expires")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Used")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ResetPasswordTokens");
                 });
 
             modelBuilder.Entity("Seeagle.Domain.User.User", b =>
@@ -308,7 +394,29 @@ namespace Seeagle.Infrastructure.Persistence.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Seeagle.Domain.User.EmailConfirmationToken", b =>
+                {
+                    b.HasOne("Seeagle.Domain.User.User", "User")
+                        .WithOne()
+                        .HasForeignKey("Seeagle.Domain.User.EmailConfirmationToken", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Seeagle.Domain.User.RefreshToken", b =>
+                {
+                    b.HasOne("Seeagle.Domain.User.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Seeagle.Domain.User.ResetPasswordToken", b =>
                 {
                     b.HasOne("Seeagle.Domain.User.User", "User")
                         .WithMany()

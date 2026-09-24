@@ -69,7 +69,7 @@ export function AddReportTypeModal({
         <Dialog open={isOpen} onOpenChange={(open) => { if (!open) handleClose(); }}>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>{t('newReportType', 'New Report Type')}</DialogTitle>
+                    <DialogTitle>{t('newReportType')}</DialogTitle>
                 </DialogHeader>
 
                 <div className="grid gap-4 py-4">

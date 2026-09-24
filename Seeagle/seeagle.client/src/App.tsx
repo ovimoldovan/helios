@@ -19,13 +19,21 @@ import { MyReports } from '@/features/reports/components/MyReports';
 import { PublicReports } from '@/features/reports/components/PublicReports'; 
 import { AdminAreasPage } from './features/admin/components/AdminAreasPage';
 import { AppLayout } from '@/shared/layout/AppLayout';
-import { ReportManagement } from "@/features/moderator/components/ReportManagemnt.tsx"; 
+import { ReportManagement } from "@/features/moderator/components/ReportManagemnt.tsx";
+import { ConfirmEmailPage } from "@/features/registration/components/ConfirmEmailPage.tsx";
+import { ForgotPasswordPage } from "@/features/reset_password/ForgotPasswordPage.tsx";
+import { ResetPasswordPage } from "@/features/reset_password/ResetPasswordPage.tsx"; 
+import { SystemSettingsPage } from '@/features/admin/components/SystemSettingsPage.tsx';
 
 function App() {
     return (
         <AuthProvider>
             <Routes>
+                <Route path="/confirm-email" element={<ConfirmEmailPage />}/>
+                
                 <Route path="/" element={<Homepage />} />
+
+                <Route path="/:areaSlug" element={<Homepage />} />
 
                 <Route element={<AppLayout />}>
                     <Route
@@ -55,6 +63,20 @@ function App() {
                             <PublicReports />
                         }
                     />
+                    
+                    <Route
+                        path="/forgot-password"
+                        element={
+                            <ForgotPasswordPage />
+                        }
+                    />
+                    
+                    <Route
+                        path="/reset-password"
+                        element={
+                            <ResetPasswordPage />
+                        }
+                    />
 
                     <Route element={<PrivateRoutes allowedRoles={['Admin']}/>}>
                         <Route
@@ -82,6 +104,13 @@ function App() {
                             path="/admin/areas"
                             element={
                                 <AdminAreasPage />
+                            }
+                        />
+
+                        <Route
+                            path="/admin/system-settings"
+                            element={
+                                <SystemSettingsPage />
                             }
                         />
                     </Route>
@@ -138,9 +167,9 @@ function App() {
                             <CookiesPolicy/>
                         }
                     />
+                    
                 </Route>
             </Routes>
-
             <Toaster />
         </AuthProvider>
     );

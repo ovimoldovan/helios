@@ -55,8 +55,15 @@ async function request(url: string, init: RequestInit, isRetry = false): Promise
 
 async function parseJsonResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
-    if (response.status === 400) {
-      throw await response.json();
+    let body: unknown;
+    try {
+      body = await response.json();
+    } catch {
+      body = undefined;
+    }
+
+    if (body && typeof body === 'object') {
+      throw { ...body, status: response.status };
     }
 
     throw new Error(`Request failed with status ${response.status}.`);

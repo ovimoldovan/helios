@@ -6,5 +6,7 @@ public class ResendSettings
     public required string ReportMessageTemplateId { get; init; }
     public required string ReportUpdateWithModeratorMessageTemplateId { get; init; }
     public required string ReportUpdateTemplateId { get; init; }
+    public required string EmailConfirmationTemplateId { get; init; }
+    public required string PasswordResetTemplateId { get; init; }
     public required string From { get; init; }
 }

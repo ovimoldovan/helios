@@ -23,5 +23,8 @@ public class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
 
         builder.Property(refreshToken => refreshToken.Expires)
             .IsRequired();
+
+        builder.Property(refreshToken => refreshToken.KeepMeLoggedIn)
+            .IsRequired();
     }
 }
