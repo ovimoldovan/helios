@@ -13,4 +13,7 @@ public interface IUserService
     Task<User?> GetByIdAsync(Guid userId);
     
     Task<UserListItemDto?> RemoveModeratorAsync(Guid userId, CancellationToken cancellationToken);
+
+    Task<UserDto> UpdateProfileAsync(Guid userId, UpdateProfileRequest request, CancellationToken cancellationToken);
+    Task<bool> ChangePasswordAsync(Guid userId, ChangePasswordRequest request, CancellationToken cancellationToken);
 }

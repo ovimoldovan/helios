@@ -267,6 +267,21 @@
   
   "exportCsv": "Export CSV",
   "confirmDeleteMessage": "Are you really sure you want to delete?",
-  "thisReport": "this report"
+  "thisReport": "this report",
+
+  "myProfile": "My Profile",
+  "updateInfo": "Update Info",
+  "changePassword": "Change Password",
+  "currentPassword": "Current Password",
+  "newPassword": "New Password",
+  "saveChanges": "Save Changes",
+  "saving": "Saving...",
+  "profileUpdateError": "Failed to update profile.",
+  "passwordChangeError": "Failed to change password. Check your current password.",
+  "profileUpdatedTitle": "Profile updated",
+  "passwordChangedTitle": "Password changed",
+  "profileUpdatedRelogin": "Please log in again to see your changes.",
+  "confirmProfileChangeMessage": "Are you sure you want to update your profile? You will need to log in again.",
+"confirmPasswordChangeMessage": "Are you sure you want to change your password? You will need to log in again."
   
 }

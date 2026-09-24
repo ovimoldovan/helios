@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Seeagle.Application.Users;
 using Seeagle.Application.Common;
 using Seeagle.Domain.User;
+using System.Security.Claims;
 
 namespace Seeagle.Server.Controllers;
 

@@ -100,6 +100,52 @@ public class UserService : IUserService
             .FirstOrDefaultAsync(u => u.Id == userId);
     }
 
+    public async Task<UserDto> UpdateProfileAsync(Guid userId, UpdateProfileRequest request, CancellationToken cancellationToken)
+    {
+        var user = await _userRepository.GetAllQueryable()
+            .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
+
+        if (user is null)
+        {
+            throw new InvalidOperationException("User not found.");
+        }
+
+        var normalizedEmail = request.Email.ToLowerInvariant().Trim();
+
+        var emailTaken = await _userRepository.GetAllQueryable()
+            .AnyAsync(u => u.Email == normalizedEmail && u.Id != userId, cancellationToken);
+
+        if (emailTaken)
+        {
+            throw new InvalidOperationException("A user with the provided email already exists.");
+        }
+
+        user.UpdateProfile(normalizedEmail, request.FirstName.Trim(), request.LastName.Trim());
+        await _userRepository.UpdateAsync(user, cancellationToken);
+
+        return ConvertToDto(user);
+    }
+
+    public async Task<bool> ChangePasswordAsync(Guid userId, ChangePasswordRequest request, CancellationToken cancellationToken)
+    {
+        var user = await _userRepository.GetAllQueryable()
+            .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
+
+        if (user is null)
+        {
+            throw new InvalidOperationException("User not found.");
+        }
+
+        if (_passwordHasher.VerifyHashedPassword(user, user.PasswordHash, request.OldPassword) != PasswordVerificationResult.Success)
+        {
+            return false;
+        }
+
+        user.UpdatePassword(_passwordHasher.HashPassword(user, request.NewPassword));
+        await _userRepository.UpdateAsync(user, cancellationToken);
+        return true;
+    }
+
     private UserDto ConvertToDto(User user)
     {
         return new UserDto(

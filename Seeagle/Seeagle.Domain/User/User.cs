@@ -36,4 +36,16 @@ public class User
     {
         Role = Role.User;
     }
+
+    public void UpdatePassword(string newPasswordHash)
+    {
+        PasswordHash = newPasswordHash;
+    }
+
+    public void UpdateProfile(string email, string newFirstName, string newLastName)
+    {
+        Email = email;
+        FirstName = newFirstName;
+        LastName = newLastName;
+    }
 }
