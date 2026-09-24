@@ -340,5 +340,8 @@
 
   "openService": "Deschide serviciul",
   "emailConfirmationFailedToastTitle": "Confrimarea E-Mail-ului a eșuat",
-  "emailConfirmationFailedToastDescription": "Link-ul de confrimare a E-Mail-ului nu este valid"
+  "emailConfirmationFailedToastDescription": "Link-ul de confrimare a E-Mail-ului nu este valid",
+
+  "firstNameField": "Prenume",
+  "lastNameField": "Nume"
 }

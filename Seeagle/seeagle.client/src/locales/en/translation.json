@@ -342,5 +342,7 @@
   "areaOverlapError": "Area overlaps with an existing area.",
   "openService": "Open service",
   "emailConfirmationFailedToastTitle": "E-Mail confirmation failed",
-  "emailConfirmationFailedToastDescription": "Invalid E-mail confirmation link"
+  "emailConfirmationFailedToastDescription": "Invalid E-mail confirmation link",
+  "firstNameField": "First name",
+  "lastNameField": "Last name"
 }

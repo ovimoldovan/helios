@@ -28,10 +28,11 @@ export function MyProfileModal({ isOpen, onClose, user }: MyProfileModalProps) {
     const navigate = useNavigate();
     const { logout } = useAuth();
 
-    const [email] = useState(user.email);
-    const [firstName] = useState(user.firstName);
-    const [lastName] = useState(user.lastName);
+    const [email, setEmail] = useState(user.email);
+    const [firstName, setFirstName] = useState(user.firstName);
+    const [lastName, setLastName] = useState(user.lastName);
     const [profileError, setProfileError] = useState<string | null>(null);
+    const [isSavingProfile, setIsSavingProfile] = useState(false);
 
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -55,14 +56,14 @@ export function MyProfileModal({ isOpen, onClose, user }: MyProfileModalProps) {
         if (!confirmed) return;
 
         setProfileError(null);
-        /*setIsSavingProfile(true);*/
+        setIsSavingProfile(true);
 
         try {
             await updateProfile({ email, firstName, lastName });
             await redirectToReLogin(t('profileUpdatedTitle'));
         } catch {
             setProfileError(t('profileUpdateError'));
-            /*setIsSavingProfile(false);*/
+            setIsSavingProfile(false);
         }
     }
 
@@ -95,42 +96,42 @@ export function MyProfileModal({ isOpen, onClose, user }: MyProfileModalProps) {
                         <h3 className="text-sm font-semibold mb-3">{t('updateInfo')}</h3>
                         <form onSubmit={handleProfileSubmit}>
                             <FieldGroup>
-                                {/*<Field>
+                                <Field>
                                     <FieldLabel htmlFor="profile-email">{t('email')}</FieldLabel>
                                     <Input
                                         id="profile-email"
                                         type="email"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        disabled={isSavingProfile}
+                                        disabled={true}
                                     />
-                                </Field>*/}
-                                {/*<Field>
+                                </Field>
+                                <Field>
                                     <FieldLabel htmlFor="profile-firstname">{t('firstNameField')}</FieldLabel>
                                     <Input
                                         id="profile-firstname"
                                         value={firstName}
                                         onChange={(e) => setFirstName(e.target.value)}
-                                        disabled={isSavingProfile}
+                                        disabled={true}
                                     />
-                                </Field>*/}
-                                {/*<Field>
+                                </Field>
+                                <Field>
                                     <FieldLabel htmlFor="profile-lastname">{t('lastNameField')}</FieldLabel>
                                     <Input
                                         id="profile-lastname"
                                         value={lastName}
                                         onChange={(e) => setLastName(e.target.value)}
-                                        disabled={isSavingProfile}
+                                        disabled={true}
                                     />
-                                </Field>*/}
+                                </Field>
 
                                 {profileError && (
                                     <p className="text-sm text-destructive">{profileError}</p>
                                 )}
 
-                                {/*<Button type="submit" disabled={isSavingProfile}>
+                                <Button type="submit" disabled={isSavingProfile}>
                                     {isSavingProfile ? t('saving') : t('saveChanges')}
-                                </Button>*/}
+                                </Button>
                             </FieldGroup>
                         </form>
                     </section>
