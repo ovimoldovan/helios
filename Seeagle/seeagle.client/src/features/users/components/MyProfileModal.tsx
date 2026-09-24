@@ -112,7 +112,7 @@ export function MyProfileModal({ isOpen, onClose, user }: MyProfileModalProps) {
                                         id="profile-firstname"
                                         value={firstName}
                                         onChange={(e) => setFirstName(e.target.value)}
-                                        disabled={true}
+                                        disabled={isSavingProfile}
                                     />
                                 </Field>
                                 <Field>
@@ -121,7 +121,7 @@ export function MyProfileModal({ isOpen, onClose, user }: MyProfileModalProps) {
                                         id="profile-lastname"
                                         value={lastName}
                                         onChange={(e) => setLastName(e.target.value)}
-                                        disabled={true}
+                                        disabled={isSavingProfile}
                                     />
                                 </Field>
 
