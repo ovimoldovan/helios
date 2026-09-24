@@ -12,8 +12,15 @@ public sealed class AreasController(IAreaService areaService) : ControllerBase
         [FromBody] CreateAreaRequest request,
         CancellationToken cancellationToken)
     {
-        var result = await areaService.CreateAsync(request, cancellationToken);
-        return Ok(result);
+        try
+        {
+            var result = await areaService.CreateAsync(request, cancellationToken);
+            return Ok(result);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
     
     [HttpGet]
@@ -30,14 +37,21 @@ public sealed class AreasController(IAreaService areaService) : ControllerBase
         [FromBody] UpdateAreaRequest request,
         CancellationToken cancellationToken)
     {
-        var result = await areaService.UpdateAsync(id, request, cancellationToken);
-        
-        if (result is null)
+        try
         {
-            return NotFound();
+            var result = await areaService.UpdateAsync(id, request, cancellationToken);
+
+            if (result is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(result);
         }
-        
-        return Ok(result);
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     [HttpDelete("{id:guid}")]

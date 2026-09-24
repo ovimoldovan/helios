@@ -228,6 +228,10 @@
   "rejected": "Respins",
 
   "unexpectedErrorLoadingReports": "Eroare neașteptată la încărcarea rapoartelor.",
+  
+  "assistantOnline": "Online",
+  "assistantOffline": "Offline",
+  "assistantChecking": "Se verifică...",
 
   "allReportsTitle": "Toate Rapoartele",
   "allReportsDescription": "Revizuiește toate rapoartele, cu excepția celor în așteptare.",
@@ -265,6 +269,10 @@
   "backToHome": "Înapoi acasă",
   
   "exportCsv": "Exportă CSV",
+
+  "uniqueAreaPrompt": "Introduceți un nume unic pentru arie.",
+  "areaOverlapPrompt": "Această arie se suprapune cu o arie care deja există",
+  
   "confirmDeleteMessage": "Ești sigur că vrei să ștergi?",
   "thisReport": "acest raport",
 
@@ -281,6 +289,55 @@
   "passwordChangedTitle": "Parolă schimbată",
   "profileUpdatedRelogin": "Te rugăm să te autentifici din nou, ca să vezi modificările.",
   "confirmProfileChangeMessage": "Ești sigur că vrei să actualizezi profilul? Va trebui să te autentifici din nou.",
-  "confirmPasswordChangeMessage": "Ești sigur că vrei să schimbi parola? Va trebui să te autentifici din nou."
+  "confirmPasswordChangeMessage": "Ești sigur că vrei să schimbi parola? Va trebui să te autentifici din nou.",
+  "unauthenticatedToastTitle": "Neautentificat",
+  "unauthenticatedToastDescription": "Autentifică-te pentru a accesa această pagină",
+  "emailConfirmationNeededToastTitle" : "Confirmare pe E-Mail necesară",
+  "emailConfirmationNeededToastDescription": "Verifică căsuța",
+  "emailNotConfirmed": "E-Mail neconfirmat",
+
+  "graphsTab": "Grafice",
+  "tableTab": "Tabel",
+  "noSummaryData": "Nu există date disponibile.",
+  "reportCount": "Rapoarte",
   
+  "reportPhoto": "Imagine raport",
+  "showPhotoToPublic": "Arată imaginea public",
+  "showPhotoToPublicDescription": "Cei care pot vedea raportul pot vedea și imaginea",
+  "reset": "Resetează",
+  "forgotYourPassword": "Ți-ai uitat parola?",
+  "resetPasswordTitle": "Resetează parola",
+  "resetPasswordDescription": "Introdu adresa de E-Mail",
+  "resetPasswordSentDescription": "Dacă există un cont înregistrat pentru adresa introdusă, un link pentru resetare s-a trimis",
+  "resetFailed": "Ceva nu a mers bine, vă rugăm să reîncercați",
+  "backToLogin": "Înapoi la autentificare",
+  "sending": "Se trimite...",
+  "passwordResetSuccessToastTitle": "Parolă resetată cu succes",
+  "passwordResetSuccessToastDescription": "Puteți utiliza noua parolă",
+  "passwordResetFailed": "Resetarea parolei a eșuat",
+  "setNewPasswordTitle": "Setați o parolă nouă",
+  "invalidResetLinkDescription": "Link-ul de resetare a parolei nu este valid",
+  "requestNewResetLink": "Obține un link nou de resetare",
+  "setNewPasswordButton": "Schimbă parola",
+  "newPassword": "Parolă nouă",
+  
+  "systemSettingsTitle": "Setări de sistem",
+  "systemSettingsDescription": "Modifică parametrii de detectare dublură",
+  "errorLoadingSettings": "Eroare încărcare setări",
+  "errorSavingSettings": "Eroare salvare setări",
+  "fieldRequired": "Acest câmp este obligatoriu",
+  "distanceRangeError": "Trebuie sa fie între 0 și 1000",
+  "timeWindowRangeError": "Trebuie să fie între 0 și un an (8760 ore)",
+  "settingsSaved": "Setările au fost salvate",
+  "duplicateDistanceLabel": "Rază distanță pentru detectare dubluri",
+  "duplicateTimeWindowLabel": "Interval de timp pentru detectare dubluri",
+  
+  "addArea": "Adaugă zonă",
+  "enterUniqueAreaName": "Introdu un nume unic pentru noua zonă.",
+  "areaName": "Numele zonei",
+  "areaOverlapError": "Zona se suprapune cu o zonă existentă.",
+
+  "openService": "Deschide serviciul",
+  "emailConfirmationFailedToastTitle": "Confrimarea E-Mail-ului a eșuat",
+  "emailConfirmationFailedToastDescription": "Link-ul de confrimare a E-Mail-ului nu este valid"
 }

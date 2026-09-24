@@ -10,7 +10,9 @@ public sealed record ReportDto(
     string Priority,
     string Type,
     string? MessageToReporter,
-    double? AiProbabilityScore
+    double? AiProbabilityScore,
+    bool HasPhoto,
+    bool ShowPhotoToPublic
 )
 {
     public IReadOnlyList<Guid> DuplicateCandidateIds { get; init; } = [];

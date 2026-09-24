@@ -10,3 +10,8 @@ export interface AuthUser {
     lastName: string;
     role: 'User' | 'Admin' | 'Moderator';
 }
+
+export interface LoginErrorResponse {
+    message: string;
+    status: number;
+}

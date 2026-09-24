@@ -3,6 +3,7 @@ using NetTopologySuite.Geometries;
 using Seeagle.Application.Common;
 using Seeagle.Domain.Reports;
 using Seeagle.Domain.User;
+using Seeagle.Domain.Settings;
 using Microsoft.EntityFrameworkCore;
 using Seeagle.Domain.Areas;
 
@@ -15,6 +16,7 @@ public sealed class ReportService : IReportService
     private readonly IRepository<ReportType> _reportTypeRepository;
     private readonly IRepository<Area> _areaRepository;
     private readonly IRepository<Photo> _photoRepository;
+    private readonly IRepository<SystemSettings> _systemSettingsRepository;
     
     private static readonly int StandardGpsFormat = 4326;
     private static readonly GeometryFactory GeometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: StandardGpsFormat);
@@ -27,6 +29,7 @@ public sealed class ReportService : IReportService
         IRepository<Area> areaRepository,
         IRepository<ReportType> reportTypeRepository,
         IRepository<Photo> photoRepository,
+        IRepository<SystemSettings> systemSettingsRepository,
         IPhotoProcessor photoProcessor)
     {
         _reportRepository = reportRepository;
@@ -34,6 +37,7 @@ public sealed class ReportService : IReportService
         _areaRepository = areaRepository;
         _reportTypeRepository = reportTypeRepository;
         _photoRepository = photoRepository;
+        _systemSettingsRepository = systemSettingsRepository;
         _photoProcessor = photoProcessor;
     }
 
@@ -105,24 +109,26 @@ public sealed class ReportService : IReportService
         var point = GeometryFactory.CreatePoint(new Coordinate(request.Longitude, request.Latitude));
         var report = new Report(point, request.Description, user, reportType);
 
-        var duplicateCandidateStartDate = DateTime.UtcNow.AddHours(-72);
+        var settings = await _systemSettingsRepository.GetAllQueryable().FirstAsync(cancellationToken);
+
+        var duplicateCandidateStartDate = DateTime.UtcNow - settings.DuplicateTimeWindow;
 
         var possibleDuplicates = new List<Report>();
 
         await foreach (var candidate in _reportRepository
-            .GetAllQueryable()
-            .Where(r =>
-                !r.IsDeleted &&
-                r.Type.Id == reportType.Id &&
-                r.CreatedUtc >= duplicateCandidateStartDate)
-            .AsAsyncEnumerable()
-            .WithCancellation(cancellationToken))
+                           .GetAllQueryable()
+                           .Where(r =>
+                               !r.IsDeleted &&
+                               r.Type.Id == reportType.Id &&
+                               r.CreatedUtc >= duplicateCandidateStartDate)
+                           .AsAsyncEnumerable()
+                           .WithCancellation(cancellationToken))
         {
             if (CalculateDistanceInMeters(
                     report.Location.Y,
                     report.Location.X,
                     candidate.Location.Y,
-                    candidate.Location.X) <= 50 &&
+                    candidate.Location.X) <= settings.DuplicateDistanceMeters &&
                 HasSimilarDescription(
                     report.Description,
                     candidate.Description))
@@ -178,7 +184,7 @@ public sealed class ReportService : IReportService
             pageSize);
     }
 
-    public async Task<Report?> ApproveAsync(Guid id, string priority, CancellationToken cancellationToken)
+    public async Task<Report?> ApproveAsync(Guid id, string priority, bool showPhotoToPublic, CancellationToken cancellationToken)
     {
         var report = await _reportRepository
             .GetAllQueryable()
@@ -199,9 +205,11 @@ public sealed class ReportService : IReportService
         };
 
         report.Approve(priorityEnum);
+        
+        report.SetPhotoVisibility(showPhotoToPublic);
 
         await _reportRepository.UpdateAsync(report, cancellationToken);
-
+        
         return report;
     }
 
@@ -387,6 +395,11 @@ public sealed class ReportService : IReportService
             };
             report.UpdatePriority(priorityEnum);
         }
+        
+        if (request.ShowPhotoToPublic is not null)
+        {
+            report.SetPhotoVisibility(request.ShowPhotoToPublic.Value);
+        }
 
         await _reportRepository.UpdateAsync(report, cancellationToken);
 
@@ -420,13 +433,22 @@ public sealed class ReportService : IReportService
     {
         var report = await _reportRepository
             .GetAllQueryable()
+            .Include(report => report.Photo)
             .FirstOrDefaultAsync(report => report.Id == reportId, cancellationToken);
 
         if (report?.Photo is null)
             return null;
 
-        if (report.Status != ReportStatus.Approved && !isModerator)
-            return null;
+        if (!isModerator)
+        {
+            var isPubliclyVisible =
+                !report.IsDeleted &&
+                report.ShowPhotoToPublic &&
+                (report.Status == ReportStatus.Approved || report.Status == ReportStatus.Solved);
+
+            if (!isPubliclyVisible)
+                return null;
+        }
 
         return new ProcessedPhoto(report.Photo.ImageData, report.Photo.ContentType);
     }

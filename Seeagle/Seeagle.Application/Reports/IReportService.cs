@@ -9,7 +9,7 @@ public interface IReportService
 
     Task<PagedResult<Report>> GetPendingAsync(int pageNumber, int pageSize, CancellationToken cancellationToken);
 
-    Task<Report?> ApproveAsync(Guid id,string priority, CancellationToken cancellationToken);
+    Task<Report?> ApproveAsync(Guid id, string priority, bool showPhotoToPublic, CancellationToken cancellationToken);
 
     Task<Report?> RejectAsync(Guid id, string? message, CancellationToken cancellationToken);
     Task<Report?> MarkAsSolvedAsync(Guid id, string? message, CancellationToken cancellationToken);
@@ -23,4 +23,5 @@ public interface IReportService
     Task<bool>SoftDeleteAsync(Guid id, CancellationToken cancellationToken);
 	Task<Report?> UpdateAsync(Guid id, UpdateReportRequest request, CancellationToken cancellationToken);
     Task <List<CsvReportDto>> GetByStatusForExportAsync(string? status, string? excludeStatus, CancellationToken cancellationToken);
+    
 }

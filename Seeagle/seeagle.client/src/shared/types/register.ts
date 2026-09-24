@@ -11,3 +11,8 @@ export interface RegisterResponse {
     firstName: string;
     lastName: string;
 }
+
+export interface ConfirmEmailRequest {
+    userId: string;
+    token: string;
+}

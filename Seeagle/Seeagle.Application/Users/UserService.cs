@@ -14,7 +14,7 @@ public class UserService : IUserService
         _userRepository = userRepository;
     }
 
-    public async Task<UserDto> RegisterUserAsync(RegisterUserRequest request, CancellationToken cancellationToken)
+    public async Task<User> RegisterUserAsync(RegisterUserRequest request, CancellationToken cancellationToken)
     {
         var normalizedEmail = request.Email.ToLowerInvariant().Trim();
         var emailExists = await _userRepository.GetAllQueryable()
@@ -30,7 +30,7 @@ public class UserService : IUserService
 
         var user = new User(normalizedEmail, hashedPassword, request.FirstName.Trim(), request.LastName.Trim());
         await _userRepository.AddAsync(user, cancellationToken);
-        return ConvertToDto(user);
+        return user;
     }
 
     public async Task<User?> ValidateCredentialsAsync(LoginUserRequest request, CancellationToken cancellationToken)
@@ -147,14 +147,25 @@ public class UserService : IUserService
     }
 
     private UserDto ConvertToDto(User user)
+    public async Task<User?> GetByEmailAsync(string email)
     {
-        return new UserDto(
-            user.Id,
-            user.Email,
-            user.FirstName,
-            user.LastName,
-            user.Role.ToString()
-        );
+        return await _userRepository.GetAllQueryable()
+            .Where(user => user.Email == email)
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task UpdatePasswordAsync(User user, string newPassword, CancellationToken cancellationToken)
+    {
+        var existingUser = await _userRepository.GetAllQueryable()
+            .Where(existing => existing.Id == user.Id)
+            .FirstOrDefaultAsync();
+
+        if (existingUser != null)
+        {
+            var newHashedPassword = _passwordHasher.HashPassword(existingUser, newPassword);
+            existingUser.PasswordHash = newHashedPassword;
+            await _userRepository.UpdateAsync(existingUser, cancellationToken);
+        }
     }
 }
        

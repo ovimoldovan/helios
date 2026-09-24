@@ -14,6 +14,8 @@ export interface Report {
     priority: string;
     type: string;
     messageToReporter?: string | null;
+    hasPhoto: boolean;
+    showPhotoToPublic: boolean;
 }
 
 export interface ReportType {

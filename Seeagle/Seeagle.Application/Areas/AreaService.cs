@@ -2,13 +2,43 @@ using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Geometries;
 using Seeagle.Application.Common;
 using Seeagle.Domain.Areas;
+using Seeagle.Domain.Reports;
+using System.Text.RegularExpressions;
 
 namespace Seeagle.Application.Areas;
 
-public sealed class AreaService(IRepository<Area> repository) : IAreaService
+public sealed class AreaService(IRepository<Area> repository, IRepository<Report> reportRepository) : IAreaService
 {
     private static readonly GeometryFactory GeometryFactory =
         new(new PrecisionModel(), 4326);
+    
+    private static string GenerateSlug(string name)
+    {
+        var slug = name.Trim().ToLowerInvariant();
+        slug = Regex.Replace(slug, @"[^a-z0-9\s-]", "");
+        slug = Regex.Replace(slug, @"\s+", "-");
+        slug = Regex.Replace(slug, @"-+", "-");
+        return slug.Trim('-');
+    }
+
+    private async Task<string> GenerateUniqueSlugAsync(string name, CancellationToken cancellationToken, Guid? excludeId = null)
+    {
+        var baseSlug = GenerateSlug(name);
+        if (string.IsNullOrEmpty(baseSlug))
+            baseSlug = "area";
+
+        var slug = baseSlug;
+        var suffix = 2;
+
+        while (await repository.GetAllQueryable()
+                   .AnyAsync(a => !a.IsDeleted && a.Slug == slug && a.Id != excludeId, cancellationToken))
+        {
+            slug = $"{baseSlug}-{suffix}";
+            suffix++;
+        }
+
+        return slug;
+    }
 
     public async Task<AreaDto> CreateAsync(CreateAreaRequest request, CancellationToken cancellationToken)
     {
@@ -40,8 +70,38 @@ public sealed class AreaService(IRepository<Area> repository) : IAreaService
 
             geometry = GeometryFactory.CreatePolygon(coords.ToArray());
         }
+        
+        var nameExists = await repository
+            .GetAllQueryable()
+            .AnyAsync(
+                area =>
+                    !area.IsDeleted &&
+                    area.Name.ToLower() == request.Name.Trim().ToLower(),
+                cancellationToken);
 
-        var area = new Area(request.Name, geometry);
+        if (nameExists)
+        {
+            throw new InvalidOperationException("An area with this name already exists.");
+        }
+
+        var overlapsExistingArea = await repository
+            .GetAllQueryable()
+            .AnyAsync(
+                area =>
+                    !area.IsDeleted &&
+                    area.Geometry.Intersects(geometry) &&
+                    !area.Geometry.Touches(geometry),
+                cancellationToken);
+
+        var slug = await GenerateUniqueSlugAsync(request.Name, cancellationToken);
+        
+        if (overlapsExistingArea)
+        {
+            throw new InvalidOperationException("Area overlaps with an existing area.");
+        }
+
+        var area = new Area(request.Name.Trim(), geometry, slug);
+        
         await repository.AddAsync(area, cancellationToken);
 
         return ToDto(area);
@@ -53,7 +113,7 @@ public sealed class AreaService(IRepository<Area> repository) : IAreaService
             .Select(c => new double[] { c.Y, c.X })
             .ToArray();
 
-        return new AreaDto(area.Id, area.Name, coords, area.CreatedUtc);
+        return new AreaDto(area.Id, area.Name, area.Slug, coords, area.CreatedUtc);
     }
     
     public async Task<IReadOnlyList<AreaDto>> GetAllAsync(CancellationToken cancellationToken)
@@ -75,8 +135,26 @@ public sealed class AreaService(IRepository<Area> repository) : IAreaService
         {
             return null;
         }
+      
+        var nameExists = await repository
+            .GetAllQueryable()
+            .AnyAsync(
+                existingArea =>
+                    !existingArea.IsDeleted &&
+                    existingArea.Id != id &&
+                    existingArea.Name.ToLower() == request.Name.Trim().ToLower(),
+                cancellationToken);
 
-        area.UpdateName(request.Name);
+        if (nameExists)
+        {
+            throw new InvalidOperationException("An area with this name already exists.");
+        }
+        
+        if (area.Name != request.Name)
+        {
+            var slug = await GenerateUniqueSlugAsync(request.Name, cancellationToken, excludeId: area.Id);
+            area.UpdateName(request.Name, slug);
+        }
 
         await repository.UpdateAsync(area, cancellationToken);
 
@@ -93,8 +171,17 @@ public sealed class AreaService(IRepository<Area> repository) : IAreaService
             return false;
         }
 
-        area.Delete();
+        var reports = await reportRepository.GetAllQueryable()
+            .Where(r => r.AreaId == id)
+            .ToListAsync(cancellationToken);
 
+        foreach (var report in reports)
+        {
+            report.SetAreaId(null);
+            await reportRepository.UpdateAsync(report, cancellationToken);
+        }
+
+        area.Delete();
         await repository.UpdateAsync(area, cancellationToken);
 
         return true;

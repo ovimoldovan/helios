@@ -4,6 +4,7 @@ using NSubstitute;
 using Seeagle.Application.Areas;
 using Seeagle.Application.Common;
 using Seeagle.Domain.Areas;
+using Seeagle.Domain.Reports;
 
 namespace Seeagle.Application.Tests.Areas;
 
@@ -14,6 +15,7 @@ public sealed class AreaServiceTests
     {
         // Arrange
         var repository = Substitute.For<IRepository<Area>>();
+        var reportRepository = Substitute.For<IRepository<Report>>();
 
         var geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
         var geometry = geometryFactory.CreatePolygon([
@@ -24,13 +26,17 @@ public sealed class AreaServiceTests
             new Coordinate(26.0, 44.5)
         ]);
 
-        var area = new Area("Test area", geometry);
+        var area = new Area("Test area", geometry, "test-area");
 
         repository
             .GetAllQueryable()
             .Returns(new List<Area> { area }.BuildMock());
 
-        var service = new AreaService(repository);
+        reportRepository
+            .GetAllQueryable()
+            .Returns(new List<Report>().BuildMock());  
+
+        var service = new AreaService(repository, reportRepository); 
 
         // Act
         var result = await service.DeleteAsync(
