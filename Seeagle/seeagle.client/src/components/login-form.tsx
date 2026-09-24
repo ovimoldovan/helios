@@ -21,6 +21,7 @@ import {toast} from "@/components/ui/toast.tsx";
 import {loginUser} from "@/shared/context/api/loginApi.ts";
 import { useTranslation } from 'react-i18next';
 import type {LoginErrorResponse} from "@/shared/types/authentication.ts";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface LoginFormErrors {
     email?: string;
@@ -33,6 +34,7 @@ export function LoginForm({
                           }: React.ComponentProps<"div">) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [keepMeLoggedIn, setKeepMeLoggedIn] = useState(false);
     const [errors, setErrors] = useState<LoginFormErrors>({});
     const [isLoading, setIsLoading] = useState(false);
     const [loginError, setLoginError] = useState<'invalid-credentials' | 'email-not-confirmed' | null>(null);
@@ -97,7 +99,7 @@ export function LoginForm({
         setLoginError(null);
 
         try {
-            const response = await loginUser({email, password});
+            const response = await loginUser({email, password, keepMeLoggedIn});
             login(response);
             navigate('/');
         } catch (apiError) {
@@ -144,7 +146,7 @@ export function LoginForm({
                                     <FieldLabel id="password-label" htmlFor="password">{t('password')}</FieldLabel>
                                     <a
                                         onClick={() => navigate('/forgot-password')}
-                                        className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                                        className="ml-auto inline-block text-sm underline-offset-4 hover:underline cursor-pointer"
                                     >
                                         {t('forgotYourPassword')}
                                     </a>
@@ -164,6 +166,15 @@ export function LoginForm({
                                        autoComplete="current-password"
                                 />
                                 <FieldError>{errors.password}</FieldError>
+                            </Field>
+                            <Field orientation="horizontal">
+                                <label className="flex items-center gap-2 text-sm">
+                                    <Checkbox
+                                        checked={keepMeLoggedIn}
+                                        onCheckedChange={setKeepMeLoggedIn}
+                                    />
+                                    <FieldLabel>{t('keepMeLoggedIn')}</FieldLabel>
+                                </label>
                             </Field>
                             <Field>
                                 <Button type="submit">{t('login')}</Button>

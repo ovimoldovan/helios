@@ -16,6 +16,7 @@
   "register": "Register",
   "incorrectCredentials": "Incorrect e-mail or password",
   "missingAccount": "Don't have an account?",
+  "keepMeLoggedIn": "Keep me logged in",
 
   "registerTitle": "Create account",
   "registerDescription": "Enter your details below to create an account",
