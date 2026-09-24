@@ -87,26 +87,14 @@ public sealed class AuthController : ControllerBase
             return StatusCode(StatusCodes.Status403Forbidden, new { message = "Please confirm your email before logging in." });        
         
         var authToken = _jwtUtil.GenerateToken(user);
-        var refreshToken = await _refreshTokenService.CreateAsync(user, _cookieSettings.RefreshTokenExpiryTimeSpanInDays, cancellationToken);
-        
-        var authTokenCookieOptions = new CookieOptions
-        {
-            Expires = DateTime.UtcNow.AddMinutes(_cookieSettings.AuthTokenExpiryTimeSpanInMinutes),
-            Secure = _cookieSettings.SecurePolicy,
-            SameSite = Enum.Parse<SameSiteMode>(_cookieSettings.SameSite),
-            HttpOnly = _cookieSettings.HttpOnly
-        };
-        
-        var refreshTokenCookieOptions = new CookieOptions
-        {
-            Expires = DateTime.UtcNow.AddDays(_cookieSettings.RefreshTokenExpiryTimeSpanInDays),
-            Secure = _cookieSettings.SecurePolicy,
-            SameSite = Enum.Parse<SameSiteMode>(_cookieSettings.SameSite),
-            HttpOnly = _cookieSettings.HttpOnly
-        };
-        
-        Response.Cookies.Append(_cookieSettings.AuthTokenName, authToken, authTokenCookieOptions);
-        Response.Cookies.Append(_cookieSettings.RefreshTokenName, refreshToken.Token, refreshTokenCookieOptions);
+        var refreshToken = await _refreshTokenService.CreateAsync(
+            user,
+            _cookieSettings.RefreshTokenExpiryTimeSpanInDays,
+            request.KeepMeLoggedIn,
+            cancellationToken);
+
+        Response.Cookies.Append(_cookieSettings.AuthTokenName, authToken, CreateCookieOptions(request.KeepMeLoggedIn, _cookieSettings.AuthTokenExpiryTimeSpanInMinutes));
+        Response.Cookies.Append(_cookieSettings.RefreshTokenName, refreshToken.Token, CreateCookieOptions(request.KeepMeLoggedIn, _cookieSettings.RefreshTokenExpiryTimeSpanInDays, true));
         
         return Ok(new UserDto(
             user.Id,
@@ -222,28 +210,35 @@ public sealed class AuthController : ControllerBase
             return Unauthorized();
         
         var newAuthToken = _jwtUtil.GenerateToken(user);
-        var newRefreshToken = await _refreshTokenService.CreateAsync(user, _cookieSettings.RefreshTokenExpiryTimeSpanInDays, cancellationToken);
-        
-        var authTokenCookieOptions = new CookieOptions
-        {
-            Expires = DateTime.UtcNow.AddMinutes(_cookieSettings.AuthTokenExpiryTimeSpanInMinutes),
-            Secure = _cookieSettings.SecurePolicy,
-            SameSite = Enum.Parse<SameSiteMode>(_cookieSettings.SameSite),
-            HttpOnly = _cookieSettings.HttpOnly
-        };
-        
-        var refreshTokenCookieOptions = new CookieOptions
-        {
-            Expires = DateTime.UtcNow.AddDays(_cookieSettings.RefreshTokenExpiryTimeSpanInDays),
-            Secure = _cookieSettings.SecurePolicy,
-            SameSite = Enum.Parse<SameSiteMode>(_cookieSettings.SameSite),
-            HttpOnly = _cookieSettings.HttpOnly
-        };
-        
-        Response.Cookies.Append(_cookieSettings.AuthTokenName, newAuthToken, authTokenCookieOptions);
-        Response.Cookies.Append(_cookieSettings.RefreshTokenName, newRefreshToken.Token, refreshTokenCookieOptions);
+        var newRefreshToken = await _refreshTokenService.CreateAsync(
+            user,
+            _cookieSettings.RefreshTokenExpiryTimeSpanInDays,
+            existing.KeepMeLoggedIn,
+            cancellationToken);
+
+        Response.Cookies.Append(_cookieSettings.AuthTokenName, newAuthToken, CreateCookieOptions(existing.KeepMeLoggedIn, _cookieSettings.AuthTokenExpiryTimeSpanInMinutes));
+        Response.Cookies.Append(_cookieSettings.RefreshTokenName, newRefreshToken.Token, CreateCookieOptions(existing.KeepMeLoggedIn, _cookieSettings.RefreshTokenExpiryTimeSpanInDays, true));
 
         return Ok();
+    }
+
+    private CookieOptions CreateCookieOptions(bool persistent, int expiryTimeSpan, bool isDays = false)
+    {
+        var options = new CookieOptions
+        {
+            Secure = _cookieSettings.SecurePolicy,
+            SameSite = Enum.Parse<SameSiteMode>(_cookieSettings.SameSite),
+            HttpOnly = _cookieSettings.HttpOnly
+        };
+
+        if (persistent)
+        {
+            options.Expires = isDays
+                ? DateTime.UtcNow.AddDays(expiryTimeSpan)
+                : DateTime.UtcNow.AddMinutes(expiryTimeSpan);
+        }
+
+        return options;
     }
     
     [HttpPost("confirm-email")]
