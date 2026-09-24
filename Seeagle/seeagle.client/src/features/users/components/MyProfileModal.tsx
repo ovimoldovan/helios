@@ -103,7 +103,7 @@ export function MyProfileModal({ isOpen, onClose, user }: MyProfileModalProps) {
                                         type="email"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        disabled={isSavingProfile}
+                                        disabled={true}
                                     />
                                 </Field>
                                 <Field>
