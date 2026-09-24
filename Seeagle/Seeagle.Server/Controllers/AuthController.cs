@@ -9,6 +9,7 @@ using Seeagle.Server.Utils.JWT;
 using Seeagle.Server.Utils.Cookies;
 using Seeagle.Server.Utils.EmailConfirmationToken;
 using Seeagle.Server.Utils.MailService;
+using Seeagle.Server.Utils.PasswordResetToken;
 
 namespace Seeagle.Server.Controllers;
 
@@ -25,6 +26,8 @@ public sealed class AuthController : ControllerBase
     private readonly IEmailConfirmationTokenService _emailConfirmationTokenService;
     private readonly IMailService _mailService;
     private string _frontendUrl;
+    private readonly ResetPasswordTokenOptions _resetPasswordTokenOptions;
+    private readonly IResetPasswordTokenService _resetPasswordTokenService;
 
     public AuthController(
         IUserService userService, 
@@ -35,7 +38,9 @@ public sealed class AuthController : ControllerBase
         IOptions<EmailConfirmationTokenOptions> emailConfirmationTokenOptions,
         IEmailConfirmationTokenService emailConfirmationTokenService,
         IMailService mailService, 
-        IConfiguration configuration)
+        IConfiguration configuration, 
+        IOptions<ResetPasswordTokenOptions> resetPasswordTokenOptions,
+        IResetPasswordTokenService resetPasswordTokenService)
     {
         _userService = userService;
         _jwtUtil = jwtUtil;
@@ -46,6 +51,8 @@ public sealed class AuthController : ControllerBase
         _emailConfirmationTokenService = emailConfirmationTokenService;
         _mailService = mailService;
         _frontendUrl = configuration["FrontendBaseUrl"] ?? "";
+        _resetPasswordTokenOptions = resetPasswordTokenOptions.Value;
+        _resetPasswordTokenService = resetPasswordTokenService;
     }
 
     [HttpPost("register")]
@@ -80,26 +87,14 @@ public sealed class AuthController : ControllerBase
             return StatusCode(StatusCodes.Status403Forbidden, new { message = "Please confirm your email before logging in." });        
         
         var authToken = _jwtUtil.GenerateToken(user);
-        var refreshToken = await _refreshTokenService.CreateAsync(user, _cookieSettings.RefreshTokenExpiryTimeSpanInDays, cancellationToken);
-        
-        var authTokenCookieOptions = new CookieOptions
-        {
-            Expires = DateTime.UtcNow.AddMinutes(_cookieSettings.AuthTokenExpiryTimeSpanInMinutes),
-            Secure = _cookieSettings.SecurePolicy,
-            SameSite = Enum.Parse<SameSiteMode>(_cookieSettings.SameSite),
-            HttpOnly = _cookieSettings.HttpOnly
-        };
-        
-        var refreshTokenCookieOptions = new CookieOptions
-        {
-            Expires = DateTime.UtcNow.AddDays(_cookieSettings.RefreshTokenExpiryTimeSpanInDays),
-            Secure = _cookieSettings.SecurePolicy,
-            SameSite = Enum.Parse<SameSiteMode>(_cookieSettings.SameSite),
-            HttpOnly = _cookieSettings.HttpOnly
-        };
-        
-        Response.Cookies.Append(_cookieSettings.AuthTokenName, authToken, authTokenCookieOptions);
-        Response.Cookies.Append(_cookieSettings.RefreshTokenName, refreshToken.Token, refreshTokenCookieOptions);
+        var refreshToken = await _refreshTokenService.CreateAsync(
+            user,
+            _cookieSettings.RefreshTokenExpiryTimeSpanInDays,
+            request.KeepMeLoggedIn,
+            cancellationToken);
+
+        Response.Cookies.Append(_cookieSettings.AuthTokenName, authToken, CreateCookieOptions(request.KeepMeLoggedIn, _cookieSettings.AuthTokenExpiryTimeSpanInMinutes));
+        Response.Cookies.Append(_cookieSettings.RefreshTokenName, refreshToken.Token, CreateCookieOptions(request.KeepMeLoggedIn, _cookieSettings.RefreshTokenExpiryTimeSpanInDays, true));
         
         return Ok(new UserDto(
             user.Id,
@@ -215,28 +210,35 @@ public sealed class AuthController : ControllerBase
             return Unauthorized();
         
         var newAuthToken = _jwtUtil.GenerateToken(user);
-        var newRefreshToken = await _refreshTokenService.CreateAsync(user, _cookieSettings.RefreshTokenExpiryTimeSpanInDays, cancellationToken);
-        
-        var authTokenCookieOptions = new CookieOptions
-        {
-            Expires = DateTime.UtcNow.AddMinutes(_cookieSettings.AuthTokenExpiryTimeSpanInMinutes),
-            Secure = _cookieSettings.SecurePolicy,
-            SameSite = Enum.Parse<SameSiteMode>(_cookieSettings.SameSite),
-            HttpOnly = _cookieSettings.HttpOnly
-        };
-        
-        var refreshTokenCookieOptions = new CookieOptions
-        {
-            Expires = DateTime.UtcNow.AddDays(_cookieSettings.RefreshTokenExpiryTimeSpanInDays),
-            Secure = _cookieSettings.SecurePolicy,
-            SameSite = Enum.Parse<SameSiteMode>(_cookieSettings.SameSite),
-            HttpOnly = _cookieSettings.HttpOnly
-        };
-        
-        Response.Cookies.Append(_cookieSettings.AuthTokenName, newAuthToken, authTokenCookieOptions);
-        Response.Cookies.Append(_cookieSettings.RefreshTokenName, newRefreshToken.Token, refreshTokenCookieOptions);
+        var newRefreshToken = await _refreshTokenService.CreateAsync(
+            user,
+            _cookieSettings.RefreshTokenExpiryTimeSpanInDays,
+            existing.KeepMeLoggedIn,
+            cancellationToken);
+
+        Response.Cookies.Append(_cookieSettings.AuthTokenName, newAuthToken, CreateCookieOptions(existing.KeepMeLoggedIn, _cookieSettings.AuthTokenExpiryTimeSpanInMinutes));
+        Response.Cookies.Append(_cookieSettings.RefreshTokenName, newRefreshToken.Token, CreateCookieOptions(existing.KeepMeLoggedIn, _cookieSettings.RefreshTokenExpiryTimeSpanInDays, true));
 
         return Ok();
+    }
+
+    private CookieOptions CreateCookieOptions(bool persistent, int expiryTimeSpan, bool isDays = false)
+    {
+        var options = new CookieOptions
+        {
+            Secure = _cookieSettings.SecurePolicy,
+            SameSite = Enum.Parse<SameSiteMode>(_cookieSettings.SameSite),
+            HttpOnly = _cookieSettings.HttpOnly
+        };
+
+        if (persistent)
+        {
+            options.Expires = isDays
+                ? DateTime.UtcNow.AddDays(expiryTimeSpan)
+                : DateTime.UtcNow.AddMinutes(expiryTimeSpan);
+        }
+
+        return options;
     }
     
     [HttpPost("confirm-email")]
@@ -253,5 +255,48 @@ public sealed class AuthController : ControllerBase
             return BadRequest(new { message = "Email confirmation failed" });
 
         return Ok();
+    }
+
+    [HttpPost("forgot-password")]
+    public async Task<IActionResult> ForgotPasswordAsync(ForgotPasswordRequest request, CancellationToken cancellationToken)
+    {
+        var user = await _userService.GetByEmailAsync(request.Email);
+
+        if (user != null)
+        {
+            var resetPasswordToken = await _resetPasswordTokenService.CreateAsync(user,
+                _resetPasswordTokenOptions.ExpiryInMinutes, cancellationToken);
+            var url = $"{_frontendUrl}/reset-password?token={resetPasswordToken.Token}";
+
+            await _mailService.SendPasswordResetEmailAsync(user.Email, url);
+        }
+
+        return NoContent();
+    }
+
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPasswordAsync(ResetPasswordRequest request, CancellationToken cancellationToken)
+    {
+        var resetToken = await _resetPasswordTokenService.FindUnusedByTokenAsync(request.Token);
+        
+        if (resetToken is null || resetToken.Used || resetToken.Expires < DateTime.UtcNow)
+            return BadRequest();
+
+        await _userService.UpdatePasswordAsync(resetToken.User, request.NewPassword, cancellationToken);
+        await _resetPasswordTokenService.UseTokenAsync(request.Token);
+        await _refreshTokenService.RevokeAllActiveForUserAsync(resetToken.User.Id, cancellationToken);
+
+        return NoContent();
+    }
+    
+    [HttpGet("reset-password/validate")]
+    public async Task<IActionResult> ValidateResetPasswordTokenAsync([FromQuery] string token, CancellationToken cancellationToken)
+    {
+        var resetToken = await _resetPasswordTokenService.FindUnusedByTokenAsync(token);
+
+        if (resetToken is null || resetToken.Used || resetToken.Expires < DateTime.UtcNow)
+            return BadRequest();
+
+        return NoContent();
     }
 }

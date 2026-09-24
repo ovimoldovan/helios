@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -12,9 +13,11 @@ using Seeagle.Infrastructure.Persistence;
 namespace Seeagle.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(SeeagleDbContext))]
-    partial class SeeagleDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260922165452_CreateResetPasswordTokens")]
+    partial class CreateResetPasswordTokens
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,10 +62,6 @@ namespace Seeagle.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
-
-                    b.Property<string>("Slug")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -200,26 +199,6 @@ namespace Seeagle.Infrastructure.Persistence.Migrations
 
                     b.ToTable("sample_names", (string)null);
                 });
-            
-            modelBuilder.Entity("Seeagle.Domain.Settings.SystemSettings", b =>
-            {
-                b.Property<Guid>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("uuid");
-
-                b.Property<double>("DuplicateDistanceMeters")
-                    .HasColumnType("double precision");
-
-                b.Property<TimeSpan>("DuplicateTimeWindow")
-                    .HasColumnType("interval");
-
-                b.Property<DateTime>("UpdatedUtc")
-                    .HasColumnType("timestamp with time zone");
-
-                b.HasKey("Id");
-
-                b.ToTable("SystemSettings");
-            });
 
             modelBuilder.Entity("Seeagle.Domain.User.EmailConfirmationToken", b =>
                 {
@@ -262,9 +241,6 @@ namespace Seeagle.Infrastructure.Persistence.Migrations
 
                     b.Property<DateTime>("Expires")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("KeepMeLoggedIn")
-                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("Revoked")
                         .HasColumnType("timestamp with time zone");

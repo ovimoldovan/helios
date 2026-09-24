@@ -4,7 +4,7 @@ namespace Seeagle.Application.Users;
 
 public interface IRefreshTokenService
 {
-    Task<RefreshToken> CreateAsync(User user, int expiryInDays, CancellationToken cancellationToken);
+    Task<RefreshToken> CreateAsync(User user, int expiryInDays, bool keepMeLoggedIn, CancellationToken cancellationToken);
 
     Task<RefreshToken?> GetByTokenAsync(string token, CancellationToken cancellationToken);
 

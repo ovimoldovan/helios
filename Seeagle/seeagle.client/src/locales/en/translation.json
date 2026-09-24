@@ -16,6 +16,7 @@
   "register": "Register",
   "incorrectCredentials": "Incorrect e-mail or password",
   "missingAccount": "Don't have an account?",
+  "keepMeLoggedIn": "Keep me logged in",
 
   "registerTitle": "Create account",
   "registerDescription": "Enter your details below to create an account",
@@ -31,7 +32,7 @@
   "firstNameTooLong": "First name must be at most {{max}} characters.",
   "lastNameRequired": "Last name is required.",
   "lastNameTooLong": "Last name must be at most {{max}} characters.",
-
+  
   "cookiesPolicyTitle": "Cookies Policy",
   "registeredUsers": "Registered users",
   "loadingUsers": "Loading...",
@@ -108,9 +109,9 @@
   "goHome": "Go to homepage",
   "unexpectedErrorLoadingUsers": "Unexpected error while loading users.",
   "unexpectedErrorAssigningModerator": "Unexpected error while assigning moderator.",
-
+  
   "moderatorDashboard": "Moderator Dashboard",
-
+ 
   "moderationQueue": "Moderation Queue",
   "unexpectedError": "Unexpected error while loading reports.",
   "unexpectedErrorApprove": "Unexpected error while approving report.",
@@ -145,7 +146,7 @@
   "noApprovedReports": "No approved reports.",
   "unexpectedErrorLoadingApproved": "Unexpected error while loading approved reports.",
   "unexpectedErrorProcessingAction": "Unexpected error while processing action.",
-
+  
   "languageEn": "EN",
   "languageRo": "RO",
 
@@ -208,7 +209,8 @@
   "errorWhileRejectingReport": "Error while rejecting report.",
   "approve": "Approve",
   "reject": "Reject",
-"Photo": "Photo",
+  "Photo": "Photo",
+  "photo": "Photo",
   "photoPreview": "Photo Preview",
   "remove": "Remove",
   "disable": "Disable",
@@ -258,7 +260,7 @@
 
   "user": "User",
   "moderatorMessage": "Message from Moderator",
-
+  
   "checking": "Checking...",
 
   "areaManagementTitle": "Area Management",
@@ -269,27 +271,61 @@
   "rename": "Rename",
   "delete": "Delete",
   "backToHome": "Back to Home",
-
+  
   "exportCsv": "Export CSV",
-
   "confirmDeleteMessage": "Are you really sure you want to delete?",
   "thisReport": "this report",
 
-  "graphsTab": "Graphs",
-  "tableTab": "Table data",
-  "noSummaryData": "No data available.",
-  "reportCount": "Reports",
+  "myProfile": "My Profile",
+  "updateInfo": "Update Info",
+  "changePassword": "Change Password",
+  "currentPassword": "Current Password",
+  "newPassword": "New Password",
+  "saveChanges": "Save Changes",
+  "saving": "Saving...",
+  "profileUpdateError": "Failed to update profile.",
+  "passwordChangeError": "Failed to change password. Check your current password.",
+  "profileUpdatedTitle": "Profile updated",
+  "passwordChangedTitle": "Password changed",
+  "profileUpdatedRelogin": "Please log in again to see your changes.",
+  "confirmProfileChangeMessage": "Are you sure you want to update your profile? You will need to log in again.",
+"confirmPasswordChangeMessage": "Are you sure you want to change your password? You will need to log in again.",
   
+  "uniqueAreaPrompt": "Enter a unique name for the new area.",
+  "areaOverlapPrompt": "Area overlaps with an existing area",
+  
+  "confirmDeleteMessage": "Are you really sure you want to delete?",
+  "thisReport": "this report",
   "unauthenticatedToastTitle": "Unauthenticated",
   "unauthenticatedToastDescription": "Log in to access this page",
   "emailConfirmationNeededToastTitle" : "E-Mail confirmation needed",
   "emailConfirmationNeededToastDescription": "Check your inbox",
   "emailNotConfirmed": "E-Mail not confirmed",
 
+  "graphsTab": "Graphs",
+  "tableTab": "Table data",
+  "noSummaryData": "No data available.",
+  "reportCount": "Reports",
+
   "reportPhoto": "Report photo",
   "showPhotoToPublic": "Show photo to public",
   "showPhotoToPublicDescription": "Everyone viewing this report can see the image",
-
+  "reset": "Reset",
+  "forgotYourPassword": "Forgot your password?",
+  "resetPasswordTitle": "Reset password",
+  "resetPasswordDescription": "Enter your E-Mail",
+  "resetPasswordSentDescription": "If an account exists for that E-Mail, a reset link has been sent.",
+  "resetFailed": "Something went wrong. Please try again.",
+  "backToLogin": "Back to login",
+  "sending": "Sending...",
+  "passwordResetSuccessToastTitle": "Password reset successful",
+  "passwordResetSuccessToastDescription": "You may use the new password",
+  "passwordResetFailed": "Password reset failed",
+  "setNewPasswordTitle": "Set a new password",
+  "invalidResetLinkDescription": "Reset password link is invalid",
+  "requestNewResetLink": "Request new link",
+  "setNewPasswordButton": "Change password",
+  "newPassword": "New password",
   "systemSettingsTitle": "System settings",
   "systemSettingsDescription": "Tune duplicate detection thresholds",
   "errorLoadingSettings": "Error while loading settings",
