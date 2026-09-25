@@ -237,7 +237,7 @@
   "assistantChecking": "Checking...",
 
   "allReportsTitle": "All Reports",
-  "allReportsDescription": "Review all reports, except pending ones.",
+  "allReportsDescription": "Review all reports.",
   "noReportsFound": "No reports found.",
   "searchUsers": "Search users...",
   "allRoles": "All roles",
